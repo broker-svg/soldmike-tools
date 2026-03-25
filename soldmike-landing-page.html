@@ -1092,184 +1092,6 @@
     .footer-bottom a { color: var(--gold); }
 
     /* ============================================================
-       CHATBOT
-    ============================================================ */
-    #chat-bubble {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 2000;
-      box-shadow: 0 4px 24px rgba(197,160,83,0.4);
-      transition: transform 0.2s, background 0.2s;
-    }
-    #chat-bubble:hover { transform: scale(1.08); background: var(--gold-light); }
-    .chat-pulse {
-      position: absolute;
-      top: 0; right: 0;
-      width: 14px; height: 14px;
-      background: var(--green);
-      border-radius: 50%;
-      border: 2px solid var(--navy);
-    }
-    #chat-window {
-      position: fixed;
-      bottom: 96px;
-      right: 28px;
-      width: 340px;
-      max-height: 520px;
-      background: var(--navy-mid);
-      border: 1px solid rgba(197,160,83,0.25);
-      border-radius: 4px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
-      z-index: 1999;
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    #chat-window.open { display: flex; }
-    .chat-header {
-      background: var(--navy);
-      border-bottom: 1px solid rgba(197,160,83,0.15);
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .chat-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-label);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--navy);
-      flex-shrink: 0;
-    }
-    .chat-agent-name {
-      font-family: var(--font-label);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: var(--white);
-    }
-    .chat-status {
-      font-family: var(--font-body);
-      font-size: 12px;
-      color: var(--green);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .chat-status-dot {
-      width: 7px; height: 7px;
-      background: var(--green);
-      border-radius: 50%;
-    }
-    .chat-close {
-      margin-left: auto;
-      color: rgba(232,226,212,0.4);
-      font-size: 20px;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .chat-close:hover { color: var(--white); }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(197,160,83,0.2) transparent;
-    }
-    .chat-msg {
-      max-width: 85%;
-      padding: 12px 16px;
-      font-family: var(--font-body);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-    .chat-msg.bot {
-      background: var(--navy);
-      border: 1px solid rgba(197,160,83,0.12);
-      align-self: flex-start;
-      color: var(--white-dim);
-      border-radius: 0 8px 8px 8px;
-    }
-    .chat-msg.user {
-      background: var(--gold);
-      color: var(--navy);
-      align-self: flex-end;
-      font-weight: 500;
-      border-radius: 8px 0 8px 8px;
-    }
-    .chat-quick-replies {
-      padding: 0 20px 12px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .chat-quick-btn {
-      font-family: var(--font-label);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gold);
-      border: 1px solid rgba(197,160,83,0.3);
-      padding: 6px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: transparent;
-    }
-    .chat-quick-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
-    .chat-input-row {
-      padding: 16px 20px;
-      border-top: 1px solid rgba(197,160,83,0.1);
-      display: flex;
-      gap: 10px;
-    }
-    .chat-input {
-      flex: 1;
-      background: var(--navy);
-      border: 1px solid rgba(197,160,83,0.2);
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 13px;
-      padding: 10px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .chat-input:focus { border-color: var(--gold); }
-    .chat-send {
-      background: var(--gold);
-      color: var(--navy);
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-    .chat-send:hover { background: var(--gold-light); }
-
-    /* ============================================================
        RESPONSIVE
     ============================================================ */
     @media (max-width: 1024px) {
@@ -1811,7 +1633,7 @@
         </ul>
         <div class="contact-direct">
           <p>📞 <a href="tel:6472782237">647-278-2237</a></p>
-          <p style="margin-top:6px;">✉️ <a href="mailto:mike@theopteam.ca">mike@theopteam.ca</a></p>
+          <p style="margin-top:6px;">✉️ <a href="/cdn-cgi/l/email-protection#264b4f4d4366524e4349565243474b084547"><span class="__cf_email__" data-cfemail="74191d1f1134001c111b04001115195a1715">[email&#160;protected]</span></a></p>
         </div>
       </div>
 
@@ -1899,58 +1721,26 @@
       </a>
     </div>
     <div class="footer-bottom">
-      <p>Michael Barillari · RE/MAX Premier · Vaughan, ON · <a href="tel:6472782237">647-278-2237</a> · <a href="mailto:mike@theopteam.ca">mike@theopteam.ca</a></p>
+      <p>Michael Barillari · RE/MAX Premier · Vaughan, ON · <a href="tel:6472782237">647-278-2237</a> · <a href="/cdn-cgi/l/email-protection#7f1216141a3f0b171a100f0b1a1e12511c1e"><span class="__cf_email__" data-cfemail="f39e9a9896b3879b969c838796929edd9092">[email&#160;protected]</span></a></p>
       <p style="margin-top:6px;">© 2026 SOLDMIKE. All rights reserved. RE/MAX Premier Inc., Brokerage.</p>
     </div>
   </div>
 </footer>
 
-<!-- ============================================================
-     CHATBOT
-============================================================ -->
-<div id="chat-bubble" onclick="toggleChat()" aria-label="Open chat">
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0d1a" stroke-width="2.2">
-    <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-  </svg>
-  <div class="chat-pulse"></div>
-</div>
 
-<div id="chat-window">
-  <div class="chat-header">
-    <div class="chat-avatar">MB</div>
-    <div>
-      <div class="chat-agent-name">SOLDMIKE Assistant</div>
-      <div class="chat-status"><div class="chat-status-dot"></div>Online now</div>
-    </div>
-    <div class="chat-close" onclick="toggleChat()">×</div>
-  </div>
-  <div class="chat-messages" id="chat-messages"></div>
-  <div class="chat-quick-replies" id="quick-replies">
-    <button class="chat-quick-btn" onclick="sendQuick('Areas')">Areas</button>
-    <button class="chat-quick-btn" onclick="sendQuick('Listings')">Listings</button>
-    <button class="chat-quick-btn" onclick="sendQuick('Pricing')">Pricing</button>
-    <button class="chat-quick-btn" onclick="sendQuick('Commission')">Commission</button>
-    <button class="chat-quick-btn" onclick="sendQuick('Book Now')">Book Now</button>
-  </div>
-  <div class="chat-input-row">
-    <input type="text" class="chat-input" id="chat-input" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendMessage()" />
-    <button class="chat-send" onclick="sendMessage()" aria-label="Send">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0a0d1a" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
 
 <!-- ============================================================
      SCRIPTS
 ============================================================ -->
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script defer>
 
 /* ---- FORM CONFIG ----
    Set LEAD_CONNECTION to: 'fub_api' | 'zapier_webhook' | 'email'
 */
 const LEAD_CONNECTION = 'fub_api';
-const FUB_API_KEY = 'fka_0st8sqhU6fH5PYgRLhu9GpVUqxmD4cdbit'; // ← paste your key here, never commit to GitHub
+const FUB_API_KEY = '>>>PASTE_YOUR_FUB_KEY_HERE<<<';
+const FUB_API_KEY = '>>>PASTE_YOUR_FUB_KEY_HERE<<<'; // ← paste your key here, never commit to GitHub
 const ZAPIER_WEBHOOK_URL = 'REPLACE_WITH_YOUR_ZAPIER_WEBHOOK_URL';
 
 /* ============================================================
@@ -2143,83 +1933,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-/* ============================================================
-   CHATBOT
-============================================================ */
-let chatOpen = false;
-let chatInitialized = false;
 
-function toggleChat() {
-  chatOpen = !chatOpen;
-  const win = document.getElementById('chat-window');
-  win.classList.toggle('open', chatOpen);
-  if (chatOpen && !chatInitialized) {
-    chatInitialized = true;
-    setTimeout(() => addBotMsg("Hi — I know Michael's listings, his process, and the Vaughan market inside and out. What can I help you with today?"), 400);
-  }
-}
-
-function addBotMsg(text) {
-  const el = document.createElement('div');
-  el.className = 'chat-msg bot';
-  el.textContent = text;
-  document.getElementById('chat-messages').appendChild(el);
-  scrollChat();
-}
-
-function addUserMsg(text) {
-  const el = document.createElement('div');
-  el.className = 'chat-msg user';
-  el.textContent = text;
-  document.getElementById('chat-messages').appendChild(el);
-  scrollChat();
-  // hide quick replies after first user message
-  document.getElementById('quick-replies').style.display = 'none';
-}
-
-function scrollChat() {
-  const m = document.getElementById('chat-messages');
-  m.scrollTop = m.scrollHeight;
-}
-
-function sendQuick(text) {
-  addUserMsg(text);
-  setTimeout(() => addBotMsg(getResponse(text.toLowerCase())), 600);
-}
-
-function sendMessage() {
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  addUserMsg(text);
-  setTimeout(() => addBotMsg(getResponse(text.toLowerCase())), 700);
-}
-
-function getResponse(msg) {
-  if (/areas?|neighbourhood|vaughan|woodbridge|islington|kleinburg/.test(msg))
-    return "Michael specializes in Vaughan and Woodbridge — including Islington Woods, Vellore Village, Kleinburg, Woodbridge, and surrounding GTA communities.";
-  if (/listing|for sale|available/.test(msg))
-    return "Check out soldmike.ca/featured-listings for all current listings, or ask Michael directly — he often knows about off-market properties too.";
-  if (/pric|offer date|strategy/.test(msg))
-    return "Michael uses a 4-tier pricing framework: Offer Date Price, Market Value, Optimistic Price, and Overpriced. His goal is always the optimistic price — and his track record proves it's achievable.";
-  if (/commission|rate|cost|expensive/.test(msg))
-    return "The question isn't what Michael costs — it's what he delivers. Professional photography and video he shoots personally, full social campaigns, staging coordination, and a negotiation strategy backed by 3 designations. Results speak for themselves.";
-  if (/photo|video|media|hdr/.test(msg))
-    return "Michael personally handles all photography using 5-shot HDR bracket technique and produces all video in-house. Nothing is outsourced — ever.";
-  if (/book|consult|call|appointment|meet/.test(msg))
-    return "You can book directly using the form on this page, or call Michael at 647-278-2237. He responds personally to every inquiry.";
-  if (/market|gta|stats|trend/.test(msg))
-    return "The GTA average sale price is currently $1,008,968 — down 7.1% year-over-year. Vaughan detached homes remain strong relative to the broader market. Want a free home evaluation?";
-  if (/team|nick|op team/.test(msg))
-    return "Michael works closely with Nick Oppedisano and The OP Team at RE/MAX Premier. Combined they bring mass marketing capability and deep GTA expertise. Learn more at theopteam.ca.";
-  if (/sell|selling|list/.test(msg))
-    return "Great — selling starts with a conversation. Fill out the form below or call 647-278-2237. Michael will assess your home's value and walk you through the full plan.";
-  if (/buy|buying|looking/.test(msg))
-    return "Michael is an Accredited Buyer's Representative (ABR). Whether you're looking for a specific neighbourhood or just starting out, he can help. Browse listings at soldmike.ca/featured-listings.";
-  return "Great question — let me connect you with Michael directly. You can fill out the contact form on this page or call 647-278-2237.";
-}
 
 </script>
+
+<!-- ============================================================
+     JOTFORM AI AGENT - MIKA
+============================================================ -->
+<script src='https://cdn.jotfor.ms/agent/embedjs/019d23d98def784db901dc147239fa93179d/embed.js?skipWelcome=1&maximizable=1'></script>
+<style>
+  [class*="agent-launcher"], [class*="agentLauncher"],
+  .jfAgent-launcher, #JotformAIAssistant-button {
+    background-color: #cc0000 !important;
+    background: #cc0000 !important;
+    border-color: #cc0000 !important;
+  }
+</style>
 </body>
 </html>
