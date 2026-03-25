@@ -11,3 +11,773 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0a0d1a;
+      --navy-mid: #0f1525;
+      --navy-light: #141c30;
+      --gold: #c5a053;
+      --gold-light: #d4b472;
+      --gold-dim: rgba(197,160,83,0.15);
+      --white: #e8e2d4;
+      --white-dim: rgba(232,226,212,0.7);
+      --white-faint: rgba(232,226,212,0.15);
+      --green: #4caf7d;
+      --blue: #4a90d9;
+      --red: #c0392b;
+      --font-head: 'Playfair Display', Georgia, serif;
+      --font-label: 'Rajdhani', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { background: var(--navy); color: var(--white); font-family: var(--font-body); line-height: 1.65; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; font-family: inherit; border: none; background: none; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .section-sm { padding: 60px 0; }
+    .gold { color: var(--gold); }
+    .label-tag { font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); display: block; margin-bottom: 12px; }
+    .section-title { font-family: var(--font-head); font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 700; line-height: 1.15; margin-bottom: 16px; }
+    .section-sub { font-family: var(--font-body); font-size: 1.05rem; color: var(--white-dim); max-width: 620px; line-height: 1.7; }
+    .divider { width: 60px; height: 2px; background: var(--gold); margin: 20px 0 40px; }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.75s ease, transform 0.75s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* NAV */
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 0 24px; height: 72px; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.98); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.1); transition: background 0.3s; }
+    #nav.scrolled { background: rgba(255,255,255,1); border-bottom-color: rgba(0,0,0,0.15); }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-text { font-family: var(--font-label); font-size: 22px; font-weight: 700; letter-spacing: 0.08em; color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+    .nav-links a { font-family: var(--font-label); font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #0a0d1a; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--gold); }
+    .btn-nav { font-family: var(--font-label); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: 10px 22px; border-radius: 2px; transition: background 0.2s, transform 0.2s; white-space: nowrap; cursor: pointer; }
+    .btn-nav:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; padding: 8px; cursor: pointer; z-index: 1001; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #0a0d1a; transition: all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--navy-mid); border-bottom: 1px solid var(--gold-dim); padding: 24px; z-index: 999; flex-direction: column; gap: 20px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-label); font-size: 15px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); padding: 8px 0; border-bottom: 1px solid var(--white-faint); }
+    .mobile-menu .btn-nav { text-align: center; }
+
+    /* HERO */
+    #hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding-top: 72px; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background-image: url('https://cdn.gamma.app/j6c9cv6j9yv4013/c76962f0acee40b7879434574d58d1a2/original/L3RycmViL2xpc3RpbmdzLzQxLzQ3LzAyLzYxL3AvZWMzMGU3MzAtN2YwOC00N2I3LTg0ZDctNTIyYmVmYzUzNmI1LmpwZw.jpg'); background-size: cover; background-position: center; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(105deg, rgba(10,13,26,0.92) 0%, rgba(10,13,26,0.75) 55%, rgba(10,13,26,0.45) 100%); }
+    .hero-content { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; margin: 0 auto; padding: 80px 24px; gap: 40px; }
+    .hero-left { flex: 1; max-width: 620px; }
+    .hero-eyebrow { font-family: var(--font-label); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .hero-headline { font-family: var(--font-head); font-size: clamp(3rem, 6vw, 5.5rem); font-weight: 900; line-height: 1.0; color: var(--white); margin-bottom: 20px; }
+    .hero-sub { font-family: var(--font-head); font-size: clamp(1.1rem, 2vw, 1.4rem); font-style: italic; color: var(--white-dim); margin-bottom: 36px; line-height: 1.5; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+    .btn-primary { font-family: var(--font-label); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; background: var(--gold); color: var(--navy); padding: 14px 28px; border-radius: 2px; transition: all 0.2s; display: inline-block; cursor: pointer; }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(197,160,83,0.3); }
+    .btn-ghost { font-family: var(--font-label); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid rgba(197,160,83,0.5); color: var(--white); padding: 14px 28px; border-radius: 2px; transition: all 0.2s; display: inline-block; }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+    .hero-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+    .badge { font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(197,160,83,0.35); padding: 6px 14px; border-radius: 2px; }
+    .hero-right { display: flex; flex-direction: column; gap: 16px; flex-shrink: 0; width: 280px; }
+    .stat-card { background: rgba(10,13,26,0.85); border: 1px solid rgba(197,160,83,0.25); border-left: 3px solid var(--gold); padding: 18px 20px; backdrop-filter: blur(8px); }
+    .stat-card p { font-family: var(--font-body); font-size: 13px; color: var(--white-dim); line-height: 1.5; }
+    .stat-card strong { color: var(--gold); }
+
+    /* ABOUT */
+    #about { background: var(--navy-mid); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-quote { font-family: var(--font-head); font-size: 1.3rem; font-style: italic; color: var(--gold); border-left: 3px solid var(--gold); padding-left: 20px; margin: 32px 0; line-height: 1.6; }
+    .desig-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+    .desig-card { background: var(--navy); border: 1px solid rgba(197,160,83,0.2); padding: 16px 20px; text-align: center; min-width: 90px; }
+    .desig-card .abbr { font-family: var(--font-label); font-size: 18px; font-weight: 700; color: var(--gold); display: block; margin-bottom: 4px; }
+    .desig-card .full { font-family: var(--font-body); font-size: 10px; color: var(--white-dim); line-height: 1.3; }
+
+    /* HEADSHOT PLACEHOLDER */
+    .headshot-placeholder { width: 100%; aspect-ratio: 3/4; background: var(--navy-light); border: 2px dashed rgba(197,160,83,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--gold); font-family: var(--font-label); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; gap: 12px; text-align: center; padding: 20px; }
+    .headshot-placeholder svg { opacity: 0.4; }
+
+    /* STAGING */
+    #staging { background: var(--navy); }
+    .staging-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .ba-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .ba-item { position: relative; overflow: hidden; }
+    .ba-item img, .ba-placeholder { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+    .ba-placeholder { background: var(--navy-light); border: 2px dashed rgba(197,160,83,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--font-label); font-size: 11px; color: rgba(197,160,83,0.5); text-transform: uppercase; letter-spacing: 0.1em; text-align: center; padding: 20px; }
+    .ba-label { position: absolute; top: 12px; left: 12px; font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--navy); background: var(--gold); padding: 4px 10px; }
+
+    /* PHILOSOPHY */
+    #philosophy { background: var(--navy-light); }
+    .philosophy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+    .phil-card { background: var(--navy); border-top: 3px solid var(--gold); padding: 36px 32px; }
+    .phil-card h3 { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; color: var(--white); margin-bottom: 14px; }
+    .phil-card p { font-family: var(--font-body); font-size: 0.95rem; color: var(--white-dim); line-height: 1.7; }
+
+    /* MARKETING */
+    #marketing { background: var(--navy-mid); }
+    .marketing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+    .mkt-card { background: var(--navy); border: 1px solid rgba(197,160,83,0.15); padding: 32px 28px; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s; }
+    .mkt-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gold); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
+    .mkt-card:hover::before { transform: scaleX(1); }
+    .mkt-card:hover { border-color: rgba(197,160,83,0.35); transform: translateY(-4px); }
+    .mkt-num { font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.15em; color: rgba(197,160,83,0.4); margin-bottom: 16px; display: block; }
+    .mkt-card h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; color: var(--gold); margin-bottom: 12px; }
+    .mkt-card p { font-size: 0.9rem; color: var(--white-dim); line-height: 1.65; }
+
+    /* PRICING */
+    #pricing { background: var(--navy); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+    .price-card { background: var(--navy-mid); padding: 32px 28px; border-left: 4px solid; }
+    .price-card.green { border-color: var(--green); }
+    .price-card.blue { border-color: var(--blue); }
+    .price-card.gold-c { border-color: var(--gold); }
+    .price-card.red { border-color: var(--red); }
+    .price-card h3 { font-family: var(--font-head); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+    .price-card.green h3 { color: var(--green); }
+    .price-card.blue h3 { color: var(--blue); }
+    .price-card.gold-c h3 { color: var(--gold); }
+    .price-card.red h3 { color: var(--red); }
+    .price-card p { font-size: 0.9rem; color: var(--white-dim); line-height: 1.65; }
+    .quote-band { margin-top: 48px; background: var(--gold-dim); border: 1px solid rgba(197,160,83,0.25); border-left: 4px solid var(--gold); padding: 28px 36px; text-align: center; }
+    .quote-band blockquote { font-family: var(--font-head); font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-style: italic; color: var(--white); line-height: 1.5; }
+    .quote-band cite { display: block; font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-top: 12px; font-style: normal; }
+
+    /* MARKET */
+    #market { background: var(--navy-light); }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 56px; }
+    .market-stat { background: var(--navy); border: 1px solid rgba(197,160,83,0.15); border-top: 3px solid var(--gold); padding: 28px 24px; text-align: center; }
+    .market-stat .val { font-family: var(--font-head); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; color: var(--gold); display: block; line-height: 1.1; margin-bottom: 8px; }
+    .market-stat .lbl { font-family: var(--font-label); font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white-dim); }
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .chart-wrap { background: var(--navy); border: 1px solid rgba(197,160,83,0.12); padding: 28px; }
+    .chart-title { font-family: var(--font-label); font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); margin-bottom: 20px; }
+    .chart-legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-label); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .chart-footnote { font-family: var(--font-body); font-size: 11px; color: rgba(232,226,212,0.35); margin-top: 12px; text-align: right; }
+
+    /* PROCESS */
+    #process { background: var(--navy-mid); }
+    .process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+    .process-step { background: var(--navy); border: 1px solid rgba(197,160,83,0.12); padding: 32px 28px; display: flex; gap: 24px; align-items: flex-start; transition: border-color 0.3s; }
+    .process-step:hover { border-color: rgba(197,160,83,0.35); }
+    .step-num { font-family: var(--font-label); font-size: 32px; font-weight: 700; color: rgba(197,160,83,0.2); line-height: 1; flex-shrink: 0; min-width: 52px; }
+    .step-content h3 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 8px; }
+    .step-content p { font-size: 0.9rem; color: var(--white-dim); line-height: 1.65; }
+
+    /* VIDEO TESTIMONIALS */
+    #video-testimonials { background: var(--navy); }
+    .video-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+    .video-card { background: var(--navy-mid); border: 1px solid rgba(197,160,83,0.2); overflow: hidden; }
+    .video-info { padding: 20px 24px; border-top: 1px solid rgba(197,160,83,0.12); }
+    .video-info h4 { font-family: var(--font-head); font-size: 1rem; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+    .video-info p { font-family: var(--font-label); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); }
+
+    /* TESTIMONIALS */
+    #testimonials { background: var(--navy-light); }
+    .testi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 48px; }
+    .testi-card { background: var(--navy); border: 1px solid rgba(197,160,83,0.12); padding: 36px 32px; position: relative; }
+    .testi-quote-mark { font-family: var(--font-head); font-size: 80px; color: rgba(197,160,83,0.15); line-height: 0.8; position: absolute; top: 20px; left: 24px; }
+    .testi-text { font-family: var(--font-body); font-size: 0.95rem; color: var(--white-dim); line-height: 1.75; margin-bottom: 20px; position: relative; z-index: 1; }
+    .testi-name { font-family: var(--font-label); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); display: block; }
+    .testi-role { font-family: var(--font-body); font-size: 12px; color: rgba(232,226,212,0.45); margin-top: 2px; }
+
+    /* REMAX */
+    #remax { background: var(--navy-mid); padding: 70px 0; text-align: center; }
+    .remax-title { font-family: var(--font-label); font-size: 12px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(197,160,83,0.6); margin-bottom: 20px; }
+    .remax-heading { font-family: var(--font-head); font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 700; color: var(--white); margin-bottom: 48px; }
+    .remax-stats { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; }
+    .remax-stat { padding: 20px 48px; border-right: 1px solid rgba(197,160,83,0.2); text-align: center; }
+    .remax-stat:last-child { border-right: none; }
+    .remax-stat .val { font-family: var(--font-head); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 700; color: var(--gold); display: block; }
+    .remax-stat .lbl { font-family: var(--font-label); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-top: 4px; }
+
+    /* CONTACT */
+    #contact { background: var(--navy); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+    .contact-links { list-style: none; margin-bottom: 32px; }
+    .contact-links li { margin-bottom: 10px; }
+    .contact-links a { font-family: var(--font-label); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
+    .contact-links a::before { content: '→'; }
+    .contact-links a:hover { gap: 14px; }
+    .contact-direct { font-family: var(--font-body); font-size: 0.9rem; color: var(--white-dim); }
+    .contact-direct a { color: var(--gold); }
+    .contact-form { background: var(--navy-mid); padding: 40px 36px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { font-family: var(--font-label); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(232,226,212,0.6); display: block; margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; background: var(--navy); border: 1px solid rgba(197,160,83,0.2); color: var(--white); font-family: var(--font-body); font-size: 14px; padding: 13px 16px; border-radius: 0; outline: none; transition: border-color 0.2s; appearance: none; }
+    .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c5a053' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; cursor: pointer; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .btn-submit { width: 100%; background: var(--gold); color: var(--navy); font-family: var(--font-label); font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px; border: none; border-radius: 0; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+    .btn-submit:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .form-note { font-size: 12px; color: rgba(232,226,212,0.35); text-align: center; margin-top: 12px; }
+    .form-success { display: none; text-align: center; padding: 24px; }
+    .form-success.show { display: block; }
+    .form-success p { color: var(--gold); font-family: var(--font-head); font-size: 1.1rem; font-style: italic; }
+    .form-error { display: none; background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.4); color: #e57373; padding: 12px 16px; font-size: 13px; margin-top: 12px; }
+    .form-error.show { display: block; }
+
+    /* FOOTER */
+    footer { background: #ffffff; border-top: 1px solid rgba(0,0,0,0.1); padding: 60px 0 40px; }
+    .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(197,160,83,0.1); }
+    .footer-logo-text { font-family: var(--font-label); font-size: 28px; font-weight: 700; letter-spacing: 0.08em; color: #0a0d1a; }
+    .footer-brokerage { font-family: var(--font-label); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,0,0,0.5); margin-top: 4px; }
+    .footer-nav { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+    .footer-nav a { font-family: var(--font-label); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #0a0d1a; transition: color 0.2s; }
+    .footer-nav a:hover { color: var(--gold); }
+    .footer-social { display: flex; gap: 20px; justify-content: center; margin: 32px 0; }
+    .footer-social a { color: rgba(0,0,0,0.4); transition: color 0.2s, transform 0.2s; display: flex; }
+    .footer-social a:hover { color: var(--gold); transform: translateY(-2px); }
+    .footer-bottom { text-align: center; font-family: var(--font-body); font-size: 12px; color: rgba(0,0,0,0.5); line-height: 1.8; }
+    .footer-bottom a { color: var(--gold); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) { .hero-right { display: none; } .charts-grid { grid-template-columns: 1fr; } .marketing-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      .nav-links, .btn-nav { display: none; }
+      .hamburger { display: flex; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .philosophy-grid, .pricing-grid, .process-grid, .video-grid, .testi-grid, .staging-grid { grid-template-columns: 1fr; }
+      .marketing-grid { grid-template-columns: 1fr; }
+      .stat-row { grid-template-columns: repeat(2, 1fr); }
+      .ba-pair { grid-template-columns: 1fr; }
+      .remax-stats { flex-direction: column; align-items: center; }
+      .remax-stat { border-right: none; border-bottom: 1px solid rgba(197,160,83,0.2); width: 100%; max-width: 280px; padding: 16px; }
+      .footer-top { flex-direction: column; gap: 24px; text-align: center; }
+      .footer-nav { gap: 16px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) { .stat-row { grid-template-columns: 1fr 1fr; } .hero-ctas { flex-direction: column; } .btn-primary, .btn-ghost { text-align: center; } }
+
+    /* ============================================================
+       MIKA CHATBOT COLOR OVERRIDE — Force red theme
+    ============================================================ */
+    #jotform-agent-root,
+    .jotform-agent-container,
+    [class*="agent-bubble"],
+    [class*="AgentBubble"],
+    [class*="chat-bubble"],
+    [id*="jotform-agent"] {
+      --agent-primary: #c0392b !important;
+      --agent-bg: #c0392b !important;
+      --primary-color: #c0392b !important;
+    }
+    /* Target Jotform's injected styles directly */
+    iframe[src*="jotfor"] { border: none; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-text">SOLDMIKE</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://soldmike.ca/featured-listings" target="_blank">Listings</a></li>
+    <li><a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">Sold</a></li>
+    <li><a href="https://soldmike.ca/Communities" target="_blank">Communities</a></li>
+    <li><a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Home Value</a></li>
+    <li><a href="https://soldmike.ca/new-listings" target="_blank">New Listings</a></li>
+    <button class="btn-nav" onclick="openBookingPopup()">Book a Call</button>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="https://soldmike.ca/featured-listings" target="_blank">Listings</a>
+  <a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">Sold</a>
+  <a href="https://soldmike.ca/Communities" target="_blank">Communities</a>
+  <a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Home Value</a>
+  <a href="https://soldmike.ca/new-listings" target="_blank">New Listings</a>
+  <button class="btn-nav" onclick="openBookingPopup(); closeMobileMenu();">Book a Call</button>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <span class="hero-eyebrow">RE/MAX Premier The OP Team · Vaughan &amp; Woodbridge</span>
+      <h1 class="hero-headline">Built Different.<br>Built to Sell.</h1>
+      <p class="hero-sub">"From the trades to the table. I see what other agents miss."</p>
+      <div class="hero-ctas">
+        <a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank" class="btn-primary">Get Your Home Value</a>
+        <button class="btn-ghost" onclick="openBookingPopup()">Book a Consultation</button>
+      </div>
+      <div class="hero-badges">
+        <span class="badge">RENE</span>
+        <span class="badge">ABR</span>
+        <span class="badge">SRS</span>
+        <span class="badge">Broker</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-card"><p><strong>#1 RE/MAX Team in Vaughan</strong><br>Every Year 2011–2025</p></div>
+      <div class="stat-card"><p><strong>$50K+ Over Optimistic Price</strong><br>78 Mast Road</p></div>
+      <div class="stat-card"><p><strong>High-End HDR Photography</strong><br>Mass Marketing Reach</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO I AM -->
+<section id="about" class="section">
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal">
+        <span class="label-tag">About Michael</span>
+        <h2 class="section-title">Who I Am</h2>
+        <div class="divider"></div>
+        <p style="color:var(--white-dim);line-height:1.8;font-size:0.97rem;">I'm Michael Barillari — Real Estate Broker with RE/MAX Premier, and the person behind SOLDMIKE. I didn't start in real estate. I started in the trades as a finished carpenter — building things with my hands. That background changed the way I see homes. When I walk through a property, I see things other agents don't.</p>
+        <p style="color:var(--white-dim);line-height:1.8;font-size:0.97rem;margin-top:16px;">Today, I'm also a professional photographer and videographer. I don't outsource the most important part of selling your home — I handle it personally, because presentation is everything and I won't cut corners on it.</p>
+        <blockquote class="about-quote">"I do a good job, with class, and I treat every listing like it's my own."</blockquote>
+        <div class="desig-row">
+          <div class="desig-card"><span class="abbr">RENE</span><span class="full">Real Estate<br>Negotiation Expert</span></div>
+          <div class="desig-card"><span class="abbr">ABR</span><span class="full">Accredited<br>Buyer's Rep</span></div>
+          <div class="desig-card"><span class="abbr">SRS</span><span class="full">Seller<br>Representative</span></div>
+          <div class="desig-card"><span class="abbr">BRK</span><span class="full">Licensed<br>Broker</span></div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <!-- PHOTO PLACEHOLDER — replace src with hosted URL e.g. https://soldmike.ca/images/michael-barillari.jpg -->
+        <div class="headshot-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>ADD PHOTO HERE<br><small style="font-size:10px;opacity:0.6;">Host image externally<br>then replace this div with:<br>&lt;img src="your-url"&gt;</small></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE & AFTER -->
+<section id="staging" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">Visual Transformation</span>
+      <h2 class="section-title">Showroom Ready. Every Time.</h2>
+      <div class="divider"></div>
+      <p class="section-sub">Professional staging that transforms your home into an irresistible product.</p>
+    </div>
+    <div class="staging-grid" style="margin-top:48px;">
+      <div class="reveal">
+        <div class="ba-pair">
+          <div class="ba-item"><div class="ba-placeholder">Replace with<br>Before Photo</div><span class="ba-label">BEFORE</span></div>
+          <div class="ba-item"><img src="https://cdn.gamma.app/j6c9cv6j9yv4013/016cf597570246d1bc5adaaf6d75f06d/original/15RodcliffeRd-TottenhamONL0G1W0-Canada-49.jpg" alt="After Staging" loading="lazy" /><span class="ba-label" style="background:var(--green);color:#fff;">AFTER</span></div>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="ba-pair">
+          <div class="ba-item"><div class="ba-placeholder">Replace with<br>Before Photo</div><span class="ba-label">BEFORE</span></div>
+          <div class="ba-item"><img src="https://cdn.gamma.app/j6c9cv6j9yv4013/b36514b13c534a33b51dc3774ba87177/original/L3RycmViL2xpc3RpbmdzLzQyLzM4LzI4LzUyL3AvOGJlMjdlNWQtMjY2Ni00MTM0LThlMWMtMjZlNjdkZWJjMzA0LmpwZw.jpg" alt="After Staging" loading="lazy" /><span class="ba-label" style="background:var(--green);color:#fff;">AFTER</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">How I Operate</span>
+      <h2 class="section-title">RE/MAX Premier · The OP Team | SoldMike</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="philosophy-grid">
+      <div class="phil-card reveal reveal-delay-1"><h3>The Deal Over the Dollar</h3><p>I will tell you not to sell if the timing isn't right. My loyalty is to your outcome — not the commission.</p></div>
+      <div class="phil-card reveal reveal-delay-2"><h3>Reframe, Don't Criticize</h3><p>Every property has a buyer. My job is to find the right angle and position it for the person who wants exactly what you have.</p></div>
+      <div class="phil-card reveal reveal-delay-3"><h3>Respect the Craft</h3><p>You trusted me with your home. I will present it at the highest possible standard — professional photography, video, and marketing. No shortcuts.</p></div>
+      <div class="phil-card reveal reveal-delay-4"><h3>Never Stop Learning</h3><p>Three designations, a broker's license, and active investment in AI-powered marketing tools. Preparation is visible in every conversation.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING PLAN -->
+<section id="marketing" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">What I Do For Your Home</span>
+      <h2 class="section-title">Your Marketing Plan</h2>
+      <div class="divider"></div>
+      <p class="section-sub">Brokerage exposure is the baseline. Here's what I do on top of it.</p>
+    </div>
+    <div class="marketing-grid">
+      <div class="mkt-card reveal reveal-delay-1"><span class="mkt-num">01</span><h3>HDR Photography</h3><p>Five-shot bracket photography shot personally. Never outsourced. Your home seen in its best possible light.</p></div>
+      <div class="mkt-card reveal reveal-delay-2"><span class="mkt-num">02</span><h3>Professional Video &amp; Virtual Tours</h3><p>Full cinematic production, virtual tours, floor plans, and drone footage. A complete visual package.</p></div>
+      <div class="mkt-card reveal reveal-delay-3"><span class="mkt-num">03</span><h3>Showroom-Ready Staging</h3><p>Staged and presented the way a builder presents a model home. Everything is intentional.</p></div>
+      <div class="mkt-card reveal reveal-delay-1"><span class="mkt-num">04</span><h3>Full Social Media Campaign</h3><p>Custom reels, carousels, coming-soon teasers, just-listed launches. Organic content plus paid promotion beyond MLS.</p></div>
+      <div class="mkt-card reveal reveal-delay-2"><span class="mkt-num">05</span><h3>Maximum RE/MAX Exposure</h3><p>remax.ca, realtor.ca, and dozens of national and international partner sites.</p></div>
+      <div class="mkt-card reveal reveal-delay-3"><span class="mkt-num">06</span><h3>Sustained Promotion</h3><p>Marketing accelerates after launch. Open houses, weekly campaigns, constant social presence.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING STRATEGY -->
+<section id="pricing" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">Data-Driven Pricing</span>
+      <h2 class="section-title">Pricing Strategy &amp; Market Knowledge</h2>
+      <div class="divider"></div>
+      <p class="section-sub">I don't guess. I use a four-tier framework backed by real data.</p>
+    </div>
+    <div class="pricing-grid" style="margin-top:48px;">
+      <div class="price-card green reveal reveal-delay-1"><h3>Offer Date Price</h3><p>Strategic underpricing to generate maximum traffic and competing offers. Create a bidding environment.</p></div>
+      <div class="price-card blue reveal reveal-delay-2"><h3>Market Value</h3><p>What the data says based on recent comparable sales. The anchor — never the ceiling.</p></div>
+      <div class="price-card gold-c reveal reveal-delay-3"><h3>Optimistic Price</h3><p>The realistic high-end target. Our goal — and what my track record shows is achievable.</p></div>
+      <div class="price-card red reveal reveal-delay-4"><h3>Overpriced</h3><p>The line where homes simply don't sell. I'll be honest about this even if another agent won't.</p></div>
+    </div>
+    <div class="quote-band reveal" style="margin-top:48px;">
+      <blockquote>"If you think I'm expensive, imagine how much that amateur is gonna cost you."</blockquote>
+      <cite>— Michael Barillari, SOLDMIKE</cite>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET CONDITIONS -->
+<section id="market" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">TRREB Market Watch · Updated Monthly</span>
+      <h2 class="section-title">The GTA Market Right Now</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="stat-row">
+      <div class="market-stat reveal reveal-delay-1"><span class="val">$1,008,968</span><span class="lbl">Avg Sale Price</span></div>
+      <div class="market-stat reveal reveal-delay-2"><span class="val" style="color:#e57373;">−7.1%</span><span class="lbl">Year-over-Year</span></div>
+      <div class="market-stat reveal reveal-delay-3"><span class="val">36.1%</span><span class="lbl">Sales-to-List Ratio</span></div>
+      <div class="market-stat reveal reveal-delay-4"><span class="val">$938,800</span><span class="lbl">Benchmark Price</span></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-wrap reveal">
+        <div class="chart-title">GTA Average Sale Price — 12 Months</div>
+        <canvas id="priceChart" height="180"></canvas>
+        <p class="chart-footnote">Source: TRREB Market Watch · GTA resale residential market</p>
+      </div>
+      <div class="chart-wrap reveal reveal-delay-2">
+        <div class="chart-title">Monthly Market Activity</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#4caf7d;"></span>Sales</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#c5a053;"></span>New Listings</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#c0392b;"></span>Expired/Withdrawn</span>
+        </div>
+        <canvas id="activityChart" height="180"></canvas>
+        <p class="chart-footnote">Source: TRREB Market Watch · GTA resale residential market</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROCESS -->
+<section id="process" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">What to Expect</span>
+      <h2 class="section-title">Working With Me</h2>
+      <div class="divider"></div>
+      <p class="section-sub">A blueprint from day one — not a vague promise.</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal reveal-delay-1"><div class="step-num">01</div><div class="step-content"><h3>Paperwork</h3><p>Listing agreement and disclosures. Every line explained.</p></div></div>
+      <div class="process-step reveal reveal-delay-2"><div class="step-num">02</div><div class="step-content"><h3>Prepare</h3><p>Photography, video, staging, cleaning, go-to-market timeline.</p></div></div>
+      <div class="process-step reveal reveal-delay-1"><div class="step-num">03</div><div class="step-content"><h3>Launch</h3><p>Full RE/MAX exposure plus personal marketing campaign. Everything at once.</p></div></div>
+      <div class="process-step reveal reveal-delay-2"><div class="step-num">04</div><div class="step-content"><h3>Showings &amp; Feedback</h3><p>Real-time updates, honest feedback. Weekly Monday updates minimum.</p></div></div>
+      <div class="process-step reveal reveal-delay-1"><div class="step-num">05</div><div class="step-content"><h3>Offers &amp; Negotiation</h3><p>Review terms, honest assessment, negotiate the best outcome. No pressure.</p></div></div>
+      <div class="process-step reveal reveal-delay-2"><div class="step-num">06</div><div class="step-content"><h3>Close &amp; Beyond</h3><p>Conditions, inspections, financing, lawyers, deposits — I coordinate everything.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO TESTIMONIALS -->
+<section id="video-testimonials" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">Real Clients · Real Results</span>
+      <h2 class="section-title">Hear It From Clients</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="video-grid">
+      <div class="video-card reveal reveal-delay-1">
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="https://player.vimeo.com/video/1173657829?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>
+        <div class="video-info"><h4>RE/MAX Premier · The OP Team | SoldMike</h4><p>Toronto · Vaughan · GTA</p></div>
+      </div>
+      <div class="video-card reveal reveal-delay-2">
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="https://player.vimeo.com/video/1125941530?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>
+        <div class="video-info"><h4>RE/MAX Premier · The OP Team | SoldMike</h4><p>Toronto · Vaughan · GTA</p></div>
+      </div>
+      <div class="video-card reveal reveal-delay-1">
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="https://player.vimeo.com/video/1175023269?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>
+        <div class="video-info"><h4>RE/MAX Premier · The OP Team | SoldMike</h4><p>Toronto · Vaughan · GTA</p></div>
+      </div>
+      <div class="video-card reveal reveal-delay-2">
+        <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;"><iframe src="https://player.vimeo.com/video/1172756055?badge=0&autopause=0&player_id=0&app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe></div>
+        <div class="video-info"><h4>RE/MAX Premier · The OP Team | SoldMike</h4><p>Toronto · Vaughan · GTA</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WRITTEN TESTIMONIALS -->
+<section id="testimonials" class="section">
+  <div class="container">
+    <div class="reveal">
+      <span class="label-tag">Client Stories</span>
+      <h2 class="section-title">What Clients Say</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal reveal-delay-1"><div class="testi-quote-mark">"</div><p class="testi-text">Michael came in, corrected the strategy, and sold our home within a month. He did what the previous agent couldn't — and he made the whole process feel easy.</p><span class="testi-name">Daniel &amp; Laura Albanez</span><span class="testi-role">Via Borghese</span></div>
+      <div class="testi-card reveal reveal-delay-2"><div class="testi-quote-mark">"</div><p class="testi-text">After Michael handled my first property, I didn't even think about using anyone else for the second. His professionalism, his knowledge — he knows what he's doing and it shows in the results.</p><span class="testi-name">Cid Lippa</span><span class="testi-role">Repeat Client, Two Properties</span></div>
+      <div class="testi-card reveal reveal-delay-1"><div class="testi-quote-mark">"</div><p class="testi-text">The way he operates — methodical, organized, no corners cut — we were honestly shocked. He runs his business at a level most agents don't come close to.</p><span class="testi-name">Anthony &amp; Rob Lippa</span><span class="testi-role">Long-Time Friends Turned Clients</span></div>
+      <div class="testi-card reveal reveal-delay-2"><div class="testi-quote-mark">"</div><p class="testi-text">Michael sold our home for $1,350,000 — well above what we expected. Then he helped us buy the home we wanted for significantly less than we thought. He delivered on both sides.</p><span class="testi-name">Damon</span><span class="testi-role">78 Mast Road</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RE/MAX BAND -->
+<section id="remax">
+  <div class="container">
+    <div class="remax-title reveal">The Power Behind Every Listing</div>
+    <h2 class="remax-heading reveal">The RE/MAX Brand</h2>
+    <div class="remax-stats">
+      <div class="remax-stat reveal reveal-delay-1"><span class="val">145,000+</span><span class="lbl">Agents Worldwide</span></div>
+      <div class="remax-stat reveal reveal-delay-2"><span class="val">110+</span><span class="lbl">Countries</span></div>
+      <div class="remax-stat reveal reveal-delay-3"><span class="val">25,000+</span><span class="lbl">Agents in Canada</span></div>
+      <div class="remax-stat reveal reveal-delay-4"><span class="val">#1</span><span class="lbl">In Vaughan 2011–2025</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <span class="label-tag">Get In Touch</span>
+        <h2 style="font-family:var(--font-head);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;margin-bottom:20px;">Let's Talk About<br>Your Home</h2>
+        <p style="font-size:0.95rem;color:var(--white-dim);line-height:1.75;margin-bottom:32px;">Whether you're thinking about selling, buying, or just want to know what your home is worth in today's market — reach out. No pressure. Just a real conversation.</p>
+        <ul class="contact-links">
+          <li><a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Get a Free Home Evaluation</a></li>
+          <li><a href="https://soldmike.ca/featured-listings" target="_blank">View Featured Listings</a></li>
+          <li><a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">See Our Sold Results</a></li>
+          <li><a href="https://soldmike.ca/Communities" target="_blank">Explore Communities</a></li>
+        </ul>
+        <div class="contact-direct">
+          <p>📞 <a href="tel:6472782237">647-278-2237</a></p>
+          <p style="margin-top:6px;">✉️ <a href="mailto:mike@theopteam.ca">mike@theopteam.ca</a></p>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="contact-form">
+          <div id="form-success" class="form-success"><p>Thanks — Michael will be in touch personally within the hour.</p></div>
+          <form id="lead-form" novalidate>
+            <div class="form-row">
+              <div class="form-group"><label for="firstName">First Name</label><input type="text" id="firstName" name="firstName" required placeholder="Michael" /></div>
+              <div class="form-group"><label for="lastName">Last Name</label><input type="text" id="lastName" name="lastName" required placeholder="Smith" /></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label for="phone">Phone Number</label><input type="tel" id="phone" name="phone" placeholder="647-000-0000" /></div>
+              <div class="form-group"><label for="email">Email Address</label><input type="email" id="email" name="email" required placeholder="you@email.com" /></div>
+            </div>
+            <div class="form-group">
+              <label for="interest">I'm Looking To</label>
+              <select id="interest" name="interest">
+                <option value="Sell my home">Sell my home</option>
+                <option value="Buy a home">Buy a home</option>
+                <option value="Get a home evaluation">Get a home evaluation</option>
+                <option value="Learn about the market">Learn about the market</option>
+              </select>
+            </div>
+            <div class="form-group"><label for="message">Message (optional)</label><textarea id="message" name="message" placeholder="Tell me about your situation or property..."></textarea></div>
+            <button type="submit" class="btn-submit" id="submit-btn">Let's Talk About Your Home</button>
+            <p class="form-note">Your information is secure. We never sell or share your details.</p>
+            <div class="form-error" id="form-error">Something went wrong — please call 647-278-2237 directly.</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div style="text-align:center;">
+        <div class="footer-logo-text">SOLDMIKE</div>
+        <div class="footer-brokerage">RE/MAX Premier The OP Team, Brokerage</div>
+      </div>
+      <nav class="footer-nav">
+        <a href="https://soldmike.ca/featured-listings" target="_blank">Listings</a>
+        <a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">Sold</a>
+        <a href="https://soldmike.ca/new-listings" target="_blank">New Listings</a>
+        <a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Home Worth</a>
+        <a href="https://soldmike.ca/Communities" target="_blank">Communities</a>
+        <a href="https://theopteam.ca" target="_blank">The OP Team</a>
+      </nav>
+    </div>
+    <div class="footer-social">
+      <a href="https://www.facebook.com/soldmike/" target="_blank" aria-label="Facebook"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+      <a href="https://www.instagram.com/soldmike/" target="_blank" aria-label="Instagram"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+      <a href="https://www.linkedin.com/in/soldmike/" target="_blank" aria-label="LinkedIn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+      <a href="https://www.youtube.com/channel/UCqcVLQJFR4N7SGkFHNG68WQ" target="_blank" aria-label="YouTube"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#0a0d1a"/></svg></a>
+    </div>
+    <div class="footer-bottom">
+      <p>Michael Barillari · RE/MAX Premier The OP Team · Vaughan, ON · <a href="tel:6472782237">647-278-2237</a> · <a href="mailto:mike@theopteam.ca">mike@theopteam.ca</a></p>
+      <p style="margin-top:6px;">© 2026 SOLDMIKE. All rights reserved. RE/MAX Premier The OP Team, Brokerage.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     MIKA AI CHATBOT — Jotform Agent (loads as floating widget)
+     Agent ID: 019d23d98def784db901dc147239fa93179d
+============================================================ -->
+<script src="https://cdn.jotfor.ms/agent/embedjs/019d23d98def784db901dc147239fa93179d/embed.js?skipWelcome=1&maximizable=1"></script>
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+
+/* NAV SCROLL */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+/* HAMBURGER */
+function toggleMenu() {
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+
+/* SCROLL REVEAL */
+document.addEventListener('DOMContentLoaded', () => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+});
+
+/* BOOKING POPUP — opens Mika chatbot */
+function openBookingPopup() {
+  // Triggers the Jotform Mika agent to open
+  if (window.AgentEmbed && typeof window.AgentEmbed.open === 'function') {
+    window.AgentEmbed.open();
+  } else {
+    // Fallback: scroll to contact form
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+/* CHARTS */
+window.addEventListener('load', () => {
+  if (typeof Chart === 'undefined') return;
+  Chart.defaults.color = 'rgba(232,226,212,0.5)';
+  Chart.defaults.font.family = "'Rajdhani', sans-serif";
+  const months = ['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'];
+
+  const ctx1 = document.getElementById('priceChart');
+  if (ctx1) {
+    new Chart(ctx1, {
+      type: 'line',
+      data: { labels: months, datasets: [{ label: 'Avg Sale Price ($000s)', data: [1082,1095,1118,1124,1098,1085,1071,1052,1039,1020,971,1009], borderColor: '#c5a053', backgroundColor: 'rgba(197,160,83,0.08)', borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#c5a053', fill: true, tension: 0.3 }] },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(232,226,212,0.06)' }, ticks: { font: { size: 11 } } }, y: { grid: { color: 'rgba(232,226,212,0.06)' }, ticks: { font: { size: 11 }, callback: v => '$' + v + 'K' } } } }
+    });
+  }
+
+  const ctx2 = document.getElementById('activityChart');
+  if (ctx2) {
+    new Chart(ctx2, {
+      type: 'bar',
+      data: { labels: months, datasets: [
+        { label: 'Sales', data: [6241,7992,11458,9921,4554,5211,4996,4642,5010,3869,3088,3868], backgroundColor: 'rgba(76,175,125,0.75)', borderRadius: 2 },
+        { label: 'New Listings', data: [14068,15941,17558,18612,13467,12182,14185,13358,11134,10901,12972,10705], backgroundColor: 'rgba(197,160,83,0.7)', borderRadius: 2 },
+        { label: 'Expired/Withdrawn', data: [2110,2390,2634,2790,2020,1827,2128,2004,1670,1635,1946,1606], backgroundColor: 'rgba(192,57,43,0.7)', borderRadius: 2 }
+      ]},
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(232,226,212,0.06)' }, ticks: { font: { size: 10 } } }, y: { grid: { color: 'rgba(232,226,212,0.06)' } } } }
+    });
+  }
+});
+
+/* CONTACT FORM — powered by SOLDMIKE Cloudflare Worker → Follow Up Boss */
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('lead-form');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('form-error');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    errEl.classList.remove('show');
+
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName  = document.getElementById('lastName').value.trim();
+    const phone     = document.getElementById('phone').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const interest  = document.getElementById('interest').value;
+    const message   = document.getElementById('message').value.trim();
+
+    if (!firstName || !email) {
+      errEl.textContent = 'Please enter your name and email.';
+      errEl.classList.add('show');
+      btn.textContent = "Let\'s Talk About Your Home";
+      btn.disabled = false;
+      return;
+    }
+
+    try {
+      const res = await fetch('https://dawn-sun-5ae8.broker-e2c.workers.dev', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          message: `Interest: ${interest}. ${message}`,
+          property: 'SOLDMIKE Landing Page'
+        })
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        form.style.display = 'none';
+        document.getElementById('form-success').classList.add('show');
+      } else {
+        throw new Error('FUB worker returned failure');
+      }
+    } catch (err) {
+      errEl.textContent = 'Something went wrong — please call 647-278-2237 directly.';
+      errEl.classList.add('show');
+      btn.textContent = "Let\'s Talk About Your Home";
+      btn.disabled = false;
+    }
+  });
+});
+
+</script>
+</body>
+</html>
