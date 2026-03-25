@@ -99,7 +99,7 @@
 
     /* ABOUT */
     #about { background: var(--navy-mid); }
-    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-grid { display: grid; grid-template-columns: 1fr; gap: 40px; max-width: 720px; }
     .about-quote { font-family: var(--font-head); font-size: 1.3rem; font-style: italic; color: var(--gold); border-left: 3px solid var(--gold); padding-left: 20px; margin: 32px 0; line-height: 1.6; }
     .desig-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
     .desig-card { background: var(--navy); border: 1px solid rgba(197,160,83,0.2); padding: 16px 20px; text-align: center; min-width: 90px; }
@@ -236,14 +236,15 @@
     footer { background: #ffffff; border-top: 1px solid rgba(0,0,0,0.1); padding: 60px 0 40px; }
     .footer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(197,160,83,0.1); gap: 32px; }
     .footer-logo-block { text-align: right; flex-shrink: 0; }
-    .footer-logo-img { height: 52px; width: auto; display: block; margin-left: auto; margin-bottom: 6px; }
+    .footer-logo-img { height: 72px; width: auto; display: block; margin-left: auto; margin-bottom: 6px; }
     .footer-logo-fallback { display: none; }
     .footer-logo-text { font-family: var(--font-label); font-size: 28px; font-weight: 700; letter-spacing: 0.08em; color: #0a0d1a; }
     .footer-brokerage { font-family: var(--font-label); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,0,0,0.5); margin-top: 4px; }
-    .footer-nav { display: flex; gap: 32px; flex-wrap: wrap; justify-content: flex-start; align-items: center; }
+    .footer-center-block { flex: 1; display: flex; flex-direction: column; align-items: center; }
+    .footer-nav { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; align-items: center; }
     .footer-nav a { font-family: var(--font-label); font-size: 15px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #0a0d1a; transition: color 0.2s; }
     .footer-nav a:hover { color: var(--gold); }
-    .footer-social { display: flex; gap: 20px; justify-content: center; margin: 32px 0; }
+    .footer-social { display: flex; gap: 20px; justify-content: center; margin: 20px 0 0 0; }
     .footer-social a { color: rgba(0,0,0,0.4); transition: color 0.2s, transform 0.2s; display: flex; }
     .footer-social a:hover { color: var(--gold); transform: translateY(-2px); }
     .footer-bottom { text-align: center; font-family: var(--font-body); font-size: 12px; color: rgba(0,0,0,0.5); line-height: 1.8; }
@@ -362,10 +363,6 @@
           <div class="desig-card"><span class="abbr">BRK</span><span class="full">Licensed<br>Broker</span></div>
         </div>
       </div>
-      <div class="reveal reveal-delay-2">
-        <!-- PHOTO PLACEHOLDER — replace src with hosted URL e.g. https://soldmike.ca/images/michael-barillari.jpg -->
-        <img src="https://res.cloudinary.com/dgjwvyjbu/image/upload/ChatGPT_Image_Mar_24_2026_10_25_00_PM_kwt6wv" alt="Michael Barillari" style="width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;" />
-      </div>
     </div>
   </div>
 </section>
@@ -392,18 +389,7 @@
           <div class="ba-item"><img src="https://cdn.gamma.app/j6c9cv6j9yv4013/b36514b13c534a33b51dc3774ba87177/original/L3RycmViL2xpc3RpbmdzLzQyLzM4LzI4LzUyL3AvOGJlMjdlNWQtMjY2Ni00MTM0LThlMWMtMjZlNjdkZWJjMzA0LmpwZw.jpg" alt="After Staging" loading="lazy" /><span class="ba-label" style="background:var(--green);color:#fff;">AFTER</span></div>
         </div>
       </div>
-      <div class="reveal">
-        <div class="ba-pair">
-          <div class="ba-item">
-            <img src="https://res.cloudinary.com/dgjwvyjbu/image/upload/884b33c3-e4cc-4c21-8eae-299befcae595_copy_lpkfcl" alt="Twilight Shot" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;" />
-            <span class="ba-label" style="background:#0a0d1a;color:#c5a053;">TWILIGHT</span>
-          </div>
-          <div class="ba-item">
-            <img src="https://res.cloudinary.com/dgjwvyjbu/image/upload/ChatGPT_Image_Mar_11_2026_03_23_03_PM_n4pxxh" alt="Twilight Shot 2" loading="lazy" style="width:100%;aspect-ratio:4/3;object-fit:cover;" />
-            <span class="ba-label" style="background:#0a0d1a;color:#c5a053;">TWILIGHT</span>
-          </div>
-        </div>
-      </div>
+
     </div>
   </div>
 </section>
@@ -601,7 +587,9 @@
         </div>
       </div>
       <div class="reveal reveal-delay-2">
-        <div class="contact-form">
+        <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:40px;align-items:start;">
+          <img src="https://res.cloudinary.com/dgjwvyjbu/image/upload/ChatGPT_Image_Mar_24_2026_10_25_00_PM_kwt6wv" alt="Michael Barillari" style="width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;border:2px solid rgba(197,160,83,0.2);" />
+          <div class="contact-form">
           <div id="form-success" class="form-success"><p>Thanks — Michael will be in touch personally within the hour.</p></div>
           <form id="lead-form" novalidate>
             <div class="form-row">
@@ -636,13 +624,22 @@
 <footer>
   <div class="container">
     <div class="footer-top">
-      <nav class="footer-nav">
-        <a href="https://soldmike.ca/featured-listings" target="_blank">Listings</a>
-        <a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">Sold</a>
-        <a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Home Worth</a>
-        <a href="https://soldmike.ca/Communities" target="_blank">Communities</a>
-        <a href="https://theopteam.ca" target="_blank">The OP Team</a>
-      </nav>
+      <div style="flex:1;"></div>
+      <div class="footer-center-block">
+        <nav class="footer-nav">
+          <a href="https://soldmike.ca/featured-listings" target="_blank">Listings</a>
+          <a href="https://soldmike.ca/sellers/team-sold-listings" target="_blank">Sold</a>
+          <a href="https://soldmike.ca/Sellers/HomeWorth" target="_blank">Home Worth</a>
+          <a href="https://soldmike.ca/Communities" target="_blank">Communities</a>
+          <a href="https://theopteam.ca" target="_blank">The OP Team</a>
+        </nav>
+        <div class="footer-social" style="margin:16px 0 0 0;">
+          <a href="https://www.facebook.com/soldmike/" target="_blank" aria-label="Facebook"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+          <a href="https://www.instagram.com/soldmike/" target="_blank" aria-label="Instagram"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="https://www.linkedin.com/in/soldmike/" target="_blank" aria-label="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://www.youtube.com/channel/UCqcVLQJFR4N7SGkFHNG68WQ" target="_blank" aria-label="YouTube"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#ffffff"/></svg></a>
+        </div>
+      </div>
       <div class="footer-logo-block">
         <!-- FOOTER LOGO: Replace src with your hosted logo URL -->
         <img src="https://res.cloudinary.com/dgjwvyjbu/image/upload/Add_a_heading_blijg9" alt="SOLDMIKE" class="footer-logo-img" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
@@ -650,7 +647,7 @@
         <div class="footer-brokerage">RE/MAX Premier The OP Team, Brokerage</div>
       </div>
     </div>
-    <div class="footer-social">
+    <div class="footer-social" style="display:none;">
       <a href="https://www.facebook.com/soldmike/" target="_blank" aria-label="Facebook"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
       <a href="https://www.instagram.com/soldmike/" target="_blank" aria-label="Instagram"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
       <a href="https://www.linkedin.com/in/soldmike/" target="_blank" aria-label="LinkedIn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
