@@ -190,7 +190,7 @@
 <body>
 
 <nav id="mainNav">
-  <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="SOLDMIKE — The OP Team"></a>
+  <a href="https://soldmike.ca" class="nav-logo"><img src="soldmike-logo-transparent.png" alt="SOLDMIKE — The OP Team"></a>
   <ul class="nav-links">
     <li><a href="#overview">Overview</a></li>
     <li><a href="#videos">Video</a></li>
@@ -340,7 +340,7 @@
         <div class="agent-brokerage">RE/MAX Premier — The OP Team</div>
         <div class="agent-contacts">
           <a href="tel:6472782237" class="agent-contact-item"><div class="contact-icon">📞</div>(647) 278-2237</a>
-          <a href="mailto:mike@theopteam.ca" class="agent-contact-item"><div class="contact-icon">✉</div>mike@theopteam.ca</a>
+          <a href="/cdn-cgi/l/email-protection#187571737d586c707d77686c7d7975367b79" class="agent-contact-item"><div class="contact-icon">✉</div><span class="__cf_email__" data-cfemail="264b4f4d4366524e4349565243474b084547">[email&#160;protected]</span></a>
           <a href="https://soldmike.ca" target="_blank" class="agent-contact-item"><div class="contact-icon">🌐</div>soldmike.ca</a>
         </div>
       </div>
@@ -364,10 +364,180 @@
 
 <footer>
   <div class="footer-copy">© 2026 Michael Barillari · RE/MAX Premier · The OP Team · All rights reserved</div>
-  <img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="SOLDMIKE" class="footer-logo-img">
+  <img src="soldmike-logo-transparent.png" alt="SOLDMIKE" class="footer-logo-img">
 </footer>
 
-<script>
+<!-- ===== SOLDMIKE FLOATING LEAD WIDGET ===== -->
+<style>
+  #sm-trigger {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9998;
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #c9a84c 0%, #e8c96a 50%, #c9a84c 100%);
+    border-radius: 50%; border: none; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.3);
+    animation: sm-pulse 2.8s ease-out infinite;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s ease;
+  }
+  #sm-trigger:hover { transform: scale(1.08); }
+  #sm-trigger.open svg.sm-icon-chat { display: none; }
+  #sm-trigger.open svg.sm-icon-close { display: block !important; }
+  @keyframes sm-pulse {
+    0%   { box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0.35); }
+    70%  { box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 18px rgba(201,168,76,0); }
+    100% { box-shadow: 0 4px 24px rgba(201,168,76,0.45), 0 0 0 0 rgba(201,168,76,0); }
+  }
+  #sm-panel {
+    position: fixed; bottom: 104px; right: 28px; z-index: 9999;
+    width: 340px; background: #111; border-radius: 20px;
+    border: 1px solid rgba(201,168,76,0.22);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.75);
+    display: flex; flex-direction: column; overflow: hidden;
+    transform: scale(0.92) translateY(16px); opacity: 0; pointer-events: none;
+    transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    font-family: 'Montserrat', sans-serif;
+  }
+  #sm-panel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: all; }
+  @media (max-width: 420px) {
+    #sm-panel { width: calc(100vw - 24px); right: 12px; bottom: 96px; }
+    #sm-trigger { bottom: 16px; right: 16px; }
+  }
+  .sm-hdr {
+    background: linear-gradient(135deg, #191408, #1d1a0d);
+    padding: 15px 17px 13px; border-bottom: 1px solid rgba(201,168,76,0.13);
+    display: flex; align-items: center; gap: 11px;
+  }
+  .sm-av {
+    width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+    border: 2px solid #c9a84c; flex-shrink: 0;
+  }
+  .sm-av img { width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .sm-hdr-text h3 { color: #e8c96a; font-size: 13px; font-weight: 600; font-family: 'Cormorant Garamond', serif; }
+  .sm-hdr-text p { color: rgba(255,255,255,0.38); font-size: 10px; font-weight: 300; margin-top: 1px; letter-spacing: 0.5px; }
+  .sm-dot { width: 7px; height: 7px; background: #3ecf8e; border-radius: 50%; display: inline-block; margin-right: 4px; }
+  .sm-body {
+    overflow-y: auto; padding: 16px 15px; max-height: 430px;
+    display: flex; flex-direction: column; gap: 11px;
+    scrollbar-width: thin; scrollbar-color: rgba(201,168,76,0.2) transparent;
+  }
+  .sm-step { display: none; flex-direction: column; gap: 11px; }
+  .sm-step.active { display: flex; }
+  .sm-bubble {
+    background: #1c1c1c; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 13px 13px 13px 3px; padding: 10px 12px;
+    color: rgba(255,255,255,0.82); font-size: 13px; line-height: 1.55; max-width: 92%;
+    font-weight: 300;
+  }
+  .sm-chips { display: flex; flex-direction: column; gap: 7px; }
+  .sm-chip {
+    background: transparent; border: 1px solid rgba(201,168,76,0.28); border-radius: 9px;
+    padding: 9px 12px; color: rgba(255,255,255,0.7);
+    font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 400;
+    cursor: pointer; text-align: left; transition: all 0.15s ease;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .sm-chip:hover { background: rgba(201,168,76,0.1); border-color: #c9a84c; color: #e8c96a; }
+  .sm-field { display: flex; flex-direction: column; gap: 4px; }
+  .sm-field label { color: rgba(255,255,255,0.35); font-size: 9.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+  .sm-field input {
+    background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); border-radius: 9px;
+    padding: 10px 11px; color: rgba(255,255,255,0.9);
+    font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 300;
+    outline: none; width: 100%; transition: border-color 0.15s;
+  }
+  .sm-field input:focus { border-color: rgba(201,168,76,0.5); }
+  .sm-field input::placeholder { color: rgba(255,255,255,0.2); }
+  .sm-cta {
+    background: linear-gradient(135deg, #c9a84c 0%, #e8c96a 100%);
+    border: none; border-radius: 11px; padding: 13px;
+    color: #0a0a0a; font-family: 'Montserrat', sans-serif;
+    font-size: 11px; font-weight: 600; cursor: pointer;
+    letter-spacing: 2px; text-transform: uppercase; width: 100%; margin-top: 2px;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+  .sm-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+  .sm-cta:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .sm-or { text-align: center; color: rgba(255,255,255,0.18); font-size: 10px; position: relative; padding: 2px 0; }
+  .sm-or::before, .sm-or::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: rgba(255,255,255,0.07); }
+  .sm-or::before { left: 0; } .sm-or::after { right: 0; }
+  .sm-phone { display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .sm-phone span { color: rgba(255,255,255,0.28); font-size: 11px; }
+  .sm-phone a { color: rgba(201,168,76,0.65); font-size: 13px; font-weight: 500; text-decoration: none; }
+  .sm-phone a:hover { color: #e8c96a; }
+  .sm-back { background: none; border: none; color: rgba(255,255,255,0.25); font-size: 11px; cursor: pointer; font-family: 'Montserrat', sans-serif; text-align: left; padding: 0; transition: color 0.15s; }
+  .sm-back:hover { color: rgba(201,168,76,0.6); }
+  .sm-success { display: none; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0; text-align: center; }
+  .sm-success.active { display: flex; }
+  .sm-success-icon { width: 50px; height: 50px; background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.28); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .sm-success h4 { color: #e8c96a; font-size: 15px; font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+  .sm-success p { color: rgba(255,255,255,0.4); font-size: 12px; line-height: 1.5; max-width: 220px; font-weight: 300; }
+  .sm-footer { padding: 8px 15px 11px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+  .sm-footer span { font-size: 9.5px; color: rgba(255,255,255,0.13); letter-spacing: 0.05em; }
+</style>
+
+<!-- Trigger button -->
+<button id="sm-trigger" aria-label="Contact Mike about 179 Lio Ave">
+  <svg class="sm-icon-chat" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <svg class="sm-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a0a0a" stroke-width="2.5" stroke-linecap="round" style="display:none">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+</button>
+
+<!-- Widget panel -->
+<div id="sm-panel">
+  <div class="sm-hdr">
+    <div class="sm-av">
+      <img src="https://media.relahq.com/public/styles/agent_card_square_large/s3/agent-headshots/user-1413396/2026-3/img_2147.jpg" alt="Mike Barillari">
+    </div>
+    <div class="sm-hdr-text">
+      <h3>Mike Barillari</h3>
+      <p><span class="sm-dot"></span>RE/MAX Premier · Vaughan</p>
+    </div>
+  </div>
+
+  <div class="sm-body">
+
+    <!-- Step 1: Intent -->
+    <div class="sm-step active" id="sm-step1">
+      <div class="sm-bubble">Hey! 👋 Interested in 179 Lio Ave? How can I help?</div>
+      <div class="sm-chips">
+        <button class="sm-chip" data-intent="tour"    onclick="smSelectIntent(this)"><span>🏠</span> I'd like to book a showing</button>
+        <button class="sm-chip" data-intent="offer"   onclick="smSelectIntent(this)"><span>📋</span> I want to make an offer</button>
+        <button class="sm-chip" data-intent="info"    onclick="smSelectIntent(this)"><span>💬</span> I have a question about the home</button>
+        <button class="sm-chip" data-intent="selling" onclick="smSelectIntent(this)"><span>📊</span> I'm thinking about selling</button>
+        <button class="sm-chip" data-intent="other"   onclick="smSelectIntent(this)"><span>✉</span> Something else</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Contact -->
+    <div class="sm-step" id="sm-step2">
+      <button class="sm-back" onclick="smGoBack()">← Back</button>
+      <div class="sm-bubble" id="sm-msg2"></div>
+      <div class="sm-field"><label>First Name *</label><input type="text" id="sm-first" placeholder="Jane" autocomplete="given-name"></div>
+      <div class="sm-field"><label>Last Name</label><input type="text" id="sm-last" placeholder="Smith" autocomplete="family-name"></div>
+      <div class="sm-field"><label>Phone *</label><input type="tel" id="sm-phone" placeholder="647-555-1234" autocomplete="tel"></div>
+      <div class="sm-field"><label>Email</label><input type="email" id="sm-email" placeholder="jane@email.com" autocomplete="email"></div>
+      <button class="sm-cta" id="sm-submit-btn" onclick="smSubmit()">Connect with Mike →</button>
+      <div class="sm-or">or</div>
+      <div class="sm-phone"><span>Call / Text:</span><a href="tel:+16472782237">647-278-2237</a></div>
+    </div>
+
+    <!-- Success -->
+    <div class="sm-success" id="sm-success">
+      <div class="sm-success-icon">✓</div>
+      <h4>You're all set!</h4>
+      <p>I'll reach out to you shortly about 179 Lio Ave.</p>
+      <p style="color:rgba(201,168,76,0.5);font-size:11px;margin-top:3px;">— Mike</p>
+    </div>
+
+  </div>
+
+  <div class="sm-footer"><span>SOLDMIKE · RE/MAX Premier · 647-278-2237</span></div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // All 44 photos - Rela CDN URLs for reliable display
 const nums = [326,826,312,206,580,432,448,509,511,738,214,352,870,926,178,393,828,295,174,582,87,801,114,450,432,723,385,62,870,105,423,149,110,216,314,839,793,276,157,966,723,493,41,212];
 const photos = nums.map((n, i) => `https://media.relahq.com/public/styles/image_manage_preview/s3/property-images/prop-nid-236609956/179_lio_ave-${i+1}_${n}.jpg`);
@@ -464,7 +634,7 @@ document.getElementById('formSubmit').addEventListener('click', async function()
     const response = await fetch('https://dawn-sun-5ae8.broker-e2c.workers.dev', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ firstName, lastName, email, phone, message, property: '179 Lio Ave — Woodbridge, ON — $1,498,000' })
+      body: JSON.stringify({ firstName, lastName, email, phone, message })
     });
 
     const result = await response.json();
@@ -480,14 +650,94 @@ document.getElementById('formSubmit').addEventListener('click', async function()
       throw new Error('Failed');
     }
   } catch (err) {
-    btn.textContent = 'Something went wrong — please call us';
+    btn.textContent = 'Something went wrong — please call us'
     btn.style.background = '#c0392b';
     btn.style.color = '#fff';
   }
-
   btn.disabled = false;
-  setTimeout(() => { btn.textContent = 'Send Inquiry'; btn.style.background=''; btn.style.color=''; }, 5000);
+  setTimeout(() => { btn.textContent = 'Send Inquiry'; btn.style.background = ''; btn.style.color = ''; }, 5000);
 });
+
+// ===== SOLDMIKE FLOATING WIDGET =====
+let smIntent = '';
+
+const smMessages = {
+  tour:    "Let's book a showing — 179 Lio Ave is available to view now. What's the best way to reach you?",
+  offer:   "Great — let's talk about putting together an offer. Drop your info and I'll call you right away.",
+  info:    "Happy to answer any questions. Leave your info and I'll be in touch quickly.",
+  selling: "Let's talk about your home. I'll put together a free market evaluation for you.",
+  other:   "No problem — leave your info and I'll reach out shortly."
+};
+
+const smLabels = {
+  tour: 'Showing Request — 179 Lio Ave',
+  offer: 'Offer Interest — 179 Lio Ave',
+  info: 'Property Inquiry — 179 Lio Ave',
+  selling: 'Seller Lead — 179 Lio Ave',
+  other: 'General Inquiry — 179 Lio Ave'
+};
+
+document.getElementById('sm-trigger').addEventListener('click', () => {
+  document.getElementById('sm-panel').classList.toggle('open');
+  document.getElementById('sm-trigger').classList.toggle('open');
+});
+
+function smSelectIntent(btn) {
+  smIntent = btn.dataset.intent;
+  document.getElementById('sm-msg2').textContent = smMessages[smIntent];
+  smShowStep('sm-step2');
+  setTimeout(() => document.getElementById('sm-first').focus(), 300);
+}
+
+function smGoBack() { smShowStep('sm-step1'); }
+
+function smShowStep(id) {
+  document.querySelectorAll('.sm-step').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+async function smSubmit() {
+  const btn       = document.getElementById('sm-submit-btn');
+  const firstName = document.getElementById('sm-first').value.trim();
+  const lastName  = document.getElementById('sm-last').value.trim();
+  const phone     = document.getElementById('sm-phone').value.trim();
+  const email     = document.getElementById('sm-email').value.trim();
+
+  if (!firstName || !phone) {
+    btn.textContent = 'Please enter your name & phone';
+    btn.style.background = '#c0392b'; btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = 'Connect with Mike →'; btn.style.background = ''; btn.style.color = ''; }, 3000);
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('https://dawn-sun-5ae8.broker-e2c.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName, lastName, email, phone,
+        message: smLabels[smIntent] || 'Property Website Lead',
+        property: '179 Lio Ave, Woodbridge'
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      document.querySelectorAll('.sm-step').forEach(s => s.classList.remove('active'));
+      document.getElementById('sm-success').classList.add('active');
+    } else { throw new Error(); }
+  } catch {
+    btn.textContent = 'Error — call 647-278-2237';
+    btn.style.background = '#c0392b'; btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.textContent = 'Connect with Mike →';
+      btn.style.background = ''; btn.style.color = ''; btn.disabled = false;
+    }, 5000);
+  }
+}
 </script>
 </body>
 </html>
