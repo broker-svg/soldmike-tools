@@ -2194,42 +2194,35 @@ document.addEventListener('DOMContentLoaded', () => {
 let chatOpen = false;
 let chatInitialized = false;
 
-function openChat() {
-  chatOpen = true;
-  const win = document.getElementById('chat-window');
+function setChatState(open) {
+  chatOpen = open;
+  const win    = document.getElementById('chat-window');
   const bubble = document.getElementById('chat-bubble');
-  const iconOpen = document.getElementById('chat-icon-open');
-  const iconClose = document.getElementById('chat-icon-close');
-  win.classList.add('open');
-  bubble.classList.add('open');
-  iconOpen.style.display = 'none';
-  iconClose.style.display = 'block';
-  if (!chatInitialized) {
+  const iconO  = document.getElementById('chat-icon-open');
+  const iconC  = document.getElementById('chat-icon-close');
+  if (!win) return;
+  if (open) {
+    win.classList.add('open');
+    bubble.classList.add('open');
+  } else {
+    win.classList.remove('open');
+    bubble.classList.remove('open');
+  }
+  if (iconO) iconO.style.display = open ? 'none' : 'block';
+  if (iconC) iconC.style.display = open ? 'block' : 'none';
+  if (open && !chatInitialized) {
     chatInitialized = true;
-    setTimeout(() => addBotMsg("Hello! I'm Mike's AI assistant. How can I help you with your property needs today?"), 350);
-    setTimeout(() => addBotMsg("I would like to learn more."), 1000);
+    setTimeout(() => addBotMsg("Hello! I'm Mike's AI assistant. How can I help you with your real estate needs today?"), 400);
+    setTimeout(() => addBotMsg("I would like to learn more."), 1100);
   }
 }
 
-function toggleChat() {
-  chatOpen = !chatOpen;
-  const win = document.getElementById('chat-window');
-  const bubble = document.getElementById('chat-bubble');
-  const iconOpen = document.getElementById('chat-icon-open');
-  const iconClose = document.getElementById('chat-icon-close');
-  win.classList.toggle('open', chatOpen);
-  bubble.classList.toggle('open', chatOpen);
-  iconOpen.style.display = chatOpen ? 'none' : 'block';
-  iconClose.style.display = chatOpen ? 'block' : 'none';
-  if (chatOpen && !chatInitialized) {
-    chatInitialized = true;
-    setTimeout(() => addBotMsg("Hello! I'm Mike's AI assistant. How can I help you with your property needs today?"), 350);
-    setTimeout(() => addBotMsg("I would like to learn more."), 1000);
-  }
-}
+function toggleChat() { setChatState(!chatOpen); }
 
-// Auto-open after 1.5 seconds
-setTimeout(() => openChat(), 1500);
+// Auto-open 1.5s after page load
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => setChatState(true), 1500);
+});
 
 function switchTab(tab) {
   document.querySelectorAll('.jf-tab').forEach(t => t.classList.remove('active'));
