@@ -1,27 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2 La Maria Lane - Offer Review | SOLDMIKE</title>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offer Review — 2 La Maria Lane, Vaughan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Arial, sans-serif; background: #0a1628; color: #fff; margin: 0; padding: 40px; }
-  .header { text-align: center; padding: 40px 0; border-bottom: 2px solid #c9a84c; }
-  .logo { font-size: 2.5em; font-weight: bold; color: #c9a84c; letter-spacing: 4px; }
-  .subtitle { color: #aaa; margin-top: 10px; font-size: 1.1em; }
-  .address { font-size: 1.8em; font-weight: bold; margin: 20px 0 5px; }
-  .note { background: #1a2a4a; border: 1px solid #c9a84c; border-radius: 8px; padding: 30px; margin: 40px auto; max-width: 600px; text-align: center; }
-  .note p { font-size: 1.1em; line-height: 1.7; color: #ccc; }
-  .contact { color: #c9a84c; font-weight: bold; font-size: 1.2em; margin-top: 15px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8f9fa; color: #1a1a2e; line-height: 1.6; }
+
+.hero { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #fff; padding: 48px 24px 40px; text-align: center; }
+.hero .brand { font-size: 13px; letter-spacing: 4px; text-transform: uppercase; color: #e94560; font-weight: 700; margin-bottom: 8px; }
+.hero h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.hero .address { font-size: 20px; font-weight: 300; color: #ccc; margin-bottom: 16px; }
+.hero .meta { font-size: 13px; color: #999; }
+.hero .sellers { font-size: 14px; color: #bbb; margin-top: 8px; }
+.hero .badge { display: inline-block; background: #e94560; color: #fff; padding: 6px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 14px; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
+.section-title { font-size: 22px; font-weight: 800; color: #1a1a2e; margin-bottom: 6px; }
+.section-subtitle { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+.prog-row { display: flex; gap: 16px; margin-bottom: 12px; flex-wrap: wrap; }
+.prog-card { flex: 1; min-width: 200px; background: #fff; border-radius: 10px; padding: 16px; box-shadow: 0 1px 8px rgba(0,0,0,0.05); border-left: 4px solid #ddd; }
+.prog-card.active { border-left-color: #e94560; }
+.prog-card .prog-round { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+.prog-card .prog-price { font-size: 22px; font-weight: 800; color: #1a1a2e; }
+.prog-card .prog-change { font-size: 12px; color: #2e7d32; font-weight: 600; }
+.prog-card .prog-detail { font-size: 12px; color: #777; margin-top: 6px; }
+
+.table-wrap { overflow-x: auto; margin-bottom: 40px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+table { width: 100%; border-collapse: collapse; background: #fff; min-width: 600px; }
+thead th { background: #1a1a2e; color: #fff; padding: 14px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: left; }
+thead th:first-child { border-radius: 12px 0 0 0; }
+thead th:last-child { border-radius: 0 12px 0 0; }
+tbody td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: #fafbfc; }
+td.label { font-weight: 600; color: #555; width: 160px; background: #fafbfc; }
+.highlight-green { background: #e8f5e9; color: #2e7d32; font-weight: 700; }
+.highlight-red { background: #ffeef0; color: #c62828; font-weight: 600; }
+.tag { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-red { background: #ffeef0; color: #c62828; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+.card { background: #fff; border-radius: 12px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); border-top: 4px solid #ddd; position: relative; }
+.card.top-pick { border-top-color: #e94560; }
+.card .card-badge { position: absolute; top: -2px; right: 20px; background: #e94560; color: #fff; padding: 4px 12px; border-radius: 0 0 8px 8px; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.card .card-agent { font-size: 12px; color: #999; margin-bottom: 14px; }
+.card .card-price { font-size: 28px; font-weight: 800; color: #1a1a2e; margin-bottom: 12px; }
+.card .card-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+.card .card-row:last-child { border-bottom: none; }
+.card .card-row .card-label { color: #888; }
+.card .card-row .card-value { font-weight: 600; }
+.card .card-summary { margin-top: 14px; padding: 12px; background: #f8f9fa; border-radius: 8px; font-size: 13px; color: #555; line-height: 1.5; }
+
+.recommendation { background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%); color: #fff; border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+.recommendation h2 { font-size: 20px; font-weight: 800; margin-bottom: 16px; }
+.recommendation p { font-size: 15px; line-height: 1.7; color: #ddd; margin-bottom: 12px; }
+.recommendation .rec-highlight { color: #e94560; font-weight: 700; }
+
+.timeline { position: relative; padding-left: 32px; margin-bottom: 40px; }
+.timeline::before { content: ''; position: absolute; left: 12px; top: 0; bottom: 0; width: 2px; background: #e0e0e0; }
+.timeline-item { position: relative; margin-bottom: 24px; }
+.timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: #1a1a2e; border: 2px solid #fff; box-shadow: 0 0 0 2px #1a1a2e; }
+.timeline-item.final::before { background: #e94560; box-shadow: 0 0 0 2px #e94560; }
+.timeline-item h4 { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 2px; }
+.timeline-item p { font-size: 13px; color: #666; }
+.timeline-item .tl-buyers { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.timeline-item .tl-chip { background: #f0f0f0; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #555; }
+.timeline-item .tl-chip.active { background: #e8f5e9; color: #2e7d32; }
+.timeline-item .tl-chip.dropped { background: #ffeef0; color: #c62828; text-decoration: line-through; }
+
+.disclaimer { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 32px; border: 1px solid #eee; }
+.disclaimer h4 { font-size: 13px; font-weight: 700; color: #999; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+.disclaimer p { font-size: 12px; color: #999; line-height: 1.6; }
+
+.footer { text-align: center; padding: 24px; color: #999; font-size: 12px; }
+.footer .brand-foot { font-size: 14px; font-weight: 700; color: #e94560; letter-spacing: 2px; margin-bottom: 4px; }
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 22px; }
+  .hero .address { font-size: 16px; }
+  .cards { grid-template-columns: 1fr; }
+  .prog-row { flex-direction: column; }
+}
 </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">SOLDMIKE</div>
-    <div class="address">2 La Maria Lane</div>
-    <div class="subtitle">Offer Review Summary — Prepared by Michael Barillari, RE/MAX Premier</div>
+
+<div class="hero">
+  <div class="brand">SOLDMIKE</div>
+  <h1>Offer Review</h1>
+  <div class="address">2 La Maria Lane, Vaughan, ON L6A 3X2</div>
+  <div class="sellers">Prepared for: Gholam-Reza Rehmani &amp; Gelena Rahmani</div>
+  <div class="meta">March 24, 2026 &bull; Multi-Round Negotiation &bull; Prepared by Michael Barillari</div>
+  <div class="badge">3 Rounds &bull; Final Offers In</div>
+</div>
+
+<div class="container">
+
+  <div class="section-title">Negotiation Journey</div>
+  <div class="section-subtitle">How the offers progressed through each round of negotiation</div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <h4>Round 1 &mdash; Original Offers Received</h4>
+      <p>4 offers submitted on offer night</p>
+      <div class="tl-buyers">
+        <span class="tl-chip dropped">Liu &mdash; $970,000</span>
+        <span class="tl-chip dropped">Khan &amp; Chowdhury &mdash; $999,999</span>
+        <span class="tl-chip dropped">Kucuk &amp; Kucuk &mdash; $1,040,000</span>
+        <span class="tl-chip active">Kayalica &amp; Kayalica &mdash; $1,040,000</span>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <h4>Round 2 &mdash; Improvements</h4>
+      <p>Sellers requested highest and best &mdash; 1 buyer improved, 1 new buyer entered</p>
+      <div class="tl-buyers">
+        <span class="tl-chip active">Kayalica &amp; Kayalica &mdash; $1,075,000 (+$35K)</span>
+        <span class="tl-chip active">Soma &amp; Soma &mdash; $1,030,000 (new)</span>
+      </div>
+    </div>
+    <div class="timeline-item final">
+      <h4>Round 3 &mdash; Final Offers</h4>
+      <p>Both remaining buyers submitted their best and final</p>
+      <div class="tl-buyers">
+        <span class="tl-chip active">Kayalica &amp; Kayalica &mdash; $1,081,000 (+$6K)</span>
+        <span class="tl-chip active">Soma &amp; Soma &mdash; $1,075,000 (+$45K)</span>
+      </div>
+    </div>
   </div>
-  <div class="note">
-    <p>This offer review summary has been prepared exclusively for your review. Please contact your agent directly to discuss the details of each offer and next steps.</p>
-    <div class="contact">Michael Barillari | broker@soldmike.com</div>
+
+  <div class="section-title">Price Progression &mdash; Final Two Buyers</div>
+  <div class="section-subtitle">How each buyer's offer changed across negotiation rounds</div>
+
+  <div style="margin-bottom: 32px;">
+    <h3 style="font-size:15px; font-weight:700; margin-bottom:12px;">Kayalica &amp; Kayalica</h3>
+    <div class="prog-row">
+      <div class="prog-card">
+        <div class="prog-round">Round 1</div>
+        <div class="prog-price">$1,040,000</div>
+        <div class="prog-detail">Financing + Inspection &bull; $40K deposit</div>
+      </div>
+      <div class="prog-card">
+        <div class="prog-round">Round 2</div>
+        <div class="prog-price">$1,075,000</div>
+        <div class="prog-change">+$35,000</div>
+        <div class="prog-detail">Same conditions &bull; Same deposit</div>
+      </div>
+      <div class="prog-card active">
+        <div class="prog-round">Final</div>
+        <div class="prog-price">$1,081,000</div>
+        <div class="prog-change">+$41,000 total from Round 1</div>
+        <div class="prog-detail">Financing + Inspection &bull; $40K deposit</div>
+      </div>
+    </div>
   </div>
-</body>
-</html>
+
+  <div style="margin-bottom: 40px;">
+    <h3 style="font-size:15px; font-weight:700; margin-bottom:12px;">Soma &amp; Soma</h3>
+    <div class="prog-row">
+      <div class="prog-card">
+        <div class="prog-round">Round 2 (New Entry)</div>
+        <div class="prog-price">$1,030,000</div>
+        <div class="prog-detail">Financing + Inspection &bull; $30K deposit</div>
+      </div>
+      <div class="prog-card active">
+        <div class="prog-round">Final</div>
+        <div class="prog-price">$1,075,000</div>
+        <div class="prog-change">+$45,000 from entry</div>
+        <div class="prog-detail">Financing + Inspection &bull; $30K deposit</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Final Offer Comparison</div>
+  <div class="section-subtitle">Side-by-side breakdown of the two final offers</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Detail</th>
+          <th>Kayalica &amp; Kayalica</th>
+          <th>Soma &amp; Soma</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label">Purchase Price</td>
+          <td class="highlight-green">$1,081,000</td>
+          <td>$1,075,000</td>
+        </tr>
+        <tr>
+          <td class="label">Deposit</td>
+          <td class="highlight-green">$40,000 (3.7%)</td>
+          <td>$30,000 (2.8%)</td>
+        </tr>
+        <tr>
+          <td class="label">Conditions</td>
+          <td class="highlight-red"><span class="tag tag-red">Financing</span> <span class="tag tag-red">Inspection</span></td>
+          <td class="highlight-red"><span class="tag tag-red">Financing</span> <span class="tag tag-red">Inspection</span></td>
+        </tr>
+        <tr>
+          <td class="label">Condition Period</td>
+          <td>5 Business Days</td>
+          <td>5 Business Days</td>
+        </tr>
+        <tr>
+          <td class="label">Closing Date</td>
+          <td>June 12, 2026</td>
+          <td class="highlight-green">May 28, 2026</td>
+        </tr>
+        <tr>
+          <td class="label">Agent</td>
+          <td>Turk Lafci<br><span style="color:#999;font-size:12px;">RE/MAX Premier Inc.</span></td>
+          <td>Ana Yakovleva<br><span style="color:#999;font-size:12px;">Right At Home Realty</span></td>
+        </tr>
+        <tr>
+          <td class="label">Co-op Commission</td>
+          <td>2.5% + HST</td>
+          <td>2.5% + HST</td>
+        </tr>
+        <tr>
+          <td class="label">Chattels Included</td>
+          <td>Fridge, Stove, Dishwasher, Washer &amp; Dryer, Central Vac, All ELFs, Central A/C</td>
+          <td>All existing appliances (SS &amp; basement), Central Vac, All ELFs, Central A/C, Curtains &amp; Blinds, Wall Mirrors (main floor)</td>
+        </tr>
+        <tr>
+          <td class="label">Rental Items</td>
+          <td>&mdash;</td>
+          <td>HWT</td>
+        </tr>
+        <tr>
+          <td class="label">Price Movement</td>
+          <td>$1,040K &rarr; $1,075K &rarr; $1,081K</td>
+          <td>$1,030K &rarr; $1,075K</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Final Offers &mdash; In Plain Language</div>
+  <div class="section-subtitle">What each final offer means for you as the seller</div>
+
+  <div class="cards">
+    <div class="card top-pick">
+      <div class="card-badge">Highest Price</div>
+      <h3>Ali Kayalica &amp; Gunnur Kayalica</h3>
+      <div class="card-agent">Agent: Turk Lafci &bull; RE/MAX Premier Inc.</div>
+      <div class="card-price">$1,081,000</div>
+      <div class="card-row"><span class="card-label">Deposit</span><span class="card-value">$40,000 upon acceptance</span></div>
+      <div class="card-row"><span class="card-label">Conditions</span><span class="card-value" style="color:#c62828;">Financing + Inspection (5 bus. days)</span></div>
+      <div class="card-row"><span class="card-label">Closing</span><span class="card-value">June 12, 2026</span></div>
+      <div class="card-row"><span class="card-label">Irrevocable</span><span class="card-value">11:59 PM, March 24</span></div>
+      <div class="card-summary">
+        <strong>Summary:</strong> This is the highest offer at $1,081,000. The buyers increased their price three times over the negotiation &mdash; starting at $1,040,000, improving to $1,075,000, and landing at $1,081,000. The deposit is strong at $40,000. Both financing and inspection conditions remain, with a 5 business day window. Closing is June 12, giving you a comfortable move-out timeline. The co-op brokerage (RE/MAX Premier) is the same brokerage family, which can make communication smoother.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Ganesh Soma &amp; Shanthi Priyadarsani Soma</h3>
+      <div class="card-agent">Agent: Ana Yakovleva &bull; Right At Home Realty</div>
+      <div class="card-price">$1,075,000</div>
+      <div class="card-row"><span class="card-label">Deposit</span><span class="card-value">$30,000 (2 bus. days after acceptance)</span></div>
+      <div class="card-row"><span class="card-label">Conditions</span><span class="card-value" style="color:#c62828;">Financing + Inspection (5 bus. days)</span></div>
+      <div class="card-row"><span class="card-label">Closing</span><span class="card-value">May 28, 2026</span></div>
+      <div class="card-row"><span class="card-label">Irrevocable</span><span class="card-value">11:59 PM, March 24</span></div>
+      <div class="card-summary">
+        <strong>Summary:</strong> This offer came in strong at $1,075,000. The buyers entered at Round 2 with $1,030,000 and raised $45,000 to get here. However, the deposit is lower at $30,000 (delivered within 2 business days of acceptance, not upon acceptance). Both financing and inspection conditions remain. The earlier May 28 closing could be a plus if you want to move sooner. They are requesting more chattels than the Kayalica offer, including curtains, blinds, and wall mirrors.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Round 1 Recap &mdash; All Original Offers</div>
+  <div class="section-subtitle">For reference: the four original offers received before negotiations began</div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Detail</th>
+          <th>Liu</th>
+          <th>Khan &amp; Chowdhury</th>
+          <th>Kucuk &amp; Kucuk</th>
+          <th>Kayalica &amp; Kayalica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label">Price</td>
+          <td>$970,000</td>
+          <td>$999,999</td>
+          <td>$1,040,000</td>
+          <td>$1,040,000</td>
+        </tr>
+        <tr>
+          <td class="label">Deposit</td>
+          <td>$48,500 (5%)</td>
+          <td>$40,000 (4%)</td>
+          <td>$50,000 (4.8%)</td>
+          <td>$40,000 (3.8%)</td>
+        </tr>
+        <tr>
+          <td class="label">Conditions</td>
+          <td><span class="tag tag-red">Financing</span> <span class="tag tag-red">Inspection</span></td>
+          <td><span class="tag tag-red">Financing</span> <span class="tag tag-red">Inspection</span></td>
+          <td><span class="tag tag-orange">Inspection Only</span></td>
+          <td><span class="tag tag-red">Financing</span> <span class="tag tag-red">Inspection</span></td>
+        </tr>
+        <tr>
+          <td class="label">Closing</td>
+          <td>June 30, 2026</td>
+          <td>June 2, 2026</td>
+          <td>May 28, 2026</td>
+          <td>June 12, 2026</td>
+        </tr>
+        <tr>
+          <td class="label">Outcome</td>
+          <td style="color:#999;">Did not improve</td>
+          <td style="color:#999;">Did not improve</td>
+          <td style="color:#999;">Did not improve</td>
+          <td style="color:#2e7d32; font-weight:600;">Advanced to Final &rarr; $1,081,000</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="recommendation">
+    <h2>Michael's Recommendation</h2>
+    <p>After three rounds of negotiation, two strong offers remain on the table. Here's my assessment:</p>
+    <p>The <span class="rec-highlight">Kayalica offer at $1,081,000</span> is the strongest overall. It's the highest price by $6,000, comes with a larger deposit ($40,000 vs. $30,000), and the buyers have shown consistent commitment &mdash; increasing their offer three times through the process. That kind of persistence signals serious motivation to close this deal.</p>
+    <p>The Soma offer at $1,075,000 is competitive, but the lower deposit and the fact that it's delivered within 2 business days (rather than upon acceptance) introduces a slight timing gap. They also request more chattels. The earlier closing date of May 28 could be a consideration if timing is important to you.</p>
+    <p>Both offers carry the same conditions (financing and inspection, 5 business days). The key differentiator is price, deposit strength, and the Kayalica buyers' demonstrated willingness to negotiate upward three times.</p>
+    <p><strong>My suggestion: the Kayalica offer gives you the strongest position.</strong> That said, this is your home and your decision &mdash; I'm here to make sure you have all the information you need.</p>
+  </div>
+
+  <div class="disclaimer">
+    <h4>Important Disclaimer</h4>
+    <p>This offer review is prepared for informational purposes to assist the sellers in evaluating received offers. It is not intended as legal or financial advice. The listing agent's recommendation is based on the offer terms as presented and does not guarantee the outcome of any transaction. Sellers are encouraged to consult with their legal counsel regarding any questions about the terms and conditions of any offer. All information is believed to be accurate as of the date of preparation.</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="brand-foot">SOLDMIKE</div>
+  <div>Michael Barillari &bull; Broker &bull; RE/MAX Premier The OP Team</div>
+  <div>416-987-8000 &bull; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4426362b2f213604372b2820292d2f216a272b29">[email&#160;protected]</a></div>
+  <div style="margin-top: 8
