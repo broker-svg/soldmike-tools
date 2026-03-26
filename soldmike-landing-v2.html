@@ -207,7 +207,7 @@
 
     /* CONTACT */
     #contact { background: var(--navy); }
-    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start; }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
     .contact-links { list-style: none; margin-bottom: 32px; }
     .contact-links li { margin-bottom: 10px; }
     .contact-links a { font-family: var(--font-label); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; transition: gap 0.2s; }
@@ -255,7 +255,7 @@
     @media (max-width: 768px) {
       .nav-links, .btn-nav { display: none; }
       .hamburger { display: flex; }
-      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .about-grid, .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
       .philosophy-grid, .pricing-grid, .process-grid, .video-grid, .testi-grid, .staging-grid { grid-template-columns: 1fr; }
       .marketing-grid { grid-template-columns: 1fr; }
       .stat-row { grid-template-columns: repeat(2, 1fr); }
@@ -556,6 +556,21 @@
   </div>
 </section>
 
+<!-- RE/MAX BAND -->
+<section id="remax">
+  <div class="container">
+    <div class="remax-title reveal">The Power Behind Every Listing</div>
+    <h2 class="remax-heading reveal">The RE/MAX Brand</h2>
+    <div class="remax-stats">
+      <div class="remax-stat reveal reveal-delay-1"><span class="val">145,000+</span><span class="lbl">Agents Worldwide</span></div>
+      <div class="remax-stat reveal reveal-delay-2"><span class="val">110+</span><span class="lbl">Countries</span></div>
+      <div class="remax-stat reveal reveal-delay-3"><span class="val">25,000+</span><span class="lbl">Agents in Canada</span></div>
+      <div class="remax-stat reveal reveal-delay-4"><span class="val">#1</span><span class="lbl">In Vaughan 2011–2025</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
 <!-- RE/MAX BAND -->
 <section id="remax">
   <div class="container">
