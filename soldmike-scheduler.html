@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Post Scheduler</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface2: #181818;
+    --border: #222222;
+    --gold: #c9a84c;
+    --gold-dim: #7a6230;
+    --text: #e8e4dc;
+    --text-dim: #666;
+    --text-mid: #999;
+    --red: #e05252;
+    --green: #4caf82;
+    --blue: #5b9bd5;
+    --purple: #9b72cf;
+    --ig: #e1306c;
+    --fb: #1877f2;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+  .logo span { color: var(--text-dim); font-size: 13px; font-family: 'Outfit', sans-serif; margin-left: 12px; letter-spacing: 0; }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .status-label { color: var(--text-mid); font-size: 12px; margin-left: 6px; margin-right: 16px; }
+  
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: #0a0a0a;
+  }
+  .btn-gold:hover { background: #e0bb5a; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--gold-dim); color: var(--text); }
+  .btn-big {
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ── LAYOUT ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label { color: var(--text-dim); font-size: 12px; margin-top: 4px; }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  /* ── POST CARD ── */
+  .post-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .post-card:hover { border-color: #333; }
+  .post-card.scheduled { border-left: 3px solid var(--green); }
+  .post-card.pending { border-left: 3px solid var(--gold-dim); }
+  .post-card.error { border-left: 3px solid var(--red); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .card-header:hover { background: var(--surface2); }
+
+  .post-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-mid);
+    min-width: 100px;
+  }
+  .post-date strong { color: var(--gold); font-size: 14px; display: block; }
+
+  .post-property {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    min-width: 120px;
+  }
+
+  .post-preview {
+    flex: 1;
+    color: var(--text-mid);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .platforms { display: flex; gap: 5px; }
+  .platform-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .p-ig { background: rgba(225, 48, 108, 0.15); color: var(--ig); }
+  .p-fb { background: rgba(24, 119, 242, 0.15); color: var(--fb); }
+  .p-li { background: rgba(0, 119, 181, 0.15); color: #0077b5; }
+
+  .card-status {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+  .status-pending { background: rgba(201, 168, 76, 0.1); color: var(--gold); }
+  .status-live { background: rgba(76, 175, 130, 0.1); color: var(--green); }
+  .status-error { background: rgba(224, 82, 82, 0.1); color: var(--red); }
+
+  .chevron { color: var(--text-dim); font-size: 12px; transition: transform 0.2s; margin-left: 4px; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* ── CARD BODY (expanded) ── */
+  .card-body {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid var(--border);
+  }
+  .card-body.open { display: block; }
+
+  .field-group { margin-top: 14px; }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  textarea, input[type=text], input[type=url] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    padding: 10px 12px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  textarea:focus, input:focus { border-color: var(--gold-dim); }
+  textarea { min-height: 90px; line-height: 1.5; }
+
+  .url-row { display: flex; gap: 8px; }
+  .url-row input { flex: 1; }
+
+  .image-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    display: none;
+  }
+  .image-preview.loaded { display: block; }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  /* ── BOTTOM CTA ── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+  }
+  .bottom-summary { color: var(--text-mid); font-size: 13px; }
+  .bottom-summary strong { color: var(--text); }
+
+  /* ── TOAST ── */
+  .toast-container {
+    position: fixed;
+    top: 80px; right: 24px;
+    display: flex; flex-direction: column; gap: 8px;
+    z-index: 999;
+  }
+  .toast {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: 300px;
+    animation: slideIn 0.2s ease;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .toast.success { border-color: var(--green); }
+  .toast.error { border-color: var(--red); }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    display: none;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .divider-label {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 24px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .divider-label::before, .divider-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SOLDMIKE <span>/ Content Scheduler</span></div>
+  <div class="header-actions">
+    <div style="display:flex;align-items:center">
+      <div class="status-dot" id="apiDot"></div>
+      <span class="status-label" id="apiStatus">Checking Metricool...</span>
+    </div>
+    <button class="btn btn-outline" onclick="checkAPI()">Test API</button>
+  </div>
+</header>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="main">
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">Posts queued</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statScheduled" style="color:var(--green)">0</div>
+      <div class="stat-label">Scheduled</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statPending" style="color:var(--gold)">0</div>
+      <div class="stat-label">Pending images</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statDays">21</div>
+      <div class="stat-label">Days covered</div>
+    </div>
+  </div>
+
+  <div class="progress-bar" id="progressBar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-title">April 2026 — Content Queue</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="expandAll()">Expand All</button>
+      <button class="btn btn-outline" onclick="collapseAll()">Collapse All</button>
+    </div>
+  </div>
+
+  <div id="postQueue"></div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-summary">
+    <strong id="readyCount">0</strong> posts ready · <strong id="pendingCount">0</strong> need images
+  </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn btn-outline btn-big" onclick="scheduleReady()">Schedule Ready Posts</button>
+    <button class="btn btn-gold btn-big" onclick="scheduleAll()" id="scheduleAllBtn">🚀 Schedule All to Metricool</button>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const METRICOOL_TOKEN = 'UOCDXRIWOECOLJQIRHCFXGLXLZUYNHLNNOWTQFSUWJNTSWVTKUVQFGZWCHLXSXCB';
+const BLOG_ID = 1814163;
+const BASE_URL = 'https://app.metricool.com';
+
+// ── POST DATA ──
+// Dates: 3 weeks, weekdays only, 9 AM ET
+function makeDate(month, day, hour=9) {
+  return `2026-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}T${String(hour).padStart(2,'0')}:00:00`;
+}
+
+const POSTS = [
+  // ─── WEEK 1: Apr 6–10 ───
+  {
+    id: 'p1', date: makeDate(4,7), property: '179 Lio Ave',
+    platforms: ['ig','fb'],
+    caption: `✨ JUST LISTED — 179 Lio Avenue, Vaughan\n\n4+2 Bed · 4 Bath · Detached · $1,498,800\n\nThis is the one Woodbridge buyers have been waiting for. Stunning curb appeal, thoughtful layout, and a location that puts everything at your fingertips — schools, shops, 400-series highways, and Vaughan's best neighbourhoods.\n\nFinished basement. Double car garage. Move-in ready.\n\n📩 DM '179LIO' for the full package — floor plans, photos, and showing availability.\n\n#JustListed #VaughanRealEstate #SoldMike #TheOPTeam #WoodbridgeHomes #REMAXPremier #GTA #HomeForSale`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p2', date: makeDate(4,8), property: '2 La Maria Lane',
+    platforms: ['ig','fb'],
+    caption: `🏡 JUST LISTED — 2 La Maria Lane, Vaughan\n\nUnder $1M · Detached · Separate Entrance\n\nDetached under a million in Vaughan — with a separate entrance. That's getting rare, and this one won't last.\n\nMain floor that flows for real life. Finished lower level with income or in-law potential. Minutes to the 400, 407, parks, shops, and Canada's Wonderland.\n\n📩 DM 'LAMARIA' for details and a private showing.\n\n#JustListed #VaughanRealEstate #UnderOneMillion #SoldMike #TheOPTeam #REMAXPremier #FirstTimeHomeBuyer`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p3', date: makeDate(4,9), property: '3 Westbrooke Blvd',
+    platforms: ['ig','fb'],
+    caption: `🌿 JUST LISTED — 3 Westbrooke Blvd, King\n\nLuxury Living in King's Most Prestigious Community\n\nKing is a different category entirely — and Westbrooke Boulevard delivers the full picture. Prestigious address, executive finishes, the kind of space and privacy that's disappearing from the GTA.\n\nThis is move-up living done right.\n\n📩 DM 'WESTBROOKE' for details and a private showing.\n\n#JustListed #KingCity #KingOntario #LuxuryRealEstate #SoldMike #TheOPTeam #REMAXPremier #ExecutiveHomes`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p4', date: makeDate(4,10), property: 'Educational',
+    platforms: ['ig','fb'],
+    caption: `📊 Vaughan Real Estate — Spring 2026 Reality Check\n\nHere's what buyers and sellers need to know RIGHT NOW:\n\n✅ Inventory is up compared to last spring\n✅ Properly priced homes are still moving fast\n✅ The rate environment is stabilizing — buyers who wait may be competing with more people later\n\nKnowledge is leverage. If you're thinking about making a move this spring, let's have a real conversation about what your options actually look like.\n\n📩 DM me 'SPRING2026' and I'll send you a personalized market breakdown for your area.\n\n💡 I am SoldMike — giving you power through knowledge.\n\n#VaughanRealEstate #SpringMarket #GTA #MarketUpdate #SoldMike #TheOPTeam #REMAXPremier`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p5', date: makeDate(4,11), property: '179 Lio Ave',
+    platforms: ['ig','fb'],
+    caption: `🏠 Inside 179 Lio Ave — What Makes This One Different\n\nEvery detail was thought through:\n\n→ Open concept main floor built for how families actually live\n→ Principal suite that actually feels like a retreat\n→ Finished basement — extra bedrooms, extra space, extra options\n→ Woodbridge location: walkable, connected, established\n\nAt $1,498,800 this is a serious home for a serious buyer.\n\nPrivate showings available now.\n\n📩 DM '179LIO' or call directly.\n\n#VaughanHomes #WoodbridgeRealEstate #SoldMike #TheOPTeam #GTA #LuxuryDetached`,
+    imageUrl: '',
+    status: 'pending'
+  },
+
+  // ─── WEEK 2: Apr 13–17 ───
+  {
+    id: 'p6', date: makeDate(4,13), property: '2 La Maria Lane',
+    platforms: ['ig','fb'],
+    caption: `💡 The Smartest Buy Under $1M in Vaughan Right Now?\n\n2 La Maria Lane.\n\nHere's why buyers keep asking about this one:\n\n→ Detached. Not semi, not townhouse. Detached.\n→ Separate entrance — that's income potential or a full in-law setup\n→ Finished lower level already done for you\n→ Real Vaughan location — not far from everything, actually close to everything\n\nThis is the one you tell your friends you should have bought.\n\n📩 DM 'LAMARIA' — I'll get you in.\n\n#VaughanRealEstate #DetachedHome #SeparateEntrance #SoldMike #TheOPTeam #REMAXPremier`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p7', date: makeDate(4,14), property: '16 Saint Keller Pl',
+    platforms: ['ig','fb'],
+    caption: `📍 NEW LISTING — 16 Saint Keller Place\n\n[UPDATE CAPTION WITH PROPERTY DETAILS — beds, baths, price, key features, neighbourhood highlights]\n\n📩 DM 'SAINTKELLER' for full details and a private showing.\n\n#JustListed #SoldMike #TheOPTeam #REMAXPremier #GTARealEstate`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p8', date: makeDate(4,15), property: 'Educational',
+    platforms: ['ig','fb'],
+    caption: `📋 Sellers — 3 Things That Kill Offers Before They're Written\n\n1️⃣ Overpricing by even 5% can cut your showing traffic in half\n2️⃣ Poor photography — first impressions happen online, not at the door\n3️⃣ Inflexible showing access — if buyers can't get in, they move on\n\nThese aren't opinions. These are patterns I've seen across hundreds of transactions since 2011.\n\nIf you're thinking about listing this spring, let's build your strategy right from the start.\n\n📩 DM me 'LISTINGREADY' and I'll send you my full pre-listing checklist.\n\n💡 I am SoldMike — giving you power through knowledge.\n\n#SellerTips #GTARealEstate #SoldMike #REMAXPremier #VaughanRealEstate`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p9', date: makeDate(4,16), property: '3 Westbrooke Blvd',
+    platforms: ['ig','fb'],
+    caption: `🌿 Why King is the Move for GTA Buyers Who Want More\n\nYou've outgrown the suburbs. You want space, privacy, and a community that actually feels like a community.\n\nKing delivers:\n→ Acreage and estate lots unavailable anywhere closer to the city\n→ Top-rated schools and tight-knit community feel\n→ Minutes to Hwy 400 — still connected, never crowded\n\n3 Westbrooke Blvd is your entry point into this market done right.\n\n📩 DM 'WESTBROOKE' to book a private tour.\n\n#KingCity #KingOntario #LuxuryHomes #GTARealEstate #SoldMike #TheOPTeam`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p10', date: makeDate(4,17), property: '179 Lio Ave',
+    platforms: ['ig','fb'],
+    caption: `🎯 179 Lio Ave — Still Available. Here's Your Window.\n\nThe best homes in Woodbridge move. This one is still here — which means your opportunity is still here.\n\nWhat you get at $1,498,800:\n→ 4+2 Bedrooms across a smart, spacious layout\n→ Double car garage + finished basement\n→ Established Woodbridge street with real community feel\n→ Access to Vaughan's best schools, shops, and highways\n\nDon't be the person who waits too long on this one.\n\n📩 DM '179LIO' — let's get you in this week.\n\n#WoodbridgeHomes #VaughanRealEstate #SoldMike #TheOPTeam #REMAXPremier`,
+    imageUrl: '',
+    status: 'pending'
+  },
+
+  // ─── WEEK 3: Apr 20–25 ───
+  {
+    id: 'p11', date: makeDate(4,20), property: 'Educational',
+    platforms: ['ig','fb'],
+    caption: `🧠 Buyers — What "Conditionally Sold" Actually Means for You\n\nWhen a property goes conditional, most buyers walk away. Here's what the smart ones do instead:\n\n✅ They register backup interest with the listing agent\n✅ They use that time to sharpen their financing\n✅ They're ready to move the moment a condition falls through\n\nConditions fail more often than people think. The buyers who are positioned win.\n\nAre you positioned? Let's talk.\n\n📩 DM me 'BUYERSTRATEGY' and let's build your plan.\n\n💡 I am SoldMike — giving you power through knowledge.\n\n#BuyerTips #GTARealEstate #SoldMike #REMAXPremier #VaughanRealEstate`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p12', date: makeDate(4,21), property: '2 La Maria Lane',
+    platforms: ['ig','fb'],
+    caption: `📈 Under $1M With Income Potential — The Math on La Maria\n\nLet's talk about what a separate entrance actually means in 2026:\n\n→ Convert lower level to a legal rental suite\n→ Offset your mortgage with rental income\n→ OR keep it for family — flexible either way\n\nThis is the kind of built-in upside that most sub-$1M Vaughan properties can't offer. Detached, with a finished lower level and a separate entrance.\n\n2 La Maria Lane, Vaughan.\n\n📩 DM 'LAMARIA' — let's walk through the numbers together.\n\n#VaughanRealEstate #IncomePotential #SeparateEntrance #SoldMike #TheOPTeam`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p13', date: makeDate(4,22), property: '3 Westbrooke Blvd',
+    platforms: ['ig','fb'],
+    caption: `🏡 3 Westbrooke Blvd — A King City Lifestyle\n\nThere are addresses in the GTA where the moment you drive in, something shifts.\n\nWestbrooke Boulevard in King is one of them.\n\nThis is what move-up looks like when it's done right. Executive finishes, meaningful space, and a community that holds its value because the people who live here chose it intentionally.\n\nReady to see it in person?\n\n📩 DM 'WESTBROOKE' — private showings available now.\n\n#KingOntario #LuxuryRealEstate #SoldMike #TheOPTeam #REMAXPremier #GTALuxury`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p14', date: makeDate(4,23), property: 'Educational',
+    platforms: ['ig','fb'],
+    caption: `🔑 The Most Underrated Part of Buying or Selling in the GTA?\n\nNegotiation.\n\nNot just price negotiation. The whole picture:\n\n→ Conditions and what you're actually risking\n→ Closing timelines and how they affect financing\n→ What to offer beyond price to win a multiple offer situation\n→ How sellers should respond to low-ball first offers\n\nThis is where having the right agent changes the outcome — not just slightly. Significantly.\n\nSince 2011, I've been in these rooms. Let me bring that experience to your table.\n\n📩 DM me 'NEGOTIATE' and let's talk strategy.\n\n💡 I am SoldMike — giving you power through knowledge.\n\n#Negotiation #GTARealEstate #SoldMike #REMAXPremier #BuyerTips #SellerTips`,
+    imageUrl: '',
+    status: 'pending'
+  },
+  {
+    id: 'p15', date: makeDate(4,24), property: 'SOLDMIKE Brand',
+    platforms: ['ig','fb'],
+    caption: `💪 Why I do this.\n\nReal estate is one of the biggest financial decisions most people make in their lifetime.\n\nThat's not lost on me — not for a single transaction.\n\nMy goal has always been simple: make sure the people I work with are the most informed, best-positioned, and well-represented people in the room.\n\nSpeed. Quality. Consistency. That's the standard I hold myself to — and what I deliver for every client, every time.\n\n📩 If you or someone you know is thinking about making a move — I'm a DM away.\n\n💡 I am SoldMike, Your Full-Time Realtor — Giving You Power, Through Knowledge.\n\n#SoldMike #TheOPTeam #REMAXPremier #VaughanRealEstate #GTA #RealtorLife #RealEstate2026`,
+    imageUrl: '',
+    status: 'pending'
+  }
+];
+
+// ── STATE ──
+let posts = POSTS.map(p => ({...p}));
+
+// ── RENDER ──
+function render() {
+  const container = document.getElementById('postQueue');
+  container.innerHTML = '';
+
+  let scheduled = 0, pending = 0;
+
+  posts.forEach((post, idx) => {
+    if (post.status === 'scheduled') scheduled++;
+    else if (!post.imageUrl) pending++;
+
+    const d = new Date(post.date);
+    const dayStr = d.toLocaleDateString('en-CA', {weekday:'short', month:'short', day:'numeric'});
+
+    const card = document.createElement('div');
+    card.className = `post-card ${post.status}`;
+    card.id = `card-${post.id}`;
+
+    const platformBadges = post.platforms.map(p => {
+      const labels = {ig:'IG', fb:'FB', li:'LI'};
+      return `<span class="platform-badge p-${p}">${labels[p]}</span>`;
+    }).join('');
+
+    const statusLabel = {
+      pending: `<span class="card-status status-pending">Pending</span>`,
+      scheduled: `<span class="card-status status-live">✓ Scheduled</span>`,
+      error: `<span class="card-status status-error">Error</span>`
+    }[post.status] || '';
+
+    const preview = post.caption.split('\n')[0].replace(/[✨🏡🌿📊🏠💡📋🎯🧠📈🔑💪📩]/g,'').trim();
+
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard('${post.id}')">
+        <div class="post-date"><strong>${d.toLocaleDateString('en-CA',{weekday:'short'}).toUpperCase()} ${d.getDate()}</strong>9:00 AM</div>
+        <div class="post-property">${post.property}</div>
+        <div class="post-preview">${preview}</div>
+        <div class="platforms">${platformBadges}</div>
+        ${statusLabel}
+        <span class="chevron" id="chev-${post.id}">▼</span>
+      </div>
+      <div class="card-body" id="body-${post.id}">
+        <div class="field-group">
+          <div class="field-label">Caption</div>
+          <textarea id="caption-${post.id}" oninput="updateCaption('${post.id}', this.value)">${post.caption}</textarea>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Image URL (Cloudinary / Public Link)</div>
+          <div class="url-row">
+            <input type="url" id="img-${post.id}" placeholder="https://res.cloudinary.com/dgjwvyjbu/..." 
+              value="${post.imageUrl}"
+              onchange="updateImage('${post.id}', this.value)"
+              oninput="updateImage('${post.id}', this.value)" />
+            <img id="preview-${post.id}" class="image-preview ${post.imageUrl ? 'loaded':''}" 
+              src="${post.imageUrl || ''}" 
+              onerror="this.classList.remove('loaded')" 
+              onload="this.classList.add('loaded')" />
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-outline" onclick="scheduleOne('${post.id}')">Schedule This Post</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  // Update stats
+  document.getElementById('statTotal').textContent = posts.length;
+  document.getElementById('statScheduled').textContent = scheduled;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('readyCount').textContent = posts.length - pending;
+  document.getElementById('pendingCount').textContent = pending;
+}
+
+function toggleCard(id) {
+  const body = document.getElementById(`body-${id}`);
+  const chev = document.getElementById(`chev-${id}`);
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+function expandAll() { posts.forEach(p => { document.getElementById(`body-${p.id}`)?.classList.add('open'); document.getElementById(`chev-${p.id}`)?.classList.add('open'); }); }
+function collapseAll() { posts.forEach(p => { document.getElementById(`body-${p.id}`)?.classList.remove('open'); document.getElementById(`chev-${p.id}`)?.classList.remove('open'); }); }
+
+function updateCaption(id, val) { posts.find(p=>p.id===id).caption = val; }
+function updateImage(id, val) {
+  const post = posts.find(p=>p.id===id);
+  post.imageUrl = val;
+  const img = document.getElementById(`preview-${id}`);
+  if (val) { img.src = val; }
+  else { img.classList.remove('loaded'); }
+}
+
+// ── API ──
+async function checkAPI() {
+  const dot = document.getElementById('apiDot');
+  const label = document.getElementById('apiStatus');
+  dot.style.background = '#c9a84c';
+  label.textContent = 'Checking...';
+  try {
+    const r = await fetch(`${BASE_URL}/api/admin/simpleProfiles`, {
+      headers: { 'X-Mc-Auth': METRICOOL_TOKEN }
+    });
+    if (r.ok) {
+      dot.style.background = 'var(--green)';
+      dot.style.boxShadow = '0 0 8px var(--green)';
+      label.textContent = 'Metricool Connected ✓';
+      toast('✓ Metricool API is live', 'success');
+    } else {
+      throw new Error(`${r.status}`);
+    }
+  } catch(e) {
+    dot.style.background = 'var(--red)';
+    dot.style.boxShadow = '0 0 8px var(--red)';
+    label.textContent = 'API Error — check token';
+    toast('⚠ API check failed: ' + e.message, 'error');
+  }
+}
+
+async function postToMetricool(post) {
+  // Convert platform codes to Metricool network names
+  const networkMap = { ig: 'instagram', fb: 'facebook', li: 'linkedin' };
+  const networks = post.platforms.map(p => ({
+    network: networkMap[p],
+    publishDate: post.date.replace('T', ' ').substring(0, 16)
+  }));
+
+  const body = {
+    blogId: BLOG_ID,
+    text: post.caption,
+    networks: networks,
+    ...(post.imageUrl ? { images: [{ url: post.imageUrl }] } : {})
+  };
+
+  const response = await fetch(`${BASE_URL}/api/v2/scheduler/posts`, {
+    method: 'POST',
+    headers: {
+      'X-Mc-Auth': METRICOOL_TOKEN,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`${response.status}: ${err}`);
+  }
+  return await response.json();
+}
+
+async function scheduleOne(id) {
+  const post = posts.find(p=>p.id===id);
+  const card = document.getElementById(`card-${id}`);
+  try {
+    await postToMetricool(post);
+    post.status = 'scheduled';
+    card.className = 'post-card scheduled';
+    toast(`✓ Scheduled: ${post.property} on ${new Date(post.date).toLocaleDateString()}`, 'success');
+    render();
+  } catch(e) {
+    post.status = 'error';
+    card.className = 'post-card error';
+    toast(`✗ Failed: ${e.message}`, 'error');
+  }
+}
+
+async function scheduleAll() {
+  const btn = document.getElementById('scheduleAllBtn');
+  btn.disabled = true;
+  const bar = document.getElementById('progressBar');
+  const fill = document.getElementById('progressFill');
+  bar.style.display = 'block';
+  fill.style.width = '0%';
+
+  let done = 0;
+  const toSchedule = posts.filter(p => p.status !== 'scheduled');
+  
+  for (const post of toSchedule) {
+    try {
+      await postToMetricool(post);
+      post.status = 'scheduled';
+      toast(`✓ ${post.property} — ${new Date(post.date).toLocaleDateString('en-CA',{month:'short',day:'numeric'})}`, 'success');
+    } catch(e) {
+      post.status = 'error';
+      toast(`✗ ${post.property}: ${e.message}`, 'error');
+    }
+    done++;
+    fill.style.width = `${(done/toSchedule.length)*100}%`;
+    await new Promise(r => setTimeout(r, 600)); // rate limit buffer
+    render();
+  }
+  
+  btn.disabled = false;
+  bar.style.display = 'none';
+  toast(`🎯 Done — ${posts.filter(p=>p.status==='scheduled').length} posts scheduled`, 'success');
+}
+
+async function scheduleReady() {
+  const ready = posts.filter(p => p.status !== 'scheduled' && p.imageUrl);
+  if (!ready.length) { toast('No posts with images ready yet', 'error'); return; }
+  for (const post of ready) {
+    try {
+      await postToMetricool(post);
+      post.status = 'scheduled';
+      toast(`✓ ${post.property}`, 'success');
+    } catch(e) {
+      post.status = 'error';
+    }
+    await new Promise(r => setTimeout(r, 600));
+    render();
+  }
+}
+
+// ── TOAST ──
+function toast(msg, type='success') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── INIT ──
+render();
+setTimeout(checkAPI, 800);
+</script>
+</body>
+</html>
