@@ -24,19 +24,16 @@ button{cursor:pointer;}
 .input{width:100%;background:#F8FAFC;border:2px solid #E2E8F0;border-radius:10px;padding:14px 16px;color:#111;font-size:15px;outline:none;margin-bottom:10px;}
 .input:focus{border-color:#1B3A6B;}
 .input::placeholder{color:#9CA3AF;}
-.badge{display:inline-block;font-size:9px;padding:3px 8px;border-radius:20px;letter-spacing:1px;font-weight:700;}
-.bs{background:#D1FAE5;color:#065F46;}
-.bc{background:#FEF3C7;color:#92400E;}
-.bl{background:#FCE7F3;color:#9D174D;}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+<!-- HOME -->
 <div id="pg-home" class="page active">
   <div style="background:#1B3A6B;padding:28px 20px 24px;">
     <div style="font-family:'Bebas Neue';font-size:44px;letter-spacing:5px;color:#C9A84C;line-height:1;">SOLDMIKE</div>
-    <div style="font-size:11px;letter-spacing:3px;color:rgba(255,255,255,0.55);margin-top:4px;">SHOT COMMANDER</div>
+    <div style="font-size:11px;letter-spacing:3px;color:rgba(255,255,255,0.5);margin-top:4px;">SHOT COMMANDER</div>
   </div>
   <div style="padding:20px;">
     <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
@@ -51,67 +48,73 @@ button{cursor:pointer;}
   </div>
 </div>
 
+<!-- SESSION -->
 <div id="pg-session" class="page" style="padding-bottom:100px;">
   <div id="sess-header" style="background:#1B3A6B;padding:16px 20px 0;position:sticky;top:0;z-index:20;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
       <div>
-        <button onclick="showPage('pg-home')" style="background:none;border:none;color:rgba(255,255,255,0.55);font-size:11px;padding:0;margin-bottom:6px;display:block;">← HOME</button>
-        <div id="sess-addr" style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:#fff;line-height:1;"></div>
-        <div id="sess-meta" style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:3px;"></div>
+        <button onclick="showPage('pg-home')" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;padding:0;margin-bottom:6px;display:block;">← HOME</button>
+        <div id="sess-addr" style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:#fff;line-height:1;max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <div id="sess-meta" style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:3px;"></div>
       </div>
-      <div style="text-align:right;">
+      <div style="text-align:right;flex-shrink:0;">
         <div id="sess-count" style="font-family:'Bebas Neue';font-size:40px;color:#C9A84C;line-height:1;"></div>
-        <div id="sess-pct" style="font-size:9px;color:rgba(255,255,255,0.45);letter-spacing:1px;margin-top:2px;"></div>
+        <div id="sess-pct" style="font-size:9px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-top:2px;"></div>
       </div>
     </div>
     <div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px;margin-bottom:14px;">
       <div id="prog-bar" style="height:100%;width:0%;background:#C9A84C;border-radius:3px;transition:width 0.4s ease;"></div>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:12px;">
-      <button onclick="setTab('shoot')" id="tab-shoot" class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;background:#C9A84C;border:none;color:#1B3A6B;">SHOOT</button>
-      <button onclick="setTab('edit')"  id="tab-edit"  class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.7);">EDIT ORDER</button>
-      <button onclick="setTab('lib')"   id="tab-lib"   class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.7);">LIBRARY</button>
+    <!-- Main tabs -->
+    <div style="display:flex;gap:5px;margin-bottom:10px;">
+      <button onclick="setTab('shoot')" id="tab-shoot" class="tap" style="flex:1;padding:9px;border-radius:8px;font-size:10px;font-weight:700;background:#C9A84C;border:none;color:#1B3A6B;">SHOOT</button>
+      <button onclick="setTab('edit')"  id="tab-edit"  class="tap" style="flex:1;padding:9px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.7);">EDIT ORDER</button>
+      <button onclick="setTab('lib')"   id="tab-lib"   class="tap" style="flex:1;padding:9px;border-radius:8px;font-size:10px;font-weight:700;background:rgba(255,255,255,0.15);border:none;color:rgba(255,255,255,0.7);">LIBRARY</button>
     </div>
-    <div style="display:flex;gap:6px;padding-bottom:14px;" id="tier-filters"></div>
+    <!-- GEAR filter - the main on-set filter -->
+    <div style="display:flex;gap:5px;padding-bottom:14px;overflow-x:auto;" id="gear-filters"></div>
   </div>
   <div id="sess-content" style="padding:16px 20px;"></div>
 </div>
 
+<!-- LIBRARY STANDALONE -->
 <div id="pg-library" class="page">
   <div style="background:#1B3A6B;padding:28px 20px 24px;">
-    <button onclick="showPage('pg-home')" style="background:none;border:none;color:rgba(255,255,255,0.55);font-size:11px;padding:0;margin-bottom:12px;display:block;">← HOME</button>
+    <button onclick="showPage('pg-home')" style="background:none;border:none;color:rgba(255,255,255,0.5);font-size:11px;padding:0;margin-bottom:12px;display:block;">← HOME</button>
     <div style="font-family:'Bebas Neue';font-size:36px;letter-spacing:4px;color:#C9A84C;">SHOT LIBRARY</div>
-    <div style="font-size:10px;color:rgba(255,255,255,0.45);letter-spacing:2px;margin-top:4px;">SAVE REFERENCE MOVES</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-top:4px;">SAVE REFERENCE MOVES</div>
   </div>
   <div style="padding:20px;">
     <button onclick="openLibModal()" class="tap" style="width:100%;background:#1B3A6B;border:none;border-radius:12px;padding:15px;color:#fff;font-size:13px;font-weight:700;letter-spacing:2px;margin-bottom:16px;">+ SAVE A COOL SHOT</button>
-    <div id="lib-list-standalone"></div>
+    <div id="lib-list-sa"></div>
   </div>
 </div>
 
-</div>
+</div><!-- /wrap -->
 
+<!-- REF MODAL -->
 <div id="modal-ref" class="modal-wrap">
   <div class="modal-box fadeIn">
     <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#1B3A6B;margin-bottom:8px;">ADD REFERENCE VIDEO</div>
     <div style="font-size:13px;color:#6B7280;margin-bottom:16px;line-height:1.6;">Paste a YouTube link. Tap WATCH on set to open it before shooting.</div>
     <input id="ref-url-input" class="input" placeholder="https://youtube.com/..."/>
-    <div style="display:flex;gap:10px;margin-top:6px;">
+    <div style="display:flex;gap:10px;margin-top:4px;">
       <button onclick="closeRefModal()" class="tap" style="flex:1;padding:14px;background:#F3F4F6;border:none;border-radius:10px;color:#6B7280;font-size:13px;font-weight:600;">Cancel</button>
       <button onclick="saveRef()" class="tap" style="flex:2;padding:14px;background:#1B3A6B;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;">SAVE REF</button>
     </div>
   </div>
 </div>
 
+<!-- LIB MODAL -->
 <div id="modal-lib" class="modal-wrap">
   <div class="modal-box fadeIn">
     <div style="font-size:12px;font-weight:700;letter-spacing:2px;color:#1B3A6B;margin-bottom:16px;">SAVE SHOT TO LIBRARY</div>
-    <input id="lib-name" class="input" placeholder="Shot name (e.g. Focus Pull Kitchen)"/>
-    <input id="lib-move" class="input" placeholder="Gimbal move description..."/>
+    <input id="lib-name" class="input" placeholder="Shot name..."/>
+    <input id="lib-move" class="input" placeholder="Move description..."/>
     <input id="lib-url"  class="input" placeholder="Reference video URL..."/>
-    <input id="lib-tags" class="input" placeholder="Tags: kitchen, focus pull, high riser..."/>
-    <div style="font-size:11px;font-weight:700;color:#6B7280;letter-spacing:1px;margin:4px 0 10px;">TIER</div>
-    <div style="display:flex;gap:8px;margin-bottom:18px;" id="lib-tier-row"></div>
+    <input id="lib-tags" class="input" placeholder="Tags: kitchen, vertical, focus pull..."/>
+    <div style="font-size:11px;font-weight:700;color:#6B7280;letter-spacing:1px;margin:4px 0 10px;">GEAR TYPE</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;" id="lib-gear-row"></div>
     <div style="display:flex;gap:10px;">
       <button onclick="closeLibModal()" class="tap" style="flex:1;padding:14px;background:#F3F4F6;border:none;border-radius:10px;color:#6B7280;font-size:13px;font-weight:600;">Cancel</button>
       <button onclick="saveLibShot()" class="tap" style="flex:2;padding:14px;background:#1B3A6B;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;">SAVE SHOT</button>
@@ -120,184 +123,415 @@ button{cursor:pointer;}
 </div>
 
 <script>
-const SHOTS=[
-  {id:"d1",zone:"Drone",zi:0,name:"Opening Reveal",move:"High altitude descend toward property, slow tilt down",lens:"Drone",eo:1,tier:"safety"},
-  {id:"d2",zone:"Drone",zi:0,name:"Low Fly Approach",move:"Ultra low fast glide straight to front entrance",lens:"Drone",eo:2,tier:"cool"},
-  {id:"d3",zone:"Drone",zi:0,name:"Orbit",move:"Slow clockwise orbit at mid height, property centered",lens:"Drone",eo:21,tier:"creative"},
-  {id:"d4",zone:"Drone",zi:0,name:"Closing Pull-Back",move:"Rise and pull back to reveal street and neighbourhood",lens:"Drone",eo:22,tier:"safety"},
-  {id:"e1",zone:"Exterior",zi:1,name:"Curb Wide Push",move:"Slow gimbal push forward from curb toward front door",lens:"12mm",eo:3,tier:"safety"},
-  {id:"e2",zone:"Exterior",zi:1,name:"Front Door Detail",move:"Arc around door handle, rise up to reveal entry",lens:"50mm",eo:4,tier:"creative"},
-  {id:"e3",zone:"Exterior",zi:1,name:"Backyard Wide",move:"Pan across backyard left to right, low angle",lens:"12mm",eo:18,tier:"safety"},
-  {id:"l1",zone:"Living Room",zi:2,name:"Entry Reveal",move:"Push through front door, slow reveal of full space",lens:"12mm",eo:5,tier:"safety"},
-  {id:"l2",zone:"Living Room",zi:2,name:"Room Wide Push",move:"Straight gimbal push toward feature wall",lens:"12mm",eo:6,tier:"safety"},
-  {id:"l3",zone:"Living Room",zi:2,name:"Fireplace Arc",move:"Low slow orbit around fireplace, tilt up at end",lens:"50mm",eo:7,tier:"creative"},
-  {id:"l4",zone:"Living Room",zi:2,name:"Window Focus Pull",move:"Rack focus from foreground object to window view",lens:"50mm",eo:8,tier:"cool"},
-  {id:"k1",zone:"Kitchen",zi:3,name:"Kitchen Wide Push",move:"Straight gimbal push through full kitchen",lens:"12mm",eo:9,tier:"safety"},
-  {id:"k2",zone:"Kitchen",zi:3,name:"Island Arc",move:"Slow arc around island, low angle, tilt up at end",lens:"12mm",eo:10,tier:"creative"},
-  {id:"k3",zone:"Kitchen",zi:3,name:"Counter Detail",move:"Slow slide along counter edge, extreme close",lens:"50mm",eo:11,tier:"safety"},
-  {id:"pb1",zone:"Primary Bedroom",zi:4,name:"Bedroom Reveal",move:"Push in from doorway, slow wide reveal of room",lens:"12mm",eo:12,tier:"safety"},
-  {id:"pb2",zone:"Primary Bedroom",zi:4,name:"Ensuite Reveal",move:"Push into ensuite, pan to shower feature wall",lens:"12mm",eo:13,tier:"safety"},
-  {id:"r1",zone:"Secondary Rooms",zi:5,name:"Bedroom 2",move:"Quick gimbal push, single clean pass through room",lens:"12mm",eo:14,tier:"safety"},
-  {id:"r2",zone:"Secondary Rooms",zi:5,name:"Bathroom",move:"Arc around vanity, rise up to mirror",lens:"50mm",eo:15,tier:"safety"},
-  {id:"det1",zone:"Details",zi:6,name:"Hardware Close-Up",move:"Extreme close, slow pull back to reveal context",lens:"50mm",eo:16,tier:"creative"},
-  {id:"det2",zone:"Details",zi:6,name:"Light Fixture Rise",move:"Low to high rise past fixture, slow tilt down",lens:"50mm",eo:17,tier:"creative"},
-  {id:"det3",zone:"Details",zi:6,name:"Staircase Track",move:"Track along staircase railing in upward motion",lens:"12mm",eo:19,tier:"safety"},
-  {id:"det4",zone:"Details",zi:6,name:"Wild Card / Pocket Shot",move:"Your creative shot — add reference video",lens:"Any",eo:20,tier:"cool"},
-  // DINING ROOM
-  {id:"din1",zone:"Dining Room",zi:3,name:"Dining Room Wide",move:"Push in from entry, slow reveal of dining space",lens:"12mm",eo:10,tier:"safety"},
-  {id:"din2",zone:"Dining Room",zi:3,name:"Table Detail",move:"Slow arc around dining table, low angle",lens:"50mm",eo:11,tier:"creative"},
-  // HOME OFFICE
-  {id:"off1",zone:"Office / Den",zi:5,name:"Office Wide",move:"Push in through doorway, reveal full space",lens:"12mm",eo:16,tier:"safety"},
-  {id:"off2",zone:"Office / Den",zi:5,name:"Built-In Detail",move:"Slow slide along built-in shelving",lens:"50mm",eo:17,tier:"creative"},
-  // GARAGE
-  {id:"gar1",zone:"Garage",zi:7,name:"Garage Interior",move:"Push in through garage door, wide reveal",lens:"12mm",eo:23,tier:"safety"},
-  {id:"gar2",zone:"Garage",zi:7,name:"Garage Exterior",move:"Low angle push toward garage doors",lens:"12mm",eo:24,tier:"safety"},
-  // LAUNDRY
-  {id:"lau1",zone:"Laundry",zi:8,name:"Laundry Room",move:"Wide reveal, arc to show full room",lens:"12mm",eo:25,tier:"safety"},
-  // LOWER LEVEL
-  {id:"low1",zone:"Lower Level",zi:9,name:"Basement Wide",move:"Push in from stairs, slow wide reveal",lens:"12mm",eo:26,tier:"safety"},
-  {id:"low2",zone:"Lower Level",zi:9,name:"Rec Room / Feature",move:"Track along feature wall or bar area",lens:"12mm",eo:27,tier:"creative"},
-  // EXTRA DETAILS
-  {id:"det5",zone:"Details",zi:6,name:"Flooring Close-Up",move:"Extreme close on floor, slow pull back",lens:"50mm",eo:28,tier:"creative"},
-  {id:"det6",zone:"Details",zi:6,name:"Window / View",move:"Rack focus from window frame to outside view",lens:"50mm",eo:29,tier:"cool"},
-  {id:"det7",zone:"Details",zi:6,name:"Walk-In Closet",move:"Push in from door, pan to reveal full space",lens:"12mm",eo:30,tier:"safety"},
-  {id:"det8",zone:"Details",zi:6,name:"Accent Wall / Feature",move:"Low push toward feature wall, tilt up",lens:"50mm",eo:31,tier:"creative"},
+// ═══════════════════════════════════════════
+// GEAR TYPES — primary on-set filter
+// ═══════════════════════════════════════════
+const GEAR = {
+  wide:     {label:"📷 WIDE",     color:"#1B3A6B", bg:"#EFF6FF", border:"#BFDBFE"},
+  detail:   {label:"🔍 DETAIL",   color:"#7C3AED", bg:"#F5F3FF", border:"#DDD6FE"},
+  drone:    {label:"🚁 DRONE",    color:"#0891B2", bg:"#ECFEFF", border:"#A5F3FC"},
+  vertical: {label:"📱 VERTICAL", color:"#DB2777", bg:"#FDF2F8", border:"#FBCFE8"},
+  agent:    {label:"🎬 AGENT",    color:"#D97706", bg:"#FFFBEB", border:"#FDE68A"},
+};
+
+const ZONE_COLOR = {
+  "Drone":"#0891B2","Exterior":"#16A34A","Living Room":"#2563EB","Dining Room":"#7C3AED",
+  "Kitchen":"#9333EA","Primary Bedroom":"#DB2777","Secondary Rooms":"#0891B2",
+  "Bathrooms":"#0D9488","Office / Den":"#D97706","Details":"#C9A84C",
+  "Garage":"#6B7280","Laundry":"#16A34A","Lower Level":"#374151",
+  "Vertical":"#DB2777","Agent Shots":"#D97706"
+};
+
+// ═══════════════════════════════════════════
+// SHOTS — each has safeMove + creativeOption
+// gear = which pass you shoot it in
+// ═══════════════════════════════════════════
+const SHOTS = [
+  // ── DRONE ──
+  {id:"d1",zone:"Drone",gear:"drone",name:"Opening Reveal",safeMove:"High altitude descend toward property, slow tilt down",creativeOption:"Start tight on roof, pull back fast to reveal full lot",eo:1},
+  {id:"d2",zone:"Drone",gear:"drone",name:"Low Fly Approach",safeMove:"Low steady glide straight toward front entrance",creativeOption:"Ultra low aggressive speed-ramp push to front door",eo:2},
+  {id:"d3",zone:"Drone",gear:"drone",name:"Orbit",safeMove:"Slow clockwise orbit at mid height, property centered",creativeOption:"Tight low orbit with dynamic tilt — rising through orbit",eo:21},
+  {id:"d4",zone:"Drone",gear:"drone",name:"Closing Pull-Back",safeMove:"Rise and pull back to reveal full street and neighbourhood",creativeOption:"Fast ascend then hover — let sky fill the frame",eo:22},
+  // ── WIDE — EXTERIOR ──
+  {id:"e1",zone:"Exterior",gear:"wide",name:"Curb Wide Push",safeMove:"Slow gimbal push forward from curb toward front door",creativeOption:"Low angle push, drift slightly right as you approach",eo:3},
+  {id:"e2",zone:"Exterior",gear:"wide",name:"Backyard Wide",safeMove:"Pan across backyard left to right, low angle",creativeOption:"Push forward into backyard, pivot to feature (pool/patio/trees)",eo:18},
+  // ── WIDE — LIVING ROOM ──
+  {id:"l1",zone:"Living Room",gear:"wide",name:"Entry Reveal",safeMove:"Push through front door, slow reveal of full space",creativeOption:"Start outside door, whip pan inside on open",eo:5},
+  {id:"l2",zone:"Living Room",gear:"wide",name:"Room Wide Push",safeMove:"Straight gimbal push toward feature wall",creativeOption:"Low push with slight rise at end to reveal ceiling height",eo:6},
+  // ── WIDE — DINING ──
+  {id:"din1",zone:"Dining Room",gear:"wide",name:"Dining Wide",safeMove:"Push in from entry toward dining table",creativeOption:"Arc around dining table, low angle",eo:9},
+  // ── WIDE — KITCHEN ──
+  {id:"k1",zone:"Kitchen",gear:"wide",name:"Kitchen Wide Push",safeMove:"Straight gimbal push through full kitchen",creativeOption:"Push in then pivot to island — one continuous move",eo:10},
+  {id:"k2",zone:"Kitchen",gear:"wide",name:"Island Arc",safeMove:"Slow arc around island, low angle, tilt up at end",creativeOption:"Tight low arc — stay close to island surface",eo:11},
+  // ── WIDE — PRIMARY BED ──
+  {id:"pb1",zone:"Primary Bedroom",gear:"wide",name:"Bedroom Reveal",safeMove:"Push in from doorway, slow wide reveal of room",creativeOption:"Slow rise from low angle as you push through door",eo:14},
+  {id:"pb2",zone:"Primary Bedroom",gear:"wide",name:"Walk-In Closet",safeMove:"Push into closet, pan to reveal full space",creativeOption:"Low push through closet center, tilt up to shelving",eo:15},
+  {id:"pb3",zone:"Primary Bedroom",gear:"wide",name:"Ensuite Reveal",safeMove:"Push into ensuite, pan to shower feature wall",creativeOption:"Start at shower, pull back to reveal full ensuite",eo:16},
+  // ── WIDE — SECONDARY ──
+  {id:"r1",zone:"Secondary Rooms",gear:"wide",name:"Bedroom 2",safeMove:"Single clean push through room",creativeOption:"Low push — tilt up to window",eo:17},
+  // ── WIDE — OFFICE ──
+  {id:"off1",zone:"Office / Den",gear:"wide",name:"Office Wide",safeMove:"Push in through doorway, reveal full space",creativeOption:"Slow push toward desk/built-in wall feature",eo:19},
+  // ── WIDE — LOWER ──
+  {id:"low1",zone:"Lower Level",gear:"wide",name:"Lower Level Wide",safeMove:"Push in from stairs, slow wide reveal",creativeOption:"Low angle push — feels bigger",eo:23},
+  // ── DETAIL — EXTERIOR ──
+  {id:"ed1",zone:"Exterior",gear:"detail",name:"Front Door Detail",safeMove:"Arc around door handle, rise up to reveal entry",creativeOption:"Extreme close on hardware, pull back fast",eo:4},
+  // ── DETAIL — KITCHEN ──
+  {id:"kd1",zone:"Kitchen",gear:"detail",name:"Counter Detail",safeMove:"Slow slide along counter edge, extreme close",creativeOption:"Start on tap/faucet, pull back to reveal full counter",eo:12},
+  {id:"kd2",zone:"Kitchen",gear:"detail",name:"Appliance Feature",safeMove:"Push in on range/fridge, slow close",creativeOption:"Focus pull from counter to appliance behind",eo:13},
+  // ── DETAIL — LIVING ──
+  {id:"ld1",zone:"Living Room",gear:"detail",name:"Fireplace Arc",safeMove:"Low slow orbit around fireplace, tilt up",creativeOption:"Extreme close on flame/stone, pull back",eo:7},
+  {id:"ld2",zone:"Living Room",gear:"detail",name:"Window Focus Pull",safeMove:"Rack focus from foreground object to window view",creativeOption:"Start on texture in foreground, pull to view outside",eo:8},
+  // ── DETAIL — MISC ──
+  {id:"det1",zone:"Details",gear:"detail",name:"Hardware Close-Up",safeMove:"Extreme close, slow pull back to reveal context",creativeOption:"Tilt in from above on hardware, pull back low",eo:24},
+  {id:"det2",zone:"Details",gear:"detail",name:"Light Fixture Rise",safeMove:"Low to high rise past fixture, slow tilt down",creativeOption:"Start below fixture, spin up through it",eo:25},
+  {id:"det3",zone:"Details",gear:"detail",name:"Flooring Slide",safeMove:"Extreme low slide along flooring, looking down",creativeOption:"Angle the slide to catch light reflection",eo:26},
+  {id:"det4",zone:"Details",gear:"detail",name:"Staircase Track",safeMove:"Track along staircase railing in upward motion",creativeOption:"Start at base, look up through staircase on rise",eo:27},
+  {id:"det5",zone:"Details",gear:"detail",name:"Wild Card / Pocket Shot",safeMove:"Your safety grab of the coolest detail on this property",creativeOption:"Add your ref video — something you want to try",eo:28},
+  // ── VERTICAL — key rooms ──
+  {id:"v1",zone:"Vertical",gear:"vertical",name:"Exterior Vertical Push",safeMove:"Portrait push from curb to front door",creativeOption:"Low angle portrait push — aggressive and cinematic",eo:29},
+  {id:"v2",zone:"Vertical",gear:"vertical",name:"Living Room Vertical",safeMove:"Portrait push through living room",creativeOption:"Vertical with slow tilt up to reveal ceiling",eo:30},
+  {id:"v3",zone:"Vertical",gear:"vertical",name:"Kitchen Vertical",safeMove:"Portrait push through kitchen",creativeOption:"Arc around island in portrait mode",eo:31},
+  {id:"v4",zone:"Vertical",gear:"vertical",name:"Primary Bedroom Vertical",safeMove:"Portrait push through bedroom",creativeOption:"Low portrait rise from floor level",eo:32},
+  {id:"v5",zone:"Vertical",gear:"vertical",name:"Detail Vertical",safeMove:"Vertical close-up on best feature of the property",creativeOption:"Focus pull on detail — your pocket shot in portrait",eo:33},
+  {id:"v6",zone:"Vertical",gear:"vertical",name:"Drone Vertical",safeMove:"Portrait descend toward property from above",creativeOption:"Fast vertical drop to roofline",eo:34},
+  // ── AGENT SHOTS ──
+  {id:"ag1",zone:"Agent Shots",gear:"agent",name:"Walk Through Front Door",safeMove:"Walk naturally through front door, look at camera naturally",creativeOption:"Open door mid-walk, don't look at camera",eo:35},
+  {id:"ag2",zone:"Agent Shots",gear:"agent",name:"Walking Through Kitchen",safeMove:"Walk through kitchen, gesture to feature naturally",creativeOption:"Walk past camera, don't acknowledge it",eo:36},
+  {id:"ag3",zone:"Agent Shots",gear:"agent",name:"Backyard Stand",safeMove:"Stand in backyard, talk to camera — introduce the space",creativeOption:"Walk into backyard from house, natural discovery",eo:37},
+  {id:"ag4",zone:"Agent Shots",gear:"agent",name:"Exterior Address Intro",safeMove:"Stand at curb, address the camera — intro the property",creativeOption:"Walk from car to camera, stop and address",eo:38},
 ];
-const ZC={"Drone":"#FF6B35","Exterior":"#16A34A","Living Room":"#2563EB","Kitchen":"#9333EA","Primary Bedroom":"#DB2777","Secondary Rooms":"#0891B2","Details":"#D97706"};
-const TIER={safety:{label:"SAFETY",bc:"#6EE7B7",bg:"#ECFDF5",cls:"bs"},creative:{label:"CREATIVE",bc:"#FCD34D",bg:"#FFFBEB",cls:"bc"},cool:{label:"COOL",bc:"#F9A8D4",bg:"#FDF2F8",cls:"bl"}};
-let S={shoots:[],library:[],current:null,tab:"shoot",filter:"all",tmpl:"60sec",refId:null,libTier:"cool"};
-function save(){try{localStorage.setItem("sc-shoots",JSON.stringify(S.shoots));}catch(e){}try{localStorage.setItem("sc-lib",JSON.stringify(S.library));}catch(e){}}
-function load(){try{const x=localStorage.getItem("sc-shoots");if(x)S.shoots=JSON.parse(x);}catch(e){}try{const x=localStorage.getItem("sc-lib");if(x)S.library=JSON.parse(x);}catch(e){}}
-function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");window.scrollTo(0,0);if(id==="pg-home")renderHome();if(id==="pg-session")renderSession();if(id==="pg-library")renderLibSA();}
-function renderTmpl(){document.getElementById("tmpl-row").innerHTML=["60sec","90sec","2min"].map(t=>`<button onclick="setTmpl('${t}')" class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;background:${S.tmpl===t?"#1B3A6B":"#F3F4F6"};border:2px solid ${S.tmpl===t?"#1B3A6B":"#E2E8F0"};color:${S.tmpl===t?"#fff":"#6B7280"};">${t}</button>`).join("");}
+
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let S={shoots:[],library:[],current:null,tab:"shoot",gearFilter:"all",tmpl:"60sec",refId:null,libGear:"wide"};
+
+function save(){
+  try{localStorage.setItem("sc3-shoots",JSON.stringify(S.shoots));}catch(e){}
+  try{localStorage.setItem("sc3-lib",JSON.stringify(S.library));}catch(e){}
+}
+function load(){
+  try{const x=localStorage.getItem("sc3-shoots");if(x)S.shoots=JSON.parse(x);}catch(e){}
+  try{const x=localStorage.getItem("sc3-lib");if(x)S.library=JSON.parse(x);}catch(e){}
+}
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="pg-home")renderHome();
+  if(id==="pg-session")renderSession();
+  if(id==="pg-library")renderLibSA();
+}
+
+// ═══════════════════════════════════════════
+// HOME
+// ═══════════════════════════════════════════
+function renderTmpl(){
+  document.getElementById("tmpl-row").innerHTML=["60sec","90sec","2min"].map(t=>`
+    <button onclick="setTmpl('${t}')" class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;
+      background:${S.tmpl===t?"#1B3A6B":"#F3F4F6"};
+      border:2px solid ${S.tmpl===t?"#1B3A6B":"#E2E8F0"};
+      color:${S.tmpl===t?"#fff":"#6B7280"};">${t}</button>`).join("");
+}
 function setTmpl(t){S.tmpl=t;renderTmpl();}
+
 function renderHome(){
   renderTmpl();
   const el=document.getElementById("recent-list");
-  if(!S.shoots.length){el.innerHTML=`<div style="text-align:center;color:#9CA3AF;font-size:13px;padding:32px;background:#fff;border-radius:12px;">No shoots yet — start your first above</div>`;return;}
+  if(!S.shoots.length){
+    el.innerHTML=`<div style="text-align:center;color:#9CA3AF;font-size:13px;padding:32px;background:#fff;border-radius:12px;">No shoots yet — start your first above</div>`;
+    return;
+  }
   el.innerHTML=S.shoots.slice(0,6).map(sh=>{
     const d=sh.shots.filter(s=>s.completed).length,t=sh.shots.length,p=Math.round(d/t*100);
+    // count by gear
+    const gearDone={};
+    Object.keys(GEAR).forEach(g=>{
+      const gs=sh.shots.filter(s=>s.gear===g);
+      gearDone[g]=gs.filter(s=>s.completed).length+"/"+gs.length;
+    });
     return `<div onclick="loadShoot('${sh.id}')" class="tap" style="background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);cursor:pointer;border:2px solid ${d===t?"#86EFAC":"#E2E8F0"};">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <div><div style="font-size:15px;font-weight:700;margin-bottom:2px;">${sh.address}</div><div style="font-size:11px;color:#9CA3AF;">${sh.date} · ${sh.template}</div></div>
-        <div style="text-align:right;"><div style="font-family:'Bebas Neue';font-size:32px;color:${d===t?"#059669":"#1B3A6B"};line-height:1;">${d}/${t}</div><div style="font-size:10px;color:#9CA3AF;">${p}%</div></div>
+        <div>
+          <div style="font-size:15px;font-weight:700;margin-bottom:2px;">${sh.address}</div>
+          <div style="font-size:11px;color:#9CA3AF;">${sh.date} · ${sh.template}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue';font-size:30px;color:${d===t?"#059669":"#1B3A6B"};line-height:1;">${d}/${t}</div>
+          <div style="font-size:10px;color:#9CA3AF;">${p}%</div>
+        </div>
       </div>
-      <div style="height:6px;background:#F3F4F6;border-radius:3px;"><div style="height:100%;width:${p}%;background:${d===t?"#059669":"#C9A84C"};border-radius:3px;"></div></div>
+      <div style="height:5px;background:#F3F4F6;border-radius:3px;margin-bottom:10px;">
+        <div style="height:100%;width:${p}%;background:${d===t?"#059669":"#C9A84C"};border-radius:3px;"></div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        ${Object.entries(GEAR).map(([g,gc])=>`<span style="background:${gc.bg};color:${gc.color};border:1px solid ${gc.border};font-size:9px;font-weight:700;padding:3px 7px;border-radius:20px;">${gc.label} ${gearDone[g]}</span>`).join("")}
+      </div>
     </div>`;
   }).join("");
 }
 function loadShoot(id){S.current=S.shoots.find(s=>s.id===id);showPage("pg-session");}
+
 function startShoot(){
-  const a=document.getElementById("addr-input").value.trim();if(!a){document.getElementById("addr-input").focus();return;}
+  const a=document.getElementById("addr-input").value.trim();
+  if(!a){document.getElementById("addr-input").focus();return;}
   const shots=SHOTS.map(s=>({...s,completed:false,refUrl:""}));
   const sh={id:Date.now().toString(),address:a,template:S.tmpl,date:new Date().toLocaleDateString("en-CA"),shots};
   S.current=sh;S.shoots=[sh,...S.shoots];save();
-  document.getElementById("addr-input").value="";S.tab="shoot";S.filter="all";showPage("pg-session");
+  document.getElementById("addr-input").value="";
+  S.tab="shoot";S.gearFilter="all";
+  showPage("pg-session");
 }
+
+// ═══════════════════════════════════════════
+// SESSION
+// ═══════════════════════════════════════════
 function updShoot(){S.shoots=S.shoots.map(s=>s.id===S.current.id?S.current:s);save();}
+
 function renderHeader(){
-  const done=S.current.shots.filter(s=>s.completed).length,total=S.current.shots.length,pct=Math.round(done/total*100);
+  const done=S.current.shots.filter(s=>s.completed).length;
+  const total=S.current.shots.length;
+  const pct=Math.round(done/total*100);
   document.getElementById("sess-addr").textContent=S.current.address;
   document.getElementById("sess-meta").textContent=S.current.template+" · "+S.current.date;
   document.getElementById("sess-count").textContent=done+"/"+total;
   document.getElementById("sess-pct").textContent=pct+"% COMPLETE";
   document.getElementById("prog-bar").style.width=pct+"%";
   document.getElementById("prog-bar").style.background=done===total?"#22C55E":"#C9A84C";
-  ["shoot","edit","lib"].forEach(t=>{const el=document.getElementById("tab-"+t),a=S.tab===t;el.style.background=a?"#C9A84C":"rgba(255,255,255,0.15)";el.style.color=a?"#1B3A6B":"rgba(255,255,255,0.7)";});
-  document.getElementById("tier-filters").innerHTML=["all","safety","creative","cool"].map(f=>{
-    const a=S.filter===f;
-    const map={all:["#C9A84C","#1B3A6B"],safety:["#D1FAE5","#065F46"],creative:["#FEF3C7","#92400E"],cool:["#FCE7F3","#9D174D"]};
-    const [bg,col]=map[f]||map.all;
-    return `<button onclick="setFilter('${f}')" class="tap" style="flex:1;padding:6px 0;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:1px;background:${a?bg:"rgba(255,255,255,0.12)"};border:none;color:${a?col:"rgba(255,255,255,0.6)"};">${f.toUpperCase()}</button>`;
-  }).join("");
+
+  ["shoot","edit","lib"].forEach(t=>{
+    const el=document.getElementById("tab-"+t),a=S.tab===t;
+    el.style.background=a?"#C9A84C":"rgba(255,255,255,0.15)";
+    el.style.color=a?"#1B3A6B":"rgba(255,255,255,0.7)";
+  });
+
+  // GEAR filter buttons
+  const gearCounts={};
+  Object.keys(GEAR).forEach(g=>{
+    const gs=S.current.shots.filter(s=>s.gear===g);
+    const done=gs.filter(s=>s.completed).length;
+    gearCounts[g]={done,total:gs.length};
+  });
+  document.getElementById("gear-filters").innerHTML=
+    [["all","🎯 ALL",S.current.shots.filter(s=>s.completed).length+"/"+S.current.shots.length],
+     ...Object.entries(GEAR).map(([g,gc])=>[g,gc.label,gearCounts[g].done+"/"+gearCounts[g].total])
+    ].map(([g,label,count])=>{
+      const a=S.gearFilter===g;
+      const gc=GEAR[g];
+      return `<button onclick="setGear('${g}')" class="tap" style="flex-shrink:0;padding:6px 12px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;
+        background:${a?(g==="all"?"#C9A84C":(gc?.bg||"#fff")):"rgba(255,255,255,0.12)"};
+        border:1px solid ${a?(g==="all"?"#C9A84C":(gc?.border||"#fff")):"transparent"};
+        color:${a?(g==="all"?"#1B3A6B":(gc?.color||"#111")):"rgba(255,255,255,0.6)"};">${label} <span style="opacity:0.7;">${count}</span></button>`;
+    }).join("");
 }
+
 function setTab(t){S.tab=t;renderSession();}
-function setFilter(f){S.filter=f;renderSession();}
-function getFilt(){return S.filter==="all"?S.current.shots:S.current.shots.filter(s=>s.tier===S.filter);}
+function setGear(g){S.gearFilter=g;renderSession();}
+
+function getFiltered(){
+  return S.gearFilter==="all"?S.current.shots:S.current.shots.filter(s=>s.gear===S.gearFilter);
+}
+
 function renderSession(){
   renderHeader();
-  const shots=getFilt(),el=document.getElementById("sess-content");
+  const shots=getFiltered();
+  const el=document.getElementById("sess-content");
+
+  // ── SHOOT TAB ──
   if(S.tab==="shoot"){
-    const zones={};shots.forEach(s=>{(zones[s.zone]=zones[s.zone]||[]).push(s);});
-    const sorted=Object.entries(zones).sort(([a],[b])=>(SHOTS.find(s=>s.zone===a)?.zi??99)-(SHOTS.find(s=>s.zone===b)?.zi??99));
+    // Group by zone
+    const zones={};
+    shots.forEach(s=>{(zones[s.zone]=zones[s.zone]||[]).push(s);});
+    const sorted=Object.entries(zones).sort(([a],[b])=>{
+      const ai=SHOTS.find(s=>s.zone===a)?.eo??99;
+      const bi=SHOTS.find(s=>s.zone===b)?.eo??99;
+      return ai-bi;
+    });
     if(!sorted.length){el.innerHTML=`<div style="text-align:center;color:#9CA3AF;padding:60px 0;font-size:13px;">No shots match this filter.</div>`;return;}
+
     el.innerHTML=sorted.map(([zone,zshots])=>{
-      const done=zshots.filter(s=>s.completed).length,zc=ZC[zone]||"#666";
+      const done=zshots.filter(s=>s.completed).length;
+      const zc=ZONE_COLOR[zone]||"#666";
       return `<div style="margin-bottom:24px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;background:#fff;padding:12px 14px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
           <div style="width:12px;height:12px;border-radius:50%;background:${zc};flex-shrink:0;"></div>
           <div style="font-size:12px;font-weight:800;letter-spacing:2px;color:#111;">${zone.toUpperCase()}</div>
-          <div style="font-size:12px;color:#9CA3AF;margin-left:auto;">${done}/${zshots.length} done</div>
+          <div style="font-size:12px;color:#9CA3AF;margin-left:auto;">${done}/${zshots.length}</div>
         </div>
         ${zshots.map(s=>shotCard(s)).join("")}
       </div>`;
     }).join("");
-  } else if(S.tab==="edit"){
-    const ord=[...shots].sort((a,b)=>a.eo-b.eo);
+  }
+
+  // ── EDIT TAB ──
+  else if(S.tab==="edit"){
+    const ordered=[...shots].sort((a,b)=>a.eo-b.eo);
     el.innerHTML=`<div style="background:#EFF6FF;border-radius:12px;padding:14px 16px;margin-bottom:16px;border-left:4px solid #1B3A6B;">
       <div style="font-size:12px;font-weight:700;color:#1B3A6B;margin-bottom:4px;">DROP CLIPS IN THIS ORDER</div>
-      <div style="font-size:12px;color:#6B7280;">Place shots in Final Cut Pro in this numbered sequence.</div>
-    </div>`+ord.map(s=>`
-      <div style="display:flex;gap:14px;align-items:center;background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border-left:4px solid ${s.completed?"#22C55E":"#E2E8F0"};">
-        <div style="font-family:'Bebas Neue';font-size:34px;color:${s.completed?"#22C55E":"#1B3A6B"};width:40px;text-align:center;flex-shrink:0;line-height:1;">${s.eo}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;gap:6px;margin-bottom:5px;flex-wrap:wrap;">
-            <span class="badge ${TIER[s.tier].cls}">${TIER[s.tier].label}</span>
-            <span style="font-size:10px;font-weight:700;color:${ZC[s.zone]||"#666"};">${s.zone.toUpperCase()}</span>
+      <div style="font-size:12px;color:#6B7280;">Safe and Creative options shown side by side — use whichever worked.</div>
+    </div>`+ordered.map(s=>{
+      const gc=GEAR[s.gear]||{};
+      return `<div style="background:#fff;border-radius:12px;padding:14px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,0.05);border-left:4px solid ${s.completed?"#22C55E":"#E2E8F0"};">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue';font-size:34px;color:${s.completed?"#22C55E":"#1B3A6B"};width:36px;flex-shrink:0;line-height:1;">${s.eo}</div>
+          <div style="flex:1;">
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+              <span style="background:${gc.bg||"#F3F4F6"};color:${gc.color||"#666"};border:1px solid ${gc.border||"#E5E7EB"};font-size:8px;font-weight:700;padding:2px 7px;border-radius:20px;">${gc.label||s.gear}</span>
+              <span style="font-size:10px;font-weight:700;color:${ZONE_COLOR[s.zone]||"#666"};">${s.zone.toUpperCase()}</span>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:8px;">${s.name}</div>
+            <!-- Safe vs Creative side by side -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:10px;">
+                <div style="font-size:8px;font-weight:700;color:#059669;letter-spacing:1px;margin-bottom:4px;">✓ SAFE</div>
+                <div style="font-size:11px;color:#166534;line-height:1.4;">${s.safeMove}</div>
+              </div>
+              <div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:10px;">
+                <div style="font-size:8px;font-weight:700;color:#D97706;letter-spacing:1px;margin-bottom:4px;">★ CREATIVE</div>
+                <div style="font-size:11px;color:#92400E;line-height:1.4;">${s.creativeOption||"—"}</div>
+              </div>
+            </div>
           </div>
-          <div style="font-size:14px;font-weight:700;color:#111;margin-bottom:2px;">${s.name}</div>
-          <div style="font-size:11px;color:#6B7280;">${s.move}</div>
+          <div style="width:10px;height:10px;border-radius:50%;background:${s.completed?"#22C55E":"#E5E7EB"};flex-shrink:0;margin-top:4px;"></div>
         </div>
-        <div style="width:10px;height:10px;border-radius:50%;background:${s.completed?"#22C55E":"#E5E7EB"};flex-shrink:0;"></div>
-      </div>`).join("");
-  } else {
+      </div>`;
+    }).join("");
+  }
+
+  // ── LIBRARY TAB ──
+  else{
     el.innerHTML=`<button onclick="openLibModal()" class="tap" style="width:100%;background:#1B3A6B;border:none;border-radius:12px;padding:14px;color:#fff;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:16px;">+ SAVE A COOL SHOT</button>${renderLibCards()}`;
   }
 }
+
+// ═══════════════════════════════════════════
+// SHOT CARD (shoot mode)
+// Shows safe move + creative option stacked
+// ═══════════════════════════════════════════
 function shotCard(s){
-  const tc=TIER[s.tier],done=s.completed;
-  return `<div style="background:${done?"#F0FDF4":"#fff"};border:2px solid ${done?"#86EFAC":tc.bc};border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
-      <span class="badge ${tc.cls}">${tc.label}</span>
-      <span style="font-size:11px;font-weight:600;color:#6B7280;">${s.lens}</span>
-      <span style="font-size:11px;color:#D1D5DB;margin-left:auto;">Edit #${s.eo}</span>
+  const gc=GEAR[s.gear]||{bg:"#F3F4F6",color:"#666",border:"#E5E7EB",label:s.gear};
+  const done=s.completed;
+  return `<div style="background:${done?"#F0FDF4":"#fff"};border:2px solid ${done?"#86EFAC":"#E2E8F0"};border-radius:14px;margin-bottom:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+    <!-- Top section -->
+    <div style="padding:14px 14px 10px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+        <span style="background:${gc.bg};color:${gc.color};border:1px solid ${gc.border};font-size:8px;font-weight:700;padding:3px 8px;border-radius:20px;">${gc.label}</span>
+        <span style="font-size:11px;font-weight:600;color:#9CA3AF;">${s.zone}</span>
+        <span style="font-size:10px;color:#D1D5DB;margin-left:auto;">Edit #${s.eo}</span>
+      </div>
+      <div style="font-size:16px;font-weight:700;color:${done?"#15803D":"#111"};margin-bottom:12px;">${done?"✓ ":""}${s.name}</div>
+
+      <!-- Safe move -->
+      <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+        <div style="font-size:8px;font-weight:700;color:#059669;letter-spacing:1px;margin-bottom:4px;">✓ SAFE MOVE</div>
+        <div style="font-size:12px;color:#166534;line-height:1.5;">${s.safeMove}</div>
+      </div>
+
+      <!-- Creative option -->
+      ${s.creativeOption?`<div style="background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:10px 12px;margin-bottom:0;">
+        <div style="font-size:8px;font-weight:700;color:#D97706;letter-spacing:1px;margin-bottom:4px;">★ CREATIVE OPTION</div>
+        <div style="font-size:12px;color:#92400E;line-height:1.5;">${s.creativeOption}</div>
+      </div>`:""}
     </div>
-    <div style="font-size:16px;font-weight:700;color:${done?"#15803D":"#111"};margin-bottom:5px;">${done?"✓ ":""}${s.name}</div>
-    <div style="font-size:13px;color:#6B7280;line-height:1.5;margin-bottom:14px;">${s.move}</div>
-    <div style="display:flex;gap:8px;">
-      <button onclick="openRefModal('${s.id}')" class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;background:${s.refUrl?"#EFF6FF":"#F9FAFB"};border:2px solid ${s.refUrl?"#1B3A6B":"#E5E7EB"};color:${s.refUrl?"#1B3A6B":"#6B7280"};">${s.refUrl?"▶ REF VIDEO":"+ ADD REF"}</button>
-      ${s.refUrl?`<button onclick="window.open('${s.refUrl}','_blank')" class="tap" style="padding:10px 14px;background:#1B3A6B;border:none;border-radius:8px;color:#fff;font-size:11px;font-weight:700;">WATCH</button>`:""}
-      <button onclick="toggleShot('${s.id}')" class="tap" style="padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;background:${done?"#22C55E":"#1B3A6B"};border:none;color:#fff;">${done?"✓ DONE":"DONE"}</button>
+
+    <!-- Action bar -->
+    <div style="padding:10px 14px 14px;display:flex;gap:8px;">
+      <button onclick="openRefModal('${s.id}')" class="tap" style="flex:1;padding:9px;border-radius:8px;font-size:10px;font-weight:700;
+        background:${s.refUrl?"#EFF6FF":"#F9FAFB"};
+        border:2px solid ${s.refUrl?"#1B3A6B":"#E5E7EB"};
+        color:${s.refUrl?"#1B3A6B":"#6B7280"};">${s.refUrl?"▶ REF VIDEO":"+ ADD REF"}</button>
+      ${s.refUrl?`<button onclick="window.open('${s.refUrl}','_blank')" class="tap" style="padding:9px 12px;background:#1B3A6B;border:none;border-radius:8px;color:#fff;font-size:10px;font-weight:700;">WATCH</button>`:""}
+      <button onclick="toggleShot('${s.id}')" class="tap" style="padding:9px 16px;border-radius:8px;font-size:12px;font-weight:700;
+        background:${done?"#22C55E":"#1B3A6B"};border:none;color:#fff;">${done?"✓ DONE":"DONE"}</button>
     </div>
   </div>`;
 }
-function toggleShot(id){S.current.shots=S.current.shots.map(s=>s.id===id?{...s,completed:!s.completed}:s);updShoot();renderSession();}
-function openRefModal(id){S.refId=id;const s=S.current.shots.find(x=>x.id===id);document.getElementById("ref-url-input").value=s?.refUrl||"";document.getElementById("modal-ref").classList.add("open");setTimeout(()=>document.getElementById("ref-url-input").focus(),100);}
-function closeRefModal(){document.getElementById("modal-ref").classList.remove("open");}
-function saveRef(){const u=document.getElementById("ref-url-input").value.trim();S.current.shots=S.current.shots.map(s=>s.id===S.refId?{...s,refUrl:u}:s);updShoot();closeRefModal();renderSession();}
-function renderLibCards(){
-  if(!S.library.length)return`<div style="text-align:center;color:#9CA3AF;font-size:13px;padding:40px;background:#fff;border-radius:12px;line-height:2;">No saved shots yet.<br>See a cool move on YouTube?<br>Save it here.</div>`;
-  return S.library.map(s=>{const tc=TIER[s.tier]||TIER.cool;return`<div style="background:#fff;border:2px solid ${tc.bc};border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div style="flex:1;"><span class="badge ${tc.cls}" style="margin-bottom:8px;display:inline-block;">${tc.label}</span>
-      <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:5px;">${s.name}</div>
-      ${s.move?`<div style="font-size:13px;color:#6B7280;margin-bottom:5px;line-height:1.5;">${s.move}</div>`:""}
-      ${s.tags?`<div style="font-size:11px;color:#9CA3AF;">${s.tags}</div>`:""}
-      </div>
-      <div style="display:flex;gap:6px;margin-left:12px;flex-shrink:0;">
-        ${s.url?`<button onclick="window.open('${s.url}','_blank')" class="tap" style="padding:10px 14px;background:#1B3A6B;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;">▶</button>`:""}
-        <button onclick="deleteLib('${s.id}')" class="tap" style="padding:10px 12px;background:#FEE2E2;border:none;border-radius:8px;color:#DC2626;font-size:12px;font-weight:700;">✕</button>
-      </div>
-    </div>
-  </div>`;}).join("");
+
+function toggleShot(id){
+  S.current.shots=S.current.shots.map(s=>s.id===id?{...s,completed:!s.completed}:s);
+  updShoot();renderSession();
 }
-function renderLibSA(){document.getElementById("lib-list-standalone").innerHTML=renderLibCards();}
-function openLibModal(){S.libTier="cool";["lib-name","lib-move","lib-url","lib-tags"].forEach(id=>document.getElementById(id).value="");renderLibTierRow();document.getElementById("modal-lib").classList.add("open");setTimeout(()=>document.getElementById("lib-name").focus(),100);}
+
+// ═══════════════════════════════════════════
+// REF MODAL
+// ═══════════════════════════════════════════
+function openRefModal(id){
+  S.refId=id;
+  const s=S.current.shots.find(x=>x.id===id);
+  document.getElementById("ref-url-input").value=s?.refUrl||"";
+  document.getElementById("modal-ref").classList.add("open");
+  setTimeout(()=>document.getElementById("ref-url-input").focus(),100);
+}
+function closeRefModal(){document.getElementById("modal-ref").classList.remove("open");}
+function saveRef(){
+  const u=document.getElementById("ref-url-input").value.trim();
+  S.current.shots=S.current.shots.map(s=>s.id===S.refId?{...s,refUrl:u}:s);
+  updShoot();closeRefModal();renderSession();
+}
+
+// ═══════════════════════════════════════════
+// LIBRARY
+// ═══════════════════════════════════════════
+function renderLibCards(){
+  if(!S.library.length) return `<div style="text-align:center;color:#9CA3AF;font-size:13px;padding:40px;background:#fff;border-radius:12px;line-height:2;">No saved shots yet.<br>See a cool move on YouTube? Save it here.</div>`;
+  return S.library.map(s=>{
+    const gc=GEAR[s.gear]||{bg:"#F3F4F6",color:"#666",border:"#E5E7EB",label:s.gear||"—"};
+    return `<div style="background:#fff;border:2px solid ${gc.border};border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div style="flex:1;">
+          <span style="background:${gc.bg};color:${gc.color};border:1px solid ${gc.border};font-size:8px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:8px;display:inline-block;">${gc.label}</span>
+          <div style="font-size:15px;font-weight:700;color:#111;margin-bottom:5px;">${s.name}</div>
+          ${s.move?`<div style="font-size:12px;color:#6B7280;margin-bottom:4px;line-height:1.5;">${s.move}</div>`:""}
+          ${s.tags?`<div style="font-size:10px;color:#9CA3AF;">${s.tags}</div>`:""}
+        </div>
+        <div style="display:flex;gap:6px;margin-left:12px;flex-shrink:0;">
+          ${s.url?`<button onclick="window.open('${s.url}','_blank')" class="tap" style="padding:10px 14px;background:#1B3A6B;border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;">▶</button>`:""}
+          <button onclick="deleteLib('${s.id}')" class="tap" style="padding:10px 12px;background:#FEE2E2;border:none;border-radius:8px;color:#DC2626;font-size:12px;font-weight:700;">✕</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+function renderLibSA(){document.getElementById("lib-list-sa").innerHTML=renderLibCards();}
+
+function openLibModal(){
+  S.libGear="wide";
+  ["lib-name","lib-move","lib-url","lib-tags"].forEach(id=>document.getElementById(id).value="");
+  renderLibGearRow();
+  document.getElementById("modal-lib").classList.add("open");
+  setTimeout(()=>document.getElementById("lib-name").focus(),100);
+}
 function closeLibModal(){document.getElementById("modal-lib").classList.remove("open");}
-function renderLibTierRow(){document.getElementById("lib-tier-row").innerHTML=["safety","creative","cool"].map(t=>{const tc=TIER[t],a=S.libTier===t;return`<button onclick="setLibTier('${t}')" class="tap" style="flex:1;padding:10px;border-radius:8px;font-size:11px;font-weight:700;background:${a?tc.bg:"#F9FAFB"};border:2px solid ${a?tc.bc:"#E5E7EB"};color:#111;">${tc.label}</button>`;}).join("");}
-function setLibTier(t){S.libTier=t;renderLibTierRow();}
-function saveLibShot(){const n=document.getElementById("lib-name").value.trim();if(!n)return;const s={id:Date.now().toString(),name:n,move:document.getElementById("lib-move").value.trim(),url:document.getElementById("lib-url").value.trim(),tags:document.getElementById("lib-tags").value.trim(),tier:S.libTier};S.library=[s,...S.library];save();closeLibModal();if(document.getElementById("pg-library").classList.contains("active"))renderLibSA();if(S.tab==="lib")renderSession();}
-function deleteLib(id){S.library=S.library.filter(s=>s.id!==id);save();if(document.getElementById("pg-library").classList.contains("active"))renderLibSA();if(S.tab==="lib")renderSession();}
+
+function renderLibGearRow(){
+  document.getElementById("lib-gear-row").innerHTML=Object.entries(GEAR).map(([g,gc])=>{
+    const a=S.libGear===g;
+    return `<button onclick="setLibGear('${g}')" class="tap" style="padding:8px 12px;border-radius:20px;font-size:9px;font-weight:700;
+      background:${a?gc.bg:"#F9FAFB"};
+      border:2px solid ${a?gc.border:"#E5E7EB"};
+      color:${a?gc.color:"#9CA3AF"};">${gc.label}</button>`;
+  }).join("");
+}
+function setLibGear(g){S.libGear=g;renderLibGearRow();}
+
+function saveLibShot(){
+  const n=document.getElementById("lib-name").value.trim();
+  if(!n)return;
+  const s={id:Date.now().toString(),name:n,move:document.getElementById("lib-move").value.trim(),url:document.getElementById("lib-url").value.trim(),tags:document.getElementById("lib-tags").value.trim(),gear:S.libGear};
+  S.library=[s,...S.library];
+  save();closeLibModal();
+  if(document.getElementById("pg-library").classList.contains("active"))renderLibSA();
+  if(S.tab==="lib")renderSession();
+}
+function deleteLib(id){
+  S.library=S.library.filter(s=>s.id!==id);save();
+  if(document.getElementById("pg-library").classList.contains("active"))renderLibSA();
+  if(S.tab==="lib")renderSession();
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
 load();renderHome();
 </script>
 </body>
