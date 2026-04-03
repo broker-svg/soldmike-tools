@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>SOLDMIKE — Shot Commander</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0A0A0A;color:#E8E8E8;font-family:'Space Mono',monospace;min-height:100vh;-webkit-tap-highlight-color:transparent;}
+::-webkit-scrollbar{width:0;}
+input,button,textarea{font-family:'Space Mono',monospace;}
+.wrap{max-width:480px;margin:0 auto;}
+.page{display:none;}
+.page.active{display:block;}
+button{cursor:pointer;}
+.tap{transition:transform 0.12s ease,opacity 0.12s ease;}
+.tap:active{transform:scale(0.96);opacity:0.8;}
+.fadeIn{animation:fi 0.2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:200;align-items:flex-end;}
+.modal-wrap.open{display:flex;}
+.modal-box{background:#141414;width:100%;max-width:480px;margin:0 auto;border-radius:16px 16px 0 0;padding:24px 20px;}
+.input{width:100%;background:#0A0A0A;border:1px solid #252525;border-radius:8px;padding:13px 14px;color:#E8E8E8;font-size:13px;outline:none;margin-bottom:10px;-webkit-appearance:none;}
+.input::placeholder{color:#3A3A3A;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ══════════ HOME ══════════ -->
+<div id="pg-home" class="page active" style="padding:28px 20px 60px;">
+
+  <div style="margin-bottom:36px;">
+    <div style="font-family:'Bebas Neue';font-size:42px;letter-spacing:5px;color:#FF6B35;line-height:1;">SOLDMIKE</div>
+    <div style="font-size:9px;letter-spacing:4px;color:#444;margin-top:4px;">SHOT COMMANDER</div>
+  </div>
+
+  <!-- New Shoot -->
+  <div style="background:#111;border:1px solid #1E1E1E;border-radius:14px;padding:22px;margin-bottom:28px;">
+    <div style="font-size:9px;letter-spacing:3px;color:#555;margin-bottom:16px;">NEW SHOOT</div>
+    <input id="addr-input" class="input" placeholder="Property address..." />
+    <div style="display:flex;gap:6px;margin-bottom:18px;" id="tmpl-row"></div>
+    <button onclick="startShoot()" class="tap" style="width:100%;background:#FF6B35;border:none;border-radius:9px;padding:15px;color:#000;font-size:11px;font-weight:700;letter-spacing:3px;">START SHOOT →</button>
+  </div>
+
+  <!-- Library quick-add -->
+  <button onclick="showPage('pg-library')" class="tap" style="width:100%;background:transparent;border:1px dashed #2A2A2A;border-radius:10px;padding:13px;color:#555;font-size:9px;letter-spacing:3px;margin-bottom:28px;">+ SHOT LIBRARY</button>
+
+  <!-- Recent -->
+  <div style="font-size:9px;letter-spacing:3px;color:#444;margin-bottom:12px;">RECENT SHOOTS</div>
+  <div id="recent-list"></div>
+</div>
+
+<!-- ══════════ SESSION ══════════ -->
+<div id="pg-session" class="page" style="padding-bottom:90px;">
+
+  <!-- Sticky header -->
+  <div id="sess-header" style="position:sticky;top:0;background:#0A0A0A;border-bottom:1px solid #1A1A1A;padding:14px 20px 0;z-index:20;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+      <div>
+        <button onclick="showPage('pg-home')" style="background:none;border:none;color:#444;font-size:9px;letter-spacing:2px;padding:0;margin-bottom:5px;display:block;font-family:'Space Mono',monospace;">← HOME</button>
+        <div id="sess-addr" style="font-family:'Bebas Neue';font-size:18px;letter-spacing:2px;line-height:1;"></div>
+        <div id="sess-meta" style="font-size:9px;color:#444;letter-spacing:1px;margin-top:2px;"></div>
+      </div>
+      <div style="text-align:right;">
+        <div id="sess-count" style="font-family:'Bebas Neue';font-size:32px;color:#FF6B35;line-height:1;"></div>
+        <div id="sess-pct" style="font-size:8px;color:#444;letter-spacing:2px;"></div>
+      </div>
+    </div>
+    <div style="height:3px;background:#1A1A1A;border-radius:2px;margin-bottom:13px;">
+      <div id="prog-bar" style="height:100%;width:0%;background:#FF6B35;border-radius:2px;transition:width 0.4s cubic-bezier(.4,0,.2,1);"></div>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:5px;margin-bottom:11px;">
+      <button onclick="setTab('shoot')" id="tab-shoot" class="tap" style="flex:1;padding:8px;background:#FF6B35;border:1px solid #FF6B35;border-radius:7px;color:#000;font-size:9px;font-weight:700;letter-spacing:2px;">SHOOT</button>
+      <button onclick="setTab('edit')"  id="tab-edit"  class="tap" style="flex:1;padding:8px;background:#111;border:1px solid #222;border-radius:7px;color:#555;font-size:9px;font-weight:700;letter-spacing:2px;">EDIT</button>
+      <button onclick="setTab('lib')"   id="tab-lib"   class="tap" style="flex:1;padding:8px;background:#111;border:1px solid #222;border-radius:7px;color:#555;font-size:9px;font-weight:700;letter-spacing:2px;">LIBRARY</button>
+    </div>
+    <!-- Tier filter -->
+    <div style="display:flex;gap:5px;padding-bottom:13px;" id="tier-filters"></div>
+  </div>
+
+  <!-- Content area -->
+  <div id="sess-content" style="padding:16px 20px;"></div>
+</div>
+
+<!-- ══════════ LIBRARY STANDALONE ══════════ -->
+<div id="pg-library" class="page" style="padding:24px 20px 60px;">
+  <button onclick="showPage('pg-home')" style="background:none;border:none;color:#444;font-size:9px;letter-spacing:2px;padding:0;margin-bottom:20px;display:block;font-family:'Space Mono',monospace;">← HOME</button>
+  <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:3px;color:#FF6B35;margin-bottom:4px;">SHOT LIBRARY</div>
+  <div style="font-size:9px;color:#444;letter-spacing:2px;margin-bottom:20px;">SAVE REFERENCE MOVES</div>
+  <button onclick="openLibModal()" class="tap" style="width:100%;background:transparent;border:1px dashed #333;border-radius:10px;padding:14px;color:#FF6B35;font-size:10px;letter-spacing:2px;margin-bottom:16px;font-weight:700;">+ SAVE A COOL SHOT</button>
+  <div id="lib-list-standalone"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- ══════════ REF MODAL ══════════ -->
+<div id="modal-ref" class="modal-wrap">
+  <div class="modal-box fadeIn">
+    <div style="font-size:9px;letter-spacing:3px;color:#555;margin-bottom:12px;">ADD REFERENCE VIDEO</div>
+    <div style="font-size:11px;color:#555;margin-bottom:14px;line-height:1.7;">Paste a YouTube URL. Tap WATCH on set to open it before doing the move.</div>
+    <input id="ref-url-input" class="input" placeholder="https://youtube.com/..."/>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button onclick="closeRefModal()" class="tap" style="flex:1;padding:13px;background:transparent;border:1px solid #222;border-radius:8px;color:#555;font-size:10px;">CANCEL</button>
+      <button onclick="saveRef()" class="tap" style="flex:2;padding:13px;background:#FF6B35;border:none;border-radius:8px;color:#000;font-size:10px;font-weight:700;letter-spacing:2px;">SAVE REF</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ LIB MODAL ══════════ -->
+<div id="modal-lib" class="modal-wrap">
+  <div class="modal-box fadeIn">
+    <div style="font-size:9px;letter-spacing:3px;color:#555;margin-bottom:16px;">SAVE SHOT TO LIBRARY</div>
+    <input id="lib-name"  class="input" placeholder="Shot name..."/>
+    <input id="lib-move"  class="input" placeholder="Gimbal move description..."/>
+    <input id="lib-url"   class="input" placeholder="Reference video URL..."/>
+    <input id="lib-tags"  class="input" placeholder="Tags: kitchen, focus pull, high riser..."/>
+    <div style="display:flex;gap:6px;margin:4px 0 16px;" id="lib-tier-row"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeLibModal()" class="tap" style="flex:1;padding:13px;background:transparent;border:1px solid #222;border-radius:8px;color:#555;font-size:10px;">CANCEL</button>
+      <button onclick="saveLibShot()" class="tap" style="flex:2;padding:13px;background:#FF6B35;border:none;border-radius:8px;color:#000;font-size:10px;font-weight:700;letter-spacing:2px;">SAVE SHOT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+
+const SHOTS = [
+  {id:"d1",zone:"Drone",zi:0,name:"Opening Reveal",move:"High altitude descend toward property, slow tilt down",lens:"Drone",eo:1,tier:"safety"},
+  {id:"d2",zone:"Drone",zi:0,name:"Low Fly Approach",move:"Ultra low fast glide straight to front entrance",lens:"Drone",eo:2,tier:"cool"},
+  {id:"d3",zone:"Drone",zi:0,name:"Orbit",move:"Slow clockwise orbit at mid height, property centered",lens:"Drone",eo:21,tier:"creative"},
+  {id:"d4",zone:"Drone",zi:0,name:"Closing Pull-Back",move:"Rise and pull back to reveal street and neighbourhood",lens:"Drone",eo:22,tier:"safety"},
+  {id:"e1",zone:"Exterior",zi:1,name:"Curb Wide Push",move:"Slow gimbal push forward from curb toward front door",lens:"12mm",eo:3,tier:"safety"},
+  {id:"e2",zone:"Exterior",zi:1,name:"Front Door Detail",move:"Arc around door handle, rise up to reveal entry",lens:"50mm",eo:4,tier:"creative"},
+  {id:"e3",zone:"Exterior",zi:1,name:"Backyard Wide",move:"Pan across backyard left to right, low angle",lens:"12mm",eo:18,tier:"safety"},
+  {id:"l1",zone:"Living Room",zi:2,name:"Entry Reveal",move:"Push through front door, slow reveal of full space",lens:"12mm",eo:5,tier:"safety"},
+  {id:"l2",zone:"Living Room",zi:2,name:"Room Wide Push",move:"Straight gimbal push toward feature wall",lens:"12mm",eo:6,tier:"safety"},
+  {id:"l3",zone:"Living Room",zi:2,name:"Fireplace Arc",move:"Low slow orbit around fireplace, tilt up at end",lens:"50mm",eo:7,tier:"creative"},
+  {id:"l4",zone:"Living Room",zi:2,name:"Window Focus Pull",move:"Rack focus from foreground object to window view",lens:"50mm",eo:8,tier:"cool"},
+  {id:"k1",zone:"Kitchen",zi:3,name:"Kitchen Wide Push",move:"Straight gimbal push through full kitchen",lens:"12mm",eo:9,tier:"safety"},
+  {id:"k2",zone:"Kitchen",zi:3,name:"Island Arc",move:"Slow arc around island, low angle, tilt up at end",lens:"12mm",eo:10,tier:"creative"},
+  {id:"k3",zone:"Kitchen",zi:3,name:"Counter Detail",move:"Slow slide along counter edge, extreme close",lens:"50mm",eo:11,tier:"safety"},
+  {id:"pb1",zone:"Primary Bedroom",zi:4,name:"Bedroom Reveal",move:"Push in from doorway, slow wide reveal of room",lens:"12mm",eo:12,tier:"safety"},
+  {id:"pb2",zone:"Primary Bedroom",zi:4,name:"Ensuite Reveal",move:"Push into ensuite, pan to shower feature wall",lens:"12mm",eo:13,tier:"safety"},
+  {id:"r1",zone:"Secondary Rooms",zi:5,name:"Bedroom 2",move:"Quick gimbal push, single clean pass through room",lens:"12mm",eo:14,tier:"safety"},
+  {id:"r2",zone:"Secondary Rooms",zi:5,name:"Bathroom",move:"Arc around vanity, rise up to mirror",lens:"50mm",eo:15,tier:"safety"},
+  {id:"det1",zone:"Details",zi:6,name:"Hardware Close-Up",move:"Extreme close, slow pull back to reveal context",lens:"50mm",eo:16,tier:"creative"},
+  {id:"det2",zone:"Details",zi:6,name:"Light Fixture Rise",move:"Low to high rise past fixture, slow tilt down",lens:"50mm",eo:17,tier:"creative"},
+  {id:"det3",zone:"Details",zi:6,name:"Staircase Track",move:"Track along staircase railing in upward motion",lens:"12mm",eo:19,tier:"safety"},
+  {id:"det4",zone:"Details",zi:6,name:"Wild Card / Pocket",move:"Your creative shot — add reference video below",lens:"Any",eo:20,tier:"cool"},
+];
+
+const ZONE_COLOR = {
+  "Drone":"#FF6B35","Exterior":"#22C55E","Living Room":"#3B82F6",
+  "Kitchen":"#A855F7","Primary Bedroom":"#EC4899","Secondary Rooms":"#14B8A6","Details":"#F59E0B"
+};
+
+const TIER = {
+  safety:  {label:"SAFETY",  color:"#22C55E", bg:"rgba(34,197,94,0.12)"},
+  creative:{label:"CREATIVE",color:"#F59E0B", bg:"rgba(245,158,11,0.12)"},
+  cool:    {label:"COOL",    color:"#EF4444", bg:"rgba(239,68,68,0.12)"}
+};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+
+let state = {
+  shoots: [],
+  library: [],
+  current: null,
+  tab: "shoot",
+  filter: "all",
+  selectedTemplate: "60sec",
+  refShotId: null,
+  libTier: "cool"
+};
+
+function save() {
+  try { localStorage.setItem("sm-shoots",  JSON.stringify(state.shoots));  } catch(e){}
+  try { localStorage.setItem("sm-library", JSON.stringify(state.library)); } catch(e){}
+}
+
+function load() {
+  try { const s = localStorage.getItem("sm-shoots");  if(s) state.shoots  = JSON.parse(s); } catch(e){}
+  try { const s = localStorage.getItem("sm-library"); if(s) state.library = JSON.parse(s); } catch(e){}
+}
+
+// ══════════════════════════════════════════
+// PAGE NAV
+// ══════════════════════════════════════════
+
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  if (id === "pg-home")    renderHome();
+  if (id === "pg-session") renderSession();
+  if (id === "pg-library") renderLibStandalone();
+}
+
+// ══════════════════════════════════════════
+// HOME
+// ══════════════════════════════════════════
+
+function renderTemplateButtons() {
+  const row = document.getElementById("tmpl-row");
+  row.innerHTML = ["60sec","90sec","2min"].map(t => `
+    <button onclick="setTemplate('${t}')" class="tap" id="tmpl-${t}" style="flex:1;padding:9px;background:${state.selectedTemplate===t?"#FF6B35":"#0A0A0A"};border:1px solid ${state.selectedTemplate===t?"#FF6B35":"#222"};border-radius:7px;color:${state.selectedTemplate===t?"#000":"#666"};font-size:10px;font-weight:${state.selectedTemplate===t?"700":"400"};letter-spacing:1px;">${t}</button>
+  `).join("");
+}
+
+function setTemplate(t) {
+  state.selectedTemplate = t;
+  renderTemplateButtons();
+}
+
+function renderHome() {
+  renderTemplateButtons();
+  const list = document.getElementById("recent-list");
+  if (!state.shoots.length) { list.innerHTML = `<div style="color:#333;font-size:11px;text-align:center;padding:20px 0;">No shoots yet. Start your first above.</div>`; return; }
+  list.innerHTML = state.shoots.slice(0,6).map(sh => {
+    const d = sh.shots.filter(s=>s.completed).length;
+    const t = sh.shots.length;
+    const p = Math.round((d/t)*100);
+    return `
+      <div onclick="loadShoot('${sh.id}')" class="tap" style="background:#111;border:1px solid #1E1E1E;border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:3px;">${sh.address}</div>
+            <div style="font-size:9px;color:#444;letter-spacing:1px;">${sh.date} · ${sh.template}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'Bebas Neue';font-size:28px;color:${d===t?"#22C55E":"#FF6B35"};line-height:1;">${d}/${t}</div>
+          </div>
+        </div>
+        <div style="height:2px;background:#1E1E1E;border-radius:1px;">
+          <div style="height:100%;width:${p}%;background:${d===t?"#22C55E":"#FF6B35"};border-radius:1px;"></div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function loadShoot(id) {
+  state.current = state.shoots.find(s => s.id === id);
+  showPage("pg-session");
+}
+
+// ══════════════════════════════════════════
+// START SHOOT
+// ══════════════════════════════════════════
+
+function startShoot() {
+  const addr = document.getElementById("addr-input").value.trim();
+  if (!addr) { document.getElementById("addr-input").focus(); return; }
+  const shots = SHOTS.map(s => ({...s, completed:false, refUrl:""}));
+  const shoot = {
+    id: Date.now().toString(),
+    address: addr,
+    template: state.selectedTemplate,
+    date: new Date().toLocaleDateString("en-CA"),
+    shots
+  };
+  state.current = shoot;
+  state.shoots = [shoot, ...state.shoots];
+  save();
+  document.getElementById("addr-input").value = "";
+  state.tab = "shoot";
+  state.filter = "all";
+  showPage("pg-session");
+}
+
+// ══════════════════════════════════════════
+// SESSION
+// ══════════════════════════════════════════
+
+function updateShoot() {
+  state.shoots = state.shoots.map(s => s.id === state.current.id ? state.current : s);
+  save();
+}
+
+function getStats() {
+  const done  = state.current.shots.filter(s=>s.completed).length;
+  const total = state.current.shots.length;
+  return { done, total, pct: Math.round((done/total)*100) };
+}
+
+function renderHeader() {
+  const {done,total,pct} = getStats();
+  document.getElementById("sess-addr").textContent  = state.current.address;
+  document.getElementById("sess-meta").textContent  = state.current.template + " · " + state.current.date;
+  document.getElementById("sess-count").textContent = done + "/" + total;
+  document.getElementById("sess-count").style.color = done===total?"#22C55E":"#FF6B35";
+  document.getElementById("sess-pct").textContent   = pct + "% DONE";
+  document.getElementById("prog-bar").style.width   = pct + "%";
+  document.getElementById("prog-bar").style.background = done===total?"#22C55E":"#FF6B35";
+
+  // Tabs
+  ["shoot","edit","lib"].forEach(t => {
+    const el = document.getElementById("tab-"+t);
+    const active = state.tab === t;
+    el.style.background = active?"#FF6B35":"#111";
+    el.style.borderColor = active?"#FF6B35":"#222";
+    el.style.color = active?"#000":"#555";
+  });
+
+  // Tier filters
+  document.getElementById("tier-filters").innerHTML = ["all","safety","creative","cool"].map(f => {
+    const active = state.filter === f;
+    let bg="transparent", bc="#1E1E1E", col="#3A3A3A";
+    if(active){
+      if(f==="all"){bg="#222";bc="#555";col="#E8E8E8";}
+      else{bg=TIER[f].bg;bc=TIER[f].color;col=TIER[f].color;}
+    }
+    return `<button onclick="setFilter('${f}')" class="tap" style="flex:1;padding:5px 0;border-radius:5px;font-size:8px;letter-spacing:1px;font-weight:700;border:1px solid ${bc};background:${bg};color:${col};font-family:'Space Mono',monospace;">${f.toUpperCase()}</button>`;
+  }).join("");
+}
+
+function setTab(t) { state.tab = t; renderSession(); }
+function setFilter(f) { state.filter = f; renderSession(); }
+
+function filtered() {
+  return state.filter === "all" ? state.current.shots : state.current.shots.filter(s=>s.tier===state.filter);
+}
+
+function renderSession() {
+  renderHeader();
+  const shots = filtered();
+  const content = document.getElementById("sess-content");
+
+  if (state.tab === "shoot") {
+    // Group by zone
+    const zones = {};
+    shots.forEach(s => { (zones[s.zone] = zones[s.zone]||[]).push(s); });
+    const sorted = Object.entries(zones).sort(([a],[b]) => {
+      const ai = SHOTS.find(s=>s.zone===a)?.zi??99;
+      const bi = SHOTS.find(s=>s.zone===b)?.zi??99;
+      return ai-bi;
+    });
+    if (!sorted.length) { content.innerHTML=`<div style="text-align:center;color:#333;font-size:11px;padding:60px 0;">No shots match this filter.</div>`; return; }
+    content.innerHTML = sorted.map(([zone, zshots]) => {
+      const done = zshots.filter(s=>s.completed).length;
+      const zc = ZONE_COLOR[zone]||"#666";
+      return `
+        <div style="margin-bottom:26px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${zc};flex-shrink:0;"></div>
+            <div style="font-size:10px;letter-spacing:3px;color:${zc};font-weight:700;">${zone.toUpperCase()}</div>
+            <div style="font-size:9px;color:#333;">(${done}/${zshots.length})</div>
+          </div>
+          ${zshots.map(shot => shotCard(shot)).join("")}
+        </div>`;
+    }).join("");
+  }
+
+  else if (state.tab === "edit") {
+    const ordered = [...shots].sort((a,b)=>a.eo-b.eo);
+    content.innerHTML = `<div style="font-size:9px;letter-spacing:3px;color:#444;margin-bottom:16px;">DROP CLIPS IN THIS ORDER</div>` +
+      ordered.map(shot => `
+        <div style="display:flex;gap:14px;align-items:center;background:#111;border:1px solid #1E1E1E;border-radius:10px;padding:12px 14px;margin-bottom:7px;">
+          <div style="font-family:'Bebas Neue';font-size:30px;color:#2A2A2A;width:36px;text-align:center;flex-shrink:0;line-height:1;">${shot.eo}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;gap:6px;align-items:center;margin-bottom:5px;">
+              <span style="background:${TIER[shot.tier].bg};color:${TIER[shot.tier].color};font-size:7px;padding:2px 5px;border-radius:3px;letter-spacing:1px;font-weight:700;">${TIER[shot.tier].label}</span>
+              <span style="font-size:8px;color:${ZONE_COLOR[shot.zone]||"#666"};letter-spacing:1px;">${shot.zone.toUpperCase()}</span>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#E8E8E8;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${shot.name}</div>
+            <div style="font-size:10px;color:#444;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${shot.move}</div>
+          </div>
+          <div style="width:8px;height:8px;border-radius:50%;background:${shot.completed?"#22C55E":"#222"};flex-shrink:0;"></div>
+        </div>`).join("");
+  }
+
+  else if (state.tab === "lib") {
+    content.innerHTML = `
+      <button onclick="openLibModal()" class="tap" style="width:100%;background:transparent;border:1px dashed #333;border-radius:10px;padding:14px;color:#FF6B35;font-size:10px;letter-spacing:2px;margin-bottom:16px;font-weight:700;">+ SAVE A COOL SHOT</button>
+      ${renderLibCards()}`;
+  }
+}
+
+function shotCard(shot) {
+  const tc = TIER[shot.tier];
+  const bg = shot.completed?"#0C180C":"#111";
+  const border = shot.completed?"#1A301A":"#1E1E1E";
+  const nameColor = shot.completed?"#2A4A2A":"#E8E8E8";
+  return `
+    <div style="background:${bg};border:1px solid ${border};border-radius:11px;padding:14px;margin-bottom:8px;">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+        <span style="background:${tc.bg};color:${tc.color};font-size:7px;padding:3px 6px;border-radius:3px;letter-spacing:1px;font-weight:700;flex-shrink:0;">${tc.label}</span>
+        <span style="font-size:9px;color:#444;letter-spacing:1px;">${shot.lens}</span>
+        <span style="font-size:9px;color:#2A2A2A;margin-left:auto;">#${shot.eo}</span>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:${nameColor};margin-bottom:4px;">${shot.name}</div>
+      <div style="font-size:11px;color:#555;line-height:1.5;margin-bottom:12px;">${shot.move}</div>
+      <div style="display:flex;gap:7px;">
+        <button onclick="openRefModal('${shot.id}')" class="tap" style="flex:1;padding:8px;background:${shot.refUrl?"rgba(255,107,53,0.1)":"#0A0A0A"};border:1px solid ${shot.refUrl?"#FF6B35":"#222"};border-radius:7px;color:${shot.refUrl?"#FF6B35":"#444"};font-size:9px;letter-spacing:1px;font-family:'Space Mono',monospace;">
+          ${shot.refUrl?"✦ REF":"+ REF"}
+        </button>
+        ${shot.refUrl?`<button onclick="window.open('${shot.refUrl}','_blank')" class="tap" style="padding:8px 12px;background:#FF6B35;border:none;border-radius:7px;color:#000;font-size:9px;font-weight:700;font-family:'Space Mono',monospace;">WATCH</button>`:""}
+        <button onclick="toggleShot('${shot.id}')" class="tap" style="padding:8px 18px;background:${shot.completed?"#22C55E":"#0A0A0A"};border:1px solid ${shot.completed?"#22C55E":"#222"};border-radius:7px;color:${shot.completed?"#000":"#444"};font-size:9px;font-weight:700;letter-spacing:1px;font-family:'Space Mono',monospace;">
+          ${shot.completed?"✓ DONE":"DONE"}
+        </button>
+      </div>
+    </div>`;
+}
+
+function toggleShot(shotId) {
+  state.current.shots = state.current.shots.map(s => s.id===shotId ? {...s, completed:!s.completed} : s);
+  updateShoot();
+  renderSession();
+}
+
+// ══════════════════════════════════════════
+// REF MODAL
+// ══════════════════════════════════════════
+
+function openRefModal(shotId) {
+  state.refShotId = shotId;
+  const shot = state.current.shots.find(s=>s.id===shotId);
+  document.getElementById("ref-url-input").value = shot?.refUrl || "";
+  document.getElementById("modal-ref").classList.add("open");
+  setTimeout(()=>document.getElementById("ref-url-input").focus(),100);
+}
+
+function closeRefModal() { document.getElementById("modal-ref").classList.remove("open"); }
+
+function saveRef() {
+  const url = document.getElementById("ref-url-input").value.trim();
+  state.current.shots = state.current.shots.map(s => s.id===state.refShotId ? {...s, refUrl:url} : s);
+  updateShoot();
+  closeRefModal();
+  renderSession();
+}
+
+// ══════════════════════════════════════════
+// LIBRARY
+// ══════════════════════════════════════════
+
+function renderLibCards() {
+  if (!state.library.length) return `<div style="text-align:center;color:#333;font-size:11px;padding:40px 0;line-height:2;">No saved shots yet.<br>See a cool move on YouTube? Save it here.</div>`;
+  return state.library.map(shot => {
+    const tc = TIER[shot.tier] || TIER.cool;
+    return `
+      <div style="background:#111;border:1px solid #1E1E1E;border-radius:11px;padding:14px;margin-bottom:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="flex:1;">
+            <span style="background:${tc.bg};color:${tc.color};font-size:7px;padding:3px 6px;border-radius:3px;letter-spacing:1px;font-weight:700;">${tc.label}</span>
+            <div style="font-size:14px;font-weight:700;margin:7px 0 4px;">${shot.name}</div>
+            ${shot.move?`<div style="font-size:11px;color:#555;line-height:1.5;margin-bottom:4px;">${shot.move}</div>`:""}
+            ${shot.tags?`<div style="font-size:9px;color:#333;letter-spacing:1px;">${shot.tags}</div>`:""}
+          </div>
+          <div style="display:flex;gap:6px;margin-left:12px;flex-shrink:0;">
+            ${shot.url?`<button onclick="window.open('${shot.url}','_blank')" class="tap" style="padding:8px 12px;background:#FF6B35;border:none;border-radius:7px;color:#000;font-size:10px;font-weight:700;font-family:'Space Mono',monospace;">▶</button>`:""}
+            <button onclick="deleteLib('${shot.id}')" class="tap" style="padding:8px 10px;background:transparent;border:1px solid #2A2A2A;border-radius:7px;color:#444;font-size:10px;font-family:'Space Mono',monospace;">✕</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function renderLibStandalone() {
+  document.getElementById("lib-list-standalone").innerHTML = renderLibCards();
+}
+
+function openLibModal() {
+  state.libTier = "cool";
+  ["lib-name","lib-move","lib-url","lib-tags"].forEach(id => document.getElementById(id).value = "");
+  renderLibTierRow();
+  document.getElementById("modal-lib").classList.add("open");
+  setTimeout(()=>document.getElementById("lib-name").focus(),100);
+}
+
+function closeLibModal() { document.getElementById("modal-lib").classList.remove("open"); }
+
+function renderLibTierRow() {
+  document.getElementById("lib-tier-row").innerHTML = ["safety","creative","cool"].map(t => {
+    const active = state.libTier === t;
+    const tc = TIER[t];
+    return `<button onclick="setLibTier('${t}')" class="tap" style="flex:1;padding:9px;border-radius:7px;font-size:9px;letter-spacing:1px;font-weight:700;border:1px solid ${active?tc.color:"#222"};background:${active?tc.bg:"transparent"};color:${active?tc.color:"#444"};font-family:'Space Mono',monospace;">${t.toUpperCase()}</button>`;
+  }).join("");
+}
+
+function setLibTier(t) { state.libTier = t; renderLibTierRow(); }
+
+function saveLibShot() {
+  const name = document.getElementById("lib-name").value.trim();
+  if (!name) return;
+  const shot = {
+    id: Date.now().toString(),
+    name,
+    move: document.getElementById("lib-move").value.trim(),
+    url:  document.getElementById("lib-url").value.trim(),
+    tags: document.getElementById("lib-tags").value.trim(),
+    tier: state.libTier
+  };
+  state.library = [shot, ...state.library];
+  save();
+  closeLibModal();
+  // Refresh whichever lib view is visible
+  if (document.getElementById("pg-library").classList.contains("active")) renderLibStandalone();
+  if (state.tab === "lib") renderSession();
+}
+
+function deleteLib(id) {
+  state.library = state.library.filter(s=>s.id!==id);
+  save();
+  if (document.getElementById("pg-library").classList.contains("active")) renderLibStandalone();
+  if (state.tab === "lib") renderSession();
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+
+load();
+renderHome();
+</script>
+</body>
+</html>
