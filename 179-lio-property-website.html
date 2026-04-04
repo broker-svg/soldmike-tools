@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>179 Lio Ave — Woodbridge | $1,498,000</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #fafaf8;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --grey: #888;
+    --dark-grey: #1a1a1a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: 'Montserrat', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
+    transition: background 0.4s;
+  }
+  nav.scrolled { background: rgba(10,10,10,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,168,76,0.15); }
+  .nav-logo { text-decoration: none; display: flex; align-items: center; }
+  .nav-logo img { height: 56px; width: auto; }
+  .nav-links { display: none; gap: 32px; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta { background: var(--gold); color: var(--black) !important; padding: 10px 24px !important; font-weight: 600 !important; }
+  .hamburger { display: block; background: none; border: none; cursor: pointer; padding: 8px; z-index: 101; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); margin: 5px 0; transition: all 0.3s; }
+  .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.active span:nth-child(2) { opacity: 0; }
+  .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .mobile-menu {
+    display: none; position: fixed; inset: 0; z-index: 99;
+    background: rgba(10,10,10,0.98); backdrop-filter: blur(20px);
+    flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .mobile-menu.active { display: flex; opacity: 1; }
+  .mobile-menu a { color: var(--white); text-decoration: none; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
+  .mobile-menu .nav-cta { background: var(--gold); color: var(--black) !important; padding: 14px 32px !important; font-weight: 600 !important; margin-top: 8px; }
+
+  /* ===== HERO — NOT SQUISHED ===== */
+  .hero {
+    position: relative; width: 100%; height: 75vh; height: 75svh;
+    display: flex; align-items: flex-end; overflow: hidden;
+  }
+  .hero-img {
+    position: absolute; inset: 0; z-index: 0;
+    width: 100%; height: 100%; object-fit: cover; object-position: center 30%;
+  }
+  .hero-video-wrap { display: none; position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .hero-video-wrap iframe {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.78vh;
+    pointer-events: none; border: none;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.02) 30%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.95) 100%);
+  }
+  .hero-content { position: relative; z-index: 2; padding: 0 20px 32px; width: 100%; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(201,168,76,0.15); border: 1px solid var(--gold);
+    color: var(--gold); font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    padding: 5px 14px; margin-bottom: 12px;
+  }
+  .hero-badge::before { content: ''; width: 5px; height: 5px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  .hero-address { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300; line-height: 1; letter-spacing: -1px; margin-bottom: 4px; }
+  .hero-city { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; font-style: italic; color: rgba(255,255,255,0.6); margin-bottom: 18px; }
+  .hero-stats { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .hero-price { font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; color: var(--gold); }
+  .hero-divider { display: none; }
+  .hero-detail { display: flex; align-items: baseline; gap: 5px; }
+  .hero-detail-num { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; }
+  .hero-detail-label { font-size: 8px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+
+  /* ===== SECTIONS ===== */
+  section { padding: 48px 20px; }
+  .section-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--gold); opacity: 0.4; }
+  .section-label-center { justify-content: center; }
+  .section-label-center::after { display: none; }
+  .section-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; line-height: 1.15; margin-bottom: 20px; }
+
+  /* ===== VIDEO — RIGHT AFTER HERO ===== */
+  #videos { background: var(--black); text-align: center; padding: 48px 0; }
+  #videos .section-label { justify-content: center; }
+  #videos .section-label::after { display: none; }
+  .video-wrap { position: relative; width: 100%; margin: 0 auto; aspect-ratio: 16/9; }
+  .video-wrap iframe { width: 100%; height: 100%; border: none; }
+
+  /* ===== OVERVIEW ===== */
+  #overview { background: var(--dark-grey); display: block; }
+  .overview-headline { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 300; line-height: 1.6; color: rgba(255,255,255,0.85); margin-bottom: 12px; }
+  .read-more-toggle {
+    background: none; border: none; color: var(--gold); font-family: 'Montserrat',sans-serif;
+    font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+    padding: 0; margin-bottom: 32px; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .read-more-toggle .arrow { transition: transform 0.3s; display: inline-block; }
+  .read-more-toggle.expanded .arrow { transform: rotate(180deg); }
+  .overview-full {
+    max-height: 0; overflow: hidden; transition: max-height 0.5s ease;
+    font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 300;
+    line-height: 1.7; color: rgba(255,255,255,0.7);
+  }
+  .overview-full.open { max-height: 600px; margin-bottom: 24px; }
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.08); margin-bottom: 24px; }
+  .detail-item { background: var(--dark-grey); padding: 16px; border: 1px solid rgba(255,255,255,0.06); }
+  .detail-item .d-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--grey); margin-bottom: 4px; }
+  .detail-item .d-value { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; }
+  .features-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .feature-tag { border: 1px solid rgba(201,168,76,0.3); color: var(--gold-light); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 10px; text-align: center; }
+
+  /* ===== PHOTOS ===== */
+  #photos { background: var(--black); padding: 48px 20px; }
+  .photo-gallery-wrap { max-width: 1200px; margin: 0 auto; }
+  .photo-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 20px; }
+  .photo-item { aspect-ratio: 1/1; overflow: hidden; cursor: pointer; }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+  .view-all-btn { display: block; text-align: center; margin: 20px auto 0; background: transparent; border: 1px solid rgba(201,168,76,0.4); color: var(--gold); font-family: 'Montserrat',sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 12px 32px; cursor: pointer; transition: all 0.3s; width: fit-content; }
+  .view-all-btn:hover { background: var(--gold); color: var(--black); }
+
+  /* ===== LIGHTBOX ===== */
+  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.97); z-index: 1000; align-items: center; justify-content: center; }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 96vw; max-height: 85vh; object-fit: contain; user-select: none; }
+  .lb-close { position: absolute; top: 12px; right: 12px; color: rgba(255,255,255,0.7); font-size: 28px; cursor: pointer; z-index: 1001; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); border-radius: 50%; font-weight: 300; line-height: 1; }
+  .lb-prev, .lb-next { display: none; }
+  .lb-counter { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.4); }
+
+  /* ===== FLOOR PLANS ===== */
+  #hotspot-floorplans { background: var(--dark-grey); }
+  .fp-tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .fp-tab { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.5); font-family: 'Montserrat',sans-serif; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; padding: 10px 0; cursor: pointer; transition: all 0.3s; flex: 1; text-align: center; }
+  .fp-tab.active { background: var(--gold); border-color: var(--gold); color: var(--black); font-weight: 600; }
+  .fp-image { display: none; text-align: center; }
+  .fp-image.active { display: block; }
+  .fp-image img { width: 100%; background: white; padding: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+
+  /* ===== MAP ===== */
+  #map { background: var(--black); padding: 0; }
+  .map-header { padding: 48px 20px 20px; }
+  .map-embed { width: 100%; height: 280px; border: none; display: block; filter: grayscale(80%) contrast(1.1); }
+
+  /* ===== AGENT + CONTACT ===== */
+  #listing-agents { background: var(--dark-grey); display: block; }
+  .agent-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; margin-bottom: 40px; }
+  .agent-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; object-position: center top; border: 2px solid var(--gold); }
+  .agent-name { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; margin-bottom: 2px; }
+  .agent-title { color: var(--gold); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .agent-brokerage-addr { color: rgba(255,255,255,0.45); font-size: 11px; line-height: 1.5; }
+  .form-field { margin-bottom: 12px; }
+  .form-field input, .form-field textarea {
+    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--white); font-family: 'Montserrat',sans-serif; font-size: 16px; padding: 14px;
+    outline: none; transition: border-color 0.3s; border-radius: 0; -webkit-appearance: none;
+  }
+  .form-field input:focus, .form-field textarea:focus { border-color: var(--gold); }
+  .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,255,255,0.3); font-size: 12px; letter-spacing: 1px; }
+  .form-field textarea { height: 70px; resize: none; }
+  .form-submit { width: 100%; background: var(--gold); border: none; color: var(--black); font-family: 'Montserrat',sans-serif; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: 600; padding: 16px; cursor: pointer; transition: background 0.3s; }
+  .form-submit:hover { background: var(--gold-light); }
+  .form-optional-label { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin: 20px 0 10px; text-align: center; }
+
+  /* ===== FOOTER ===== */
+  footer { background: var(--black); border-top: 1px solid rgba(255,255,255,0.06); padding: 24px 20px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+  .footer-logo-img { height: 50px; width: auto; opacity: 0.9; }
+  .footer-copy { font-size: 9px; letter-spacing: 1px; color: rgba(255,255,255,0.2); }
+
+  /* ===== FADE IN ===== */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== DESKTOP ===== */
+  @media (min-width: 901px) {
+    nav { padding: 20px 48px; }
+    .nav-logo img { height: 120px; }
+    .nav-links { display: flex; }
+    .hamburger { display: none; }
+    .hero { height: 100vh; }
+    .hero-video-wrap { display: block; }
+    .hero-img { display: none; }
+    .hero-content { padding: 0 64px 72px; }
+    .hero-address { font-size: clamp(42px,6vw,80px); margin-bottom: 8px; }
+    .hero-city { font-size: clamp(20px,3vw,36px); margin-bottom: 32px; }
+    .hero-stats { gap: 48px; }
+    .hero-price { font-size: clamp(28px,4vw,48px); }
+    .hero-divider { display: block; width: 1px; height: 40px; background: rgba(255,255,255,0.2); }
+    .hero-detail { text-align: center; display: block; }
+    .hero-detail-num { font-size: 28px; display: block; }
+    .hero-detail-label { font-size: 9px; letter-spacing: 2px; }
+    section { padding: 100px 64px; }
+    .section-title { font-size: clamp(32px,4vw,52px); margin-bottom: 40px; }
+    .section-label { font-size: 10px; letter-spacing: 4px; }
+    #overview { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .overview-headline { font-size: 20px; }
+    .overview-full { font-size: 18px; }
+    .detail-item { padding: 24px; }
+    .detail-item .d-value { font-size: 28px; }
+    .feature-tag { font-size: 10px; padding: 8px 16px; letter-spacing: 1.5px; }
+    #videos { padding: 100px 0; }
+    .video-wrap { width: 80%; max-width: 1000px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
+    #photos { padding: 100px 64px; }
+    .photo-gallery { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 40px; }
+    .photo-item:hover img { transform: scale(1.06); transition: transform 0.5s; }
+    .fp-tab { font-size: 10px; letter-spacing: 2px; padding: 12px 24px; flex: none; }
+    .fp-image img { width: 80%; max-width: 1000px; padding: 24px; }
+    .map-header { padding: 80px 64px 40px; }
+    .map-embed { height: 500px; }
+    #listing-agents { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .agent-card { flex-direction: row; text-align: left; gap: 32px; margin-bottom: 0; }
+    .agent-photo { width: 160px; height: 160px; }
+    .agent-name { font-size: 28px; }
+    .lb-prev, .lb-next { display: block; position: absolute; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 48px; cursor: pointer; padding: 20px; font-weight: 300; user-select: none; }
+    .lb-prev { left: 8px; } .lb-next { right: 8px; }
+    .lb-prev:hover, .lb-next:hover { color: var(--gold); }
+    .lb-close { top: 24px; right: 32px; font-size: 40px; background: none; border-radius: 0; width: auto; height: auto; }
+    footer { flex-direction: row; justify-content: space-between; padding: 32px 64px; }
+    .footer-logo-img { height: 110px; }
+    .scroll-indicator { display: flex; }
+  }
+  .scroll-indicator { display: none; }
+  @media (min-width: 901px) {
+    .scroll-indicator { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; color: rgba(255,255,255,0.4); font-size: 9px; letter-spacing: 2px; text-transform: uppercase; }
+    .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent); animation: scrollDown 2s infinite; }
+    @keyframes scrollDown { 0%{transform:scaleY(0);transform-origin:top} 50%{transform:scaleY(1);transform-origin:top} 51%{transform:scaleY(1);transform-origin:bottom} 100%{transform:scaleY(0);transform-origin:bottom} }
+  }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="SOLDMIKE — The OP Team"></a>
+  <ul class="nav-links">
+    <li><a href="#videos">Video</a></li>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#photos">Photos</a></li>
+    <li><a href="#hotspot-floorplans">Floor Plans</a></li>
+    <li><a href="#map">Location</a></li>
+    <li><a href="#listing-agents" class="nav-cta">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#videos" class="mobile-nav-link">Video</a>
+  <a href="#overview" class="mobile-nav-link">Overview</a>
+  <a href="#photos" class="mobile-nav-link">Photos</a>
+  <a href="#hotspot-floorplans" class="mobile-nav-link">Floor Plans</a>
+  <a href="#map" class="mobile-nav-link">Location</a>
+  <a href="#listing-agents" class="mobile-nav-link nav-cta">Contact</a>
+</div>
+
+<!-- HERO — proper image, not squished -->
+<section class="hero" id="home">
+  <img class="hero-img" src="https://media.relahq.com/public/styles/image_manage_preview/s3/property-images/prop-nid-236609956/179_lio_ave-1_326.jpg" alt="179 Lio Ave — Woodbridge">
+  <div class="hero-video-wrap">
+    <iframe src="https://player.vimeo.com/video/1175023269?autoplay=1&muted=1&loop=1&background=1&quality=1080p" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Active Listing</div>
+    <h1 class="hero-address">179 Lio Ave</h1>
+    <p class="hero-city">Woodbridge, Ontario</p>
+    <div class="hero-stats">
+      <div class="hero-price">$1,498,000</div>
+      <div class="hero-divider"></div>
+      <div class="hero-detail"><span class="hero-detail-num">5</span><span class="hero-detail-label">Bed</span></div>
+      <div class="hero-divider"></div>
+      <div class="hero-detail"><span class="hero-detail-num">4</span><span class="hero-detail-label">Bath</span></div>
+      <div class="hero-divider"></div>
+      <div class="hero-detail"><span class="hero-detail-num">3,116</span><span class="hero-detail-label">Sq Ft</span></div>
+    </div>
+  </div>
+  <div class="scroll-indicator"><div class="scroll-line"></div><span>Scroll</span></div>
+</section>
+
+<!-- VIDEO — immediately after hero -->
+<section id="videos">
+  <div class="section-label section-label-center">Video</div>
+  <h2 class="section-title" style="margin-bottom:24px; text-align:center;">Tour</h2>
+  <div class="video-wrap">
+    <iframe src="https://player.vimeo.com/video/1175023269?title=0&byline=0&portrait=0&color=c9a84c" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section id="overview">
+  <div class="fade-in">
+    <div class="section-label">The Property</div>
+    <h2 class="section-title">Move-In Ready.</h2>
+    <p class="overview-headline">3,000+ sq ft with a finished basement, separate entrance, and every detail considered.</p>
+    <button class="read-more-toggle" id="readMoreBtn">Read More <span class="arrow">▾</span></button>
+    <div class="overview-full" id="overviewFull">
+      The main floor showcases an upgraded kitchen with crown moulding, GE Café gas range, premium hooded fan, and a full-size fridge with water and ice. Plaster crown moulding and trim dress the family and dining rooms. Five bedrooms, four upgraded bathrooms, California shutters on the main floor, wooden blinds throughout the upper. New furnace, AC, and water tank already replaced. Outside: stone stairs, custom cast iron railings, jewel stone porch, new fence, extended interlocking driveway, professionally landscaped yard, half-moon patio, and an aluminum gazebo. The 2-car garage features a custom overhead mezzanine and new insulated door. Gas line roughed in for the backyard BBQ. Minutes to Hwy 400, top schools, and every amenity you need.
+    </div>
+  </div>
+  <div class="fade-in">
+    <div class="details-grid">
+      <div class="detail-item"><div class="d-label">Bedrooms</div><div class="d-value">5</div></div>
+      <div class="detail-item"><div class="d-label">Bathrooms</div><div class="d-value">4</div></div>
+      <div class="detail-item"><div class="d-label">Living Area</div><div class="d-value">3,116 <span style="font-size:14px;color:var(--grey)">sqft</span></div></div>
+      <div class="detail-item"><div class="d-label">Lot Size</div><div class="d-value">36,109 <span style="font-size:14px;color:var(--grey)">sqft</span></div></div>
+      <div class="detail-item"><div class="d-label">Year Built</div><div class="d-value">2001</div></div>
+      <div class="detail-item"><div class="d-label">Stories</div><div class="d-value">2 + Bsmt</div></div>
+    </div>
+    <div class="section-label section-label-center" style="margin-bottom:12px; justify-content:center;">Features</div>
+    <div class="features-list">
+      <span class="feature-tag">Hardwood Floors</span>
+      <span class="feature-tag">GE Café Appliances</span>
+      <span class="feature-tag">Separate Entrance</span>
+      <span class="feature-tag">2-Car Garage</span>
+      <span class="feature-tag">California Shutters</span>
+      <span class="feature-tag">Crown Moulding</span>
+      <span class="feature-tag">New Furnace & AC</span>
+      <span class="feature-tag">Gas BBQ Line</span>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTOS — 6 initial -->
+<section id="photos">
+  <div class="section-label">Gallery</div>
+  <h2 class="section-title">Photos</h2>
+  <div class="photo-gallery-wrap">
+    <div class="photo-gallery" id="photoGallery"></div>
+    <button class="view-all-btn" id="viewAllBtn">View All Photos</button>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <span class="lb-close" id="lbClose">×</span>
+  <span class="lb-prev" id="lbPrev">‹</span>
+  <img id="lbImg" src="" alt="">
+  <span class="lb-next" id="lbNext">›</span>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<!-- FLOOR PLANS -->
+<section id="hotspot-floorplans">
+  <div class="section-label">Floor Plans</div>
+  <h2 class="section-title">Every Level</h2>
+  <div class="fp-tabs">
+    <button class="fp-tab active" data-floor="0">Bsmt</button>
+    <button class="fp-tab" data-floor="1">Main</button>
+    <button class="fp-tab" data-floor="2">Upper</button>
+    <button class="fp-tab" data-floor="3">All</button>
+  </div>
+  <div class="fp-image active" id="fp-0">
+    <img src="https://media.relahq.com/public/styles/kb_full/s3/property-docs/prop-nid-236609956/1st_floor_179_lio_avenue_vaughan_with_dim_76.png" alt="Basement Floor Plan">
+  </div>
+  <div class="fp-image" id="fp-1">
+    <img src="https://media.relahq.com/public/styles/kb_full/s3/property-docs/prop-nid-236609956/2nd_floor_179_lio_avenue_vaughan_with_dim_479.png" alt="Main Floor Plan">
+  </div>
+  <div class="fp-image" id="fp-2">
+    <img src="https://media.relahq.com/public/styles/kb_full/s3/property-docs/prop-nid-236609956/3rd_floor_179_lio_avenue_vaughan_with_dim_706.png" alt="Upper Floor Plan">
+  </div>
+  <div class="fp-image" id="fp-3">
+    <img src="https://media.relahq.com/public/styles/kb_full/s3/property-docs/prop-nid-236609956/all_floors_179_lio_avenue_vaughan_with_dim_855.png" alt="All Floors">
+  </div>
+</section>
+
+<!-- MAP -->
+<section id="map">
+  <div class="map-header fade-in">
+    <div class="section-label">Location</div>
+    <h2 class="section-title">Woodbridge</h2>
+  </div>
+  <iframe class="map-embed" src="https://maps.google.com/maps?q=179+Lio+Ave,+Woodbridge,+ON+L4H2S3&output=embed" allowfullscreen loading="lazy"></iframe>
+</section>
+
+<!-- AGENT + CONTACT -->
+<section id="listing-agents">
+  <div class="fade-in">
+    <div class="section-label section-label-center" style="justify-content:center;">Presented By</div>
+    <h2 class="section-title" style="text-align:center;">Your Agent</h2>
+    <div class="agent-card">
+      <img class="agent-photo" src="https://media.relahq.com/public/styles/agent_card_square_large/s3/agent-headshots/user-1413396/2026-3/img_2147.jpg" alt="Michael Barillari">
+      <div>
+        <div class="agent-name">Michael Barillari</div>
+        <div class="agent-title">Broker</div>
+        <div class="agent-brokerage-addr">RE/MAX Premier Inc., Brokerage<br>3550 Rutherford Rd, Unit 80<br>Vaughan, ON L4H 3T8</div>
+      </div>
+    </div>
+  </div>
+  <div class="fade-in">
+    <div class="section-label section-label-center" style="justify-content:center;">Get In Touch</div>
+    <h2 class="section-title" style="font-size:24px; text-align:center;">Inquire</h2>
+    <div class="form-field"><input type="text" id="fName" placeholder="Full Name"></div>
+    <div class="form-field"><input type="email" id="fEmail" placeholder="Email Address"></div>
+    <button class="form-submit" id="formSubmit">Send Inquiry</button>
+    <div class="form-optional-label">Optional — makes you a priority</div>
+    <div class="form-field"><input type="tel" id="fPhone" placeholder="Phone Number"></div>
+    <div class="form-field"><textarea id="fMessage" placeholder="I'm interested in 179 Lio Ave..."></textarea></div>
+  </div>
+</section>
+
+<footer>
+  <img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="SOLDMIKE" class="footer-logo-img">
+  <div class="footer-copy">© 2026 RE/MAX Premier Inc., Brokerage</div>
+</footer>
+
+<script>
+const nums = [326,826,312,206,580,432,448,509,511,738,214,352,870,926,178,393,828,295,174,582,87,801,114,450,432,723,385,62,870,105,423,149,110,216,314,839,793,276,157,966,723,493,41,212];
+const photos = nums.map((n, i) => `https://media.relahq.com/public/styles/image_manage_preview/s3/property-images/prop-nid-236609956/179_lio_ave-${i+1}_${n}.jpg`);
+
+const showCount = 6;
+let showingAll = false;
+const gallery = document.getElementById('photoGallery');
+
+function buildGallery(count) {
+  gallery.innerHTML = '';
+  photos.slice(0, count).forEach((src, idx) => {
+    const div = document.createElement('div');
+    div.className = 'photo-item';
+    div.innerHTML = `<img src="${src}" alt="179 Lio Ave photo ${idx+1}" loading="lazy">`;
+    div.addEventListener('click', () => openLightbox(idx));
+    gallery.appendChild(div);
+  });
+}
+buildGallery(showCount);
+
+document.getElementById('viewAllBtn').addEventListener('click', function() {
+  if (!showingAll) {
+    buildGallery(photos.length);
+    this.textContent = 'Show Less';
+    showingAll = true;
+  } else {
+    buildGallery(showCount);
+    this.textContent = 'View All Photos';
+    showingAll = false;
+    document.getElementById('photos').scrollIntoView({behavior:'smooth'});
+  }
+});
+
+let currentPhoto = 0;
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCounter = document.getElementById('lbCounter');
+
+function openLightbox(idx) {
+  currentPhoto = idx;
+  lbImg.src = photos[idx];
+  lbCounter.textContent = `${idx+1} / ${photos.length}`;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() { lightbox.classList.remove('active'); document.body.style.overflow = ''; }
+function prevPhoto() { currentPhoto = (currentPhoto-1+photos.length)%photos.length; lbImg.src=photos[currentPhoto]; lbCounter.textContent=`${currentPhoto+1} / ${photos.length}`; }
+function nextPhoto() { currentPhoto = (currentPhoto+1)%photos.length; lbImg.src=photos[currentPhoto]; lbCounter.textContent=`${currentPhoto+1} / ${photos.length}`; }
+document.getElementById('lbClose').addEventListener('click', closeLightbox);
+document.getElementById('lbPrev').addEventListener('click', prevPhoto);
+document.getElementById('lbNext').addEventListener('click', nextPhoto);
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key==='ArrowLeft') prevPhoto();
+  if (e.key==='ArrowRight') nextPhoto();
+  if (e.key==='Escape') closeLightbox();
+});
+let touchStartX = 0;
+lightbox.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+lightbox.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].screenX;
+  if (Math.abs(diff) > 50) { diff > 0 ? nextPhoto() : prevPhoto(); }
+});
+
+document.getElementById('readMoreBtn').addEventListener('click', function() {
+  const full = document.getElementById('overviewFull');
+  full.classList.toggle('open');
+  this.classList.toggle('expanded');
+  this.innerHTML = full.classList.contains('open')
+    ? 'Show Less <span class="arrow">▾</span>'
+    : 'Read More <span class="arrow">▾</span>';
+});
+
+document.querySelectorAll('.fp-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.fp-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.fp-image').forEach(i => i.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById(`fp-${this.dataset.floor}`).classList.add('active');
+  });
+});
+
+window.addEventListener('scroll', () => document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60));
+const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.15 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+  document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+});
+document.querySelectorAll('.mobile-nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+});
+
+// Form → Cloudflare Worker → Follow Up Boss
+document.getElementById('formSubmit').addEventListener('click', async function() {
+  const btn = this;
+  const fullName = document.getElementById('fName').value.trim();
+  const email = document.getElementById('fEmail').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  const message = document.getElementById('fMessage').value.trim();
+
+  if (!fullName || !email) {
+    btn.textContent = 'Name & email required';
+    btn.style.background = '#c0392b'; btn.style.color = '#fff';
+    setTimeout(() => { btn.textContent = 'Send Inquiry'; btn.style.background=''; btn.style.color=''; }, 3000);
+    return;
+  }
+
+  const nameParts = fullName.split(' ');
+  const firstName = nameParts[0];
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  btn.textContent = 'Sending...'; btn.disabled = true;
+
+  try {
+    const response = await fetch('https://dawn-sun-5ae8.broker-e2c.workers.dev', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, phone, message, property: '179 Lio Ave — Woodbridge, ON — $1,498,000' })
+    });
+    const result = await response.json();
+    if (result.success) {
+      btn.textContent = '✓ Sent — We\'ll be in touch!';
+      btn.style.background = '#2d6a4f'; btn.style.color = '#fff';
+      document.getElementById('fName').value = '';
+      document.getElementById('fEmail').value = '';
+      document.getElementById('fPhone').value = '';
+      document.getElementById('fMessage').value = '';
+    } else { throw new Error('Failed'); }
+  } catch (err) {
+    btn.textContent = 'Something went wrong — please call us';
+    btn.style.background = '#c0392b'; btn.style.color = '#fff';
+  }
+  btn.disabled = false;
+  setTimeout(() => { btn.textContent = 'Send Inquiry'; btn.style.background=''; btn.style.color=''; }, 5000);
+});
+</script>
+</body>
+</html>
