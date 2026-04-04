@@ -215,13 +215,26 @@
     #videos { padding: 100px 0; }
     .video-wrap { width: 80%; max-width: 1000px; box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
     #photos { padding: 100px 64px; }
+    #photos .section-label { justify-content: center; }
+    #photos .section-label::after { display: none; }
+    #photos .section-title { text-align: center; }
+    .photo-gallery-wrap { max-width: 900px; margin: 0 auto; }
     .photo-gallery { grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 40px; }
     .photo-item:hover img { transform: scale(1.06); transition: transform 0.5s; }
     .fp-tab { font-size: 10px; letter-spacing: 2px; padding: 12px 24px; flex: none; }
     .fp-image img { width: 80%; max-width: 1000px; padding: 24px; }
+    #hotspot-floorplans .section-label { justify-content: center; }
+    #hotspot-floorplans .section-label::after { display: none; }
+    #hotspot-floorplans .section-title { text-align: center; }
+    .fp-tabs { justify-content: center; }
+    #map .section-label { justify-content: center; }
+    #map .section-label::after { display: none; }
+    #map .section-title { text-align: center; }
     .map-header { padding: 80px 64px 40px; }
     .map-embed { height: 500px; }
-    #listing-agents { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    #listing-agents { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    #listing-agents .section-label-center { justify-content: flex-start; }
+    #listing-agents .section-title { text-align: left; }
     .agent-card { flex-direction: row; text-align: left; gap: 32px; margin-bottom: 0; }
     .agent-photo { width: 160px; height: 160px; }
     .agent-name { font-size: 28px; }
@@ -244,7 +257,7 @@
 <body>
 
 <nav id="mainNav">
-  <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="SOLDMIKE — The OP Team"></a>
+  <a href="https://soldmike.ca" class="nav-logo" style="font-family:'Cormorant Garamond',serif; color:var(--gold); font-size:18px; letter-spacing:2px; text-decoration:none; font-weight:400;">SOLDMIKE</a>
   <ul class="nav-links">
     <li><a href="#videos">Video</a></li>
     <li><a href="#overview">Overview</a></li>
