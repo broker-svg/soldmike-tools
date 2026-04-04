@@ -206,9 +206,13 @@
     section { padding: 100px 64px; }
     .section-title { font-size: clamp(32px,4vw,52px); margin-bottom: 40px; }
     .section-label { font-size: 10px; letter-spacing: 4px; }
-    #overview { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    .overview-headline { font-size: 20px; }
-    .overview-full { font-size: 18px; }
+    #overview { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    #overview .section-label { justify-content: center; }
+    #overview .section-label::after { display: none; }
+    #overview .section-title { text-align: center; }
+    .overview-headline { font-size: 20px; text-align: center; }
+    .read-more-toggle { display: block; text-align: center; }
+    .overview-full { font-size: 18px; text-align: center; }
     .detail-item { padding: 24px; }
     .detail-item .d-value { font-size: 28px; }
     .feature-tag { font-size: 10px; padding: 8px 16px; letter-spacing: 1.5px; }
@@ -232,10 +236,10 @@
     #map .section-title { text-align: center; }
     .map-header { padding: 80px 64px 40px; }
     .map-embed { height: 500px; }
-    #listing-agents { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-    #listing-agents .section-label-center { justify-content: flex-start; }
-    #listing-agents .section-title { text-align: left; }
-    .agent-card { flex-direction: row; text-align: left; gap: 32px; margin-bottom: 0; }
+    #listing-agents { display: block; max-width: 900px; margin: 0 auto; text-align: center; }
+    .agent-card { flex-direction: row; text-align: left; gap: 32px; margin-bottom: 48px; justify-content: center; }
+    .agent-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 600px; margin: 0 auto; }
+    .agent-form-grid .form-field { margin-bottom: 0; }
     .agent-photo { width: 160px; height: 160px; }
     .agent-name { font-size: 28px; }
     .lb-prev, .lb-next { display: block; position: absolute; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); font-size: 48px; cursor: pointer; padding: 20px; font-weight: 300; user-select: none; }
