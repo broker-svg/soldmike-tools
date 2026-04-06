@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Automation Build Guide</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#1a1a1a;color:#e0e0e0;min-height:100vh}
+.header{background:#111;padding:24px 40px;border-bottom:3px solid #C9A04A;display:flex;align-items:center;gap:20px}
+.header h1{font-size:22px;color:#fff;letter-spacing:0.05em}
+.header h1 span{color:#C9A04A}
+.header .subtitle{font-size:13px;color:#888;margin-top:4px}
+.tabs{display:flex;background:#222;padding:0 20px;border-bottom:1px solid #333;overflow-x:auto;gap:0}
+.tab{padding:14px 20px;font-size:13px;font-weight:700;color:#888;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s}
+.tab:hover{color:#ccc;background:#2a2a2a}
+.tab.active{color:#fff;border-bottom-color:#C9A04A;background:#2a2a2a}
+.tab .num{display:inline-block;background:#333;color:#888;width:20px;height:20px;border-radius:50%;text-align:center;line-height:20px;font-size:10px;margin-right:6px}
+.tab.active .num{background:#C9A04A;color:#111}
+.content{display:none;padding:30px 40px;max-width:900px}
+.content.active{display:block}
+.auto-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:6px}
+.auto-trigger{font-size:14px;color:#C9A04A;margin-bottom:24px;padding:10px 16px;background:#2a2520;border-left:3px solid #C9A04A;border-radius:0 4px 4px 0}
+.auto-trigger strong{color:#e0c070}
+.tree{position:relative;padding-left:30px}
+.tree::before{content:'';position:absolute;left:14px;top:0;bottom:40px;width:2px;background:#333}
+.step{position:relative;margin-bottom:0;padding:14px 20px;background:#252525;border:1px solid #333;border-radius:6px;margin-left:20px}
+.step::before{content:'';position:absolute;left:-22px;top:22px;width:20px;height:2px;background:#333}
+.step::after{content:'';position:absolute;left:-24px;top:18px;width:10px;height:10px;border-radius:50%;border:2px solid #555;background:#1a1a1a}
+.step.email::after{border-color:#C9A04A;background:#2a2520}
+.step.task::after{border-color:#2E7D32;background:#1e2e1e}
+.step.condition::after{border-color:#CC0000;background:#2e1a1a}
+.step-type{font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:4px}
+.step.email .step-type{color:#C9A04A}
+.step.task .step-type{color:#2E7D32}
+.step.condition .step-type{color:#CC0000}
+.step-title{font-size:14px;color:#fff;font-weight:600;line-height:1.4}
+.step-detail{font-size:12px;color:#888;margin-top:4px}
+.delay{text-align:center;padding:8px 0;margin-left:20px;position:relative}
+.delay::before{content:'';position:absolute;left:-8px;top:50%;width:8px;height:2px;background:#333}
+.delay-badge{display:inline-block;padding:4px 14px;background:#1e2e3e;border:1px solid #2a4a6a;border-radius:12px;font-size:11px;color:#6ab0f3;font-weight:600}
+.summary-box{background:#222;border:1px solid #333;border-radius:8px;padding:20px;margin-bottom:24px}
+.summary-box h3{font-size:14px;color:#C9A04A;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.1em}
+.summary-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a2a;font-size:13px}
+.summary-row:last-child{border-bottom:none}
+.summary-label{color:#888}
+.summary-value{color:#fff;font-weight:600}
+.phase-color{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:8px;vertical-align:middle}
+.note{background:#2a2520;border:1px solid #3a3020;border-radius:6px;padding:14px 18px;margin-top:20px;font-size:12px;color:#c0a060;line-height:1.6}
+.note strong{color:#e0c070}
+.step-number{position:absolute;right:12px;top:12px;font-size:10px;color:#555;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div>
+<h1><span>SOLD</span>MIKE — Automation Build Guide</h1>
+<div class="subtitle">7 Automations &bull; 47 Emails &bull; Follow Up Boss Seller Pipeline</div>
+</div>
+</div>
+
+<div class="tabs" id="tabs">
+<div class="tab active" onclick="showTab(0)"><span class="num">1</span>Listing Appointment</div>
+<div class="tab" onclick="showTab(1)"><span class="num">2</span>Pre-Launch</div>
+<div class="tab" onclick="showTab(2)"><span class="num">3</span>Pricing &amp; Strategy</div>
+<div class="tab" onclick="showTab(3)"><span class="num">4</span>Active Listing</div>
+<div class="tab" onclick="showTab(4)"><span class="num">5</span>Offer Night</div>
+<div class="tab" onclick="showTab(5)"><span class="num">6</span>Sold to Closing</div>
+<div class="tab" onclick="showTab(6)"><span class="num">7</span>Post Closing</div>
+</div>
+
+<!-- ============ AUTOMATION 1: LISTING APPOINTMENT ============ -->
+<div class="content active" id="tab0">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#757575"></span>Automation #1 — Listing Appointment</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Listing Appointment</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Listing Appointment</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">7 emails (Seller 01–07)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Grey #757575</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~20 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Listing Appointment"</strong> in SELLER pipeline</div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 01 — Before you call any agent — read this</div>
+<div class="step-detail">Sends immediately when deal enters stage</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 2 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 02 — The question every seller needs to answer honestly</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 03 — Your home's value and what you think it's worth</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 04 — Timing the market vs timing your life</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 05 — What your neighbour sold for means less than you think</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 06 — Selling and buying at the same time — the playbook</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 7</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 07 — The cost of selling — every number you need</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes → STOP this automation</div>
+<div class="step-detail">Cancels all remaining emails when deal moves to next stage</div>
+</div>
+</div>
+
+<div class="note"><strong>Note:</strong> When the deal moves to "Coming Soon," this automation stops automatically and Automation #2 (Pre-Launch) kicks in.</div>
+</div>
+
+<!-- ============ AUTOMATION 2: PRE-LAUNCH ============ -->
+<div class="content" id="tab1">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#757575"></span>Automation #2 — Pre-Launch</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Pre-Launch</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Coming Soon</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">7 emails (Seller 08–14)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Grey #757575 (still Listing Appointment template)</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~20 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Coming Soon"</strong> in SELLER pipeline</div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 08 — First impressions are made before anyone walks in</div>
+<div class="step-detail">Sends immediately when deal enters stage</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 2 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 09 — Declutter like you're already moving</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 10 — These small repairs pay for themselves ten times over</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 11 — Paint is the highest-ROI investment before listing</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 12 — Staging isn't decorating — it's strategy</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 13 — Your listing photos are your first showing</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 7</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 14 — The week before you go live — the checklist</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes → STOP this automation</div>
+<div class="step-detail">Cancels remaining emails when deal moves to "Listings"</div>
+</div>
+</div>
+
+<div class="note"><strong>Note:</strong> Pre-Launch and Pricing &amp; Strategy (Automation #3) both trigger on "Coming Soon." Pre-Launch covers prep emails (08–14). Pricing covers strategy emails (15–21). Both run simultaneously.</div>
+</div>
+
+<!-- ============ AUTOMATION 3: PRICING & STRATEGY ============ -->
+<div class="content" id="tab2">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#28388F"></span>Automation #3 — Pricing &amp; Strategy</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Pricing &amp; Strategy</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Coming Soon</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">7 emails (Seller 15–21)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Navy/Gold #28388F / #C9A04A</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~21 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Coming Soon"</strong> in SELLER pipeline</div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 15 — How I actually price your home — no guessing</div>
+<div class="step-detail">Sends immediately when deal enters stage</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 16 — Pricing high to leave room is a losing strategy</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 17 — The pricing strategy behind multiple offers</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 18 — What if your home doesn't sell in two weeks</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 19 — Days on market — what this number really means</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 20 — Your MLS listing is a sales pitch</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 7</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 21 — The marketing plan — it's more than MLS</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes → STOP this automation</div>
+<div class="step-detail">Cancels remaining emails when deal moves to "Listings"</div>
+</div>
+</div>
+
+<div class="note"><strong>Note:</strong> This runs alongside Pre-Launch (Automation #2) — both trigger on "Coming Soon." The seller gets prep emails AND pricing education at the same time, staggered by the delays. Consider offsetting the first email by 1 day so they don't get 2 emails on the same day.</div>
+</div>
+
+<!-- ============ AUTOMATION 4: ACTIVE LISTING ============ -->
+<div class="content" id="tab3">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#2E7D32"></span>Automation #4 — Active Listing</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Active Listing</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Listings</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">7 emails (Seller 22–28)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Green #2E7D32</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~27 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Listings"</strong> in SELLER pipeline</div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 22 — Your home is live — here's what happens now</div>
+<div class="step-detail">Sends immediately when deal enters stage</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 2 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 23 — Showing feedback — what to listen to and ignore</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 24 — Why your home might not sell to the first person who loves it</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 4 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 25 — Showings are slowing down — here's what we do</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 26 — Open houses — when they work and when they don't</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 27 — What to expect from your weekly update</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 7</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 28 — The hardest conversation — when the price needs to change</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes → STOP this automation</div>
+<div class="step-detail">Cancels remaining emails when deal moves to "Sold Before Closing"</div>
+</div>
+</div>
+
+<div class="note"><strong>Note:</strong> Delays are longer here (4-5 days) because the listing could be active for weeks. The emails drip slower so they don't overwhelm the seller while they're living through showings. This automation does NOT stop when the "offer-night" tag is added — it only stops when the deal stage changes.</div>
+</div>
+
+<!-- ============ AUTOMATION 5: OFFER NIGHT ============ -->
+<div class="content" id="tab4">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#3C3C3C"></span>Automation #5 — Offer Night</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Offer Night</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Tag Added → "offer-night"</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">6 emails (Seller 29–34)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Charcoal/Gold #3C3C3C / #C9A04A</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~6 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Tag <strong>"offer-night"</strong> is added to contact<br><span style="font-size:12px;color:#888;margin-top:4px;display:block">This is the ONLY automation triggered by a tag, not a deal stage change</span></div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 29 — You have an offer — here's what happens next</div>
+<div class="step-detail">Sends immediately when tag is added</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 1 day</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 30 — Multiple offers — how I manage offer night</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 1 day</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 31 — How to read an offer beyond the price</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 1 day</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 32 — Counter offers — when and how to push back</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 1 day</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 33 — Conditions in the offer — what they mean for you</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 1 day</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 34 — The deal is firm — here's what that means</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes to "Sold Before Closing" → STOP this automation</div>
+<div class="step-detail">Offer Night emails stop when the deal moves to Sold Before Closing</div>
+</div>
+</div>
+
+<div class="note"><strong>Important:</strong> This is triggered by a TAG ("offer-night"), not a deal stage move. The Active Listing emails (Automation #4) keep running alongside these — they only stop when the deal actually moves to "Sold Before Closing." Offer Night emails drip fast (every 1 day) because this phase moves quickly.</div>
+</div>
+
+<!-- ============ AUTOMATION 6: SOLD TO CLOSING ============ -->
+<div class="content" id="tab5">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#CC0000"></span>Automation #6 — Sold to Closing</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Closing</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Sold Before Closing</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">6 emails (Seller 35–40)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Red #CC0000</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~25 days</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Sold Before Closing"</strong> in SELLER pipeline<br><span style="font-size:12px;color:#888;margin-top:4px;display:block">This also stops Automation #4 (Active Listing) and Automation #5 (Offer Night)</span></div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 35 — From sold to closing — here's the timeline</div>
+<div class="step-detail">Sends immediately when deal enters stage</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 36 — Your lawyer's role — behind the scenes</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 37 — The statement of adjustments — your bottom line</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 38 — The buyer's walkthrough — what it means for you</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 39 — Moving day logistics — the practical checklist</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 5 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 40 — Closing day — minute by minute</div>
+<div class="step-detail">Timed to arrive close to closing day</div>
+</div>
+
+<div class="delay"><span class="delay-badge">&darr;</span></div>
+
+<div class="step condition">
+<span class="step-number">CONDITION</span>
+<div class="step-type">Stop Condition</div>
+<div class="step-title">If deal stage changes to "Closed" → STOP this automation</div>
+<div class="step-detail">Closing emails stop when the deal officially closes</div>
+</div>
+</div>
+
+<div class="note"><strong>Note:</strong> The delays here (3-5 days) are paced to match a typical 30-60 day closing period. Adjust the delays if your closings are shorter or longer. Email 40 ("Closing day — minute by minute") should ideally arrive the day before or day of closing.</div>
+</div>
+
+<!-- ============ AUTOMATION 7: POST CLOSING ============ -->
+<div class="content" id="tab6">
+<div class="summary-box">
+<h3><span class="phase-color" style="background:#003DA5"></span>Automation #7 — Post Closing</h3>
+<div class="summary-row"><span class="summary-label">Automation Name</span><span class="summary-value">SOLDMIKE — Post Closing</span></div>
+<div class="summary-row"><span class="summary-label">Trigger</span><span class="summary-value">Deal Stage Change → Closed</span></div>
+<div class="summary-row"><span class="summary-label">Emails</span><span class="summary-value">7 emails (Seller 41–47)</span></div>
+<div class="summary-row"><span class="summary-label">Template Color</span><span class="summary-value">Red top / Blue footer #CC0000 / #003DA5</span></div>
+<div class="summary-row"><span class="summary-label">Total Drip Duration</span><span class="summary-value">~400 days (long-term nurture)</span></div>
+</div>
+
+<div class="auto-trigger"><strong>TRIGGER:</strong> Deal moves to <strong>"Closed"</strong> in SELLER pipeline<br><span style="font-size:12px;color:#888;margin-top:4px;display:block">This also stops Automation #6 (Sold to Closing)</span></div>
+
+<div class="tree">
+<div class="step email">
+<span class="step-number">STEP 1</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 41 — It's done — here's what I want you to know</div>
+<div class="step-detail">Sends immediately when deal closes</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 3 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 2</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 42 — One small ask — if the experience was worth it</div>
+<div class="step-detail">Google review request</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 2 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 3</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 43 — A gift is on its way</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 25 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 4</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 44 — 30-day check-in — how's everything going?</div>
+<div class="step-detail">Arrives ~30 days after closing</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 150 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 5</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 45 — 6-month market update — your old neighbourhood</div>
+<div class="step-detail">Arrives ~6 months after closing</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 185 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 6</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 46 — One year later — your annual check-in</div>
+<div class="step-detail">Arrives ~1 year after closing</div>
+</div>
+
+<div class="delay"><span class="delay-badge">Wait 35 days</span></div>
+
+<div class="step email">
+<span class="step-number">STEP 7</span>
+<div class="step-type">Send Email</div>
+<div class="step-title">SOLDMIKE Seller 47 — Someone you know is thinking about real estate</div>
+<div class="step-detail">Referral ask — final email in the sequence</div>
+</div>
+</div>
+
+<div class="note"><strong>No stop condition needed here.</strong> This is the final stage — there's no next stage to move to. The emails run until they're all sent. The long delays (150 days, 185 days) handle the 6-month and 1-year touchpoints automatically.</div>
+</div>
+
+<script>
+function showTab(i) {
+  document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+  document.querySelectorAll('.content').forEach((c,idx) => c.classList.toggle('active', idx===i));
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
