@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Command Centre</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f2f1ed;min-height:100vh;color:#1a1a18;}
+
+.top-bar{background:#1a1a18;color:#fff;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;}
+.top-bar-left{display:flex;align-items:center;gap:12px;}
+.brand{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+.date-badge{font-size:12px;color:#888;margin-left:4px;}
+.top-links{display:flex;gap:8px;}
+.top-link{font-size:12px;color:#888;text-decoration:none;padding:5px 10px;border-radius:6px;border:1px solid #333;}
+.top-link:hover{color:#fff;border-color:#555;}
+
+.page{max-width:1100px;margin:0 auto;padding:24px 20px 60px;}
+
+/* SECTION TILES */
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#999;margin-bottom:12px;}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
+.tile{background:#fff;border-radius:14px;border:1px solid #e5e3dd;padding:20px 18px 16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.tile:hover{border-color:#ccc;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.07);}
+.tile-accent{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;}
+.tile-icon{font-size:22px;margin-bottom:10px;}
+.tile-name{font-size:14px;font-weight:600;margin-bottom:8px;}
+.tile-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px;}
+.pa{background:#E1F5EE;color:#085041;}
+.pq{background:#FAEEDA;color:#633806;}
+.pd{background:#E6F1FB;color:#0C447C;}
+.pp{background:#F1EFE8;color:#444441;}
+.tile-sub{font-size:11px;color:#aaa;line-height:1.4;}
+
+/* TWO COLUMN LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+
+/* PRIORITY PANEL */
+.panel{background:#fff;border-radius:14px;border:1px solid #e5e3dd;padding:18px 20px;}
+.panel-title{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.panel-title span{font-size:11px;font-weight:400;color:#999;}
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f0ede8;}
+.task-item:last-child{border-bottom:none;padding-bottom:0;}
+.check{width:17px;height:17px;border-radius:5px;border:1.5px solid #ddd;flex-shrink:0;margin-top:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.check:hover{border-color:#aaa;}
+.check.done{background:#1D9E75;border-color:#1D9E75;}
+.check.done::after{content:'✓';color:#fff;font-size:10px;}
+.pdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.ph{background:#E24B4A;}
+.pm{background:#EF9F27;}
+.pl{background:#1D9E75;}
+.task-body{flex:1;}
+.task-text{font-size:13px;color:#1a1a18;line-height:1.35;}
+.task-meta{font-size:11px;color:#aaa;margin-top:2px;display:flex;gap:8px;align-items:center;}
+.task-due{color:#E24B4A;font-weight:500;}
+.task-blocked{color:#EF9F27;font-weight:500;}
+.task-section{font-size:10px;padding:2px 6px;border-radius:10px;font-weight:500;}
+.ts-re{background:#E6F1FB;color:#0C447C;}
+.ts-biz{background:#F1EFE8;color:#444441;}
+.ts-mkt{background:#EEEDFE;color:#3C3489;}
+.ts-tpm{background:#FAECE7;color:#712B13;}
+.ts-per{background:#FAEEDA;color:#633806;}
+
+/* CALENDARS */
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+.cal-panel{background:#fff;border-radius:14px;border:1px solid #e5e3dd;overflow:hidden;}
+.cal-header{padding:14px 16px 12px;border-bottom:1px solid #f0ede8;display:flex;align-items:center;gap:8px;}
+.cal-dot{width:10px;height:10px;border-radius:50%;}
+.cal-title{font-size:13px;font-weight:600;}
+.cal-sub{font-size:11px;color:#aaa;margin-left:auto;}
+.cal-grid{padding:12px 14px;}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;}
+.cal-day-label{font-size:9px;font-weight:500;color:#bbb;text-align:center;padding:2px 0;}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day{min-height:32px;border-radius:6px;padding:3px 4px;font-size:10px;color:#888;position:relative;}
+.cal-day.today{background:#1a1a18;color:#fff;font-weight:600;}
+.cal-day.has-event{background:#f7f6f2;}
+.cal-day-num{font-size:10px;margin-bottom:2px;}
+.event-dot{width:5px;height:5px;border-radius:50%;margin:1px auto;}
+.cal-tasks{border-top:1px solid #f0ede8;}
+.cal-task-item{display:flex;align-items:flex-start;gap:8px;padding:8px 14px;border-bottom:1px solid #f7f6f2;}
+.cal-task-item:last-child{border-bottom:none;}
+.cal-task-text{font-size:12px;color:#1a1a18;flex:1;line-height:1.35;}
+.cal-task-date{font-size:10px;color:#aaa;white-space:nowrap;margin-top:1px;}
+.empty-cal{padding:16px 14px;font-size:12px;color:#bbb;text-align:center;}
+
+.dot-green{background:#1D9E75;}
+.dot-red{background:#E24B4A;}
+.dot-blue{background:#378ADD;}
+.dot-amber{background:#EF9F27;}
+.dot-purple{background:#7F77DD;}
+.dot-orange{background:#D85A30;}
+
+/* SECTION DETAIL */
+.section-detail{display:none;}
+.section-detail.active{display:block;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#888;cursor:pointer;background:none;border:none;font-family:inherit;padding:8px 0;margin-bottom:16px;}
+.back-btn:hover{color:#1a1a18;}
+.proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px;}
+.proj-card{background:#fff;border-radius:12px;border:1px solid #e5e3dd;padding:14px;cursor:pointer;transition:border-color .15s;}
+.proj-card:hover{border-color:#ccc;}
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.proj-name{font-size:13px;font-weight:600;}
+.sb{font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.sb-active{background:#E1F5EE;color:#085041;}
+.sb-queued{background:#FAEEDA;color:#633806;}
+.sb-done{background:#E6F1FB;color:#0C447C;}
+.sb-parked{background:#F1EFE8;color:#444441;}
+.sb-blocked{background:#FAECE7;color:#712B13;}
+.proj-next-label{font-size:10px;color:#bbb;margin-bottom:2px;}
+.proj-next{font-size:11px;color:#888;line-height:1.4;}
+
+.main-view{display:block;}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="brand">SOLDMIKE — Command Centre</div>
+    <div class="date-badge">Tuesday, April 7, 2026</div>
+  </div>
+  <div class="top-links">
+    <a class="top-link" href="https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453" target="_blank">🎯 Priority DB</a>
+    <a class="top-link" href="https://www.notion.so/33b8b7ae80a181b18b34f111a95c88bd" target="_blank">🗺️ Project Map</a>
+    <a class="top-link" href="https://calendar.notion.so" target="_blank">📅 Notion Calendar</a>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- MAIN VIEW -->
+  <div class="main-view" id="mainView">
+
+    <!-- SECTION TILES -->
+    <div class="section-label">Sections</div>
+    <div class="tiles">
+      <div class="tile" onclick="openSection('re')">
+        <div class="tile-accent" style="background:#1D9E75;"></div>
+        <div class="tile-icon">🏠</div>
+        <div class="tile-name">Real Estate</div>
+        <div class="tile-pills"><span class="pill pa">3 active</span><span class="pill pq">2 queued</span><span class="pill pd">3 done</span></div>
+        <div class="tile-sub">FUB · listings · websites · forms</div>
+      </div>
+      <div class="tile" onclick="openSection('mkt')">
+        <div class="tile-accent" style="background:#378ADD;"></div>
+        <div class="tile-icon">📣</div>
+        <div class="tile-name">Marketing</div>
+        <div class="tile-pills"><span class="pill pa">1 active</span><span class="pill pp">1 parked</span><span class="pill pd">2 done</span></div>
+        <div class="tile-sub">social · landing page · YouTube</div>
+      </div>
+      <div class="tile" onclick="openSection('tpm')">
+        <div class="tile-accent" style="background:#D85A30;"></div>
+        <div class="tile-icon">📷</div>
+        <div class="tile-name">Toronto Property Media</div>
+        <div class="tile-pills"><span class="pill pa">1 active</span><span class="pill pd">2 done</span></div>
+        <div class="tile-sub">shot tree · delivery · Sony A1</div>
+      </div>
+      <div class="tile" onclick="openSection('prod')">
+        <div class="tile-accent" style="background:#7F77DD;"></div>
+        <div class="tile-icon">📦</div>
+        <div class="tile-name">Products</div>
+        <div class="tile-pills"><span class="pill pp">2 parked</span><span class="pill pd">1 done</span></div>
+        <div class="tile-sub">agent platform · Mika · ISA</div>
+      </div>
+      <div class="tile" onclick="openSection('biz')">
+        <div class="tile-accent" style="background:#888780;"></div>
+        <div class="tile-icon">⚙️</div>
+        <div class="tile-name">Business & Function</div>
+        <div class="tile-pills"><span class="pill pa">2 active</span><span class="pill pq">1 queued</span><span class="pill pd">2 done</span></div>
+        <div class="tile-sub">email · website · Cloudflare · Notion</div>
+      </div>
+      <div class="tile" onclick="openSection('per')">
+        <div class="tile-accent" style="background:#EF9F27;"></div>
+        <div class="tile-icon">🧘</div>
+        <div class="tile-name">Personal</div>
+        <div class="tile-pills"><span class="pill pa">2 active</span></div>
+        <div class="tile-sub">workouts · meal plan</div>
+      </div>
+    </div>
+
+    <!-- PRIORITY + QUICK LINKS -->
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">🔴 This week — high priority <span>tap to check off</span></div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot ph"></div>
+          <div class="task-body">
+            <div class="task-text">Create Drive folder structure</div>
+            <div class="task-meta"><span class="task-due">due Apr 8</span><span class="task-section ts-biz">Business</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot ph"></div>
+          <div class="task-body">
+            <div class="task-text">Publish hub dashboard to GitHub Pages</div>
+            <div class="task-meta"><span class="task-due">due Apr 8</span><span class="task-section ts-biz">Business</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot ph"></div>
+          <div class="task-body">
+            <div class="task-text">Set up SPF / DKIM / DMARC on soldmike.com</div>
+            <div class="task-meta"><span class="task-section ts-re">Real Estate</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot ph"></div>
+          <div class="task-body">
+            <div class="task-text">Copy-paste Active Buyer campaign into FUB</div>
+            <div class="task-meta"><span class="task-blocked">blocked on deliverability</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot pm"></div>
+          <div class="task-body">
+            <div class="task-text">Build property website — 16 Saint Keller Pl</div>
+            <div class="task-meta"><span class="task-section ts-re">Real Estate</span></div>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="check" onclick="this.classList.toggle('done')"></div>
+          <div class="pdot pm"></div>
+          <div class="task-body">
+            <div class="task-text">Continue Form 290 — Page 2</div>
+            <div class="task-meta"><span class="task-section ts-re">Real Estate</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">⚡ Quick links</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="https://www.notion.so/33b8b7ae80a18110980ed065cb3e7792" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;transition:background .15s;">🏆 Command Centre (Notion)</a>
+          <a href="https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;">🎯 Priority Actions Database</a>
+          <a href="https://www.notion.so/33b8b7ae80a181b18b34f111a95c88bd" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;">🗺️ Master Project Dashboard</a>
+          <a href="https://www.notion.so/3318b7ae80a181029885e31095e99116" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;">🏡 Listings Hub</a>
+          <a href="https://www.notion.so/3338b7ae80a18152b056e0f0eb109250" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;">🔐 API Keys & Credentials</a>
+          <a href="https://broker-svg.github.io/soldmike-tools/soldmike-shot-tree.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f7f6f2;border-radius:8px;text-decoration:none;color:#1a1a18;font-size:13px;">🎥 SOLDMIKE Shot Tree</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDARS -->
+    <div class="section-label">Calendars & Upcoming</div>
+    <div class="three-col">
+
+      <!-- BROKER CALENDAR -->
+      <div class="cal-panel">
+        <div class="cal-header">
+          <div class="cal-dot dot-blue"></div>
+          <div class="cal-title">Broker</div>
+          <div class="cal-sub">broker@soldmike.com</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-days-header">
+            <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+          </div>
+          <div class="cal-days">
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="cal-day-num">6</div></div>
+            <div class="cal-day today"><div class="cal-day-num">7</div></div>
+            <div class="cal-day has-event"><div class="cal-day-num">8</div><div class="event-dot dot-blue"></div></div>
+            <div class="cal-day"><div class="cal-day-num">9</div></div>
+            <div class="cal-day has-event"><div class="cal-day-num">10</div><div class="event-dot dot-amber"></div></div>
+            <div class="cal-day"><div class="cal-day-num">11</div></div>
+            <div class="cal-day"><div class="cal-day-num">12</div></div>
+            <div class="cal-day"><div class="cal-day-num">13</div></div>
+            <div class="cal-day has-event"><div class="cal-day-num">14</div><div class="event-dot dot-blue"></div></div>
+            <div class="cal-day"><div class="cal-day-num">15</div></div>
+            <div class="cal-day"><div class="cal-day-num">16</div></div>
+            <div class="cal-day"><div class="cal-day-num">17</div></div>
+            <div class="cal-day"><div class="cal-day-num">18</div></div>
+          </div>
+        </div>
+        <div class="cal-tasks">
+          <div class="cal-task-item">
+            <div class="pdot ph" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">Create Drive folder structure</div>
+            <div class="cal-task-date">Apr 8</div>
+          </div>
+          <div class="cal-task-item">
+            <div class="pdot ph" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">Publish hub dashboard</div>
+            <div class="cal-task-date">Apr 8</div>
+          </div>
+          <div class="cal-task-item">
+            <div class="pdot pm" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">SPF / DKIM / DMARC setup</div>
+            <div class="cal-task-date">Apr 10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINANCIAL CALENDAR -->
+      <div class="cal-panel">
+        <div class="cal-header">
+          <div class="cal-dot dot-red"></div>
+          <div class="cal-title">Financial</div>
+          <div class="cal-sub">bills · tax · deadlines</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-days-header">
+            <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+          </div>
+          <div class="cal-days">
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="cal-day-num">6</div></div>
+            <div class="cal-day today"><div class="cal-day-num">7</div></div>
+            <div class="cal-day"><div class="cal-day-num">8</div></div>
+            <div class="cal-day"><div class="cal-day-num">9</div></div>
+            <div class="cal-day"><div class="cal-day-num">10</div></div>
+            <div class="cal-day"><div class="cal-day-num">11</div></div>
+            <div class="cal-day"><div class="cal-day-num">12</div></div>
+            <div class="cal-day"><div class="cal-day-num">13</div></div>
+            <div class="cal-day"><div class="cal-day-num">14</div></div>
+            <div class="cal-day"><div class="cal-day-num">15</div></div>
+            <div class="cal-day has-event"><div class="cal-day-num">16</div><div class="event-dot dot-red"></div></div>
+            <div class="cal-day"><div class="cal-day-num">17</div></div>
+            <div class="cal-day"><div class="cal-day-num">18</div></div>
+          </div>
+        </div>
+        <div class="cal-tasks">
+          <div class="cal-task-item">
+            <div class="pdot ph" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">Add closing dates here</div>
+            <div class="cal-task-date">TBD</div>
+          </div>
+          <div class="cal-task-item">
+            <div class="pdot ph" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">Add tax deadlines here</div>
+            <div class="cal-task-date">TBD</div>
+          </div>
+          <div class="cal-task-item">
+            <div class="pdot pm" style="margin-top:4px;flex-shrink:0;"></div>
+            <div class="cal-task-text">Add condition removals here</div>
+            <div class="cal-task-date">TBD</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TPM CALENDAR -->
+      <div class="cal-panel">
+        <div class="cal-header">
+          <div class="cal-dot dot-orange"></div>
+          <div class="cal-title">Toronto Property Media</div>
+          <div class="cal-sub">shoots · edits · delivery</div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-days-header">
+            <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div>
+          </div>
+          <div class="cal-days">
+            <div class="cal-day"></div>
+            <div class="cal-day"><div class="cal-day-num">6</div></div>
+            <div class="cal-day today"><div class="cal-day-num">7</div></div>
+            <div class="cal-day"><div class="cal-day-num">8</div></div>
+            <div class="cal-day"><div class="cal-day-num">9</div></div>
+            <div class="cal-day"><div class="cal-day-num">10</div></div>
+            <div class="cal-day"><div class="cal-day-num">11</div></div>
+            <div class="cal-day"><div class="cal-day-num">12</div></div>
+            <div class="cal-day"><div class="cal-day-num">13</div></div>
+            <div class="cal-day"><div class="cal-day-num">14</div></div>
+            <div class="cal-day"><div class="cal-day-num">15</div></div>
+            <div class="cal-day"><div class="cal-day-num">16</div></div>
+            <div class="cal-day"><div class="cal-day-num">17</div></div>
+            <div class="cal-day"><div class="cal-day-num">18</div></div>
+          </div>
+        </div>
+        <div class="cal-tasks">
+          <div class="empty-cal">No shoots scheduled yet.<br>Add a shoot to Google Calendar<br>and it'll appear here.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION DETAIL VIEWS -->
+  <div class="section-detail" id="sd-re">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Real Estate</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">FUB · listings · websites · forms · deliverability</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps in Real Estate</div>
+      <div class="task-item"><div class="pdot ph"></div><div class="task-body"><div class="task-text">Set up SPF / DKIM / DMARC on soldmike.com</div><div class="task-meta">Blocks entire email campaign</div></div></div>
+      <div class="task-item"><div class="pdot ph"></div><div class="task-body"><div class="task-text">Copy-paste Active Buyer campaign (8 emails) into FUB</div><div class="task-meta"><span class="task-blocked">blocked on deliverability</span></div></div></div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Build property website for 16 Saint Keller Pl</div><div class="task-meta">Use property-website skill</div></div></div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Continue Form 290 — Page 2</div><div class="task-meta">Compare against PDF after each page</div></div></div>
+      <div class="task-item"><div class="pdot pl"></div><div class="task-body"><div class="task-text">Upload MLS screenshots for next CMA</div><div class="task-meta">Run cma-generator skill</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">FUB Email Campaign</div><div class="sb sb-queued">queued</div></div><div class="proj-next-label">next step</div><div class="proj-next">Complete deliverability setup first, then copy-paste Active Buyer (8 emails)</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Property Websites</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Build site for 16 Saint Keller Pl using property-website skill</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Form 290 HTML</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Page 2 — build, compare against PDF, iterate</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">CMA Generator</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Upload MLS screenshots and run skill</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Deliverability Setup</div><div class="sb sb-queued">queued</div></div><div class="proj-next-label">next step</div><div class="proj-next">SPF · DKIM · DMARC on soldmike.com</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">FUB CRM Build</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">55 fields · 45 tags · 7 Smart Lists · live</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Zapier Engine</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">FUB stage change → Drive folder move confirmed</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Seller Update System</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">Email + HTML page skills live</div></div>
+    </div>
+  </div>
+
+  <div class="section-detail" id="sd-mkt">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Marketing</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">social · landing page · YouTube · Buffer</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps in Marketing</div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Schedule next month social posts via Metricool CSV</div></div></div>
+      <div class="task-item"><div class="pdot pl"></div><div class="task-body"><div class="task-text">Revisit YouTube channel strategy</div><div class="task-meta">Parked — revisit Q3 2026</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Social Media Automation</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Run skill → generate CSV → Michael adds images → import to Metricool</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">SOLDMIKE Landing Page</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">Live at broker-svg.github.io/soldmike-tools/soldmike-landing-v2.html</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">LinkedIn via Buffer</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">MCP posting confirmed and working</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">YouTube Channel</div><div class="sb sb-parked">parked</div></div><div class="proj-next-label">status</div><div class="proj-next">On hold — revisit Q3 2026</div></div>
+    </div>
+  </div>
+
+  <div class="section-detail" id="sd-tpm">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Toronto Property Media</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">shot tree · delivery · Sony A1 · Final Cut Pro</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps in TPM</div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Connect YouTube channel to TPM section</div></div></div>
+      <div class="task-item"><div class="pdot pl"></div><div class="task-body"><div class="task-text">Document Ryan Angle LUT workflow in Final Cut Pro</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Sony A1 Edit System</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Document 12mm + 50mm workflow, Ryan Angle LUTs in FCP</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">SOLDMIKE Shot Tree</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">14 shots across 7 zones — live on GitHub Pages</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">TPM Delivery Workflow</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">Skill live — trigger with natural language</div></div>
+    </div>
+  </div>
+
+  <div class="section-detail" id="sd-prod">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Products</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">agent platform · Mika AI · ISA</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps in Products</div>
+      <div class="task-item"><div class="pdot pl"></div><div class="task-body"><div class="task-text">Outline packaging and sales page for Agent Platform DFY OS</div><div class="task-meta">$2,500–$5,000 concept validated — needs a sales page</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Mika AI (Jotform)</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">Live on soldmike.ca — Elara handles Buyer Offer Intake</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Agent Platform DFY OS</div><div class="sb sb-parked">parked</div></div><div class="proj-next-label">next step</div><div class="proj-next">Concept validated at $2,500–$5,000 — needs packaging + sales page</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">SOLDMIKE ISA</div><div class="sb sb-parked">parked</div></div><div class="proj-next-label">status</div><div class="proj-next">Long-term vision — Claude API powered inside sales</div></div>
+    </div>
+  </div>
+
+  <div class="section-detail" id="sd-biz">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Business & Function</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">email · website · Cloudflare · Notion HQ</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps in Business & Function</div>
+      <div class="task-item"><div class="pdot ph"></div><div class="task-body"><div class="task-text">Create Drive folder structure (AI Workspace)</div><div class="task-meta"><span class="task-due">due Apr 8</span></div></div></div>
+      <div class="task-item"><div class="pdot ph"></div><div class="task-body"><div class="task-text">Publish hub dashboard to GitHub Pages</div><div class="task-meta"><span class="task-due">due Apr 8</span> · pusher tool is ready</div></div></div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Set up WordPress + Rocket.net hosting</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Notion + Drive Setup</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Create Drive folders → link everything into Notion dashboard</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Notion SOLDMIKE HQ</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">Ongoing — Command Centre, Priority DB, Project Dashboard all live</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">WordPress Website</div><div class="sb sb-queued">queued</div></div><div class="proj-next-label">next step</div><div class="proj-next">Bricks Builder + Rocket.net — Showcase IDX added last</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Email Architecture</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">4-tier Mimestream live — broker@soldmike.com is hub</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Cloudflare Worker</div><div class="sb sb-done">done</div></div><div class="proj-next-label">status</div><div class="proj-next">FUB relay permanent — dawn-sun-5ae8.broker-e2c.workers.dev</div></div>
+    </div>
+  </div>
+
+  <div class="section-detail" id="sd-per">
+    <button class="back-btn" onclick="closeSection()">← Command Centre</button>
+    <div class="section-label" style="margin-bottom:6px;">Personal</div>
+    <p style="font-size:13px;color:#888;margin-bottom:16px;">workouts · meal plan</p>
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">Next steps</div>
+      <div class="task-item"><div class="pdot pm"></div><div class="task-body"><div class="task-text">Build meal plan section</div><div class="task-meta">Define structure first — weekly vs daily</div></div></div>
+    </div>
+    <div class="section-label">Projects</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Workouts</div><div class="sb sb-active">active</div></div><div class="proj-next-label">status</div><div class="proj-next">Folder in Drive — ongoing</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-name">Meal Plan</div><div class="sb sb-active">active</div></div><div class="proj-next-label">next step</div><div class="proj-next">To be built — define structure and cadence first</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const sections = {re:'sd-re',mkt:'sd-mkt',tpm:'sd-tpm',prod:'sd-prod',biz:'sd-biz',per:'sd-per'};
+
+function openSection(key) {
+  document.getElementById('mainView').style.display = 'none';
+  document.querySelectorAll('.section-detail').forEach(s => s.classList.remove('active'));
+  document.getElementById(sections[key]).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function closeSection() {
+  document.getElementById('mainView').style.display = 'block';
+  document.querySelectorAll('.section-detail').forEach(s => s.classList.remove('active'));
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
