@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Project Hub</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;min-height:100vh;padding:32px 24px;}
+  .header{max-width:960px;margin:0 auto 28px;}
+  .header h1{font-size:22px;font-weight:600;color:#1a1a18;letter-spacing:-.02em;}
+  .header p{font-size:13px;color:#888;margin-top:4px;}
+  .legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#666;}
+  .dot{width:8px;height:8px;border-radius:50%;}
+  .dot-active{background:#1D9E75;}
+  .dot-queued{background:#EF9F27;}
+  .dot-parked{background:#B4B2A9;}
+  .dot-done{background:#378ADD;}
+  .container{max-width:960px;margin:0 auto;}
+  .hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+  @media(max-width:640px){.hub-grid{grid-template-columns:1fr 1fr;}}
+  .hub-card{background:#fff;border:1px solid #e8e6e0;border-radius:14px;padding:22px 20px 18px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+  .hub-card:hover{border-color:#ccc;transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.07);}
+  .hub-accent{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0;}
+  .hub-icon{font-size:24px;margin-bottom:12px;}
+  .hub-name{font-size:15px;font-weight:600;color:#1a1a18;margin-bottom:8px;}
+  .hub-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+  .pill{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+  .pill-active{background:#E1F5EE;color:#0F6E56;}
+  .pill-queued{background:#FAEEDA;color:#854F0B;}
+  .pill-done{background:#E6F1FB;color:#185FA5;}
+  .pill-parked{background:#F1EFE8;color:#5F5E5A;}
+  .hub-sub{font-size:12px;color:#999;line-height:1.4;}
+
+  .section-view{display:none;}
+  .section-view.active{display:block;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#888;cursor:pointer;margin-bottom:20px;padding:8px 0;background:none;border:none;font-family:inherit;}
+  .back-btn:hover{color:#1a1a18;}
+  .sec-title{font-size:18px;font-weight:600;color:#1a1a18;margin-bottom:4px;}
+  .sec-sub{font-size:13px;color:#999;margin-bottom:20px;}
+  .proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media(max-width:700px){.proj-grid{grid-template-columns:1fr 1fr;}}
+  .proj-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:16px 14px 14px;display:flex;flex-direction:column;gap:6px;transition:border-color .15s;}
+  .proj-card:hover{border-color:#ccc;}
+  .proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;}
+  .proj-icon{font-size:16px;}
+  .proj-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+  .proj-name{font-size:13px;font-weight:600;color:#1a1a18;line-height:1.35;}
+  .proj-sub{font-size:11px;color:#aaa;line-height:1.4;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SOLDMIKE — Project Hub</h1>
+  <p>Click a section to see all projects. Updated April 2026.</p>
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-active"></div>Active</div>
+    <div class="legend-item"><div class="dot dot-queued"></div>Queued</div>
+    <div class="legend-item"><div class="dot dot-parked"></div>Parked</div>
+    <div class="legend-item"><div class="dot dot-done"></div>Done</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div id="hubView">
+    <div class="hub-grid">
+
+      <div class="hub-card" onclick="show('re')">
+        <div class="hub-accent" style="background:#1D9E75;"></div>
+        <div class="hub-icon">🏠</div>
+        <div class="hub-name">Real Estate</div>
+        <div class="hub-pills">
+          <span class="pill pill-active">3 active</span>
+          <span class="pill pill-queued">2 queued</span>
+          <span class="pill pill-done">3 done</span>
+        </div>
+        <div class="hub-sub">FUB · listings · websites · forms</div>
+      </div>
+
+      <div class="hub-card" onclick="show('mkt')">
+        <div class="hub-accent" style="background:#378ADD;"></div>
+        <div class="hub-icon">📣</div>
+        <div class="hub-name">Marketing</div>
+        <div class="hub-pills">
+          <span class="pill pill-active">1 active</span>
+          <span class="pill pill-parked">1 parked</span>
+          <span class="pill pill-done">2 done</span>
+        </div>
+        <div class="hub-sub">social · landing page · YouTube</div>
+      </div>
+
+      <div class="hub-card" onclick="show('tpm')">
+        <div class="hub-accent" style="background:#D85A30;"></div>
+        <div class="hub-icon">📷</div>
+        <div class="hub-name">Toronto Property Media</div>
+        <div class="hub-pills">
+          <span class="pill pill-active">1 active</span>
+          <span class="pill pill-done">2 done</span>
+        </div>
+        <div class="hub-sub">shot tree · delivery · Sony A1</div>
+      </div>
+
+      <div class="hub-card" onclick="show('prod')">
+        <div class="hub-accent" style="background:#7F77DD;"></div>
+        <div class="hub-icon">📦</div>
+        <div class="hub-name">Products</div>
+        <div class="hub-pills">
+          <span class="pill pill-parked">2 parked</span>
+          <span class="pill pill-done">1 done</span>
+        </div>
+        <div class="hub-sub">agent platform · Mika · ISA</div>
+      </div>
+
+      <div class="hub-card" onclick="show('biz')">
+        <div class="hub-accent" style="background:#888780;"></div>
+        <div class="hub-icon">⚙️</div>
+        <div class="hub-name">Business & Function</div>
+        <div class="hub-pills">
+          <span class="pill pill-active">2 active</span>
+          <span class="pill pill-queued">1 queued</span>
+          <span class="pill pill-done">2 done</span>
+        </div>
+        <div class="hub-sub">email · website · Cloudflare · Notion</div>
+      </div>
+
+      <div class="hub-card" onclick="show('per')">
+        <div class="hub-accent" style="background:#EF9F27;"></div>
+        <div class="hub-icon">🧘</div>
+        <div class="hub-name">Personal</div>
+        <div class="hub-pills">
+          <span class="pill pill-active">2 active</span>
+        </div>
+        <div class="hub-sub">workouts · meal plan</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REAL ESTATE -->
+  <div class="section-view" id="re">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">🏠 Real Estate</div>
+    <div class="sec-sub">FUB · listings · websites · forms</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📧</div><div class="proj-dot dot-queued"></div></div><div class="proj-name">FUB Email Campaign</div><div class="proj-sub">58 emails · 7 phases</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🗂️</div><div class="proj-dot dot-done"></div></div><div class="proj-name">FUB CRM Build</div><div class="proj-sub">55 fields · 45 tags · 7 lists</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🌐</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Property Websites</div><div class="proj-sub">3 variants · all listings</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📄</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Form 290 HTML</div><div class="proj-sub">Page by page rebuild</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📊</div><div class="proj-dot dot-active"></div></div><div class="proj-name">CMA Generator</div><div class="proj-sub">Screenshot → dashboard</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">✉️</div><div class="proj-dot dot-queued"></div></div><div class="proj-name">Deliverability Setup</div><div class="proj-sub">SPF · DKIM · DMARC</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">⚡</div><div class="proj-dot dot-done"></div></div><div class="proj-name">Zapier Engine</div><div class="proj-sub">FUB → Drive automation</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📋</div><div class="proj-dot dot-done"></div></div><div class="proj-name">Seller Update System</div><div class="proj-sub">Email + HTML page</div></div>
+    </div>
+  </div>
+
+  <!-- MARKETING -->
+  <div class="section-view" id="mkt">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">📣 Marketing</div>
+    <div class="sec-sub">social · landing page · YouTube · Buffer</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📅</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Social Media Automation</div><div class="proj-sub">Metricool CSV workflow</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🏠</div><div class="proj-dot dot-done"></div></div><div class="proj-name">SOLDMIKE Landing Page</div><div class="proj-sub">Live on GitHub Pages</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🎬</div><div class="proj-dot dot-parked"></div></div><div class="proj-name">YouTube Channel</div><div class="proj-sub">On hold · revisit soon</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🔗</div><div class="proj-dot dot-done"></div></div><div class="proj-name">LinkedIn via Buffer</div><div class="proj-sub">MCP posting confirmed</div></div>
+    </div>
+  </div>
+
+  <!-- TPM -->
+  <div class="section-view" id="tpm">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">📷 Toronto Property Media</div>
+    <div class="sec-sub">shot tree · delivery · Sony A1 · Final Cut Pro</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🎥</div><div class="proj-dot dot-done"></div></div><div class="proj-name">SOLDMIKE Shot Tree</div><div class="proj-sub">14 shots · 7 zones · live</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📦</div><div class="proj-dot dot-done"></div></div><div class="proj-name">TPM Delivery Workflow</div><div class="proj-sub">Skill live</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📷</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Sony A1 Edit System</div><div class="proj-sub">12mm + 50mm · FCP LUTs</div></div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="section-view" id="prod">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">📦 Products</div>
+    <div class="sec-sub">agent platform · Mika AI · ISA</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🧩</div><div class="proj-dot dot-parked"></div></div><div class="proj-name">Agent Platform DFY OS</div><div class="proj-sub">$2,500–$5,000 · concept ready</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🤖</div><div class="proj-dot dot-done"></div></div><div class="proj-name">Mika AI (Jotform)</div><div class="proj-sub">Live on soldmike.ca</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📞</div><div class="proj-dot dot-parked"></div></div><div class="proj-name">SOLDMIKE ISA</div><div class="proj-sub">AI inside sales · long-term</div></div>
+    </div>
+  </div>
+
+  <!-- BUSINESS -->
+  <div class="section-view" id="biz">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">⚙️ Business & Function</div>
+    <div class="sec-sub">email · website · Cloudflare · Notion HQ</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">📬</div><div class="proj-dot dot-done"></div></div><div class="proj-name">Email Architecture</div><div class="proj-sub">4-tier Mimestream</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🌍</div><div class="proj-dot dot-queued"></div></div><div class="proj-name">WordPress Website</div><div class="proj-sub">Bricks + Rocket.net + IDX</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">☁️</div><div class="proj-dot dot-done"></div></div><div class="proj-name">Cloudflare Worker</div><div class="proj-sub">FUB relay · permanent</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🗺️</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Notion + Drive Setup</div><div class="proj-sub">This session · in progress</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🏗️</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Notion SOLDMIKE HQ</div><div class="proj-sub">Listings · projects · keys</div></div>
+    </div>
+  </div>
+
+  <!-- PERSONAL -->
+  <div class="section-view" id="per">
+    <button class="back-btn" onclick="goBack()">← back to hub</button>
+    <div class="sec-title">🧘 Personal</div>
+    <div class="sec-sub">workouts · meal plan</div>
+    <div class="proj-grid">
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">💪</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Workouts</div><div class="proj-sub">Folder in Drive</div></div>
+      <div class="proj-card"><div class="proj-top"><div class="proj-icon">🥗</div><div class="proj-dot dot-active"></div></div><div class="proj-name">Meal Plan</div><div class="proj-sub">To be built</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id){
+  document.getElementById('hubView').style.display='none';
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goBack(){
+  document.getElementById('hubView').style.display='block';
+  document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
+}
+</script>
+</body>
+</html>
