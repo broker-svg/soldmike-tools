@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Command Cockpit</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0f;--surface:#14141f;--surface2:#1c1c2e;--border:#2a2a3d;
+    --gold:#c8a84e;--gold-dim:#9a7d3a;--text:#e8e8f0;--text-dim:#8888a0;
+    --green:#34d399;--yellow:#fbbf24;--blue:#60a5fa;--purple:#a78bfa;
+    --red:#f87171;--orange:#fb923c;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+  /* HEADER */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .header h1{font-size:20px;font-weight:700;letter-spacing:1px}
+  .header h1 span{color:var(--gold)}
+  .header .date{color:var(--text-dim);font-size:13px}
+  .header .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}
+
+  /* PRIORITY STRIP */
+  .priority-strip{display:flex;gap:10px;padding:12px 24px;background:linear-gradient(90deg,#1a1a2e,#16162a);border-bottom:1px solid var(--border);overflow-x:auto;flex-wrap:nowrap}
+  .priority-strip::-webkit-scrollbar{display:none}
+  .pri-card{flex:0 0 auto;padding:10px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);min-width:220px;cursor:pointer;transition:border-color .2s}
+  .pri-card:hover{border-color:var(--gold)}
+  .pri-card .pri-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+  .pri-card .pri-label.high{color:var(--red)}
+  .pri-card .pri-label.med{color:var(--yellow)}
+  .pri-card .pri-label.queued{color:var(--blue)}
+  .pri-card .pri-title{font-size:13px;font-weight:600;line-height:1.3}
+  .pri-card .pri-due{font-size:11px;color:var(--text-dim);margin-top:4px}
+
+  /* MAIN GRID */
+  .main{display:grid;grid-template-columns:1fr 1fr;gap:0;height:calc(100vh - 130px)}
+
+  /* LEFT PANEL - Sections */
+  .left-panel{padding:16px 20px;overflow-y:auto;border-right:1px solid var(--border)}
+  .left-panel::-webkit-scrollbar{width:4px}
+  .left-panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  .panel-title{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:12px;font-weight:600}
+
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .section-card{padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text);display:block}
+  .section-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,168,78,.1)}
+  .section-card .sc-icon{font-size:22px;margin-bottom:6px}
+  .section-card .sc-name{font-size:14px;font-weight:600;margin-bottom:4px}
+  .section-card .sc-stats{font-size:11px;color:var(--text-dim)}
+  .section-card .sc-stats .active{color:var(--green)}
+  .section-card .sc-stats .queued{color:var(--yellow)}
+
+  /* Quick Links */
+  .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .ql{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);font-size:12px;color:var(--text-dim);text-decoration:none;transition:all .15s;white-space:nowrap}
+  .ql:hover{border-color:var(--gold);color:var(--gold)}
+
+  /* Knowledge Base */
+  .kb-list{display:flex;flex-direction:column;gap:6px}
+  .kb-item{padding:10px 12px;border-radius:8px;background:var(--surface);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:border-color .2s;display:flex;justify-content:space-between;align-items:center}
+  .kb-item:hover{border-color:var(--gold)}
+  .kb-item .kb-title{font-size:13px;font-weight:500}
+  .kb-item .kb-date{font-size:11px;color:var(--text-dim)}
+  .kb-item .kb-section{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--text-dim)}
+
+  /* RIGHT PANEL - Calendar */
+  .right-panel{display:flex;flex-direction:column;overflow:hidden}
+  .cal-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface)}
+  .cal-tab{flex:1;padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s}
+  .cal-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+  .cal-tab:hover{color:var(--text)}
+  .cal-frame{flex:1;background:var(--surface)}
+  .cal-frame iframe{width:100%;height:100%;border:none}
+
+  /* UPCOMING EVENTS SIDEBAR */
+  .events-strip{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface);max-height:200px;overflow-y:auto}
+  .events-strip::-webkit-scrollbar{width:3px}
+  .events-strip::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .event-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)}
+  .event-row:last-child{border-bottom:none}
+  .event-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+  .event-time{font-size:11px;color:var(--text-dim);min-width:65px;flex-shrink:0}
+  .event-name{font-size:12px;font-weight:500}
+  .event-day-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold-dim);padding:8px 0 4px;font-weight:600}
+
+  /* MOBILE */
+  @media(max-width:900px){
+    .main{grid-template-columns:1fr;height:auto}
+    .left-panel{border-right:none;border-bottom:1px solid var(--border)}
+    .right-panel{min-height:500px}
+    .section-grid{grid-template-columns:1fr}
+    .priority-strip{padding:10px 16px}
+  }
+  @media(max-width:600px){
+    .header{padding:12px 16px}
+    .header h1{font-size:16px}
+    .left-panel{padding:12px 16px}
+    .pri-card{min-width:180px;padding:8px 12px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1><span>SOLD</span>MIKE <span style="color:var(--text-dim);font-weight:400;font-size:14px">Command Cockpit</span></h1>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div><span class="dot"></span><span style="font-size:12px;color:var(--text-dim)">Systems Online</span></div>
+    <div class="date" id="currentDate"></div>
+  </div>
+</div>
+
+<!-- PRIORITY STRIP -->
+<div class="priority-strip">
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label high">High Priority</div>
+    <div class="pri-title">SPF / DKIM / DMARC Setup</div>
+    <div class="pri-due">Blocks all email campaigns on soldmike.com</div>
+  </div>
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label high">High Priority</div>
+    <div class="pri-title">Create Drive Folder Structure</div>
+    <div class="pri-due">AI Workspace organization</div>
+  </div>
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label high">High Priority</div>
+    <div class="pri-title">Property Website — 16 Saint Keller</div>
+    <div class="pri-due">Use property-website skill</div>
+  </div>
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label queued">Queued</div>
+    <div class="pri-title">FUB Active Buyer Campaign</div>
+    <div class="pri-due">Blocked on deliverability setup</div>
+  </div>
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label med">Medium</div>
+    <div class="pri-title">Form 290 — Page 2+</div>
+    <div class="pri-due">One page at a time, compare against PDF</div>
+  </div>
+  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+    <div class="pri-label med">Medium</div>
+    <div class="pri-title">Notion HQ + Cockpit Dashboard</div>
+    <div class="pri-due">Cleanup + Cloudflare live data</div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="panel-title">Sections</div>
+    <div class="section-grid">
+      <a class="section-card" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">
+        <div class="sc-icon">&#127969;</div>
+        <div class="sc-name">Real Estate</div>
+        <div class="sc-stats"><span class="active">3 active</span> &middot; <span class="queued">2 queued</span> &middot; 3 done</div>
+      </a>
+      <a class="section-card" href="https://www.notion.so/32f8b7ae80a181b2ba4ddfe646645d45" target="_blank">
+        <div class="sc-icon">&#128227;</div>
+        <div class="sc-name">Marketing</div>
+        <div class="sc-stats"><span class="active">2 active</span> &middot; 1 parked &middot; 3 done</div>
+      </a>
+      <a class="section-card" href="https://www.notion.so/32f8b7ae80a181c5a153dc3d50cee334" target="_blank">
+        <div class="sc-icon">&#127909;</div>
+        <div class="sc-name">Toronto Property Media</div>
+        <div class="sc-stats"><span class="active">1 active</span> &middot; 2 done</div>
+      </a>
+      <a class="section-card" href="https://www.notion.so/32f8b7ae80a1818a9980c3bf8a3dbc5b" target="_blank">
+        <div class="sc-icon">&#9881;&#65039;</div>
+        <div class="sc-name">Business & Function</div>
+        <div class="sc-stats"><span class="active">2 active</span> &middot; <span class="queued">1 queued</span> &middot; 1 done</div>
+      </a>
+      <a class="section-card" href="https://www.notion.so/32f8b7ae80a18151ac3cdeec03c884c6" target="_blank">
+        <div class="sc-icon">&#128230;</div>
+        <div class="sc-name">Products</div>
+        <div class="sc-stats">2 parked &middot; 1 done</div>
+      </a>
+      <a class="section-card" href="https://www.notion.so/33b8b7ae80a181eb9b55f58b900d24c2" target="_blank">
+        <div class="sc-icon">&#129496;</div>
+        <div class="sc-name">Personal</div>
+        <div class="sc-stats"><span class="active">2 active</span></div>
+      </a>
+    </div>
+
+    <div class="panel-title">Quick Links</div>
+    <div class="quick-links">
+      <a class="ql" href="https://www.notion.so/33b8b7ae80a18110980ed065cb3e7792" target="_blank">&#127942; Command Centre</a>
+      <a class="ql" href="https://www.notion.so/33b8b7ae80a181b18b34f111a95c88bd" target="_blank">&#128506; Master Dashboard</a>
+      <a class="ql" href="https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453" target="_blank">&#127919; Priority Actions</a>
+      <a class="ql" href="https://www.notion.so/c04ba21158e04aedb2bac989142667a6" target="_blank">&#129504; Knowledge Base</a>
+      <a class="ql" href="https://www.notion.so/3338b7ae80a18152b056e0f0eb109250" target="_blank">&#128272; API Keys</a>
+      <a class="ql" href="https://www.notion.so/32f8b7ae80a181149a9be79397a9fe8c" target="_blank">&#128736; Tools & Skills</a>
+      <a class="ql" href="https://www.notion.so/23b48957629b469e867731164cfed7a6" target="_blank">&#128199; Contacts</a>
+      <a class="ql" href="https://broker-svg.github.io/soldmike-tools/" target="_blank">&#127760; GitHub Pages</a>
+    </div>
+
+    <div class="panel-title">Recent Knowledge Base</div>
+    <div class="kb-list">
+      <a class="kb-item" href="https://www.notion.so/33c8b7ae80a18116bf9bc6b3e6b19166" target="_blank">
+        <div>
+          <div class="kb-title">Command Centre + Project Trees System Build</div>
+          <div class="kb-date">Apr 7, 2026</div>
+        </div>
+        <div class="kb-section">Full System</div>
+      </a>
+      <a class="kb-item" href="https://www.notion.so/3358b7ae80a181759576c2e1020825c8" target="_blank">
+        <div>
+          <div class="kb-title">Make.com Automation Pivot</div>
+          <div class="kb-date">Apr 1, 2026</div>
+        </div>
+        <div class="kb-section">Business</div>
+      </a>
+      <a class="kb-item" href="https://www.notion.so/3328b7ae80a181b88ed2f769956113e6" target="_blank">
+        <div>
+          <div class="kb-title">Session Knowledge — March 28</div>
+          <div class="kb-date">Mar 28, 2026</div>
+        </div>
+        <div class="kb-section">Multi</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL - Calendar + Events -->
+  <div class="right-panel">
+    <div class="cal-tabs">
+      <div class="cal-tab active" data-cal="broker">Broker</div>
+      <div class="cal-tab" data-cal="tpm">TPM</div>
+      <div class="cal-tab" data-cal="work">Work Schedule</div>
+      <div class="cal-tab" data-cal="fub">Follow Up Boss</div>
+      <div class="cal-tab" data-cal="all">All</div>
+    </div>
+    <div class="cal-frame" id="calFrame">
+      <iframe id="calIframe" src="https://calendar.google.com/calendar/embed?src=broker%40soldmike.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&bgcolor=%230a0a0f&color=%23c8a84e" loading="lazy"></iframe>
+    </div>
+    <div class="events-strip">
+      <div class="event-day-label">Today &mdash; April 7</div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--orange)"></div>
+        <div class="event-time">10:00 AM</div>
+        <div class="event-name">ReMax Premier ReCharge</div>
+      </div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--blue)"></div>
+        <div class="event-time">1:00 PM</div>
+        <div class="event-name">Jotform ChatGPT Webinar</div>
+      </div>
+      <div class="event-day-label">Tomorrow &mdash; April 8</div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--purple)"></div>
+        <div class="event-time">3:00 AM</div>
+        <div class="event-name">Book-Keeper Prep</div>
+      </div>
+      <div class="event-day-label">Saturday &mdash; April 11</div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--green)"></div>
+        <div class="event-time">All Day</div>
+        <div class="event-name">Miliania Communion</div>
+      </div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--yellow)"></div>
+        <div class="event-time">11:00 AM</div>
+        <div class="event-name">Financing</div>
+      </div>
+      <div class="event-day-label">Sunday &mdash; April 12</div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--orange)"></div>
+        <div class="event-time">2:45 PM</div>
+        <div class="event-name">Open House</div>
+      </div>
+      <div class="event-day-label">Monday &mdash; April 13</div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--red)"></div>
+        <div class="event-time">9:00 PM</div>
+        <div class="event-name">Listing Feedback Update</div>
+      </div>
+      <div class="event-row">
+        <div class="event-dot" style="background:var(--purple)"></div>
+        <div class="event-time">9:00 PM</div>
+        <div class="event-name">Closings</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Date
+  const d = new Date();
+  const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+  document.getElementById('currentDate').textContent = d.toLocaleDateString('en-CA',opts);
+
+  // Calendar tabs
+  const cals = {
+    broker: 'https://calendar.google.com/calendar/embed?src=broker%40soldmike.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0',
+    tpm: 'https://calendar.google.com/calendar/embed?src=torontopropertymedia%40gmail.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0',
+    work: 'https://calendar.google.com/calendar/embed?src=c_pe6lo2drn0ak6i9b1r3a2kptls%40group.calendar.google.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0',
+    fub: 'https://calendar.google.com/calendar/embed?src=c_7a21eadbbfe800bb53c5d57ce331b16868ae913cf13f235ade6a28d571dd4c74%40group.calendar.google.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0',
+    all: 'https://calendar.google.com/calendar/embed?src=broker%40soldmike.com&src=torontopropertymedia%40gmail.com&src=c_pe6lo2drn0ak6i9b1r3a2kptls%40group.calendar.google.com&src=c_7a21eadbbfe800bb53c5d57ce331b16868ae913cf13f235ade6a28d571dd4c74%40group.calendar.google.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0'
+  };
+
+  document.querySelectorAll('.cal-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cal-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('calIframe').src = cals[tab.dataset.cal];
+    });
+  });
+</script>
+</body>
+</html>
