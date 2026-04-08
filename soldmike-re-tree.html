@@ -3,33 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOLDMIKE — Real Estate Dependency Tree</title>
+<title>SOLDMIKE — Real Estate Tree</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;min-height:100vh;color:#e8e8f0}
+
 .top{background:#14141f;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a3d}
 .top h1{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px}
-.top h1 .icon{font-size:20px}
 .top h1 .brand{color:#c8a84e;font-size:11px;font-weight:400;letter-spacing:1px}
-.top-right{display:flex;align-items:center;gap:12px}
-.back-btn{color:#8888a0;text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid #2a2a3d;border-radius:6px;transition:all .2s}
-.back-btn:hover{border-color:#c8a84e;color:#c8a84e}
-.top-stat{font-size:11px;color:#8888a0}
+.top-right{display:flex;align-items:center;gap:10px}
+.nav-btn{color:#8888a0;text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid #2a2a3d;border-radius:6px;transition:all .2s;cursor:pointer;background:none}
+.nav-btn:hover{border-color:#c8a84e;color:#c8a84e}
 
-.legend{display:flex;gap:16px;flex-wrap:wrap;padding:10px 24px;background:#14141f;border-bottom:1px solid #2a2a3d;font-size:11px;color:#8888a0;align-items:center}
-.legend strong{color:#e8e8f0}
-.ld{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
+/* VIEW TOGGLE */
+.view-toggle{display:flex;background:#14141f;border-bottom:1px solid #2a2a3d;padding:0 24px}
+.vtab{padding:10px 20px;font-size:13px;font-weight:600;color:#8888a0;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.vtab:hover{color:#e8e8f0}
+.vtab.active{color:#c8a84e;border-bottom-color:#c8a84e}
 
-.tree-wrap{padding:24px;overflow:auto;min-height:calc(100vh - 96px)}
-.tree-inner{min-width:2200px;background:#14141f;border-radius:14px;border:1px solid #2a2a3d;padding:32px 36px 44px;display:inline-block}
+.view{display:none}
+.view.active{display:block}
 
+/* ===== SIMPLE VIEW ===== */
+.simple-wrap{padding:20px 24px;max-width:1400px;margin:0 auto}
+.zone-row{margin-bottom:20px}
+.zone-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;padding-left:4px;display:flex;align-items:center;gap:8px}
+.zone-label .zdot{width:10px;height:10px;border-radius:3px}
+.zone-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.zcard{background:#14141f;border:1px solid #2a2a3d;border-radius:10px;padding:14px 16px;border-left:4px solid;transition:all .2s}
+.zcard:hover{border-color:#c8a84e;box-shadow:0 2px 12px rgba(200,168,78,.06)}
+.zcard.done{border-left-color:#34d399}
+.zcard.active{border-left-color:#fbbf24}
+.zcard.queued{border-left-color:#60a5fa}
+.zcard.blocked{border-left-color:#f87171}
+.zcard .zc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.zcard .zc-name{font-size:14px;font-weight:600}
+.zcard .zc-badge{font-size:9px;padding:3px 8px;border-radius:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.b-done{background:rgba(52,211,153,.15);color:#34d399}
+.b-active{background:rgba(251,191,36,.15);color:#fbbf24}
+.b-queued{background:rgba(96,165,250,.15);color:#60a5fa}
+.b-blocked{background:rgba(248,113,113,.15);color:#f87171}
+.zcard .zc-next{font-size:12px;color:#8888a0;line-height:1.4;margin-bottom:6px}
+.zcard .zc-leaves{display:flex;flex-wrap:wrap;gap:4px}
+.zcard .leaf-pill{font-size:10px;padding:2px 8px;border-radius:10px;background:#1c1c2e;border:1px solid #2a2a3d;color:#8888a0}
+.zcard .leaf-pill.lp-done{border-color:rgba(52,211,153,.3);color:#34d399}
+.zcard .leaf-pill.lp-active{border-color:rgba(251,191,36,.3);color:#fbbf24}
+.zcard .leaf-pill.lp-blocked{border-color:rgba(248,113,113,.3);color:#f87171}
+.zcard .zc-dep{font-size:10px;color:#c8a84e;margin-top:6px;font-style:italic}
+
+/* CRITICAL PATH BANNER */
+.crit-banner{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.crit-banner .cb-icon{font-size:20px}
+.crit-banner .cb-text{font-size:13px;line-height:1.4}
+.crit-banner .cb-text strong{color:#f87171}
+.crit-banner .cb-text span{color:#8888a0}
+
+/* EXEC ORDER */
+.exec-bar{background:#14141f;border:1px solid #2a2a3d;border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.exec-bar .eb-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#c8a84e;font-weight:700;margin-right:4px}
+.exec-step{font-size:11px;padding:4px 10px;border-radius:6px;font-weight:500}
+.es-next{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.3)}
+.es-then{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.es-later{background:rgba(96,165,250,.1);color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.es-parallel{background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+.arrow{color:#4a4a5e;font-size:12px}
+
+/* ===== DEPENDENCY VIEW ===== */
+.dep-wrap{padding:24px;overflow:auto}
+.dep-inner{min-width:1800px;background:#14141f;border-radius:14px;border:1px solid #2a2a3d;padding:32px 36px 44px;display:inline-block}
 svg{display:block}
 svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .th{font-size:12px;font-weight:600;fill:#e8e8f0}
-.ts{font-size:10px;font-weight:400;fill:#8888a0}
+.ts{font-size:10px;fill:#8888a0}
 .row-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;fill:#9a7d3a}
-
-/* Node styles */
 .n-root rect{fill:#1c1c2e;stroke:#c8a84e;stroke-width:2}
 .n-done rect{fill:rgba(52,211,153,.08);stroke:#34d399;stroke-width:1.5}
 .n-done .th{fill:#34d399}
@@ -41,255 +87,323 @@ svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 .n-blocked .th{fill:#f87171}
 .n-pending rect{fill:rgba(136,136,160,.06);stroke:#4a4a5e;stroke-width:1}
 .n-pending .th{fill:#8888a0}
-.n-gap rect{fill:rgba(248,113,113,.04);stroke:#f87171;stroke-width:2;stroke-dasharray:6 4}
-.n-gap .th{fill:#f87171;font-style:italic}
-
 .conn{stroke:#3a3a4d;stroke-width:1.5;fill:none}
 .conn-block{stroke:#f87171;stroke-width:1.5;fill:none;stroke-dasharray:5 4}
-.conn-done{stroke:#34d399;stroke-width:1.5;fill:none;opacity:.5}
+.conn-done{stroke:#34d399;stroke-width:1.5;fill:none;opacity:.4}
 .conn-dep{stroke:#c8a84e;stroke-width:1.5;fill:none;stroke-dasharray:8 4}
 
-/* Zone backgrounds */
-.zone{fill-opacity:.06;stroke-width:1.5;rx:12}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 24px;background:#14141f;border-bottom:1px solid #2a2a3d;font-size:11px;color:#8888a0;align-items:center}
+.legend strong{color:#e8e8f0}
+.ld{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
 
 @media(max-width:900px){
-  .tree-inner{min-width:1600px}
+  .zone-cards{grid-template-columns:1fr}
+  .exec-bar{flex-direction:column;align-items:flex-start}
 }
 </style>
 </head>
 <body>
 
 <div class="top">
-  <h1><span class="icon">&#127969;</span> Real Estate — Dependency Map <span class="brand">SOLDMIKE</span></h1>
+  <h1>&#127969; Real Estate <span class="brand">SOLDMIKE</span></h1>
   <div class="top-right">
-    <span class="top-stat">8 projects &middot; 3 active &middot; 2 queued &middot; 3 done &middot; Scroll right &rarr;</span>
-    <a class="back-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-real-estate.html">&larr; Dashboard</a>
-    <a class="back-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-cockpit.html">&#127942; Cockpit</a>
+    <a class="nav-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-real-estate.html">&#8592; Dashboard</a>
+    <a class="nav-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-cockpit.html">&#127942; Cockpit</a>
   </div>
 </div>
+
+<div class="view-toggle">
+  <div class="vtab active" data-view="simple">Simple View</div>
+  <div class="vtab" data-view="dep">Dependency Map</div>
+</div>
+
+<!-- ==================== SIMPLE VIEW ==================== -->
+<div class="view active" id="view-simple">
+<div class="simple-wrap">
+
+  <!-- CRITICAL PATH -->
+  <div class="crit-banner">
+    <div class="cb-icon">&#9888;&#65039;</div>
+    <div class="cb-text"><strong>Critical Blocker:</strong> Deliverability Setup (SPF / DKIM / DMARC) must be completed before any of the 58 email campaign emails can go live. <span>This is the #1 priority.</span></div>
+  </div>
+
+  <!-- CRM & EMAIL -->
+  <div class="zone-row">
+    <div class="zone-label"><div class="zdot" style="background:#60a5fa"></div><span style="color:#60a5fa">CRM & Email System</span></div>
+    <div class="zone-cards">
+      <div class="zcard done">
+        <div class="zc-top"><div class="zc-name">FUB CRM Build</div><div class="zc-badge b-done">Done</div></div>
+        <div class="zc-next">55 custom fields, 7 Smart Lists, 45 tags all live in Follow Up Boss.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">Custom Fields</span>
+          <span class="leaf-pill lp-done">Smart Lists</span>
+          <span class="leaf-pill lp-done">Tags</span>
+          <span class="leaf-pill lp-done">Slack Integration</span>
+        </div>
+        <div class="zc-dep">Enables &rarr; Email Campaign</div>
+      </div>
+      <div class="zcard blocked">
+        <div class="zc-top"><div class="zc-name">Deliverability Setup</div><div class="zc-badge b-blocked">Blocked</div></div>
+        <div class="zc-next">Must be done before ANY email campaign goes live on soldmike.com.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-blocked">SPF Record</span>
+          <span class="leaf-pill lp-blocked">DKIM Record</span>
+          <span class="leaf-pill lp-blocked">DMARC Record</span>
+          <span class="leaf-pill">Test Delivery</span>
+        </div>
+        <div class="zc-dep">Blocks &rarr; All 7 email campaign phases</div>
+      </div>
+      <div class="zcard queued">
+        <div class="zc-top"><div class="zc-name">FUB Email Campaign</div><div class="zc-badge b-queued">Queued</div></div>
+        <div class="zc-next">58 emails across 7 phases. Waiting on deliverability. Start with Active Buyer.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-blocked">Active Buyer (8)</span>
+          <span class="leaf-pill lp-blocked">Active Seller (8)</span>
+          <span class="leaf-pill">Past Client (8)</span>
+          <span class="leaf-pill">Sphere (8)</span>
+          <span class="leaf-pill">New Lead (10)</span>
+          <span class="leaf-pill">Agent Referral (8)</span>
+          <span class="leaf-pill">VIP / Repeat (8)</span>
+        </div>
+        <div class="zc-dep">Depends on &rarr; CRM Build + Deliverability</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT DELIVERY -->
+  <div class="zone-row">
+    <div class="zone-label"><div class="zdot" style="background:#34d399"></div><span style="color:#34d399">Client Delivery Tools</span></div>
+    <div class="zone-cards">
+      <div class="zcard active">
+        <div class="zc-top"><div class="zc-name">Property Websites</div><div class="zc-badge b-active">Active</div></div>
+        <div class="zc-next">Build site for 16 Saint Keller Pl using property-website skill.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">179 Lio Ave</span>
+          <span class="leaf-pill lp-active">16 Saint Keller</span>
+          <span class="leaf-pill lp-done">Template System</span>
+          <span class="leaf-pill lp-done">FUB Connect</span>
+        </div>
+      </div>
+      <div class="zcard done">
+        <div class="zc-top"><div class="zc-name">Seller Update System</div><div class="zc-badge b-done">Done</div></div>
+        <div class="zc-next">Say "weekly seller update" or "seller update page" to trigger.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">Email Skill</span>
+          <span class="leaf-pill lp-done">HTML Page Skill</span>
+          <span class="leaf-pill lp-done">GitHub Publisher</span>
+        </div>
+      </div>
+      <div class="zcard active">
+        <div class="zc-top"><div class="zc-name">CMA Generator</div><div class="zc-badge b-active">Active</div></div>
+        <div class="zc-next">Upload MLS screenshots and run cma-generator skill.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">Skill Built</span>
+          <span class="leaf-pill lp-done">179 Lio CMA</span>
+          <span class="leaf-pill lp-active">Next CMA</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVE BUILDS -->
+  <div class="zone-row">
+    <div class="zone-label"><div class="zdot" style="background:#fbbf24"></div><span style="color:#fbbf24">Active Builds</span></div>
+    <div class="zone-cards">
+      <div class="zcard active">
+        <div class="zc-top"><div class="zc-name">Form 290 HTML Build</div><div class="zc-badge b-active">Active</div></div>
+        <div class="zc-next">Complete Page 2+. One page at a time, compare against PDF.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">Page 1</span>
+          <span class="leaf-pill lp-active">Page 2</span>
+          <span class="leaf-pill">Pages 3+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTOMATION -->
+  <div class="zone-row">
+    <div class="zone-label"><div class="zdot" style="background:#a78bfa"></div><span style="color:#a78bfa">Automation</span></div>
+    <div class="zone-cards">
+      <div class="zcard done">
+        <div class="zc-top"><div class="zc-name">Zapier Engine</div><div class="zc-badge b-done">Done</div></div>
+        <div class="zc-next">FUB stage change triggers Google Drive folder move. Confirmed working.</div>
+        <div class="zc-leaves">
+          <span class="leaf-pill lp-done">FUB Trigger</span>
+          <span class="leaf-pill lp-done">Drive Action</span>
+        </div>
+        <div class="zc-dep">Connects to &rarr; Property Websites (both use Drive)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXECUTION ORDER -->
+  <div class="exec-bar">
+    <span class="eb-label">Do Next:</span>
+    <span class="exec-step es-next">1. SPF/DKIM/DMARC</span>
+    <span class="arrow">&rarr;</span>
+    <span class="exec-step es-then">2. Active Buyer (8 emails)</span>
+    <span class="arrow">&rarr;</span>
+    <span class="exec-step es-then">3. Active Seller (8 emails)</span>
+    <span class="arrow">&rarr;</span>
+    <span class="exec-step es-later">4. Remaining 5 phases</span>
+    <span class="arrow">|</span>
+    <span class="exec-step es-parallel">16 Saint Keller (parallel)</span>
+    <span class="arrow">|</span>
+    <span class="exec-step es-parallel">Form 290 Page 2+ (parallel)</span>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== DEPENDENCY VIEW ==================== -->
+<div class="view" id="view-dep">
 
 <div class="legend">
   <strong>Legend:</strong>
   <span><span class="ld" style="background:rgba(52,211,153,.2);border:1.5px solid #34d399"></span>Done</span>
   <span><span class="ld" style="background:rgba(251,191,36,.2);border:1.5px solid #fbbf24"></span>Active</span>
   <span><span class="ld" style="background:rgba(96,165,250,.2);border:1.5px solid #60a5fa"></span>Queued</span>
-  <span><span class="ld" style="background:rgba(248,113,113,.15);border:1.5px dashed #f87171"></span>Blocked / Gap</span>
-  <span><span class="ld" style="background:rgba(136,136,160,.1);border:1px solid #4a4a5e"></span>Pending</span>
-  <span style="margin-left:8px;color:#c8a84e">— — — dependency line</span>
-  <span style="color:#f87171">- - - blocked line</span>
+  <span><span class="ld" style="background:rgba(248,113,113,.15);border:1.5px dashed #f87171"></span>Blocked</span>
+  <span style="color:#c8a84e">- - - dependency</span>
+  <span style="color:#f87171">- - - blocked by</span>
+  <span style="color:#8888a0">Scroll right to see full map &rarr;</span>
 </div>
 
-<div class="tree-wrap">
-<div class="tree-inner">
-
-<svg width="2160" height="680" viewBox="0 0 2160 680">
+<div class="dep-wrap">
+<div class="dep-inner">
+<svg width="1760" height="520" viewBox="0 0 1760 520">
 
 <!-- ROW LABELS -->
-<text class="row-lbl" x="10" y="55">Section Root</text>
-<text class="row-lbl" x="10" y="165">Projects</text>
-<text class="row-lbl" x="10" y="320">Branches</text>
-<text class="row-lbl" x="10" y="480">Leaves / Endpoints</text>
+<text class="row-lbl" x="10" y="48">Root</text>
+<text class="row-lbl" x="10" y="158">Projects</text>
+<text class="row-lbl" x="10" y="318">Leaves</text>
 
-<!-- ZONE BACKGROUNDS -->
-<!-- CRM + Email zone -->
-<rect class="zone" x="60" y="110" width="680" height="550" fill="#60a5fa" stroke="#60a5fa"/>
-<text class="ts" x="400" y="128" text-anchor="middle" style="fill:#60a5fa;font-weight:600;font-size:10px">CRM &amp; Email System</text>
-
-<!-- Client Delivery zone -->
-<rect class="zone" x="780" y="110" width="480" height="550" fill="#34d399" stroke="#34d399"/>
-<text class="ts" x="1020" y="128" text-anchor="middle" style="fill:#34d399;font-weight:600;font-size:10px">Client Delivery Tools</text>
-
-<!-- Build Tools zone -->
-<rect class="zone" x="1300" y="110" width="500" height="550" fill="#fbbf24" stroke="#fbbf24"/>
-<text class="ts" x="1550" y="128" text-anchor="middle" style="fill:#fbbf24;font-weight:600;font-size:10px">Active Builds</text>
-
-<!-- Automation zone -->
-<rect class="zone" x="1840" y="110" width="280" height="550" fill="#a78bfa" stroke="#a78bfa"/>
-<text class="ts" x="1980" y="128" text-anchor="middle" style="fill:#a78bfa;font-weight:600;font-size:10px">Automation</text>
-
-<!-- ROOT NODE -->
+<!-- ROOT -->
 <g class="n-root">
-  <rect x="940" y="24" width="280" height="52" rx="10"/>
-  <text class="th" x="1080" y="44" text-anchor="middle" style="fill:#c8a84e;font-size:14px">&#127969; Real Estate</text>
-  <text class="ts" x="1080" y="62" text-anchor="middle">8 projects &middot; 3 active &middot; 2 queued &middot; 3 done</text>
+  <rect x="740" y="20" width="280" height="48" rx="10"/>
+  <text class="th" x="880" y="40" text-anchor="middle" style="fill:#c8a84e;font-size:14px">&#127969; Real Estate</text>
+  <text class="ts" x="880" y="56" text-anchor="middle">3 active &middot; 2 queued &middot; 3 done</text>
 </g>
 
-<!-- CONNECTORS FROM ROOT -->
-<path class="conn" d="M1080,76 L1080,100 L200,100 L200,140"/>
-<path class="conn" d="M1080,100 L530,100 L530,140"/>
-<path class="conn" d="M1080,100 L840,100 L840,140"/>
-<path class="conn" d="M1080,100 L1060,100 L1060,140"/>
-<path class="conn" d="M1080,100 L1370,100 L1370,140"/>
-<path class="conn" d="M1080,100 L1560,100 L1560,140"/>
-<path class="conn" d="M1080,100 L1740,100 L1740,140"/>
-<path class="conn" d="M1080,100 L1980,100 L1980,140"/>
+<!-- ROOT → PROJECT CONNECTORS -->
+<path class="conn" d="M880,68 L880,95"/>
+<path class="conn" d="M880,95 L140,95 L140,130"/>
+<path class="conn" d="M880,95 L400,95 L400,130"/>
+<path class="conn" d="M880,95 L700,95 L700,130"/>
+<path class="conn" d="M880,95 L940,95 L940,130"/>
+<path class="conn" d="M880,95 L1160,95 L1160,130"/>
+<path class="conn" d="M880,95 L1380,95 L1380,130"/>
+<path class="conn" d="M880,95 L1580,95 L1580,130"/>
 
-<!-- PROJECT NODES (Row 2) -->
-<!-- FUB CRM - DONE -->
-<g class="n-done">
-  <rect x="110" y="140" width="180" height="48" rx="9"/>
-  <text class="th" x="200" y="160" text-anchor="middle">FUB CRM Build</text>
-  <text class="ts" x="200" y="176" text-anchor="middle" style="fill:#34d399">&#10003; Done &middot; 55 fields, 7 lists, 45 tags</text>
-</g>
+<!-- PROJECT NODES (Row 2) — well spaced, no overlap -->
+<g class="n-done"><rect x="60" y="130" width="160" height="44" rx="9"/><text class="th" x="140" y="148" text-anchor="middle">FUB CRM Build</text><text class="ts" x="140" y="163" text-anchor="middle" style="fill:#34d399">Done</text></g>
 
-<!-- Deliverability - QUEUED -->
-<g class="n-queued">
-  <rect x="420" y="140" width="220" height="48" rx="9"/>
-  <text class="th" x="530" y="160" text-anchor="middle">Deliverability (SPF/DKIM/DMARC)</text>
-  <text class="ts" x="530" y="176" text-anchor="middle" style="fill:#60a5fa">Queued &middot; Blocks ALL email campaigns</text>
-</g>
+<g class="n-queued"><rect x="280" y="130" width="240" height="44" rx="9"/><text class="th" x="400" y="148" text-anchor="middle">Deliverability (SPF/DKIM/DMARC)</text><text class="ts" x="400" y="163" text-anchor="middle" style="fill:#60a5fa">Queued &middot; Blocks email</text></g>
 
-<!-- Property Websites - ACTIVE -->
-<g class="n-active">
-  <rect x="740" y="140" width="200" height="48" rx="9"/>
-  <text class="th" x="840" y="160" text-anchor="middle">Property Websites</text>
-  <text class="ts" x="840" y="176" text-anchor="middle" style="fill:#fbbf24">Active &middot; 3 variants</text>
-</g>
+<g class="n-active"><rect x="600" y="130" width="200" height="44" rx="9"/><text class="th" x="700" y="148" text-anchor="middle">Property Websites</text><text class="ts" x="700" y="163" text-anchor="middle" style="fill:#fbbf24">Active</text></g>
 
-<!-- Seller Update - DONE -->
-<g class="n-done">
-  <rect x="960" y="140" width="200" height="48" rx="9"/>
-  <text class="th" x="1060" y="160" text-anchor="middle">Seller Update System</text>
-  <text class="ts" x="1060" y="176" text-anchor="middle" style="fill:#34d399">&#10003; Done &middot; Email + HTML page</text>
-</g>
+<g class="n-done"><rect x="850" y="130" width="180" height="44" rx="9"/><text class="th" x="940" y="148" text-anchor="middle">Seller Update System</text><text class="ts" x="940" y="163" text-anchor="middle" style="fill:#34d399">Done</text></g>
 
-<!-- CMA Generator - ACTIVE -->
-<g class="n-active">
-  <rect x="1280" y="140" width="180" height="48" rx="9"/>
-  <text class="th" x="1370" y="160" text-anchor="middle">CMA Generator</text>
-  <text class="ts" x="1370" y="176" text-anchor="middle" style="fill:#fbbf24">Active &middot; Skill built</text>
-</g>
+<g class="n-active"><rect x="1080" y="130" width="160" height="44" rx="9"/><text class="th" x="1160" y="148" text-anchor="middle">CMA Generator</text><text class="ts" x="1160" y="163" text-anchor="middle" style="fill:#fbbf24">Active</text></g>
 
-<!-- Form 290 - ACTIVE -->
-<g class="n-active">
-  <rect x="1470" y="140" width="180" height="48" rx="9"/>
-  <text class="th" x="1560" y="160" text-anchor="middle">Form 290 HTML Build</text>
-  <text class="ts" x="1560" y="176" text-anchor="middle" style="fill:#fbbf24">Active &middot; Page by page</text>
-</g>
+<g class="n-active"><rect x="1290" y="130" width="180" height="44" rx="9"/><text class="th" x="1380" y="148" text-anchor="middle">Form 290 Build</text><text class="ts" x="1380" y="163" text-anchor="middle" style="fill:#fbbf24">Active</text></g>
 
-<!-- FUB Email Campaign - QUEUED -->
-<g class="n-queued">
-  <rect x="1650" y="140" width="180" height="48" rx="9"/>
-  <text class="th" x="1740" y="160" text-anchor="middle">FUB Email Campaign</text>
-  <text class="ts" x="1740" y="176" text-anchor="middle" style="fill:#60a5fa">Queued &middot; 58 emails / 7 phases</text>
-</g>
+<g class="n-done"><rect x="1500" y="130" width="160" height="44" rx="9"/><text class="th" x="1580" y="148" text-anchor="middle">Zapier Engine</text><text class="ts" x="1580" y="163" text-anchor="middle" style="fill:#34d399">Done</text></g>
 
-<!-- Zapier Engine - DONE -->
-<g class="n-done">
-  <rect x="1880" y="140" width="200" height="48" rx="9"/>
-  <text class="th" x="1980" y="160" text-anchor="middle">Zapier Engine</text>
-  <text class="ts" x="1980" y="176" text-anchor="middle" style="fill:#34d399">&#10003; Done &middot; Drive folder automation</text>
-</g>
+<!-- DEPENDENCY: CRM enables Deliverability path -->
+<path class="conn-dep" d="M220,152 L280,152"/>
+<text class="ts" x="250" y="145" text-anchor="middle" style="fill:#c8a84e;font-size:8px">enables</text>
 
-<!-- DEPENDENCY: CRM → enables → Email Campaign -->
-<path class="conn-dep" d="M290,164 L420,164"/>
-<text class="ts" x="355" y="158" text-anchor="middle" style="fill:#c8a84e;font-size:9px">enables</text>
+<!-- DEPENDENCY: Deliverability blocks Email Campaign -->
+<!-- Email Campaign shown below Deliverability -->
+<path class="conn-block" d="M400,174 L400,210"/>
+<g class="n-blocked"><rect x="280" y="210" width="240" height="44" rx="9"/><text class="th" x="400" y="228" text-anchor="middle">FUB Email Campaign</text><text class="ts" x="400" y="243" text-anchor="middle" style="fill:#f87171">58 emails &middot; 7 phases &middot; BLOCKED</text></g>
 
-<!-- DEPENDENCY: Deliverability BLOCKS Email Campaign -->
-<path class="conn-block" d="M640,164 L1650,164"/>
-<text class="ts" x="1145" y="158" text-anchor="middle" style="fill:#f87171;font-size:9px">&#9888; BLOCKS &mdash; must complete first</text>
+<!-- CONNECTOR: Email Campaign → 7 phases -->
+<path class="conn-block" d="M400,254 L400,270"/>
+<path class="conn-block" d="M400,270 L120,270 L120,295"/>
+<path class="conn-block" d="M400,270 L220,270 L220,295"/>
+<path class="conn-block" d="M400,270 L320,270 L320,295"/>
+<path class="conn-block" d="M400,270 L400,295"/>
+<path class="conn-block" d="M400,270 L480,270 L480,295"/>
+<path class="conn-block" d="M400,270 L580,270 L580,295"/>
+<path class="conn-block" d="M400,270 L680,270 L680,295"/>
 
-<!-- CONNECTORS: Deliverability → leaves -->
-<path class="conn" d="M530,188 L530,220 L430,220 L430,280"/>
-<path class="conn" d="M530,220 L530,280"/>
-<path class="conn" d="M530,220 L630,220 L630,280"/>
+<!-- EMAIL PHASES (Row 3 — no overlap, 100px apart) -->
+<g class="n-blocked"><rect x="65" y="295" width="110" height="38" rx="7"/><text class="th" x="120" y="311" text-anchor="middle" style="font-size:10px">Active Buyer</text><text class="ts" x="120" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
+<g class="n-blocked"><rect x="165" y="295" width="110" height="38" rx="7"/><text class="th" x="220" y="311" text-anchor="middle" style="font-size:10px">Active Seller</text><text class="ts" x="220" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
+<g class="n-blocked"><rect x="265" y="295" width="110" height="38" rx="7"/><text class="th" x="320" y="311" text-anchor="middle" style="font-size:10px">Past Client</text><text class="ts" x="320" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
+<g class="n-blocked"><rect x="350" y="295" width="100" height="38" rx="7"/><text class="th" x="400" y="311" text-anchor="middle" style="font-size:10px">Sphere</text><text class="ts" x="400" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
+<g class="n-blocked"><rect x="440" y="295" width="100" height="38" rx="7"/><text class="th" x="490" y="311" text-anchor="middle" style="font-size:10px">New Lead</text><text class="ts" x="490" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">10 emails</text></g>
+<g class="n-blocked"><rect x="530" y="295" width="110" height="38" rx="7"/><text class="th" x="585" y="311" text-anchor="middle" style="font-size:10px">Agent Referral</text><text class="ts" x="585" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
+<g class="n-blocked"><rect x="630" y="295" width="110" height="38" rx="7"/><text class="th" x="685" y="311" text-anchor="middle" style="font-size:10px">VIP / Repeat</text><text class="ts" x="685" y="325" text-anchor="middle" style="font-size:9px;fill:#f87171">8 emails</text></g>
 
-<!-- DELIVERABILITY LEAVES -->
-<g class="n-pending"><rect x="370" y="280" width="120" height="42" rx="8"/><text class="th" x="430" y="296" text-anchor="middle" style="font-size:11px">SPF Record</text><text class="ts" x="430" y="312" text-anchor="middle">Pending</text></g>
-<g class="n-pending"><rect x="470" y="280" width="120" height="42" rx="8"/><text class="th" x="530" y="296" text-anchor="middle" style="font-size:11px">DKIM Record</text><text class="ts" x="530" y="312" text-anchor="middle">Pending</text></g>
-<g class="n-pending"><rect x="570" y="280" width="120" height="42" rx="8"/><text class="th" x="630" y="296" text-anchor="middle" style="font-size:11px">DMARC Record</text><text class="ts" x="630" y="312" text-anchor="middle">Pending</text></g>
+<!-- PROPERTY WEBSITES leaves -->
+<path class="conn" d="M700,174 L700,210 L640,210 L640,295"/>
+<path class="conn" d="M700,210 L700,295"/>
+<path class="conn" d="M700,210 L770,210 L770,295"/>
 
-<!-- CONNECTORS: Email Campaign → phases -->
-<path class="conn" d="M1740,188 L1740,230"/>
-<path class="conn-block" d="M1740,230 L1460,230 L1460,280"/>
-<path class="conn-block" d="M1740,230 L1570,230 L1570,280"/>
-<path class="conn-block" d="M1740,230 L1680,230 L1680,280"/>
-<path class="conn-block" d="M1740,230 L1740,280"/>
-<path class="conn-block" d="M1740,230 L1850,230 L1850,280"/>
-<path class="conn-block" d="M1740,230 L1960,230 L1960,280"/>
-<path class="conn-block" d="M1740,230 L2070,230 L2070,280"/>
+<g class="n-done"><rect x="580" y="295" width="120" height="38" rx="7"/><text class="th" x="640" y="311" text-anchor="middle" style="font-size:10px">179 Lio Ave</text><text class="ts" x="640" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Live</text></g>
+<g class="n-active"><rect x="640" y="295" width="120" height="38" rx="7"/><text class="th" x="700" y="311" text-anchor="middle" style="font-size:10px">16 Saint Keller</text><text class="ts" x="700" y="325" text-anchor="middle" style="font-size:9px;fill:#fbbf24">Next Up</text></g>
+<g class="n-done"><rect x="710" y="295" width="120" height="38" rx="7"/><text class="th" x="770" y="311" text-anchor="middle" style="font-size:10px">Template</text><text class="ts" x="770" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
 
-<!-- EMAIL CAMPAIGN PHASES (all blocked) -->
-<g class="n-blocked"><rect x="1400" y="280" width="120" height="42" rx="8"/><text class="th" x="1460" y="296" text-anchor="middle" style="font-size:11px">Active Buyer</text><text class="ts" x="1460" y="312" text-anchor="middle" style="fill:#f87171">8 emails &middot; BLOCKED</text></g>
-<g class="n-blocked"><rect x="1510" y="280" width="120" height="42" rx="8"/><text class="th" x="1570" y="296" text-anchor="middle" style="font-size:11px">Active Seller</text><text class="ts" x="1570" y="312" text-anchor="middle" style="fill:#f87171">8 emails &middot; BLOCKED</text></g>
-<g class="n-blocked"><rect x="1620" y="280" width="120" height="42" rx="8"/><text class="th" x="1680" y="296" text-anchor="middle" style="font-size:11px">Past Client</text><text class="ts" x="1680" y="312" text-anchor="middle" style="fill:#f87171">8 emails</text></g>
-<g class="n-blocked"><rect x="1680" y="280" width="120" height="42" rx="8"/><text class="th" x="1740" y="296" text-anchor="middle" style="font-size:11px">Sphere</text><text class="ts" x="1740" y="312" text-anchor="middle" style="fill:#f87171">8 emails</text></g>
-<g class="n-blocked"><rect x="1790" y="280" width="120" height="42" rx="8"/><text class="th" x="1850" y="296" text-anchor="middle" style="font-size:11px">New Lead</text><text class="ts" x="1850" y="312" text-anchor="middle" style="fill:#f87171">10 emails</text></g>
-<g class="n-blocked"><rect x="1900" y="280" width="120" height="42" rx="8"/><text class="th" x="1960" y="296" text-anchor="middle" style="font-size:11px">Agent Referral</text><text class="ts" x="1960" y="312" text-anchor="middle" style="fill:#f87171">8 emails</text></g>
-<g class="n-blocked"><rect x="2010" y="280" width="120" height="42" rx="8"/><text class="th" x="2070" y="296" text-anchor="middle" style="font-size:11px">VIP / Repeat</text><text class="ts" x="2070" y="312" text-anchor="middle" style="fill:#f87171">8 emails</text></g>
+<!-- SELLER UPDATE leaves -->
+<path class="conn-done" d="M940,174 L940,210 L880,210 L880,295"/>
+<path class="conn-done" d="M940,210 L940,295"/>
+<path class="conn-done" d="M940,210 L1000,210 L1000,295"/>
 
-<!-- PROPERTY WEBSITES branches -->
-<path class="conn" d="M840,188 L840,230 L780,230 L780,280"/>
-<path class="conn" d="M840,230 L840,280"/>
-<path class="conn" d="M840,230 L910,230 L910,280"/>
+<g class="n-done"><rect x="820" y="295" width="120" height="38" rx="7"/><text class="th" x="880" y="311" text-anchor="middle" style="font-size:10px">Email Skill</text><text class="ts" x="880" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Live</text></g>
+<g class="n-done"><rect x="880" y="295" width="120" height="38" rx="7"/><text class="th" x="940" y="311" text-anchor="middle" style="font-size:10px">HTML Page</text><text class="ts" x="940" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Live</text></g>
+<g class="n-done"><rect x="940" y="295" width="120" height="38" rx="7"/><text class="th" x="1000" y="311" text-anchor="middle" style="font-size:10px">Publisher</text><text class="ts" x="1000" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Live</text></g>
 
-<g class="n-done"><rect x="710" y="280" width="140" height="42" rx="8"/><text class="th" x="780" y="296" text-anchor="middle" style="font-size:11px">179 Lio Ave</text><text class="ts" x="780" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Live</text></g>
-<g class="n-active"><rect x="770" y="280" width="140" height="42" rx="8"/><text class="th" x="840" y="296" text-anchor="middle" style="font-size:11px">16 Saint Keller Pl</text><text class="ts" x="840" y="312" text-anchor="middle" style="fill:#fbbf24">Next Up</text></g>
-<g class="n-done"><rect x="840" y="280" width="140" height="42" rx="8"/><text class="th" x="910" y="296" text-anchor="middle" style="font-size:11px">Template System</text><text class="ts" x="910" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Done</text></g>
+<!-- CMA leaves -->
+<path class="conn" d="M1160,174 L1160,210 L1110,210 L1110,295"/>
+<path class="conn" d="M1160,210 L1210,210 L1210,295"/>
 
-<!-- SELLER UPDATE branches -->
-<path class="conn-done" d="M1060,188 L1060,230 L1000,230 L1000,280"/>
-<path class="conn-done" d="M1060,230 L1060,280"/>
-<path class="conn-done" d="M1060,230 L1120,230 L1120,280"/>
+<g class="n-done"><rect x="1055" y="295" width="110" height="38" rx="7"/><text class="th" x="1110" y="311" text-anchor="middle" style="font-size:10px">179 Lio CMA</text><text class="ts" x="1110" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
+<g class="n-active"><rect x="1155" y="295" width="110" height="38" rx="7"/><text class="th" x="1210" y="311" text-anchor="middle" style="font-size:10px">Next CMA</text><text class="ts" x="1210" y="325" text-anchor="middle" style="font-size:9px;fill:#fbbf24">Ready</text></g>
 
-<g class="n-done"><rect x="935" y="280" width="130" height="42" rx="8"/><text class="th" x="1000" y="296" text-anchor="middle" style="font-size:11px">Email Skill</text><text class="ts" x="1000" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Live</text></g>
-<g class="n-done"><rect x="995" y="280" width="130" height="42" rx="8"/><text class="th" x="1060" y="296" text-anchor="middle" style="font-size:11px">HTML Page Skill</text><text class="ts" x="1060" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Live</text></g>
-<g class="n-done"><rect x="1055" y="280" width="130" height="42" rx="8"/><text class="th" x="1120" y="296" text-anchor="middle" style="font-size:11px">GitHub Publisher</text><text class="ts" x="1120" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Live</text></g>
+<!-- FORM 290 leaves -->
+<path class="conn" d="M1380,174 L1380,210 L1330,210 L1330,295"/>
+<path class="conn" d="M1380,210 L1430,210 L1430,295"/>
 
-<!-- CMA branches -->
-<path class="conn" d="M1370,188 L1370,230 L1320,230 L1320,280"/>
-<path class="conn" d="M1370,230 L1420,230 L1420,280"/>
+<g class="n-done"><rect x="1275" y="295" width="110" height="38" rx="7"/><text class="th" x="1330" y="311" text-anchor="middle" style="font-size:10px">Page 1</text><text class="ts" x="1330" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
+<g class="n-active"><rect x="1375" y="295" width="110" height="38" rx="7"/><text class="th" x="1430" y="311" text-anchor="middle" style="font-size:10px">Page 2+</text><text class="ts" x="1430" y="325" text-anchor="middle" style="font-size:9px;fill:#fbbf24">In Progress</text></g>
 
-<g class="n-done"><rect x="1260" y="280" width="120" height="42" rx="8"/><text class="th" x="1320" y="296" text-anchor="middle" style="font-size:11px">179 Lio CMA</text><text class="ts" x="1320" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Done</text></g>
-<g class="n-active"><rect x="1360" y="280" width="120" height="42" rx="8"/><text class="th" x="1420" y="296" text-anchor="middle" style="font-size:11px">Next CMA</text><text class="ts" x="1420" y="312" text-anchor="middle" style="fill:#fbbf24">Ready on demand</text></g>
+<!-- ZAPIER leaves -->
+<path class="conn-done" d="M1580,174 L1580,210 L1530,210 L1530,295"/>
+<path class="conn-done" d="M1580,210 L1630,210 L1630,295"/>
 
-<!-- FORM 290 branches -->
-<path class="conn" d="M1560,188 L1560,230 L1520,230 L1520,280"/>
-<path class="conn" d="M1560,230 L1600,230 L1600,280"/>
+<g class="n-done"><rect x="1475" y="295" width="110" height="38" rx="7"/><text class="th" x="1530" y="311" text-anchor="middle" style="font-size:10px">FUB Trigger</text><text class="ts" x="1530" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
+<g class="n-done"><rect x="1575" y="295" width="110" height="38" rx="7"/><text class="th" x="1630" y="311" text-anchor="middle" style="font-size:10px">Drive Action</text><text class="ts" x="1630" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
 
-<g class="n-done"><rect x="1460" y="280" width="120" height="42" rx="8"/><text class="th" x="1520" y="296" text-anchor="middle" style="font-size:11px">Page 1</text><text class="ts" x="1520" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Done</text></g>
-<g class="n-active"><rect x="1540" y="280" width="120" height="42" rx="8"/><text class="th" x="1600" y="296" text-anchor="middle" style="font-size:11px">Page 2+</text><text class="ts" x="1600" y="312" text-anchor="middle" style="fill:#fbbf24">In Progress</text></g>
-
-<!-- ZAPIER branches -->
-<path class="conn-done" d="M1980,188 L1980,230 L1930,230 L1930,280"/>
-<path class="conn-done" d="M1980,230 L2030,230 L2030,280"/>
-
-<g class="n-done"><rect x="1870" y="280" width="120" height="42" rx="8"/><text class="th" x="1930" y="296" text-anchor="middle" style="font-size:11px">FUB Trigger</text><text class="ts" x="1930" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Done</text></g>
-<g class="n-done"><rect x="1970" y="280" width="120" height="42" rx="8"/><text class="th" x="2030" y="296" text-anchor="middle" style="font-size:11px">Drive Action</text><text class="ts" x="2030" y="312" text-anchor="middle" style="fill:#34d399">&#10003; Done</text></g>
-
-<!-- CROSS-PROJECT DEPENDENCY: Zapier ↔ Property Websites (both use Drive) -->
-<path class="conn-dep" d="M1880,188 L1880,380 L910,380 L910,322"/>
-<text class="ts" x="1400" y="374" text-anchor="middle" style="fill:#c8a84e;font-size:9px">both deliver to Google Drive</text>
-
-<!-- CRITICAL PATH CALLOUT -->
-<rect x="80" y="360" width="600" height="56" rx="10" fill="rgba(248,113,113,.08)" stroke="#f87171" stroke-width="1.5"/>
-<text class="th" x="100" y="382" style="fill:#f87171;font-size:12px">&#9888; CRITICAL PATH</text>
-<text class="ts" x="100" y="400" style="fill:#f87171;font-size:11px">Deliverability Setup (SPF/DKIM/DMARC) must be completed before ANY of the 58 campaign emails can go live.</text>
-<text class="ts" x="100" y="414" style="fill:#8888a0;font-size:10px">Once done &rarr; start with Active Buyer (8 emails) &rarr; then Active Seller &rarr; then remaining 5 phases</text>
-
-<!-- STATUS SUMMARY BAR -->
-<rect x="80" y="440" width="2040" height="44" rx="10" fill="#1c1c2e" stroke="#2a2a3d" stroke-width="1"/>
-<text class="th" x="100" y="462" style="fill:#c8a84e;font-size:11px">EXECUTION ORDER:</text>
-<text class="ts" x="310" y="462" style="fill:#34d399;font-size:11px">1. SPF/DKIM/DMARC</text>
-<text class="ts" x="500" y="462" style="fill:#8888a0;font-size:11px">&rarr;</text>
-<text class="ts" x="530" y="462" style="fill:#fbbf24;font-size:11px">2. Active Buyer (8 emails)</text>
-<text class="ts" x="740" y="462" style="fill:#8888a0;font-size:11px">&rarr;</text>
-<text class="ts" x="770" y="462" style="fill:#fbbf24;font-size:11px">3. Active Seller (8 emails)</text>
-<text class="ts" x="990" y="462" style="fill:#8888a0;font-size:11px">&rarr;</text>
-<text class="ts" x="1020" y="462" style="fill:#60a5fa;font-size:11px">4. Remaining 5 phases (42 emails)</text>
-<text class="ts" x="1340" y="462" style="fill:#8888a0;font-size:11px">|</text>
-<text class="ts" x="1380" y="462" style="fill:#fbbf24;font-size:11px">16 Saint Keller (parallel)</text>
-<text class="ts" x="1590" y="462" style="fill:#8888a0;font-size:11px">|</text>
-<text class="ts" x="1630" y="462" style="fill:#fbbf24;font-size:11px">Form 290 Page 2+ (parallel)</text>
+<!-- CRITICAL PATH BOX -->
+<rect x="60" y="370" width="680" height="48" rx="10" fill="rgba(248,113,113,.06)" stroke="#f87171" stroke-width="1"/>
+<text class="th" x="80" y="392" style="fill:#f87171;font-size:11px">CRITICAL PATH:</text>
+<text class="ts" x="200" y="392" style="fill:#f87171;font-size:11px">SPF/DKIM/DMARC</text>
+<text class="ts" x="330" y="392" style="fill:#4a4a5e">&rarr;</text>
+<text class="ts" x="350" y="392" style="fill:#fbbf24;font-size:11px">Active Buyer</text>
+<text class="ts" x="440" y="392" style="fill:#4a4a5e">&rarr;</text>
+<text class="ts" x="460" y="392" style="fill:#fbbf24;font-size:11px">Active Seller</text>
+<text class="ts" x="550" y="392" style="fill:#4a4a5e">&rarr;</text>
+<text class="ts" x="570" y="392" style="fill:#60a5fa;font-size:11px">5 remaining phases</text>
+<text class="ts" x="80" y="408" style="fill:#8888a0;font-size:10px">Parallel: 16 Saint Keller &middot; Form 290 Page 2+ &middot; CMA on demand</text>
 
 </svg>
-
 </div>
 </div>
-
-<div style="padding:12px 24px;font-size:11px;color:#4a4a5e;border-top:1px solid #2a2a3d;background:#14141f">
-  SOLDMIKE — Real Estate Dependency Map &middot; 8 projects &middot; Last updated April 7, 2026
 </div>
 
+<script>
+document.querySelectorAll('.vtab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.vtab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+  });
+});
+</script>
 </body>
 </html>
