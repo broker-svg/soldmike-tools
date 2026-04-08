@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Real Estate Dashboard</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a0a0f;--surface:#14141f;--surface2:#1c1c2e;--border:#2a2a3d;
+    --gold:#c8a84e;--gold-dim:#9a7d3a;--text:#e8e8f0;--text-dim:#8888a0;
+    --green:#34d399;--yellow:#fbbf24;--blue:#60a5fa;--purple:#a78bfa;
+    --red:#f87171;--orange:#fb923c;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+  /* HEADER */
+  .header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .header-left{display:flex;align-items:center;gap:14px}
+  .back-btn{color:var(--text-dim);text-decoration:none;font-size:13px;padding:6px 12px;border:1px solid var(--border);border-radius:6px;transition:all .2s;display:flex;align-items:center;gap:6px}
+  .back-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .header h1{font-size:18px;font-weight:700}
+  .header h1 .section-icon{font-size:22px;margin-right:6px}
+  .header h1 .brand{color:var(--gold);font-size:12px;font-weight:400;letter-spacing:1px;margin-left:8px}
+  .header .stats{display:flex;gap:12px;font-size:12px}
+  .header .stats .s{padding:4px 10px;border-radius:12px;background:var(--surface2);border:1px solid var(--border)}
+  .header .stats .s .n{font-weight:700}
+  .header .stats .s.active .n{color:var(--green)}
+  .header .stats .s.queued .n{color:var(--yellow)}
+  .header .stats .s.done .n{color:var(--text-dim)}
+
+  /* MAIN */
+  .main{display:grid;grid-template-columns:280px 1fr;gap:0;height:calc(100vh - 56px)}
+
+  /* LEFT SIDEBAR */
+  .sidebar{padding:16px;overflow-y:auto;border-right:1px solid var(--border)}
+  .sidebar::-webkit-scrollbar{width:3px}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  .label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-dim);font-weight:600;margin:16px 0 8px}
+  .label:first-child{margin-top:0}
+
+  /* PROJECT LIST */
+  .proj{padding:10px 12px;border-radius:8px;border:1px solid transparent;cursor:pointer;transition:all .15s;margin-bottom:4px}
+  .proj:hover{background:var(--surface2);border-color:var(--border)}
+  .proj.active{background:var(--surface2);border-color:var(--gold)}
+  .proj-name{font-size:13px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+  .proj-status{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+  .st-active{background:rgba(52,211,153,.15);color:var(--green)}
+  .st-queued{background:rgba(251,191,36,.15);color:var(--yellow)}
+  .st-done{background:rgba(136,136,160,.1);color:var(--text-dim)}
+  .st-parked{background:rgba(167,139,250,.15);color:var(--purple)}
+  .proj-sub{font-size:11px;color:var(--text-dim);line-height:1.3}
+
+  /* QUICK LINKS */
+  .ql-list{display:flex;flex-direction:column;gap:3px}
+  .ql-item{padding:6px 10px;border-radius:6px;font-size:12px;color:var(--text-dim);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:6px}
+  .ql-item:hover{background:var(--surface2);color:var(--gold)}
+
+  /* RIGHT PANEL - TREE */
+  .right-panel{display:flex;flex-direction:column;overflow:hidden}
+
+  /* PROJECT TABS */
+  .proj-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);overflow-x:auto;flex-shrink:0}
+  .proj-tabs::-webkit-scrollbar{display:none}
+  .ptab{padding:11px 16px;font-size:12px;font-weight:600;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+  .ptab:hover{color:var(--text)}
+  .ptab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+  /* TREE CONTENT */
+  .tree-content{flex:1;overflow-y:auto;padding:20px 24px}
+  .tree-content::-webkit-scrollbar{width:4px}
+  .tree-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  /* OVERVIEW TREE */
+  .tree-view{display:none}
+  .tree-view.active{display:block}
+
+  .tree-root{display:flex;flex-direction:column;align-items:center}
+  .tree-node{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;text-align:center;position:relative}
+  .tree-node.root{border-color:var(--gold);background:linear-gradient(135deg,var(--surface),#1a1a2e)}
+  .tree-node .tn-icon{font-size:20px;margin-bottom:4px}
+  .tree-node .tn-title{font-size:14px;font-weight:700}
+  .tree-node .tn-sub{font-size:11px;color:var(--text-dim)}
+  .tree-connector{width:2px;height:20px;background:var(--border);margin:0 auto}
+
+  /* BRANCH GRID */
+  .branch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+  .branch-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+  .branch-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(200,168,78,.08)}
+  .branch-card .bc-accent{position:absolute;top:0;left:0;right:0;height:3px}
+  .branch-card .bc-accent.green{background:var(--green)}
+  .branch-card .bc-accent.yellow{background:var(--yellow)}
+  .branch-card .bc-accent.gray{background:var(--text-dim)}
+  .branch-card .bc-name{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.3}
+  .branch-card .bc-status{font-size:10px;margin-bottom:6px}
+  .branch-card .bc-next{font-size:11px;color:var(--text-dim);line-height:1.3}
+
+  /* HORIZONTAL CONNECTOR */
+  .h-connector{display:flex;align-items:flex-start;justify-content:center;gap:0;margin-top:0;position:relative}
+  .h-connector::before{content:'';position:absolute;top:0;left:12.5%;right:12.5%;height:2px;background:var(--border)}
+  .h-line{width:2px;height:20px;background:var(--border);margin:0 auto}
+
+  /* PROJECT DETAIL VIEW */
+  .detail-header{margin-bottom:20px}
+  .detail-title{font-size:20px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  .detail-next{font-size:13px;color:var(--text-dim);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:10px}
+  .detail-next strong{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+
+  /* LEAVES */
+  .leaves-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-dim);font-weight:600;margin:20px 0 10px}
+  .leaves-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .leaf{border-radius:10px;border:1px solid var(--border);padding:12px 14px;background:var(--surface);transition:border-color .2s}
+  .leaf:hover{border-color:var(--gold)}
+  .leaf .leaf-name{font-size:13px;font-weight:600;margin-bottom:3px}
+  .leaf .leaf-status{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .leaf .leaf-note{font-size:11px;color:var(--text-dim);line-height:1.3}
+  .leaf.done{border-left:3px solid var(--green)}
+  .leaf.active{border-left:3px solid var(--yellow)}
+  .leaf.todo{border-left:3px solid var(--text-dim)}
+  .leaf.blocked{border-left:3px solid var(--red)}
+  .leaf.missing{border:2px dashed var(--red)}
+
+  /* NOTION LINK */
+  .notion-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);color:var(--text-dim);text-decoration:none;font-size:12px;transition:all .2s}
+  .notion-link:hover{border-color:var(--gold);color:var(--gold)}
+
+  /* MOBILE */
+  @media(max-width:900px){
+    .main{grid-template-columns:1fr;height:auto}
+    .sidebar{border-right:none;border-bottom:1px solid var(--border);max-height:300px}
+    .branch-grid{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:600px){
+    .branch-grid{grid-template-columns:1fr}
+    .leaves-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <a class="back-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-cockpit.html">&#8592; Cockpit</a>
+    <h1><span class="section-icon">&#127969;</span>Real Estate<span class="brand">SOLDMIKE</span></h1>
+  </div>
+  <div class="stats">
+    <div class="s active"><span class="n">3</span> Active</div>
+    <div class="s queued"><span class="n">2</span> Queued</div>
+    <div class="s done"><span class="n">3</span> Done</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- LEFT SIDEBAR -->
+  <div class="sidebar">
+    <div class="label">Projects</div>
+    <div class="proj active" data-proj="overview">
+      <div class="proj-name">&#127969; Overview <span class="proj-status st-active">All</span></div>
+      <div class="proj-sub">Full section tree</div>
+    </div>
+    <div class="proj" data-proj="fub-crm">
+      <div class="proj-name">FUB CRM Build <span class="proj-status st-done">Done</span></div>
+      <div class="proj-sub">55 fields, 7 Smart Lists, 45 tags</div>
+    </div>
+    <div class="proj" data-proj="fub-email">
+      <div class="proj-name">FUB Email Campaign <span class="proj-status st-queued">Queued</span></div>
+      <div class="proj-sub">58 emails / 7 phases</div>
+    </div>
+    <div class="proj" data-proj="property-web">
+      <div class="proj-name">Property Websites <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">3 variants built</div>
+    </div>
+    <div class="proj" data-proj="form290">
+      <div class="proj-name">Form 290 Build <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">HTML form, page by page</div>
+    </div>
+    <div class="proj" data-proj="cma">
+      <div class="proj-name">CMA Generator <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">Upload screenshots, auto-generate</div>
+    </div>
+    <div class="proj" data-proj="seller-update">
+      <div class="proj-name">Seller Update System <span class="proj-status st-done">Done</span></div>
+      <div class="proj-sub">Email + HTML page skills</div>
+    </div>
+    <div class="proj" data-proj="deliverability">
+      <div class="proj-name">Deliverability Setup <span class="proj-status st-queued">Queued</span></div>
+      <div class="proj-sub">SPF / DKIM / DMARC</div>
+    </div>
+    <div class="proj" data-proj="zapier">
+      <div class="proj-name">Zapier Engine <span class="proj-status st-done">Done</span></div>
+      <div class="proj-sub">Drive folder automation</div>
+    </div>
+
+    <div class="label">Notion Pages</div>
+    <div class="ql-list">
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#127969; Real Estate HQ</a>
+      <a class="ql-item" href="https://www.notion.so/8ef779a483a24a639c21ef0c453f9ac4" target="_blank">&#127968; Listings Hub</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a18151b2f3fc1874920ff6" target="_blank">&#128188; Possible Business</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a181c883ecc6817902c59e" target="_blank">&#128101; OP Team</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a181d49b58e2cd4b8967d1" target="_blank">&#129504; Listing Intelligence</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a18169ac4bce51d7988bba" target="_blank">&#127891; Coaching</a>
+      <a class="ql-item" href="https://www.notion.so/3328b7ae80a181809457e1ee26e0477a" target="_blank">&#128231; Email Templates</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a18195b505fecd53fe5212" target="_blank">&#128220; Agreements</a>
+    </div>
+
+    <div class="label">Tools</div>
+    <div class="ql-list">
+      <a class="ql-item" href="https://app.followupboss.com" target="_blank">&#128200; Follow Up Boss</a>
+      <a class="ql-item" href="https://broker-svg.github.io/soldmike-tools/" target="_blank">&#127760; GitHub Pages</a>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="proj-tabs">
+      <div class="ptab active" data-tab="overview">Overview</div>
+      <div class="ptab" data-tab="fub-crm">FUB CRM</div>
+      <div class="ptab" data-tab="fub-email">Email Campaign</div>
+      <div class="ptab" data-tab="property-web">Property Websites</div>
+      <div class="ptab" data-tab="form290">Form 290</div>
+      <div class="ptab" data-tab="cma">CMA Generator</div>
+      <div class="ptab" data-tab="seller-update">Seller Updates</div>
+      <div class="ptab" data-tab="deliverability">Deliverability</div>
+      <div class="ptab" data-tab="zapier">Zapier Engine</div>
+    </div>
+
+    <div class="tree-content">
+
+      <!-- OVERVIEW -->
+      <div class="tree-view active" id="view-overview">
+        <div class="tree-root">
+          <div class="tree-node root">
+            <div class="tn-icon">&#127969;</div>
+            <div class="tn-title">Real Estate</div>
+            <div class="tn-sub">8 projects &middot; 3 active &middot; 2 queued &middot; 3 done</div>
+          </div>
+          <div class="tree-connector"></div>
+        </div>
+        <div class="branch-grid">
+          <div class="branch-card" data-goto="fub-crm">
+            <div class="bc-accent green"></div>
+            <div class="bc-name">FUB CRM Build</div>
+            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
+            <div class="bc-next">55 custom fields, 7 Smart Lists, 45 tags all live in Follow Up Boss</div>
+          </div>
+          <div class="branch-card" data-goto="fub-email">
+            <div class="bc-accent yellow"></div>
+            <div class="bc-name">FUB Email Campaign</div>
+            <div class="bc-status"><span class="proj-status st-queued">Queued</span></div>
+            <div class="bc-next">58 emails across 7 phases. Blocked on deliverability (SPF/DKIM/DMARC)</div>
+          </div>
+          <div class="branch-card" data-goto="property-web">
+            <div class="bc-accent green"></div>
+            <div class="bc-name">Property Websites</div>
+            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
+            <div class="bc-next">Build site for 16 Saint Keller Pl using property-website skill</div>
+          </div>
+          <div class="branch-card" data-goto="form290">
+            <div class="bc-accent green"></div>
+            <div class="bc-name">Form 290 HTML Build</div>
+            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
+            <div class="bc-next">Complete Page 2+ one at a time, compare against PDF</div>
+          </div>
+          <div class="branch-card" data-goto="cma">
+            <div class="bc-accent green"></div>
+            <div class="bc-name">CMA Generator</div>
+            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
+            <div class="bc-next">Upload MLS screenshots and run cma-generator skill</div>
+          </div>
+          <div class="branch-card" data-goto="seller-update">
+            <div class="bc-accent gray"></div>
+            <div class="bc-name">Seller Update System</div>
+            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
+            <div class="bc-next">Skills live: seller-update + seller-update-page. Trigger with natural language</div>
+          </div>
+          <div class="branch-card" data-goto="deliverability">
+            <div class="bc-accent yellow"></div>
+            <div class="bc-name">Deliverability Setup</div>
+            <div class="bc-status"><span class="proj-status st-queued">Queued</span></div>
+            <div class="bc-next">Must be done before ANY email campaign goes live on soldmike.com</div>
+          </div>
+          <div class="branch-card" data-goto="zapier">
+            <div class="bc-accent gray"></div>
+            <div class="bc-name">Zapier Engine</div>
+            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
+            <div class="bc-next">FUB stage change triggers Drive folder move. Confirmed working</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FUB CRM -->
+      <div class="tree-view" id="view-fub-crm">
+        <div class="detail-header">
+          <div class="detail-title">FUB CRM Build <span class="proj-status st-done">Done</span></div>
+          <div class="detail-next"><strong>Summary:</strong> Custom fields, tags, and Smart Lists are all live in Follow Up Boss. 55 custom fields, 7 Smart Lists, 45 tags configured.</div>
+        </div>
+        <div class="leaves-title">Leaves</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">Custom Fields</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">55 custom fields configured in FUB</div></div>
+          <div class="leaf done"><div class="leaf-name">Smart Lists</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">7 Smart Lists: Active Buyer, Active Seller, Past Client, Sphere, Agent, New Lead, VIP</div></div>
+          <div class="leaf done"><div class="leaf-name">Tags</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">45 tags organized by category</div></div>
+          <div class="leaf done"><div class="leaf-name">Slack Integration</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Buyer/seller matching workflow connected</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- FUB EMAIL CAMPAIGN -->
+      <div class="tree-view" id="view-fub-email">
+        <div class="detail-header">
+          <div class="detail-title">FUB Email Campaign <span class="proj-status st-queued">Queued</span></div>
+          <div class="detail-next"><strong>Next Action:</strong> Set up SPF, DKIM, DMARC on soldmike.com first. Then manually copy-paste campaign starting with Active Buyer (8 emails).</div>
+        </div>
+        <div class="leaves-title">Campaign Phases (58 emails total)</div>
+        <div class="leaves-grid">
+          <div class="leaf blocked"><div class="leaf-name">Active Buyer</div><div class="leaf-status" style="color:var(--red)">Blocked</div><div class="leaf-note">8 emails. Blocked on deliverability setup</div></div>
+          <div class="leaf todo"><div class="leaf-name">Active Seller</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">8 emails. After Active Buyer</div></div>
+          <div class="leaf todo"><div class="leaf-name">Past Client</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">8 emails. Nurture sequence</div></div>
+          <div class="leaf todo"><div class="leaf-name">Sphere</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">8 emails. Stay-in-touch drip</div></div>
+          <div class="leaf todo"><div class="leaf-name">New Lead</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">10 emails. Fast follow-up sequence</div></div>
+          <div class="leaf todo"><div class="leaf-name">Agent Referral</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">8 emails. Agent-to-agent nurture</div></div>
+          <div class="leaf todo"><div class="leaf-name">VIP / Repeat</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">8 emails. High-value client touch</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- PROPERTY WEBSITES -->
+      <div class="tree-view" id="view-property-web">
+        <div class="detail-header">
+          <div class="detail-title">Property Websites <span class="proj-status st-active">Active</span></div>
+          <div class="detail-next"><strong>Next Action:</strong> Build site for 16 Saint Keller Pl using the property-website skill.</div>
+        </div>
+        <div class="leaves-title">Variants &amp; Sites</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">179 Lio Ave</div><div class="leaf-status" style="color:var(--green)">Live</div><div class="leaf-note">Template standard. 3 variants built (v1, property, final)</div></div>
+          <div class="leaf active"><div class="leaf-name">16 Saint Keller Pl</div><div class="leaf-status" style="color:var(--yellow)">Next Up</div><div class="leaf-note">Run property-website skill with listing details</div></div>
+          <div class="leaf done"><div class="leaf-name">Template System</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Mobile-first, SOLDMIKE branded, GitHub Pages hosted</div></div>
+          <div class="leaf done"><div class="leaf-name">FUB Connect</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Cloudflare Worker relay to FUB for lead capture forms</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/3318b7ae80a1818bbb83f0e2665bebb8" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- FORM 290 -->
+      <div class="tree-view" id="view-form290">
+        <div class="detail-header">
+          <div class="detail-title">Form 290 HTML Build <span class="proj-status st-active">Active</span></div>
+          <div class="detail-next"><strong>Next Action:</strong> Complete Page 2 and beyond. One page at a time, compare each against the PDF to ensure accuracy.</div>
+        </div>
+        <div class="leaves-title">Pages</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">Page 1</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Header, property info, listing details</div></div>
+          <div class="leaf active"><div class="leaf-name">Page 2</div><div class="leaf-status" style="color:var(--yellow)">In Progress</div><div class="leaf-note">Compare against PDF, build next</div></div>
+          <div class="leaf todo"><div class="leaf-name">Pages 3+</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">Continue page by page after Page 2</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- CMA GENERATOR -->
+      <div class="tree-view" id="view-cma">
+        <div class="detail-header">
+          <div class="detail-title">CMA Generator <span class="proj-status st-active">Active</span></div>
+          <div class="detail-next"><strong>Next Action:</strong> Upload MLS screenshots (subject property, sold comps, active listings) and run the cma-generator skill.</div>
+        </div>
+        <div class="leaves-title">Components</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">Skill Built</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">cma-generator skill reads screenshots, extracts data, builds HTML</div></div>
+          <div class="leaf done"><div class="leaf-name">179 Lio CMA</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Pricing dashboard + market analytics generated</div></div>
+          <div class="leaf active"><div class="leaf-name">Next CMA</div><div class="leaf-status" style="color:var(--yellow)">Ready</div><div class="leaf-note">Upload new MLS screenshots when needed</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- SELLER UPDATE -->
+      <div class="tree-view" id="view-seller-update">
+        <div class="detail-header">
+          <div class="detail-title">Seller Update System <span class="proj-status st-done">Done</span></div>
+          <div class="detail-next"><strong>How to use:</strong> Say "weekly seller update for [address]" or "seller update page for [address]" and the skills generate everything automatically.</div>
+        </div>
+        <div class="leaves-title">Components</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">Weekly Email Skill</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">seller-update skill: standard + open house variants</div></div>
+          <div class="leaf done"><div class="leaf-name">HTML Page Skill</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">seller-update-page skill: interactive stat cards, bar chart, buyer feedback</div></div>
+          <div class="leaf done"><div class="leaf-name">GitHub Publisher</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Auto-publishes to GitHub Pages for shareable link</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- DELIVERABILITY -->
+      <div class="tree-view" id="view-deliverability">
+        <div class="detail-header">
+          <div class="detail-title">Deliverability Setup <span class="proj-status st-queued">Queued</span></div>
+          <div class="detail-next"><strong>Next Action:</strong> Must be completed before ANY email campaign goes live. Configure SPF, DKIM, and DMARC records on soldmike.com DNS.</div>
+        </div>
+        <div class="leaves-title">Steps</div>
+        <div class="leaves-grid">
+          <div class="leaf todo"><div class="leaf-name">SPF Record</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">Add SPF TXT record to soldmike.com DNS</div></div>
+          <div class="leaf todo"><div class="leaf-name">DKIM Record</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">Generate and add DKIM key to DNS</div></div>
+          <div class="leaf todo"><div class="leaf-name">DMARC Record</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">Add DMARC policy to DNS</div></div>
+          <div class="leaf todo"><div class="leaf-name">Test Delivery</div><div class="leaf-status" style="color:var(--text-dim)">Pending</div><div class="leaf-note">Send test emails and verify inbox placement</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <!-- ZAPIER -->
+      <div class="tree-view" id="view-zapier">
+        <div class="detail-header">
+          <div class="detail-title">Zapier Engine <span class="proj-status st-done">Done</span></div>
+          <div class="detail-next"><strong>Summary:</strong> FUB stage change automatically triggers Google Drive folder move. Confirmed working.</div>
+        </div>
+        <div class="leaves-title">Components</div>
+        <div class="leaves-grid">
+          <div class="leaf done"><div class="leaf-name">FUB Trigger</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Stage change in FUB fires Zapier webhook</div></div>
+          <div class="leaf done"><div class="leaf-name">Drive Action</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">Moves client folder to matching stage folder in Drive</div></div>
+          <div class="leaf done"><div class="leaf-name">Testing</div><div class="leaf-status" style="color:var(--green)">Done</div><div class="leaf-note">End-to-end confirmed working</div></div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b6806bd176e1d0eae3" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Tab + sidebar sync
+  function showView(id) {
+    document.querySelectorAll('.tree-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.proj').forEach(p => p.classList.remove('active'));
+    const view = document.getElementById('view-' + id);
+    if (view) view.classList.add('active');
+    document.querySelectorAll(`.ptab[data-tab="${id}"]`).forEach(t => t.classList.add('active'));
+    document.querySelectorAll(`.proj[data-proj="${id}"]`).forEach(p => p.classList.add('active'));
+  }
+
+  document.querySelectorAll('.ptab').forEach(tab => {
+    tab.addEventListener('click', () => showView(tab.dataset.tab));
+  });
+  document.querySelectorAll('.proj').forEach(proj => {
+    proj.addEventListener('click', () => showView(proj.dataset.proj));
+  });
+  document.querySelectorAll('.branch-card').forEach(card => {
+    card.addEventListener('click', () => showView(card.dataset.goto));
+  });
+</script>
+</body>
+</html>
