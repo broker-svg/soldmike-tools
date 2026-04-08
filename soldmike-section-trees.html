@@ -3,407 +3,696 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SOLDMIKE — Section Trees</title>
+<title>SOLDMIKE — Project Trees</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4ef;min-height:100vh;color:#1a1a18}
-.top-bar{background:#1a1a18;padding:16px 28px;display:flex;align-items:center;gap:16px}
-.top-bar h1{font-size:16px;font-weight:500;color:#fff}
+.top-bar{background:#1a1a18;padding:15px 28px;display:flex;align-items:center;justify-content:space-between}
+.top-bar h1{font-size:15px;font-weight:500;color:#fff}
 .top-bar span{font-size:12px;color:#6b6a65}
+
+/* LEVEL 1 TABS */
 .tab-bar{background:#fff;border-bottom:1px solid #e0dfd8;padding:0 28px;display:flex;gap:2px;overflow-x:auto}
-.tab{padding:13px 18px;font-size:13px;font-weight:500;color:#6b6a65;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:7px}
+.tab{padding:13px 16px;font-size:13px;font-weight:500;color:#6b6a65;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .15s;display:flex;align-items:center;gap:6px}
 .tab:hover{color:#1a1a18}
 .tab.active{color:#1a1a18;border-bottom-color:#1a1a18}
-.tab-dot{width:8px;height:8px;border-radius:50%}
+.tdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* LEVEL 2 PROJECT TABS */
+.proj-tab-bar{background:#faf9f5;border-bottom:1px solid #e8e6de;padding:0 28px;display:flex;gap:2px;overflow-x:auto}
+.proj-tab{padding:10px 14px;font-size:12px;font-weight:500;color:#888;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.proj-tab:hover{color:#1a1a18}
+.proj-tab.active{color:#1a1a18;border-bottom-color:#1a1a18}
+
 .page{display:none}
 .page.active{display:block}
-.legend{display:flex;gap:16px;flex-wrap:wrap;padding:13px 28px;background:#faf9f5;border-bottom:1px solid #e0dfd8;font-size:12px;color:#6b6a65;align-items:center}
+.proj-page{display:none}
+.proj-page.active{display:block}
+
+/* OVERVIEW TILES */
+.overview-wrap{padding:28px}
+.ov-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:14px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px}
+.tile{background:#fff;border-radius:14px;border:1px solid #e5e3dd;padding:20px 18px 16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.tile:hover{border-color:#ccc;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.07)}
+.tile-accent{position:absolute;top:0;left:0;right:0;height:4px;border-radius:14px 14px 0 0}
+.tile-icon{font-size:22px;margin-bottom:10px}
+.tile-name{font-size:14px;font-weight:600;margin-bottom:8px}
+.tile-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:20px}
+.pa{background:#E1F5EE;color:#085041}.pq{background:#FAEEDA;color:#633806}
+.pd{background:#E6F1FB;color:#0C447C}.pp{background:#F1EFE8;color:#444441}
+.tile-sub{font-size:11px;color:#aaa;line-height:1.4}
+
+/* LEGEND */
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 28px;background:#faf9f5;border-bottom:1px solid #e0dfd8;font-size:12px;color:#6b6a65;align-items:center}
 .ld{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
-.stats-bar{display:flex;gap:20px;padding:11px 28px;background:#fff;border-bottom:1px solid #e0dfd8;font-size:12px;color:#6b6a65;align-items:center}
-.stat{display:flex;align-items:center;gap:5px}
+
+/* SECTION STATS BAR */
+.stats-bar{display:flex;gap:18px;padding:11px 28px;background:#fff;border-bottom:1px solid #e0dfd8;font-size:12px;color:#6b6a65;align-items:center;flex-wrap:wrap}
 .stat strong{color:#1a1a18;font-weight:600}
-.tree-wrap{padding:28px;overflow-x:auto}
-.tree-inner{background:#fff;border-radius:14px;border:1px solid #e0dfd8;padding:36px 40px 48px;display:inline-block;min-width:100%}
+
+/* TREE CONTAINER */
+.tree-wrap{padding:24px 28px;overflow-x:auto}
+.tree-inner{background:#fff;border-radius:14px;border:1px solid #e0dfd8;padding:32px 36px 44px;display:inline-block;min-width:100%}
 svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+
+/* PROJECT DETAIL */
+.proj-detail{padding:24px 28px}
+.proj-header{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.proj-title{font-size:18px;font-weight:600}
+.status-badge{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px}
+.sb-done{background:#E1F5EE;color:#085041}
+.sb-prog{background:#FAEEDA;color:#633806}
+.sb-todo{background:#F1EFE8;color:#444441}
+.sb-queued{background:#FAEEDA;color:#633806}
+.sb-parked{background:#EEEDFE;color:#534AB7}
+.sb-blocked{background:#FAECE7;color:#712B13}
+.leaves-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.leaf-card{border-radius:12px;border:1px solid #e5e3dd;padding:14px 16px}
+.leaf-card.done{background:#E1F5EE;border-color:#9FE1CB}
+.leaf-card.prog{background:#FAEEDA;border-color:#FAC775}
+.leaf-card.todo{background:#F1EFE8;border-color:#D3D1C7}
+.leaf-card.missing{background:#FFF5F5;border:2px dashed #E24B4A}
+.leaf-card.blocked{background:#FAECE7;border-color:#F0997B}
+.leaf-card.parked{background:#EEEDFE;border-color:#CECBF6}
+.leaf-name{font-size:13px;font-weight:600;margin-bottom:3px}
+.leaf-sub{font-size:11px;opacity:.75;line-height:1.4}
+.leaf-status{font-size:10px;font-weight:600;margin-top:6px;text-transform:uppercase;letter-spacing:.05em}
+.next-panel{background:#fff;border:1px solid #e5e3dd;border-radius:12px;padding:16px 18px}
+.next-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:8px}
+.next-text{font-size:13px;color:#1a1a18;line-height:1.6}
+.notes-text{font-size:12px;color:#888;margin-top:8px;line-height:1.5}
+.proj-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#aaa;margin-bottom:10px}
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <h1>SOLDMIKE — Section Trees</h1>
-  <span>6 sections · click a tab to view that section's project tree</span>
+  <h1>SOLDMIKE — Project Trees</h1>
+  <span>Overview → Section → Project · 3 levels deep</span>
 </div>
 
+<!-- LEVEL 1: MAIN TAB BAR -->
 <div class="tab-bar">
-  <div class="tab active" onclick="showTab('re')"><div class="tab-dot" style="background:#1D9E75"></div>Real Estate</div>
-  <div class="tab" onclick="showTab('mkt')"><div class="tab-dot" style="background:#378ADD"></div>Marketing</div>
-  <div class="tab" onclick="showTab('tpm')"><div class="tab-dot" style="background:#D85A30"></div>Toronto Property Media</div>
-  <div class="tab" onclick="showTab('prod')"><div class="tab-dot" style="background:#534AB7"></div>Products</div>
-  <div class="tab" onclick="showTab('biz')"><div class="tab-dot" style="background:#888780"></div>Business & Function</div>
-  <div class="tab" onclick="showTab('per')"><div class="tab-dot" style="background:#BA7517"></div>Personal</div>
+  <div class="tab active" onclick="showMain('overview')">🗺️ Overview</div>
+  <div class="tab" onclick="showMain('re')"><div class="tdot" style="background:#1D9E75"></div>Real Estate</div>
+  <div class="tab" onclick="showMain('mkt')"><div class="tdot" style="background:#378ADD"></div>Marketing</div>
+  <div class="tab" onclick="showMain('tpm')"><div class="tdot" style="background:#D85A30"></div>Toronto Property Media</div>
+  <div class="tab" onclick="showMain('prod')"><div class="tdot" style="background:#534AB7"></div>Products</div>
+  <div class="tab" onclick="showMain('biz')"><div class="tdot" style="background:#888780"></div>Business & Function</div>
+  <div class="tab" onclick="showMain('per')"><div class="tdot" style="background:#BA7517"></div>Personal</div>
 </div>
 
 <div class="legend">
   <strong style="color:#1a1a18">Legend:</strong>
   <span><span class="ld" style="background:#E1F5EE;border:1px solid #1D9E75"></span>Done</span>
-  <span><span class="ld" style="background:#FAEEDA;border:1px solid #EF9F27"></span>In Progress</span>
+  <span><span class="ld" style="background:#FAEEDA;border:1px solid #EF9F27"></span>In Progress / Queued</span>
   <span><span class="ld" style="background:#F1EFE8;border:1px solid #C8C7C0"></span>To Do</span>
   <span><span class="ld" style="background:#FFF5F5;border:2px dashed #E24B4A"></span>Missing leaf</span>
-  <span><span class="ld" style="background:#FAECE7;border:1px solid #D85A30"></span>Blocked</span>
   <span><span class="ld" style="background:#EEEDFE;border:1px solid #AFA9EC"></span>Parked</span>
+  <span><span class="ld" style="background:#FAECE7;border:1px solid #D85A30"></span>Blocked</span>
 </div>
 
-<!-- REAL ESTATE -->
-<div class="page active" id="page-re">
+<!-- ═══════════════════════════════════ -->
+<!-- OVERVIEW PAGE -->
+<!-- ═══════════════════════════════════ -->
+<div class="page active" id="page-overview">
+  <div class="overview-wrap">
+    <div class="ov-title">All Sections — Click to open</div>
+    <div class="tiles">
+      <div class="tile" onclick="showMain('re')">
+        <div class="tile-accent" style="background:#1D9E75"></div>
+        <div class="tile-icon">🏠</div>
+        <div class="tile-name">Real Estate</div>
+        <div class="tile-pills"><span class="pill pa">3 active</span><span class="pill pq">2 queued</span><span class="pill pd">3 done</span></div>
+        <div class="tile-sub">FUB · listings · websites · Form 290 · deliverability</div>
+      </div>
+      <div class="tile" onclick="showMain('mkt')">
+        <div class="tile-accent" style="background:#378ADD"></div>
+        <div class="tile-icon">📣</div>
+        <div class="tile-name">Marketing</div>
+        <div class="tile-pills"><span class="pill pa">2 active</span><span class="pill pp">1 parked</span><span class="pill pd">3 done</span></div>
+        <div class="tile-sub">social · landing page · Buffer · YouTube · WordPress</div>
+      </div>
+      <div class="tile" onclick="showMain('tpm')">
+        <div class="tile-accent" style="background:#D85A30"></div>
+        <div class="tile-icon">📷</div>
+        <div class="tile-name">Toronto Property Media</div>
+        <div class="tile-pills"><span class="pill pa">1 active</span><span class="pill pd">2 done</span></div>
+        <div class="tile-sub">shot tree · delivery · Sony A1 · Final Cut Pro</div>
+      </div>
+      <div class="tile" onclick="showMain('prod')">
+        <div class="tile-accent" style="background:#534AB7"></div>
+        <div class="tile-icon">📦</div>
+        <div class="tile-name">Products</div>
+        <div class="tile-pills"><span class="pill pp">2 parked</span><span class="pill pd">1 done</span></div>
+        <div class="tile-sub">Mika AI · Agent Platform · ISA</div>
+      </div>
+      <div class="tile" onclick="showMain('biz')">
+        <div class="tile-accent" style="background:#888780"></div>
+        <div class="tile-icon">⚙️</div>
+        <div class="tile-name">Business & Function</div>
+        <div class="tile-pills"><span class="pill pa">2 active</span><span class="pill pd">2 done</span></div>
+        <div class="tile-sub">email · Cloudflare · Notion HQ · GitHub Pages</div>
+      </div>
+      <div class="tile" onclick="showMain('per')">
+        <div class="tile-accent" style="background:#BA7517"></div>
+        <div class="tile-icon">🧘</div>
+        <div class="tile-name">Personal</div>
+        <div class="tile-pills"><span class="pill pa">1 active</span><span class="pill pq">1 to do</span></div>
+        <div class="tile-sub">workouts · meal plan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- REAL ESTATE PAGE -->
+<!-- ═══════════════════════════════════ -->
+<div class="page" id="page-re">
   <div class="stats-bar">
     <div class="stat">🏠 <strong>Real Estate</strong></div>
     <div class="stat">7 projects</div>
-    <div class="stat">17 leaves</div>
     <div class="stat" id="re-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-re"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('re','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('re','crm')">FUB CRM Build</div>
+    <div class="proj-tab" onclick="showProj('re','campaign')">FUB Email Campaign</div>
+    <div class="proj-tab" onclick="showProj('re','websites')">Property Websites</div>
+    <div class="proj-tab" onclick="showProj('re','form290')">Form 290 HTML</div>
+    <div class="proj-tab" onclick="showProj('re','deliverability')">Deliverability</div>
+    <div class="proj-tab" onclick="showProj('re','seller')">Seller Update System</div>
+    <div class="proj-tab" onclick="showProj('re','zapier')">Zapier Engine</div>
+  </div>
+  <div class="proj-page active" id="re-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-re"></svg></div></div>
+  </div>
+  <div class="proj-page" id="re-crm">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">FUB CRM Build</div><div class="status-badge sb-done">Done</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Custom Fields</div><div class="leaf-sub">55 fields created via API · all live</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Tags</div><div class="leaf-sub">45 tags deployed across 11,000 contacts</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Smart Lists</div><div class="leaf-sub">7 Smart Lists live and filtering correctly</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Complete. All 55 custom fields, 45 tags, and 7 Smart Lists are live. Deal stages set for both Buyers and Sellers. Foundation is solid — everything else builds on this.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-campaign">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">FUB Email Campaign</div><div class="status-badge sb-queued">Queued</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Buyer Campaign</div><div class="leaf-sub">58 emails · 7 phases · written in SOLDMIKE voice · ready to load</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card missing"><div class="leaf-name">Seller Campaign</div><div class="leaf-sub">Not yet built — this is the missing leaf</div><div class="leaf-status" style="color:#A32D2D">⚠ Missing</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Complete deliverability setup (SPF / DKIM / DMARC) on soldmike.com first — that must be done before any email campaign goes live. Then manually copy-paste the Active Buyer campaign (8 emails) into FUB one at a time. Seller campaign is built after that.</div><div class="notes-text">Blocker: Deliverability tab must be done first. FUB has no API for bulk Action Plan import — all copy-paste manually.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-websites">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Property Websites</div><div class="status-badge sb-done">Done</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">SOLDMIKE Variant</div><div class="leaf-sub">For Michael's own listings — skill live</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">OP Team Variant</div><div class="leaf-sub">For Nick / Rocco listings — skill live</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Agent Client Variant</div><div class="leaf-sub">For agent clients with their own branding</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Build site for 16 Saint Keller Pl — trigger property-website skill with listing details. All three variants are ready and working, just need to be deployed per listing.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-form290">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Form 290 HTML</div><div class="status-badge sb-prog">In Progress</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Page 1</div><div class="leaf-sub">Complete — built, compared against PDF, confirmed accurate</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card prog"><div class="leaf-name">Page 2</div><div class="leaf-sub">In progress — next to build</div><div class="leaf-status" style="color:#633806">→ In Progress</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">Page 3+</div><div class="leaf-sub">Pending — continue sequentially after Page 2</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Build Page 2. Upload PDF and compare against completed HTML. One page at a time — compare against PDF after each page to check for coordinate drift before moving on.</div><div class="notes-text">Approach: HTML recreation over PDF annotation. 179 Lio Ave REALM sheet is reference data.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-deliverability">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Deliverability Setup</div><div class="status-badge sb-todo">To Do</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card todo"><div class="leaf-name">SPF</div><div class="leaf-sub">soldmike.com — DNS record needed</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">DKIM</div><div class="leaf-sub">soldmike.com — DNS record needed</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">DMARC</div><div class="leaf-sub">soldmike.com — DNS record needed</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action — HIGH PRIORITY</div><div class="next-text">This must be completed before any email campaign goes live. Without it, emails from soldmike.com will land in spam. Set up SPF, DKIM, and DMARC DNS records through your domain registrar or Cloudflare.</div><div class="notes-text">This is the single biggest unblocked action right now. Everything email-related is waiting on this.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-seller">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Seller Update System</div><div class="status-badge sb-done">Done</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Email Skill</div><div class="leaf-sub">Weekly seller update email — 2 formats (with/without open house)</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">HTML Page Skill</div><div class="leaf-sub">Branded HTML seller update page — publishable to GitHub Pages</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">How to use</div><div class="next-text">Trigger with natural language — say "seller update for [address]" and the skill generates the full email. Say "seller update page for [address]" and it builds and publishes the HTML page.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="re-zapier">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Zapier Engine</div><div class="status-badge sb-done">Done</div></div>
+      <div class="proj-section-label">Leaves</div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Drive Automation</div><div class="leaf-sub">FUB deal stage change → Google Drive folder moves automatically</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Confirmed working — tested on 2 La Maria Lane. When a deal stage changes in FUB, the matching Drive folder automatically moves to the correct stage subfolder. PIPELINE folder and all stage folders are wired.</div><div class="notes-text">PIPELINE folder ID: 1vEQZqKR9vftp2oDKrUABsBBS298guLlE. All stage subfolder IDs stored in memory.</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- MARKETING -->
+<!-- ═══════════════════════════════════ -->
+<!-- MARKETING PAGE -->
+<!-- ═══════════════════════════════════ -->
 <div class="page" id="page-mkt">
   <div class="stats-bar">
     <div class="stat">📣 <strong>Marketing</strong></div>
-    <div class="stat">5 projects</div>
-    <div class="stat">6 leaves</div>
+    <div class="stat">6 projects</div>
     <div class="stat" id="mkt-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-mkt"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('mkt','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('mkt','social')">Social Media</div>
+    <div class="proj-tab" onclick="showProj('mkt','landing')">Landing Page</div>
+    <div class="proj-tab" onclick="showProj('mkt','linkedin')">LinkedIn Buffer</div>
+    <div class="proj-tab" onclick="showProj('mkt','youtube')">YouTube Channel</div>
+    <div class="proj-tab" onclick="showProj('mkt','skills')">Cowork Skills</div>
+    <div class="proj-tab" onclick="showProj('mkt','wordpress')">WordPress Website</div>
+  </div>
+  <div class="proj-page active" id="mkt-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-mkt"></svg></div></div>
+  </div>
+  <div class="proj-page" id="mkt-social">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Social Media Automation</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Post Skill</div><div class="leaf-sub">4 formats: Just Listed, Just Sold, Coming Soon, Open House</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Metricool CSV</div><div class="leaf-sub">80+ column template confirmed working — bulk import to Metricool</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Run soldmike-social-post skill to generate captions → generate Metricool CSV → Michael adds images manually → import to Metricool. Posting schedule: Sold posts Mondays, For Sale Tue–Fri.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="mkt-landing">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">SOLDMIKE Landing Page</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Landing Page v2</div><div class="leaf-sub">Live at broker-svg.github.io/soldmike-tools/soldmike-landing-v2.html</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Live and working. Full agent landing page with hero, about, showroom, philosophy, marketing plan, GTA market stats, process, testimonials, contact form wired to FUB via Cloudflare Worker, and Mika AI chatbot.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="mkt-linkedin">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">LinkedIn via Buffer</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">MCP Posting</div><div class="leaf-sub">LinkedIn channel ID: 69c6c639af47dacb695fef8d · customScheduled mode works</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Confirmed working. Claude can post to LinkedIn via Buffer MCP using customScheduled mode. Facebook requires post_type parameter not exposed. Instagram uses notification mode (one-tap mobile publish).</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="mkt-youtube">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">YouTube Channel</div><div class="status-badge sb-parked">Parked</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card parked"><div class="leaf-name">Channel Strategy</div><div class="leaf-sub">On hold — revisit Q3 2026 when bandwidth opens up</div><div class="leaf-status" style="color:#534AB7">⊘ Parked</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Deliberately paused. The delay happened for a reason — freed up bandwidth that was needed elsewhere. Revisit when other foundational systems are complete. Shot Tree is ready when YouTube starts.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="mkt-skills">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Cowork Skills Library</div><div class="status-badge sb-prog">Active</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Skills Library</div><div class="leaf-sub">30+ skills live — soldmike-social-post, seller-update, property-website, CMA generator, and more</div><div class="leaf-status" style="color:#085041">✓ 30+ live</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Ongoing</div><div class="next-text">Skills are added as new workflows are identified. Every time a recurring task gets a skill, it saves time permanently. Trigger skills with natural language — no commands to memorize.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="mkt-wordpress">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">WordPress Website</div><div class="status-badge sb-queued">Queued</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card todo"><div class="leaf-name">Rocket.net Hosting</div><div class="leaf-sub">~$30/month · managed WordPress hosting</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">Bricks Builder</div><div class="leaf-sub">~$299 one-time license · only stack supporting premium design + Showcase IDX</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">Showcase IDX</div><div class="leaf-sub">~$99/month · TRREB IDX + VOW · added last after site is live</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Set up Rocket.net hosting first, then install WordPress and Bricks Builder, build the full site and funnels, and add Showcase IDX last. IDX is the final step — not the first.</div><div class="notes-text">Decision made: WordPress + Bricks Builder is the only stack that supports both premium design and Showcase IDX without migration issues.</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- TPM -->
+<!-- ═══════════════════════════════════ -->
+<!-- TPM PAGE -->
+<!-- ═══════════════════════════════════ -->
 <div class="page" id="page-tpm">
   <div class="stats-bar">
     <div class="stat">📷 <strong>Toronto Property Media</strong></div>
     <div class="stat">3 projects</div>
-    <div class="stat">4 leaves</div>
     <div class="stat" id="tpm-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-tpm"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('tpm','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('tpm','shottree')">Shot Tree</div>
+    <div class="proj-tab" onclick="showProj('tpm','delivery')">TPM Delivery</div>
+    <div class="proj-tab" onclick="showProj('tpm','sonya1')">Sony A1 System</div>
+  </div>
+  <div class="proj-page active" id="tpm-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-tpm"></svg></div></div>
+  </div>
+  <div class="proj-page" id="tpm-shottree">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">SOLDMIKE Shot Tree</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Shot Tree v1.0</div><div class="leaf-sub">14 animated shot cards across 7 zones — live at broker-svg.github.io/soldmike-tools/soldmike-shot-tree.html</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Live and working. Zones: Exterior, Entrance, Living, Kitchen, Bedrooms, Bathrooms, Detail. Admires Lucid Horizon, 910 Academy, The Four Horsemen as style references. 12mm for cinematic movement, 50mm for compressed detail.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="tpm-delivery">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">TPM Delivery Workflow</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Delivery Workflow Skill</div><div class="leaf-sub">Full shoot-to-delivery workflow — trigger with natural language</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">How to use</div><div class="next-text">Trigger the TPM_Shoot_Delivery_Workflow skill with natural language when completing a shoot. Covers shoot checklist, edit workflow, file naming, delivery, and follow-up.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="tpm-sonya1">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Sony A1 Edit System</div><div class="status-badge sb-prog">In Progress</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Lens Workflow</div><div class="leaf-sub">12mm wide-angle for cinematic movement shots · 50mm for compressed detail shots</div><div class="leaf-status" style="color:#085041">✓ Established</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">LUT Documentation</div><div class="leaf-sub">Ryan Angle presets/LUTs in Final Cut Pro — workflow to be documented</div><div class="leaf-status" style="color:#5F5E5A">○ To Do</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Document the Ryan Angle LUT workflow in Final Cut Pro — settings, grade sequence, export specs. This becomes the reference doc for consistent output across all shoots.</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- PRODUCTS -->
+<!-- ═══════════════════════════════════ -->
+<!-- PRODUCTS PAGE -->
+<!-- ═══════════════════════════════════ -->
 <div class="page" id="page-prod">
   <div class="stats-bar">
     <div class="stat">📦 <strong>Products</strong></div>
     <div class="stat">3 projects</div>
-    <div class="stat">5 leaves</div>
     <div class="stat" id="prod-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-prod"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('prod','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('prod','mika')">Mika AI</div>
+    <div class="proj-tab" onclick="showProj('prod','platform')">Agent Platform</div>
+    <div class="proj-tab" onclick="showProj('prod','isa')">SOLDMIKE ISA</div>
+  </div>
+  <div class="proj-page active" id="prod-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-prod"></svg></div></div>
+  </div>
+  <div class="proj-page" id="prod-mika">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Mika AI (Jotform)</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Mika Live</div><div class="leaf-sub">Lead intake AI — live on soldmike.ca · Elara handles Buyer Offer Intake (form 260806693836064)</div><div class="leaf-status" style="color:#085041">✓ Live</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Live and working. Mika handles lead intake on soldmike.ca. Elara is the secondary agent handling Buyer Offer Intake via Jotform form 260806693836064. Seller Property Intake is form 260806200099049.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="prod-platform">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">SOLDMIKE Agent Platform DFY OS</div><div class="status-badge sb-parked">Parked</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Concept Validated</div><div class="leaf-sub">Full SOLDMIKE business OS packaged as done-for-you product · $2,500–$5,000 price point</div><div class="leaf-status" style="color:#085041">✓ Validated</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">Sales Page</div><div class="leaf-sub">Landing page to sell the product to other agents</div><div class="leaf-status" style="color:#5F5E5A">○ To Build</div></div>
+        <div class="leaf-card todo"><div class="leaf-name">Onboarding Flow</div><div class="leaf-sub">Agent onboarding — FUB config, Notion setup, email campaigns, social workflows</div><div class="leaf-status" style="color:#5F5E5A">○ To Build</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Concept validated — the entire SOLDMIKE operating system (FUB config, email campaigns, social workflows, Cloudflare relay, GitHub Pages, Notion workspace) is packageable as a high-ticket done-for-you product. Parked until core systems are fully complete.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="prod-isa">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">SOLDMIKE ISA</div><div class="status-badge sb-parked">Parked</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card parked"><div class="leaf-name">AI Inside Sales Agent</div><div class="leaf-sub">Claude API powered lead follow-up · long-term vision</div><div class="leaf-status" style="color:#534AB7">⊘ Long-term</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Vision</div><div class="next-text">AI-powered inside sales agent built on the Claude API. Handles lead follow-up, qualification, and nurturing automatically. Long-term build — requires core FUB and email systems to be complete first.</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- BUSINESS -->
+<!-- ═══════════════════════════════════ -->
+<!-- BUSINESS & FUNCTION PAGE -->
+<!-- ═══════════════════════════════════ -->
 <div class="page" id="page-biz">
   <div class="stats-bar">
     <div class="stat">⚙️ <strong>Business & Function</strong></div>
-    <div class="stat">5 projects</div>
-    <div class="stat">9 leaves</div>
+    <div class="stat">4 projects</div>
     <div class="stat" id="biz-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-biz"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('biz','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('biz','email')">Email Architecture</div>
+    <div class="proj-tab" onclick="showProj('biz','cloudflare')">Cloudflare Worker</div>
+    <div class="proj-tab" onclick="showProj('biz','notion')">Notion HQ</div>
+    <div class="proj-tab" onclick="showProj('biz','github')">GitHub Pages</div>
+  </div>
+  <div class="proj-page active" id="biz-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-biz"></svg></div></div>
+  </div>
+  <div class="proj-page" id="biz-email">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Email Architecture</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">4-Tier Setup</div><div class="leaf-sub">Business Critical · Personal & Financial · Marketing & Infrastructure · Subscriptions & Info</div><div class="leaf-status" style="color:#085041">✓ Done</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Complete. Central hub is broker@soldmike.com (Gmail, 2TB storage). All forwarding confirmed active. Mimestream chosen as Mac-native Gmail client. Only business and personal accounts on mobile. iCloud @me flagged as Apple ID — cannot be retired.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="biz-cloudflare">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Cloudflare Worker</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">FUB Relay</div><div class="leaf-sub">dawn-sun-5ae8.broker-e2c.workers.dev · permanent relay for all FUB API calls</div><div class="leaf-status" style="color:#085041">✓ Permanent</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Permanent solution. GitHub API and direct FUB API calls are blocked from Claude container — the Cloudflare Worker is the reliable path for all API calls. All listing pages and forms route through this worker.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="biz-notion">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Notion SOLDMIKE HQ</div><div class="status-badge sb-prog">Active</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Command Centre</div><div class="leaf-sub">HQ landing page with priority list, calendars, section links — live today</div><div class="leaf-status" style="color:#085041">✓ Live</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Priority Database</div><div class="leaf-sub">Real Notion database — 15 tasks, 3 views (table, calendar, board) — live today</div><div class="leaf-status" style="color:#085041">✓ Live</div></div>
+        <div class="leaf-card done"><div class="leaf-name">Project Trees</div><div class="leaf-sub">Master tree + tabbed section trees — live on GitHub Pages today</div><div class="leaf-status" style="color:#085041">✓ Live</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next</div><div class="next-text">Link Drive folders into Notion dashboard once folders are created. Notion Calendar connected to Google Calendar — tasks with due dates now appear in calendar view automatically.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="biz-github">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">GitHub Pages</div><div class="status-badge sb-done">Done</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card done"><div class="leaf-name">Tools Repository</div><div class="leaf-sub">broker-svg/soldmike-tools · live URL: broker-svg.github.io/soldmike-tools/</div><div class="leaf-status" style="color:#085041">✓ Live</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Status</div><div class="next-text">Repo live. All HTML tools published here — Shot Tree, landing page, command centre, section trees, CMA dashboards, offer reviews, seller update pages. GitHub API blocked from Claude container — all publishing via pusher tool.</div></div>
+    </div>
+  </div>
 </div>
 
-<!-- PERSONAL -->
+<!-- ═══════════════════════════════════ -->
+<!-- PERSONAL PAGE -->
+<!-- ═══════════════════════════════════ -->
 <div class="page" id="page-per">
   <div class="stats-bar">
     <div class="stat">🧘 <strong>Personal</strong></div>
     <div class="stat">2 projects</div>
-    <div class="stat">2 leaves</div>
     <div class="stat" id="per-stats"></div>
   </div>
-  <div class="tree-wrap"><div class="tree-inner"><svg id="svg-per"></svg></div></div>
+  <div class="proj-tab-bar">
+    <div class="proj-tab active" onclick="showProj('per','overview')">📊 Section Overview</div>
+    <div class="proj-tab" onclick="showProj('per','workouts')">Workouts</div>
+    <div class="proj-tab" onclick="showProj('per','meals')">Meal Plan</div>
+  </div>
+  <div class="proj-page active" id="per-overview">
+    <div class="tree-wrap"><div class="tree-inner"><svg id="svg-per"></svg></div></div>
+  </div>
+  <div class="proj-page" id="per-workouts">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Workouts</div><div class="status-badge sb-prog">Active</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card prog"><div class="leaf-name">Workout Log</div><div class="leaf-sub">Drive folder — ongoing tracking</div><div class="leaf-status" style="color:#633806">→ Active</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Build this out</div><div class="next-text">Workout folder exists in Drive. When ready, we can build a structured workout tracking system — plan templates, session logs, progress tracking. Just say the word and we build it here.</div></div>
+    </div>
+  </div>
+  <div class="proj-page" id="per-meals">
+    <div class="proj-detail">
+      <div class="proj-header"><div class="proj-title">Meal Plan</div><div class="status-badge sb-todo">To Do</div></div>
+      <div class="leaves-grid">
+        <div class="leaf-card todo"><div class="leaf-name">Meal System</div><div class="leaf-sub">Structure to be defined — weekly vs daily, macros, prep schedule</div><div class="leaf-status" style="color:#5F5E5A">○ To Build</div></div>
+      </div>
+      <div class="next-panel"><div class="next-label">Next action</div><div class="next-text">Define the structure first — weekly meal plan, daily plan, or both? Then build the system. Can integrate with the Priority Database to add meal prep tasks with due dates so they show on the Notion Calendar.</div></div>
+    </div>
+  </div>
 </div>
 
+<!-- ═══════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════ -->
 <script>
-// TAB SWITCHING
-function showTab(id){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const tabs = ['re','mkt','tpm','prod','biz','per'];
-  document.querySelectorAll('.tab')[tabs.indexOf(id)].classList.add('active');
+// ─── TAB NAVIGATION ───
+const MAINS = ['overview','re','mkt','tpm','prod','biz','per'];
+function showMain(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', MAINS[i]===id));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
 }
+function showProj(sec, proj) {
+  const bar = document.querySelectorAll('#page-'+sec+' .proj-tab');
+  const pages = document.querySelectorAll('#page-'+sec+' .proj-page');
+  const projs = ['overview',...getProjs(sec)];
+  bar.forEach((t,i) => t.classList.toggle('active', projs[i]===proj));
+  pages.forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(sec+'-'+proj);
+  if(el) el.classList.add('active');
+}
+function getProjs(sec){
+  const m={re:['crm','campaign','websites','form290','deliverability','seller','zapier'],
+    mkt:['social','landing','linkedin','youtube','skills','wordpress'],
+    tpm:['shottree','delivery','sonya1'],prod:['mika','platform','isa'],
+    biz:['email','cloudflare','notion','github'],per:['workouts','meals']};
+  return m[sec]||[];
+}
 
-// SHARED STYLES
+// ─── SHARED TREE RENDERER ───
 const ST = {
-  done:    {fill:'#E1F5EE',stroke:'#1D9E75',tf:'#085041',sf:'#04342C'},
-  prog:    {fill:'#FAEEDA',stroke:'#EF9F27',tf:'#633806',sf:'#412402'},
-  todo:    {fill:'#F1EFE8',stroke:'#C8C7C0',tf:'#5F5E5A',sf:'#444441'},
-  queued:  {fill:'#FAEEDA',stroke:'#EF9F27',tf:'#633806',sf:'#412402'},
-  blocked: {fill:'#FAECE7',stroke:'#D85A30',tf:'#712B13',sf:'#4A1B0C'},
-  parked:  {fill:'#EEEDFE',stroke:'#AFA9EC',tf:'#534AB7',sf:'#3C3489'},
-  missing: {fill:'#FFF5F5',stroke:'#E24B4A',tf:'#A32D2D',sf:'#791F1F',dash:true},
+  done:{fill:'#E1F5EE',stroke:'#1D9E75',tf:'#085041',sf:'#04342C'},
+  prog:{fill:'#FAEEDA',stroke:'#EF9F27',tf:'#633806',sf:'#412402'},
+  todo:{fill:'#F1EFE8',stroke:'#C8C7C0',tf:'#5F5E5A',sf:'#444441'},
+  queued:{fill:'#FAEEDA',stroke:'#EF9F27',tf:'#633806',sf:'#412402'},
+  blocked:{fill:'#FAECE7',stroke:'#D85A30',tf:'#712B13',sf:'#4A1B0C'},
+  parked:{fill:'#EEEDFE',stroke:'#AFA9EC',tf:'#534AB7',sf:'#3C3489'},
+  missing:{fill:'#FFF5F5',stroke:'#E24B4A',tf:'#A32D2D',sf:'#791F1F',dash:true},
 };
-
-// ROW HEIGHTS
-const Y_ROOT=70, Y_PROJ=195, Y_LEAF=330;
-const ROOT_W=200, ROOT_H=52;
-const PROJ_W=130, PROJ_H=44;
-const LEAF_W=110, LEAF_H=44;
+const Y_ROOT=70,Y_PROJ=195,Y_LEAF=330;
+const ROOT_W=200,ROOT_H=52,PROJ_W=130,PROJ_H=44,LEAF_W=110,LEAF_H=44;
 const PAD=56;
 
-function buildTree(svgId, statsId, secStyle, secName, secSub, pitch, projects) {
-  // Assign leaf X positions
-  let leafX = PAD + LEAF_W/2;
-  let counts = {};
-  projects.forEach(proj => {
-    let first = null;
-    proj.leaves.forEach(leaf => {
-      leaf.cx = leafX;
-      if(first===null) first = leafX;
-      proj._last = leafX;
-      leafX += pitch;
-      counts[leaf.status] = (counts[leaf.status]||0)+1;
+function buildTree(svgId,statsId,ss,secName,secSub,pitch,projects){
+  let leafX=PAD+LEAF_W/2,counts={};
+  projects.forEach(proj=>{
+    let first=null;
+    proj.leaves.forEach(leaf=>{
+      leaf.cx=leafX;
+      if(first===null)first=leafX;
+      proj._last=leafX;
+      leafX+=pitch;
+      counts[leaf.status]=(counts[leaf.status]||0)+1;
     });
-    proj.cx = (first + proj._last)/2;
-    leafX += 20; // gap between projects
+    proj.cx=(first+proj._last)/2;
+    leafX+=20;
   });
-  const totalW = leafX - 20 + PAD;
-  const rootCx = (projects[0].cx + projects[projects.length-1].cx)/2;
-  const totalH = Y_LEAF + LEAF_H/2 + 70;
-
-  // Stats
+  const totalW=leafX-20+PAD;
+  const rootCx=(projects[0].cx+projects[projects.length-1].cx)/2;
+  const totalH=Y_LEAF+LEAF_H/2+70;
   if(statsId){
-    const done = counts.done||0;
-    const total = Object.values(counts).reduce((a,b)=>a+b,0);
-    const miss = counts.missing||0;
-    document.getElementById(statsId).innerHTML =
-      `<span style="color:#1D9E75;font-weight:600">${done} done</span>&nbsp;·&nbsp;` +
-      `<span style="color:#EF9F27">${(counts.prog||0)+(counts.queued||0)} in progress</span>&nbsp;·&nbsp;` +
-      `<span style="color:#888">${counts.todo||0} to do</span>` +
-      (miss ? `&nbsp;·&nbsp;<span style="color:#E24B4A;font-weight:600">${miss} missing</span>` : '');
+    document.getElementById(statsId).innerHTML=
+      `<span style="color:#1D9E75;font-weight:600">${counts.done||0} done</span> · `+
+      `<span style="color:#EF9F27">${(counts.prog||0)+(counts.queued||0)} in progress</span> · `+
+      `<span style="color:#888">${counts.todo||0} to do</span>`+
+      (counts.missing?` · <span style="color:#E24B4A;font-weight:600">${counts.missing} missing</span>`:'');
   }
-
-  let html = '';
-  const svg = document.getElementById(svgId);
-  svg.setAttribute('width', totalW);
-  svg.setAttribute('height', totalH);
-  svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
-
-  // ROW LABELS
-  html += rl(8, Y_ROOT-32, 'Row 1 — Section root');
-  html += rl(8, Y_PROJ-28, 'Row 2 — Projects');
-  html += rl(8, Y_LEAF-28, 'Row 3 — Status leaves');
-
-  // ZONE BACKGROUND per project group
-  projects.forEach(proj => {
-    const ps = ST[proj.status]||ST.todo;
-    const first = proj.leaves[0].cx;
-    const last = proj.leaves[proj.leaves.length-1].cx;
-    html += `<rect x="${first-LEAF_W/2-10}" y="${Y_PROJ-PROJ_H/2-12}" width="${last-first+LEAF_W+20}" height="${Y_LEAF-Y_PROJ+LEAF_H/2+PROJ_H/2+24}" rx="10" fill="${ps.fill}" fill-opacity=".12" stroke="${ps.stroke}" stroke-width="1"/>`;
+  let h='';
+  const svg=document.getElementById(svgId);
+  svg.setAttribute('width',totalW);svg.setAttribute('height',totalH);
+  svg.setAttribute('viewBox',`0 0 ${totalW} ${totalH}`);
+  h+=rl(8,Y_ROOT-32,'Row 1 — Section root');
+  h+=rl(8,Y_PROJ-28,'Row 2 — Projects');
+  h+=rl(8,Y_LEAF-28,'Row 3 — Status leaves');
+  projects.forEach(proj=>{
+    const ps=ST[proj.status]||ST.todo;
+    const fl=proj.leaves[0].cx,ll=proj.leaves[proj.leaves.length-1].cx;
+    h+=`<rect x="${fl-LEAF_W/2-10}" y="${Y_PROJ-PROJ_H/2-12}" width="${ll-fl+LEAF_W+20}" height="${Y_LEAF-Y_PROJ+LEAF_H/2+PROJ_H/2+24}" rx="10" fill="${ps.fill}" fill-opacity=".12" stroke="${ps.stroke}" stroke-width="1"/>`;
   });
-
-  // ROOT → PROJECT connectors
-  projects.forEach(proj => {
-    html += conn(rootCx, Y_ROOT+ROOT_H/2, proj.cx, Y_PROJ-PROJ_H/2, secStyle.stroke);
-  });
-
-  // ROOT NODE
-  html += `<rect x="${rootCx-ROOT_W/2}" y="${Y_ROOT-ROOT_H/2}" width="${ROOT_W}" height="${ROOT_H}" rx="10" fill="${secStyle.fill}" stroke="${secStyle.stroke}" stroke-width="2"/>`;
-  html += `<text x="${rootCx}" y="${Y_ROOT-7}" text-anchor="middle" style="font-size:14px;font-weight:700;fill:${secStyle.tf}">${secName}</text>`;
-  html += `<text x="${rootCx}" y="${Y_ROOT+12}" text-anchor="middle" style="font-size:11px;fill:${secStyle.stroke}">${secSub}</text>`;
-
-  // PROJECTS + LEAVES
-  projects.forEach(proj => {
-    const ps = ST[proj.status]||ST.todo;
-
-    // Project node
-    html += nd(proj.cx, Y_PROJ, PROJ_W, PROJ_H, ps, trunc(proj.name,16), proj.status.toUpperCase());
-
-    proj.leaves.forEach(leaf => {
-      const ls = ST[leaf.status]||ST.todo;
-      // Proj → Leaf connector
-      if(ls.dash){
-        html += `<path d="M${proj.cx},${Y_PROJ+PROJ_H/2} C${proj.cx},${(Y_PROJ+Y_LEAF)/2} ${leaf.cx},${(Y_PROJ+Y_LEAF)/2} ${leaf.cx},${Y_LEAF-LEAF_H/2}" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/>`;
-      } else {
-        html += conn(proj.cx, Y_PROJ+PROJ_H/2, leaf.cx, Y_LEAF-LEAF_H/2, ps.stroke);
-      }
-      // Leaf node
-      html += nd(leaf.cx, Y_LEAF, LEAF_W, LEAF_H, ls, trunc(leaf.name,14), leaf.sub||'', ls.dash);
+  projects.forEach(proj=>h+=conn(rootCx,Y_ROOT+ROOT_H/2,proj.cx,Y_PROJ-PROJ_H/2,ss.stroke));
+  h+=`<rect x="${rootCx-ROOT_W/2}" y="${Y_ROOT-ROOT_H/2}" width="${ROOT_W}" height="${ROOT_H}" rx="10" fill="${ss.fill}" stroke="${ss.stroke}" stroke-width="2"/>`;
+  h+=`<text x="${rootCx}" y="${Y_ROOT-7}" text-anchor="middle" style="font-size:13px;font-weight:700;fill:${ss.tf}">${secName}</text>`;
+  h+=`<text x="${rootCx}" y="${Y_ROOT+12}" text-anchor="middle" style="font-size:11px;fill:${ss.stroke}">${secSub}</text>`;
+  projects.forEach(proj=>{
+    const ps=ST[proj.status]||ST.todo;
+    h+=nd(proj.cx,Y_PROJ,PROJ_W,PROJ_H,ps,trunc(proj.name,16),proj.status.toUpperCase());
+    proj.leaves.forEach(leaf=>{
+      const ls=ST[leaf.status]||ST.todo;
+      if(ls.dash){h+=`<path d="M${proj.cx},${Y_PROJ+PROJ_H/2} C${proj.cx},${(Y_PROJ+Y_LEAF)/2} ${leaf.cx},${(Y_PROJ+Y_LEAF)/2} ${leaf.cx},${Y_LEAF-LEAF_H/2}" stroke="#E24B4A" stroke-width="1.5" stroke-dasharray="5 4" fill="none"/>`;}
+      else{h+=conn(proj.cx,Y_PROJ+PROJ_H/2,leaf.cx,Y_LEAF-LEAF_H/2,ps.stroke);}
+      h+=nd(leaf.cx,Y_LEAF,LEAF_W,LEAF_H,ls,trunc(leaf.name,14),leaf.sub||'',ls.dash);
     });
   });
-
-  svg.innerHTML = html;
+  svg.innerHTML=h;
 }
-
 function nd(cx,cy,w,h,st,label,sub,dash){
   const x=cx-w/2,y=cy-h/2,r=8;
-  const da = dash ? 'stroke-dasharray="5 4"' : '';
-  return `<g>
-    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${st.fill}" stroke="${st.stroke}" stroke-width="1.5" ${da}/>
-    <text x="${cx}" y="${cy-5}" text-anchor="middle" style="font-size:12px;font-weight:600;fill:${st.tf}">${label}</text>
-    ${sub ? `<text x="${cx}" y="${cy+10}" text-anchor="middle" style="font-size:10px;fill:${st.sf}">${sub}</text>` : ''}
-  </g>`;
+  const da=dash?'stroke-dasharray="5 4"':'';
+  return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${st.fill}" stroke="${st.stroke}" stroke-width="1.5" ${da}/><text x="${cx}" y="${cy-5}" text-anchor="middle" style="font-size:12px;font-weight:600;fill:${st.tf}">${label}</text>${sub?`<text x="${cx}" y="${cy+10}" text-anchor="middle" style="font-size:10px;fill:${st.sf}">${sub}</text>`:''}</g>`;
 }
-
 function conn(x1,y1,x2,y2,color){
   const my=(y1+y2)/2;
   return `<path d="M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}" stroke="${color}" stroke-width="1.5" fill="none"/>`;
 }
+function rl(x,y,label){return `<text x="${x}" y="${y}" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;fill:#c8c7c0">${label}</text>`;}
+function trunc(s,n){return s.length>n?s.substring(0,n-1)+'…':s;}
 
-function rl(x,y,label){
-  return `<text x="${x}" y="${y}" style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;fill:#c8c7c0">${label}</text>`;
-}
+// ─── BUILD ALL TREES ───
+buildTree('svg-re','re-stats',{fill:'#E1F5EE',stroke:'#1D9E75',tf:'#04342C'},'Real Estate','7 projects · click a project tab for detail',112,[
+  {name:'FUB CRM Build',status:'done',leaves:[{name:'Custom Fields',sub:'55 live ✓',status:'done'},{name:'Tags',sub:'45 deployed ✓',status:'done'},{name:'Smart Lists',sub:'7 live ✓',status:'done'}]},
+  {name:'FUB Email Campaign',status:'queued',leaves:[{name:'Buyer Campaign',sub:'58 emails ✓',status:'done'},{name:'Seller Campaign',sub:'← missing leaf',status:'missing'}]},
+  {name:'Property Websites',status:'done',leaves:[{name:'SOLDMIKE',sub:'variant ✓',status:'done'},{name:'OP Team',sub:'variant ✓',status:'done'},{name:'Agent Client',sub:'variant ✓',status:'done'}]},
+  {name:'Form 290 HTML',status:'prog',leaves:[{name:'Page 1',sub:'complete ✓',status:'done'},{name:'Page 2',sub:'in progress',status:'prog'},{name:'Page 3+',sub:'pending',status:'todo'}]},
+  {name:'Deliverability',status:'todo',leaves:[{name:'SPF',sub:'soldmike.com',status:'todo'},{name:'DKIM',sub:'soldmike.com',status:'todo'},{name:'DMARC',sub:'soldmike.com',status:'todo'}]},
+  {name:'Seller Updates',status:'done',leaves:[{name:'Email Skill',sub:'live ✓',status:'done'},{name:'HTML Page',sub:'live ✓',status:'done'}]},
+  {name:'Zapier Engine',status:'done',leaves:[{name:'Drive Auto',sub:'FUB→Drive ✓',status:'done'}]},
+]);
 
-function trunc(s,n){ return s.length>n ? s.substring(0,n-1)+'…' : s; }
+buildTree('svg-mkt','mkt-stats',{fill:'#E6F1FB',stroke:'#378ADD',tf:'#042C53'},'Marketing','6 projects · click a project tab for detail',135,[
+  {name:'Social Media',status:'done',leaves:[{name:'Post Skill',sub:'4 formats ✓',status:'done'},{name:'Metricool CSV',sub:'workflow ✓',status:'done'}]},
+  {name:'Landing Page',status:'done',leaves:[{name:'SOLDMIKE Page',sub:'GitHub live ✓',status:'done'}]},
+  {name:'LinkedIn Buffer',status:'done',leaves:[{name:'MCP Posting',sub:'confirmed ✓',status:'done'}]},
+  {name:'YouTube',status:'parked',leaves:[{name:'Strategy',sub:'Q3 2026',status:'parked'}]},
+  {name:'Cowork Skills',status:'prog',leaves:[{name:'Skills Library',sub:'30+ live',status:'done'}]},
+  {name:'WordPress Site',status:'queued',leaves:[{name:'Hosting',sub:'Rocket.net',status:'todo'},{name:'Bricks Builder',sub:'~$299',status:'todo'},{name:'Showcase IDX',sub:'last step',status:'todo'}]},
+]);
 
-// =============================================
-// REAL ESTATE
-// =============================================
-buildTree('svg-re','re-stats',
-  {fill:'#E1F5EE',stroke:'#1D9E75',tf:'#04342C'},
-  'Real Estate','7 projects · 17 leaves', 115,
-  [
-    {name:'FUB CRM Build', status:'done', leaves:[
-      {name:'Custom Fields',sub:'55 live ✓',status:'done'},
-      {name:'Tags',sub:'45 deployed ✓',status:'done'},
-      {name:'Smart Lists',sub:'7 live ✓',status:'done'},
-    ]},
-    {name:'FUB Email Campaign', status:'queued', leaves:[
-      {name:'Buyer Campaign',sub:'58 emails ✓',status:'done'},
-      {name:'Seller Campaign',sub:'← missing leaf',status:'missing'},
-    ]},
-    {name:'Property Websites', status:'done', leaves:[
-      {name:'SOLDMIKE',sub:'variant live ✓',status:'done'},
-      {name:'OP Team',sub:'variant live ✓',status:'done'},
-      {name:'Agent Client',sub:'variant live ✓',status:'done'},
-    ]},
-    {name:'Form 290 HTML', status:'prog', leaves:[
-      {name:'Page 1',sub:'complete ✓',status:'done'},
-      {name:'Page 2',sub:'in progress',status:'prog'},
-      {name:'Page 3+',sub:'pending',status:'todo'},
-    ]},
-    {name:'Deliverability', status:'todo', leaves:[
-      {name:'SPF',sub:'soldmike.com',status:'todo'},
-      {name:'DKIM',sub:'soldmike.com',status:'todo'},
-      {name:'DMARC',sub:'soldmike.com',status:'todo'},
-    ]},
-    {name:'Seller Updates', status:'done', leaves:[
-      {name:'Email Skill',sub:'live ✓',status:'done'},
-      {name:'HTML Page Skill',sub:'live ✓',status:'done'},
-    ]},
-    {name:'Zapier Engine', status:'done', leaves:[
-      {name:'Drive Automation',sub:'FUB→Drive ✓',status:'done'},
-    ]},
-  ]
-);
+buildTree('svg-tpm','tpm-stats',{fill:'#FAECE7',stroke:'#D85A30',tf:'#4A1B0C'},'Toronto Property Media','3 projects · click a project tab for detail',155,[
+  {name:'SOLDMIKE Shot Tree',status:'done',leaves:[{name:'Shot Tree',sub:'14 shots · 7 zones ✓',status:'done'}]},
+  {name:'TPM Delivery',status:'done',leaves:[{name:'Delivery Skill',sub:'live ✓',status:'done'}]},
+  {name:'Sony A1 System',status:'prog',leaves:[{name:'Lens Workflow',sub:'12mm+50mm ✓',status:'done'},{name:'LUT Docs',sub:'FCP · to do',status:'todo'}]},
+]);
 
-// =============================================
-// MARKETING
-// =============================================
-buildTree('svg-mkt','mkt-stats',
-  {fill:'#E6F1FB',stroke:'#378ADD',tf:'#042C53'},
-  'Marketing','5 projects · 6 leaves', 140,
-  [
-    {name:'Social Media Automation', status:'done', leaves:[
-      {name:'Post Skill',sub:'4 formats live ✓',status:'done'},
-      {name:'Metricool CSV',sub:'workflow live ✓',status:'done'},
-    ]},
-    {name:'SOLDMIKE Landing Page', status:'done', leaves:[
-      {name:'Landing Page',sub:'live GitHub ✓',status:'done'},
-    ]},
-    {name:'LinkedIn via Buffer', status:'done', leaves:[
-      {name:'MCP Posting',sub:'confirmed ✓',status:'done'},
-    ]},
-    {name:'YouTube Channel', status:'parked', leaves:[
-      {name:'Strategy',sub:'Q3 2026',status:'parked'},
-    ]},
-    {name:'Cowork Skills Library', status:'prog', leaves:[
-      {name:'Skills Library',sub:'30+ skills live',status:'done'},
-    ]},
-  ]
-);
+buildTree('svg-prod','prod-stats',{fill:'#EEEDFE',stroke:'#534AB7',tf:'#26215C'},'Products','3 projects · click a project tab for detail',145,[
+  {name:'Mika AI',status:'done',leaves:[{name:'Jotform Live',sub:'soldmike.ca ✓',status:'done'}]},
+  {name:'Agent Platform',status:'parked',leaves:[{name:'Concept',sub:'$2.5k–$5k ✓',status:'done'},{name:'Sales Page',sub:'to build',status:'todo'},{name:'Onboarding',sub:'to build',status:'todo'}]},
+  {name:'SOLDMIKE ISA',status:'parked',leaves:[{name:'AI Inside Sales',sub:'long-term',status:'parked'}]},
+]);
 
-// =============================================
-// TORONTO PROPERTY MEDIA
-// =============================================
-buildTree('svg-tpm','tpm-stats',
-  {fill:'#FAECE7',stroke:'#D85A30',tf:'#4A1B0C'},
-  'Toronto Property Media','3 projects · 4 leaves', 155,
-  [
-    {name:'SOLDMIKE Shot Tree', status:'done', leaves:[
-      {name:'Shot Tree',sub:'14 shots · 7 zones ✓',status:'done'},
-    ]},
-    {name:'TPM Delivery Workflow', status:'done', leaves:[
-      {name:'Delivery Workflow',sub:'skill live ✓',status:'done'},
-    ]},
-    {name:'Sony A1 Edit System', status:'prog', leaves:[
-      {name:'Lens Workflow',sub:'12mm + 50mm ✓',status:'done'},
-      {name:'LUT Documentation',sub:'FCP · Ryan Angle',status:'todo'},
-    ]},
-  ]
-);
+buildTree('svg-biz','biz-stats',{fill:'#F1EFE8',stroke:'#888780',tf:'#2C2C2A'},'Business & Function','4 projects · click a project tab for detail',130,[
+  {name:'Email Architecture',status:'done',leaves:[{name:'4-Tier Setup',sub:'Mimestream ✓',status:'done'}]},
+  {name:'Cloudflare Worker',status:'done',leaves:[{name:'FUB Relay',sub:'permanent ✓',status:'done'}]},
+  {name:'Notion HQ',status:'prog',leaves:[{name:'Command Centre',sub:'live ✓',status:'done'},{name:'Priority DB',sub:'live ✓',status:'done'},{name:'Project Trees',sub:'live ✓',status:'done'}]},
+  {name:'GitHub Pages',status:'done',leaves:[{name:'Tools Repo',sub:'broker-svg ✓',status:'done'}]},
+]);
 
-// =============================================
-// PRODUCTS
-// =============================================
-buildTree('svg-prod','prod-stats',
-  {fill:'#EEEDFE',stroke:'#534AB7',tf:'#26215C'},
-  'Products','3 projects · 5 leaves', 145,
-  [
-    {name:'Mika AI (Jotform)', status:'done', leaves:[
-      {name:'Mika Live',sub:'soldmike.ca ✓',status:'done'},
-    ]},
-    {name:'Agent Platform DFY OS', status:'parked', leaves:[
-      {name:'Concept Validated',sub:'$2.5k–$5k ✓',status:'done'},
-      {name:'Sales Page',sub:'to be built',status:'todo'},
-      {name:'Onboarding Flow',sub:'to be built',status:'todo'},
-    ]},
-    {name:'SOLDMIKE ISA', status:'parked', leaves:[
-      {name:'AI Inside Sales',sub:'long-term vision',status:'parked'},
-    ]},
-  ]
-);
-
-// =============================================
-// BUSINESS & FUNCTION
-// =============================================
-buildTree('svg-biz','biz-stats',
-  {fill:'#F1EFE8',stroke:'#888780',tf:'#2C2C2A'},
-  'Business & Function','5 projects · 9 leaves', 120,
-  [
-    {name:'Email Architecture', status:'done', leaves:[
-      {name:'4-Tier Setup',sub:'Mimestream ✓',status:'done'},
-    ]},
-    {name:'Cloudflare Worker', status:'done', leaves:[
-      {name:'FUB Relay',sub:'permanent ✓',status:'done'},
-    ]},
-    {name:'Notion SOLDMIKE HQ', status:'prog', leaves:[
-      {name:'Command Centre',sub:'live today ✓',status:'done'},
-      {name:'Priority Database',sub:'live today ✓',status:'done'},
-      {name:'Project Trees',sub:'live today ✓',status:'done'},
-    ]},
-    {name:'WordPress Website', status:'queued', leaves:[
-      {name:'Rocket.net Hosting',sub:'to set up',status:'todo'},
-      {name:'Bricks Builder',sub:'~$299 license',status:'todo'},
-      {name:'Showcase IDX',sub:'last step',status:'todo'},
-    ]},
-    {name:'GitHub Pages', status:'done', leaves:[
-      {name:'Tools Repo',sub:'broker-svg ✓',status:'done'},
-    ]},
-  ]
-);
-
-// =============================================
-// PERSONAL
-// =============================================
-buildTree('svg-per','per-stats',
-  {fill:'#FAEEDA',stroke:'#BA7517',tf:'#412402'},
-  'Personal','2 projects · 2 leaves', 180,
-  [
-    {name:'Workouts', status:'prog', leaves:[
-      {name:'Workout Log',sub:'Drive folder · active',status:'prog'},
-    ]},
-    {name:'Meal Plan', status:'todo', leaves:[
-      {name:'Meal System',sub:'to be built',status:'todo'},
-    ]},
-  ]
-);
+buildTree('svg-per','per-stats',{fill:'#FAEEDA',stroke:'#BA7517',tf:'#412402'},'Personal','2 projects · click a project tab for detail',180,[
+  {name:'Workouts',status:'prog',leaves:[{name:'Workout Log',sub:'Drive · active',status:'prog'}]},
+  {name:'Meal Plan',status:'todo',leaves:[{name:'Meal System',sub:'to be built',status:'todo'}]},
+]);
 </script>
 </body>
 </html>
