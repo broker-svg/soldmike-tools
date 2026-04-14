@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Evaluation — 226 Via Borghese St, Vaughan</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#ffffff;--surface:#f5f5f2;--card:#1a1a26;--border:#2a2a3a;--gold:#c5a55a;--gold-light:#d4b96a;--gold-dim:rgba(197,165,90,.15);--text:#e8e6e1;--text-dim:#8a8a9a;--text-muted:#5a5a6a;--green:#4ade80;--green-dim:rgba(74,222,128,.12);--red:#f87171;--red-dim:rgba(248,113,113,.12);--blue:#60a5fa;--blue-dim:rgba(96,165,250,.12);--page-text:#1a1a1a;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;overflow-x:hidden}
+.serif{font-family:'Cormorant Garamond',serif}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(26,26,38,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem}
+.topbar-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--gold);letter-spacing:.05em}
+.brand span{color:var(--text-dim);font-weight:400;font-size:.82rem;margin-left:.75rem}
+.tabs{display:flex;gap:0}
+.tab{padding:.75rem 1.1rem;color:var(--text-dim);cursor:pointer;font-size:.78rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .3s;white-space:nowrap}
+.tab:hover{color:var(--text)}.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.page{display:none;max-width:1200px;margin:0 auto;padding:2rem}
+.page.active{display:block;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:.5rem;font-weight:600}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;margin-bottom:.25rem;color:var(--page-text)}
+.section-sub{color:#6a6a6a;font-size:.9rem;margin-bottom:2rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:border-color .3s;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.card:hover{border-color:rgba(197,165,90,.3)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem}
+.stat{text-align:center;padding:1.25rem 1rem}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;color:var(--gold);line-height:1.1}
+.stat-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin-top:.4rem}
+.stat-sub{font-size:.75rem;color:var(--text-muted);margin-top:.2rem}
+.prop-table{width:100%}
+.prop-table tr{border-bottom:1px solid var(--border)}
+.prop-table td{padding:.6rem .75rem;font-size:.88rem}
+.prop-table td:first-child{color:var(--text-dim);width:45%;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
+.prop-table td:last-child{color:var(--text);font-weight:500}
+.tier-bar{position:relative;border-radius:10px;overflow:hidden;display:flex;margin:1.5rem 0;box-shadow:0 6px 20px rgba(0,0,0,.15);height:auto}
+.tier-segment{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.25rem .75rem;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;transition:filter .3s;cursor:default;text-align:center;min-height:110px}
+.tier-segment:hover{filter:brightness(1.12)}
+.tier-conservative{background:linear-gradient(135deg,rgba(74,222,128,.25),rgba(74,222,128,.12));color:#4ade80;flex:1;border-right:1px solid rgba(74,222,128,.2)}
+.tier-middle{background:linear-gradient(135deg,rgba(197,165,90,.35),rgba(197,165,90,.18));color:var(--gold);flex:1.25;border-left:3px solid var(--gold);border-right:3px solid var(--gold)}
+.tier-optimistic{background:linear-gradient(135deg,rgba(96,165,250,.22),rgba(96,165,250,.1));color:#60a5fa;flex:1;border-left:1px solid rgba(96,165,250,.2);border-right:1px solid rgba(248,113,113,.2)}
+.tier-over{background:linear-gradient(135deg,rgba(248,113,113,.22),rgba(248,113,113,.1));color:#f87171;flex:.8}
+.tier-price{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;margin-top:.35rem;line-height:1.2}
+.chart-wrap{position:relative;height:260px;padding:.5rem}
+.adj-table{width:100%;border-collapse:collapse}
+.adj-table th{text-align:left;padding:.5rem .75rem;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);border-bottom:1px solid var(--border)}
+.adj-table td{padding:.5rem .75rem;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.06)}
+.adj-pos{color:var(--green);font-weight:600}.adj-neg{color:var(--red);font-weight:600}.adj-net{font-weight:700;color:var(--gold)}
+.narrative{background:var(--card);border-left:3px solid var(--gold);padding:1.25rem 1.5rem;border-radius:0 8px 8px 0;margin:1.25rem 0;font-size:.9rem;line-height:1.7;color:var(--text-dim)}
+.narrative strong{color:var(--text)}
+.divider{height:1px;background:#e0ded9;margin:2.5rem 0}
+.dash-footer{text-align:center;padding:3rem 2rem 2rem;color:#8a8a8a;font-size:.75rem;border-top:1px solid #e0ded9;margin-top:3rem}
+.dash-footer .brand-foot{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);margin-bottom:.5rem}
+.comp-block{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.comp-header-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr;background:rgba(255,255,255,.04);border-bottom:1px solid var(--border)}
+.comp-header-cell{padding:.85rem 1rem;font-size:.8rem;font-weight:600;border-right:1px solid var(--border);color:var(--text)}
+.comp-header-cell:last-child{border-right:none}
+.comp-header-cell.subject-hdr{background:rgba(197,165,90,.2);color:var(--gold)}
+.comp-data-row{display:grid;grid-template-columns:180px 1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.07)}
+.comp-data-row:last-child{border-bottom:none}
+.comp-label-cell{padding:.55rem 1rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);background:rgba(255,255,255,.04);border-right:1px solid rgba(255,255,255,.08)}
+.comp-val-cell{padding:.55rem 1rem;font-size:.83rem;border-right:1px solid rgba(255,255,255,.06);color:var(--text)}
+.comp-val-cell:last-child{border-right:none}
+.cv-subject{color:var(--gold);font-weight:600}
+.cv-better{color:var(--green);font-weight:500}.cv-worse{color:var(--red);font-weight:500}.cv-neutral{color:var(--text)}
+.tag{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;padding:.15rem .45rem;border-radius:4px;display:inline-block;margin-left:.4rem}
+.tag-direct{background:var(--green-dim);color:var(--green)}
+.tag-floor{background:var(--red-dim);color:var(--red)}
+.tag-ceiling{background:var(--blue-dim);color:var(--blue)}
+.tag-active{background:rgba(250,204,21,.1);color:#facc15}
+.tag-sold{background:var(--green-dim);color:var(--green)}
+.tag-stale{background:rgba(248,113,113,.2);color:var(--red)}
+.bracket-table{width:100%;border-collapse:collapse;font-size:.83rem}
+.bracket-table th{padding:.6rem .75rem;text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);border-bottom:2px solid var(--border)}
+.bracket-table td{padding:.6rem .75rem;border-bottom:1px solid rgba(255,255,255,.06);color:var(--text-dim);vertical-align:top}
+.bracket-table tr.hl td{background:rgba(197,165,90,.07);color:var(--text)}
+.penalty-badge{display:inline-block;padding:.15rem .5rem;border-radius:4px;font-size:.72rem;font-weight:600}
+.badge-g{background:var(--green-dim);color:var(--green)}
+.badge-y{background:rgba(250,204,21,.12);color:#facc15}
+.badge-r{background:var(--red-dim);color:var(--red)}
+.badge-rr{background:rgba(248,113,113,.25);color:#fc8181}
+.realm-link{display:inline-flex;align-items:center;gap:.4rem;color:var(--gold);text-decoration:none;font-size:.82rem;font-weight:500;padding:.45rem .9rem;border:1px solid rgba(197,165,90,.4);border-radius:6px;margin-top:.25rem;transition:all .3s}
+.realm-link:hover{background:var(--gold-dim)}
+.slider-wrap{padding:1.5rem;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:1.5rem}
+.slider-wrap label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);display:block;margin-bottom:.75rem}
+#priceSlider{width:100%;accent-color:var(--gold);height:6px;margin-bottom:1rem;cursor:pointer}
+.slider-output{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;margin-top:.75rem}
+.slider-stat{text-align:center;padding:.85rem;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid var(--border)}
+.slider-stat-val{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--gold)}
+.slider-stat-lbl{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-top:.2rem}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.comp-header-row,.comp-data-row{grid-template-columns:1fr}.tabs{overflow-x:auto}.page{padding:1rem}.slider-output{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+<div class="topbar-inner">
+<div class="brand">SOLDMIKE <span>RE/MAX Premier — The OP Team, Brokerage</span></div>
+<div class="tabs">
+<div class="tab active" onclick="showPage('overview',this)">Overview</div>
+<div class="tab" onclick="showPage('comps',this)">Comparables</div>
+<div class="tab" onclick="showPage('market',this)">Market Trends</div>
+<div class="tab" onclick="showPage('pricing',this)">Pricing</div>
+<div class="tab" onclick="showPage('analysis',this)">Full Analysis</div>
+</div>
+</div>
+</nav>
+
+<!-- PAGE 1: OVERVIEW -->
+<div class="page active" id="overview">
+<div class="section-label">Subject Property</div>
+<div class="section-title serif">226 Via Borghese Street</div>
+<div class="section-sub">Vellore Village, Vaughan, Ontario L4H 0Y6 &nbsp;·&nbsp; Listed April 13, 2026 &nbsp;·&nbsp; MLS# N12992384</div>
+
+<div class="grid-4" style="margin-bottom:1.5rem">
+<div class="card stat"><div class="stat-value">3,322</div><div class="stat-label">Sq Ft Above Grade</div><div class="stat-sub">MPAC Confirmed</div></div>
+<div class="card stat"><div class="stat-value">4</div><div class="stat-label">Bedrooms</div><div class="stat-sub">All Above Grade</div></div>
+<div class="card stat"><div class="stat-value">4</div><div class="stat-label">Bathrooms</div><div class="stat-sub">1×2 · 1×4 · 1×5 · 1×6</div></div>
+<div class="card stat"><div class="stat-value">2010</div><div class="stat-label">Year Built</div><div class="stat-sub">MPAC Verified</div></div>
+</div>
+
+<div class="grid-2" style="margin-bottom:1.5rem">
+<div class="card">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Property Details</div>
+<table class="prop-table">
+<tr><td>Type / Style</td><td>Detached, 2-Storey</td></tr>
+<tr><td>Square Footage</td><td>3,322 sq ft (MPAC above grade)</td></tr>
+<tr><td>Lot Size</td><td>46.05 × 118.24 ft · 5,436 sq ft · 0.125 ac</td></tr>
+<tr><td>Garage</td><td>Detached / 2 — Heated tile, EV charger, upgraded doors</td></tr>
+<tr><td>Total Parking</td><td>5 driveway + 2 garage = 7 spaces</td></tr>
+<tr><td>Basement</td><td>Full, Unfinished — insulated F-to-C, bath rough-in</td></tr>
+<tr><td>Fireplace</td><td>Yes — Electric</td></tr>
+<tr><td>Heat / Cooling</td><td>Forced Air / Gas · Central A/C</td></tr>
+<tr><td>Hot Water</td><td>Owned Tankless Water Heater</td></tr>
+<tr><td>Exterior</td><td>Brick</td></tr>
+<tr><td>Pool</td><td>None</td></tr>
+<tr><td>Water / Sewer</td><td>Municipal</td></tr>
+<tr><td>PIN / ARN</td><td>700070070 · 192800029004820</td></tr>
+</table>
+</div>
+<div class="card">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Assessment &amp; Taxes</div>
+<table class="prop-table">
+<tr><td>MPAC Assessment</td><td>$1,109,000</td></tr>
+<tr><td>Valuation Date</td><td>January 1, 2016 (frozen through 2026)</td></tr>
+<tr><td>Property Class</td><td>301 — Single Family Detached</td></tr>
+<tr><td>Tax 2025</td><td>$8,125.50</td></tr>
+<tr><td>Tax 2024</td><td>$7,916</td></tr>
+<tr><td>Tax 2023</td><td>$7,709</td></tr>
+<tr><td>Current List Price</td><td>$1,899,900</td></tr>
+<tr><td>DOM (Apr 14, 2026)</td><td>1</td></tr>
+<tr><td>Sellers</td><td>Daniel &amp; Laura Albonese</td></tr>
+<tr><td>Possession</td><td>Flexible — 30 / 60 / 90 / 120 days</td></tr>
+<tr><td>Ownership Since</td><td>January 2011 — original occupants</td></tr>
+<tr><td>Legal Description</td><td>Lot 110, Plan 65M4140, City of Vaughan</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Premium Upgrade Profile — Condition Overlay (Tracked Separately from Base Evaluation)</div>
+<div class="grid-3">
+<div>
+<div style="font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.5rem">Kitchen &amp; Appliances</div>
+<div style="font-size:.82rem;color:var(--text-dim);line-height:1.75">Miele 48" fridge/freezer · Miele 36" 5-burner induction cooktop · Miele 30" oven · Miele 24" speed oven · Bosch 800 Series dishwasher · Granite countertops · Custom cabinetry · Closet organizers throughout · Upgraded front door · 9-ft ceilings · Plaster crown moulding · Hunter Douglas Silhouette blinds</div>
+</div>
+<div>
+<div style="font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.5rem">Outdoor Living</div>
+<div style="font-size:.82rem;color:var(--text-dim);line-height:1.75">42" Lynx Stainless BBQ · Full outdoor kitchen (2 fridges + sink) · Interlock patio — concrete base · Composite deck with storage · Artificial turf front and back · Professional landscaping · Landscape lighting · Gazebo · Natural gas lines for heaters and BBQs · Interlock driveway — concrete base</div>
+</div>
+<div>
+<div style="font-size:.78rem;color:var(--gold);font-weight:600;margin-bottom:.5rem">Smart Home &amp; Systems</div>
+<div style="font-size:.82rem;color:var(--text-dim);line-height:1.75">Heated tiled garage · EV charger · 200-amp electrical service · Smart locks · Ethernet cabling throughout · Ring cameras + alarm system · Steam humidifier · Spa-like ensuite — glass shower with body spray, rain head, hand sprayer · Media loft custom office</div>
+</div>
+</div>
+<div class="narrative" style="margin-top:1rem">
+<strong>Important:</strong> The base evaluation reflects market value of a 3,322 sq ft, 4-bed detached 2-storey in Vellore Village based on comparable sales. The premium upgrades above represent a separate condition overlay. In the current buyer's market, premium finishes recover at approximately 40–60 cents on the dollar and are presented as a distinct overlay on the Pricing tab.
+</div>
+</div>
+
+<div class="card">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Ownership Timeline</div>
+<div style="display:flex;align-items:center;gap:2rem;flex-wrap:wrap;padding:.5rem 0">
+<div>
+<div style="font-size:.72rem;color:var(--gold);font-weight:600;margin-bottom:.25rem">JANUARY 2011</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--page-text);font-weight:700">Builder Transfer</div>
+<div style="font-size:.82rem;color:#6a6a6a">Albonese family — original occupants<br>No prior recorded sale price (builder title)</div>
+</div>
+<div style="flex:1;min-width:100px;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-light));border-radius:2px"></div>
+<div>
+<div style="font-size:.72rem;color:var(--gold);font-weight:600;margin-bottom:.25rem">APRIL 2026</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--page-text);font-weight:700">Listed at $1,899,900</div>
+<div style="font-size:.82rem;color:#6a6a6a">15 years ownership · Exceptional care<br>$180,000–$200,000+ in upgrades over tenure</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PAGE 2: COMPARABLES -->
+<div class="page" id="comps">
+<div class="section-label">Comparable Sales Analysis</div>
+<div class="section-title serif">Market Evidence</div>
+<div class="section-sub">Vellore Village detached 2-storey homes — sold and active as of April 14, 2026</div>
+
+<a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJMTQ95J93J4QfLD7NGDkEVH85jwAKAmRCy4MQ4jnDPCgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoMA3q8CpmMagnoQbIAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?q=treb%2FlistingID%3AN12339904%2CN12893968%2CN12837148%2CN12973260%2CN12838394%2CN12902692%2CN12921608%2CN12681914%2CN12992384%2CN12672892%2CN12916458%2CN12944786%2CN12812970%2CN12550936" target="_blank" class="realm-link">🔗 View All Comps in REALM MLS Portal</a>
+
+<div class="divider"></div>
+
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--green);font-weight:700;margin-bottom:.75rem">Direct Sold Comp — 3,000–3,500 sq ft Band</div>
+
+<div class="comp-block">
+<div class="comp-header-row">
+<div class="comp-header-cell" style="color:var(--text-dim)">Category</div>
+<div class="comp-header-cell subject-hdr">226 Via Borghese <span class="tag tag-active">Subject</span></div>
+<div class="comp-header-cell">30 Ferrazzano Lane <span class="tag tag-sold">Sold $1,688,000</span></div>
+<div class="comp-header-cell">78 Gallant Pl <span class="tag tag-stale">95 DOM — Stale</span></div>
+</div>
+<div class="comp-data-row"><div class="comp-label-cell">Price / Status</div><div class="comp-val-cell cv-subject">$1,899,900 — Active</div><div class="comp-val-cell cv-neutral">$1,688,000 sold Mar 24/26 · LP $1,598,000</div><div class="comp-val-cell cv-worse">$1,899,000 — Active since Jan 9/26</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Square Footage</div><div class="comp-val-cell cv-subject">3,322 sq ft (MPAC)</div><div class="comp-val-cell cv-neutral">3,367 sq ft (MPAC) · +45 sq ft</div><div class="comp-val-cell cv-neutral">3,234 sq ft (Builder) · –88 sq ft</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Lot</div><div class="comp-val-cell cv-subject">46.05 × 118.24 ft (5,436 sf)</div><div class="comp-val-cell cv-worse">49.26 × 87.28 ft (4,299 sf) — corner</div><div class="comp-val-cell cv-worse">40.68 × 109.91 ft (4,471 sf)</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Garage</div><div class="comp-val-cell cv-subject">Detached/2 — Heated, EV</div><div class="comp-val-cell cv-better">Built-In/2 (preferred)</div><div class="comp-val-cell cv-better">Attached/2</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Basement</div><div class="comp-val-cell cv-subject">Full, Unfinished — Rough-In</div><div class="comp-val-cell cv-neutral">Walk-Up, Unfinished</div><div class="comp-val-cell cv-neutral">Unfinished</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Year Built</div><div class="comp-val-cell cv-subject">2010</div><div class="comp-val-cell cv-neutral">Similar era</div><div class="comp-val-cell cv-better">0–5 years (newer)</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Beds / Baths</div><div class="comp-val-cell cv-subject">4 bed / 4 bath</div><div class="comp-val-cell cv-neutral">4 bed / 4 bath</div><div class="comp-val-cell cv-neutral">5 bed / 4 bath</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">SP/LP · DOM</div><div class="comp-val-cell cv-subject">— · 1 day</div><div class="comp-val-cell cv-better">106% · 7 DOM (sold over ask)</div><div class="comp-val-cell cv-worse">— · 95 DOM (stale, no sale)</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Taxes</div><div class="comp-val-cell cv-subject">$8,125 (2025)</div><div class="comp-val-cell cv-neutral">$7,876 (2026)</div><div class="comp-val-cell cv-neutral">$8,462 (2025)</div></div>
+<div class="comp-data-row"><div class="comp-label-cell">Pool / Special</div><div class="comp-val-cell cv-subject">None — outdoor kitchen</div><div class="comp-val-cell cv-neutral">None — interlock backyard</div><div class="comp-val-cell cv-neutral">None — newer build</div></div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Adjustment Analysis — 30 Ferrazzano Lane (Sold $1,688,000, Mar 24/26)</div>
+<table class="adj-table">
+<thead><tr><th>Factor</th><th>Direction</th><th>Adjustment</th><th>Rationale</th></tr></thead>
+<tbody>
+<tr><td>Square Footage (–45 sq ft)</td><td><span class="adj-neg">–</span></td><td class="adj-neg">–$5,000</td><td style="font-size:.8rem;color:var(--text-muted)">Comp is 45 sq ft larger; minor negative</td></tr>
+<tr><td>Lot Depth / Area</td><td><span class="adj-pos">+</span></td><td class="adj-pos">+$25,000</td><td style="font-size:.8rem;color:var(--text-muted)">Subject 118.24 ft vs comp 87.28 ft — 36% more depth, 1,137 sq ft more land</td></tr>
+<tr><td>Lot Configuration (Corner)</td><td><span class="adj-neg">–</span></td><td class="adj-neg">–$10,000</td><td style="font-size:.8rem;color:var(--text-muted)">Corner lots carry light/exposure premium for comp</td></tr>
+<tr><td>Garage Type</td><td><span class="adj-neg">–</span></td><td class="adj-neg">–$10,000</td><td style="font-size:.8rem;color:var(--text-muted)">Subject detached vs comp built-in — partially offset by heated/EV; net negative</td></tr>
+<tr><td>Basement</td><td>—</td><td class="adj-net">$0</td><td style="font-size:.8rem;color:var(--text-muted)">Both unfinished — no adjustment</td></tr>
+<tr><td>Age / Era</td><td>—</td><td class="adj-net">$0</td><td style="font-size:.8rem;color:var(--text-muted)">Similar construction era — no adjustment</td></tr>
+<tr style="background:rgba(197,165,90,.07)"><td><strong>Net Adjustment</strong></td><td></td><td class="adj-net">~$0</td><td style="color:var(--gold);font-size:.82rem">Adjustments offset — base value aligns with comp's sale price</td></tr>
+<tr style="background:rgba(197,165,90,.05)"><td><strong>Adjusted Value</strong></td><td></td><td class="adj-net" style="font-size:1rem">$1,683,000</td><td style="color:var(--gold);font-size:.82rem">Base before condition overlay</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="narrative">
+<strong>78 Gallant Pl — $1,899,000 for 95 days with no sale.</strong> This comp was originally listed at $1,698,000, held an offer night on Feb 3 (no sale), then the price was raised to $1,899,000 — now sitting stale. The market has had 95 days to buy a newer-build 3,234 sq ft home in Vellore Village at $1,899,000. It hasn't. This is not a negotiation story. This is the market telling you exactly what this price band is worth.
+</div>
+
+<div class="divider"></div>
+
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--red);font-weight:700;margin-bottom:.75rem">Floor Comps — 2,500–3,000 sq ft Band (Price Floor Reference)</div>
+
+<div class="comp-block">
+<div class="comp-header-row" style="grid-template-columns:180px 1fr 1fr">
+<div class="comp-header-cell" style="color:var(--text-dim)">Category</div>
+<div class="comp-header-cell">263 Vellore Ave <span class="tag tag-floor">Floor · Sold $1,445,000</span></div>
+<div class="comp-header-cell" style="border-right:none">48 Braden Way <span class="tag tag-floor">Floor · Sold $1,420,000</span></div>
+</div>
+<div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.05)"><div class="comp-label-cell">Sold / DOM</div><div class="comp-val-cell">Mar 4/26 · 6 DOM</div><div class="comp-val-cell" style="border-right:none">Feb 28/26 · 200 DOM</div></div>
+<div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.05)"><div class="comp-label-cell">SP/LP</div><div class="comp-val-cell">90% (LP $1,599,000 — reduced)</div><div class="comp-val-cell" style="border-right:none">95% (LP $1,498,800 — long grind)</div></div>
+<div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.05)"><div class="comp-label-cell">Sq Footage</div><div class="comp-val-cell">2,800 sq ft (MPAC)</div><div class="comp-val-cell" style="border-right:none">2,700 sq ft (bungaloft)</div></div>
+<div style="display:grid;grid-template-columns:180px 1fr 1fr;border-bottom:1px solid rgba(255,255,255,.05)"><div class="comp-label-cell">$/Sq Ft</div><div class="comp-val-cell">$516/sq ft</div><div class="comp-val-cell" style="border-right:none">$526/sq ft</div></div>
+<div style="display:grid;grid-template-columns:180px 1fr 1fr;"><div class="comp-label-cell">Year / Notes</div><div class="comp-val-cell">2010 — similar era, detached garage, finished basement</div><div class="comp-val-cell" style="border-right:none">Older — bungaloft, parquet floors, Corian counters, multi-family config</div></div>
+</div>
+
+<div class="narrative">
+<strong>Floor Interpretation:</strong> The 2,500–3,000 sq ft band is clearing at $1,420,000–$1,445,000. At $516–$526/sq ft × 3,322 sq ft = <strong>$1,714,000–$1,747,000</strong> — this is the price-per-foot implied base for the subject. Entirely consistent with the Ferrazzano adjusted value of $1,683,000. The data converges from two independent methods.
+</div>
+
+<div class="divider"></div>
+
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--blue);font-weight:700;margin-bottom:.75rem">Ceiling Comps — Active (Upper Bound Context)</div>
+
+<div class="grid-2" style="margin-bottom:1rem">
+<div class="card">
+<div style="font-weight:600;color:var(--text);margin-bottom:.3rem">67 Garyscholl Rd <span class="tag tag-ceiling">Ceiling · $2,168,888 · 13 DOM</span></div>
+<table class="prop-table">
+<tr><td>Sq Footage</td><td>3,300 sq ft (Plans) · Built 2017</td></tr>
+<tr><td>Lot</td><td>42.01 × 105.34 ft — backs onto park</td></tr>
+<tr><td>Garage / Bsmt</td><td>Built-In/2 · Partial/Sep Entrance</td></tr>
+<tr><td>Special</td><td>10-ft ceilings · Thermador appliances · Sonos surround · Quartzite waterfall island · Built-in BBQ + gas firepit · $250K+ upgrades · Park backing</td></tr>
+</table>
+</div>
+<div class="card">
+<div style="font-weight:600;color:var(--text);margin-bottom:.3rem">66 Oldham St <span class="tag tag-ceiling">Ceiling · $2,488,800 · 50 DOM</span></div>
+<table class="prop-table">
+<tr><td>Sq Footage</td><td>3,404 sq ft (MPAC)</td></tr>
+<tr><td>Lot</td><td>61.09 × 105.09 ft — 60-ft corner frontage</td></tr>
+<tr><td>Garage / Bsmt</td><td>Attached/3 (three-car tandem) · Finished apartment</td></tr>
+<tr><td>Special</td><td>Inground saltwater pool · 10-ft ceilings · In-law suite · Premium corner lot · 5+1 bed</td></tr>
+</table>
+</div>
+</div>
+
+<div class="narrative">
+<strong>Ceiling Context:</strong> The ceiling is defined by specific premium features the subject doesn't have: park-backing + 2017 build + Thermador-level appliances (Garyscholl), or pool + 60-ft lot + 3-car garage + income suite (Oldham). The subject has neither a pool, ravine/park backing, nor a 3-car garage. This is the upper bound — not because these properties are better in every way, but because buyers spending $2.1M–$2.5M have a specific checklist that 226 Via Borghese cannot fully satisfy.
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.5rem">Price vs Square Footage — All Comps (Subject Highlighted)</div>
+<div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
+</div>
+</div>
+
+<!-- PAGE 3: MARKET TRENDS -->
+<div class="page" id="market">
+<div class="section-label">York Region — Habistat Data</div>
+<div class="section-title serif">Market Trend Analysis</div>
+<div class="section-sub">Source: Habistat York Region file — all property types · Updated to April 14, 2026</div>
+
+<div class="grid-4" style="margin-bottom:1.5rem">
+<div class="card stat"><div class="stat-value">$1,151K</div><div class="stat-label">Avg Sale Price — Mar 2026</div><div class="stat-sub" style="color:var(--red)">–4.6% vs Mar 2025</div></div>
+<div class="card stat"><div class="stat-value">31</div><div class="stat-label">Avg LDOM — Mar 2026</div><div class="stat-sub">Up from 25 in May 2025</div></div>
+<div class="card stat"><div class="stat-value">98%</div><div class="stat-label">Avg SP/LP — Mar 2026</div><div class="stat-sub">Sellers giving back ~2%</div></div>
+<div class="card stat"><div class="stat-value" style="color:var(--red)">5.11</div><div class="stat-label">Months of Inventory — Mar 2026</div><div class="stat-sub" style="color:var(--red)">Buyers' Market (&gt;3 months)</div></div>
+</div>
+
+<div class="grid-3" style="margin-bottom:1.5rem">
+<div class="card">
+<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.75rem">6-Month Window · Oct 2025 – Mar 2026</div>
+<table class="prop-table">
+<tr><td>Avg Sale Price</td><td>$1,172,025</td></tr>
+<tr><td>Avg DOM</td><td>38.8 days</td></tr>
+<tr><td>Avg SP/LP</td><td>97.5%</td></tr>
+<tr><td>Avg MOI</td><td>5.78 months</td></tr>
+<tr><td>Avg SNLR</td><td>38.7%</td></tr>
+<tr><td>Total Sales</td><td>4,767</td></tr>
+<tr><td>Direction</td><td style="color:var(--red)">↓ Declining / Flat</td></tr>
+</table>
+</div>
+<div class="card">
+<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.75rem">3-Month Window · Jan – Mar 2026</div>
+<table class="prop-table">
+<tr><td>Avg Sale Price</td><td>$1,131,973</td></tr>
+<tr><td>Avg DOM</td><td>39.3 days</td></tr>
+<tr><td>Avg SP/LP</td><td>97.3%</td></tr>
+<tr><td>Avg MOI</td><td>5.79 months</td></tr>
+<tr><td>Avg SNLR</td><td>31.3%</td></tr>
+<tr><td>Total Sales</td><td>2,146</td></tr>
+<tr><td>Direction</td><td style="color:var(--red)">↓ Buyers gaining ground</td></tr>
+</table>
+</div>
+<div class="card">
+<div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.75rem">1-Month Snapshot · March 2026</div>
+<table class="prop-table">
+<tr><td>Avg Sale Price</td><td>$1,150,703</td></tr>
+<tr><td>Median Sale Price</td><td>$1,050,009</td></tr>
+<tr><td>Sales Volume</td><td>882</td></tr>
+<tr><td>New Listings</td><td>2,847</td></tr>
+<tr><td>Active Listings</td><td>4,447</td></tr>
+<tr><td>MOI</td><td>5.11 months</td></tr>
+<tr><td>SNLR</td><td>31%</td></tr>
+<tr><td>Avg LDOM</td><td>31 days</td></tr>
+<tr><td>SP/LP</td><td>98%</td></tr>
+</table>
+</div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.5rem">York Region — Avg &amp; Median Sale Price Trend (Oct 2025 – Mar 2026)</div>
+<div class="chart-wrap"><canvas id="chart6mo"></canvas></div>
+</div>
+
+<div class="grid-2" style="margin-bottom:1.5rem">
+<div class="card">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.5rem">Sales Volume vs New Listings — 3-Month Window</div>
+<div class="chart-wrap"><canvas id="chart3mo"></canvas></div>
+</div>
+<div class="card">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:.5rem">Months of Inventory — 6-Month Trend</div>
+<div class="chart-wrap"><canvas id="chartMOI"></canvas></div>
+</div>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem">
+<div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:1rem">Full Habistat Data — York Region (Oct 2025 – Apr 2026 Partial)</div>
+<div style="overflow-x:auto">
+<table style="width:100%;border-collapse:collapse;font-size:.8rem;min-width:700px">
+<thead><tr style="border-bottom:2px solid var(--border)">
+<th style="text-align:left;padding:.5rem .75rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">Month</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">Sales</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">Avg Price</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">Med Price</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">New List</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">Active</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">MOI</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">SNLR</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">LDOM</th>
+<th style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-size:.68rem;text-transform:uppercase;letter-spacing:.06em">SP/LP</th>
+</tr></thead>
+<tbody>
+<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .75rem;color:var(--text-dim)">Oct 2025</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">1,083</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,227,495</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,100,000</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">3,091</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">5,814</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">5.57</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">35%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">33</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">98%</td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .75rem;color:var(--text-dim)">Nov 2025</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">902</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,197,988</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,050,500</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">2,175</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">5,117</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">5.67</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">41%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">37</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">98%</td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .75rem;color:var(--text-dim)">Dec 2025</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">636</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,210,750</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,052,500</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">1,009</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">3,687</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">6.04</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">63%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">45</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">97%</td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .75rem;color:var(--text-dim)">Jan 2026</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">570</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,092,707</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,050,000</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">2,062</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">3,814</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">6.75</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">28%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">46</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">97%</td></tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:.5rem .75rem;color:var(--text-dim)">Feb 2026</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">694</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,152,508</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">$1,080,000</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">2,009</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">4,062</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">5.52</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">35%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">41</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text)">97%</td></tr>
+<tr style="border-bottom:2px solid var(--border);background:rgba(197,165,90,.05)"><td style="padding:.5rem .75rem;color:var(--gold);font-weight:600">Mar 2026 ★</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">882</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">$1,150,703</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">$1,050,009</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">2,847</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">4,447</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">5.11</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">31%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">31</td><td style="text-align:right;padding:.5rem .5rem;color:var(--gold);font-weight:600">98%</td></tr>
+<tr style="background:rgba(248,113,113,.04)"><td style="padding:.5rem .75rem;color:var(--text-muted);font-style:italic">Apr 2026 (partial)</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">248</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">$1,093,468</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">$1,026,500</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">1,221</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">4,908</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">6.61</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">20%</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">30</td><td style="text-align:right;padding:.5rem .5rem;color:var(--text-muted)">99%</td></tr>
+</tbody>
+</table>
+</div>
+<div style="font-size:.72rem;color:var(--text-muted);margin-top:.5rem">Source: Habistat — York Region (all property types: Vaughan, Richmond Hill, Markham, Newmarket, Aurora, King, Whitchurch-Stouffville). April 2026 is month-to-date partial as of April 14.</div>
+</div>
+
+<div class="card" style="background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.3)">
+<div style="font-size:.78rem;font-weight:700;color:var(--red);margin-bottom:.75rem">⚠ Market Classification: BUYERS' MARKET — Three Confirming Signals</div>
+<div class="grid-3">
+<div><div style="font-size:.78rem;color:var(--text-dim);font-weight:600;margin-bottom:.35rem">MOI: 5.11 Months</div><div style="font-size:.82rem;color:var(--text-dim)">Buyers' market threshold is 3.0 months. York Region has been consistently above this threshold since mid-2024. At 5.11 months, buyers hold meaningful leverage on price and terms.</div></div>
+<div><div style="font-size:.78rem;color:var(--text-dim);font-weight:600;margin-bottom:.35rem">SNLR: 31%</div><div style="font-size:.82rem;color:var(--text-dim)">Sellers' market = above 60%. At 31%, fewer than 1 in 3 new listings is selling — the market is absorbing less than a third of incoming supply. Clear buyer-favoured environment.</div></div>
+<div><div style="font-size:.78rem;color:var(--text-dim);font-weight:600;margin-bottom:.35rem">Price Trend: –4.6% YoY</div><div style="font-size:.82rem;color:var(--text-dim)">March 2026 avg price ($1,150,703) down 4.6% from March 2025 ($1,206,731). The trend has been flat-to-declining for 12+ months. No recovery signal in current data.</div></div>
+</div>
+<div style="margin-top:1rem;font-size:.82rem;color:var(--text-dim);line-height:1.7"><strong style="color:var(--text)">Pricing implication:</strong> In a confirmed buyers' market with 5.11 MOI, 31% SNLR, and prices declining year-over-year, any property priced above market value will sit. The Vellore Village luxury segment mirrors these conditions precisely — as proven by the 95–97 day stale comps at $1,899,000–$1,949,000.</div>
+</div>
+</div>
+
+<!-- PAGE 4: PRICING -->
+<div class="page" id="pricing">
+<div class="section-label">Pricing Analysis</div>
+<div class="section-title serif">Four-Tier Pricing Framework</div>
+<div class="section-sub">226 Via Borghese St — Base Evaluation + Condition Overlay + Market Intelligence</div>
+
+<div class="tier-bar">
+<div class="tier-segment tier-conservative"><div>Conservative</div><div class="tier-price">$1,649K–$1,699K</div></div>
+<div class="tier-segment tier-middle"><div>Market Middle</div><div class="tier-price">$1,749K–$1,799K</div></div>
+<div class="tier-segment tier-optimistic"><div>Optimistic</div><div class="tier-price">$1,799K–$1,849K</div></div>
+<div class="tier-segment tier-over"><div>Overpriced</div><div class="tier-price">$1,899K+</div></div>
+</div>
+
+<div class="grid-2" style="margin-bottom:1.5rem">
+<div class="card">
+<div style="font-size:.75rem;font-weight:700;color:var(--green);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em">Base Evaluation — No Condition Overlay</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--text);font-weight:700;margin-bottom:.75rem">~$1,683,000</div>
+<div style="font-size:.85rem;color:var(--text-dim);line-height:1.7">Derived from 30 Ferrazzano Lane (sold $1,688,000, 3,367 sq ft, Mar 24/26, 7 DOM) with net-zero adjustments. Independently corroborated by floor comp pricing at $516–$526/sq ft × 3,322 sq ft = $1,661,000–$1,747,000. Both methods converge.</div>
+</div>
+<div class="card">
+<div style="font-size:.75rem;font-weight:700;color:var(--gold);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em">Condition Overlay — Tracked Separately</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--text);font-weight:700;margin-bottom:.75rem">+$50K – +$100K</div>
+<div style="font-size:.85rem;color:var(--text-dim);line-height:1.7"><strong style="color:var(--text)">Conservative (40¢/$):</strong> +$50,000<br><strong style="color:var(--text)">Optimistic (60¢/$):</strong> +$100,000<br><br>Miele appliance suite: ~$50K invested<br>Outdoor kitchen + landscaping: ~$75K invested<br>Smart home + EV + systems: ~$25K invested<br>Kitchen/bath reno + finishes: ~$30K invested<br><em style="color:var(--text-muted)">Total upgrade investment: $180,000–$200,000+</em></div>
+</div>
+</div>
+
+<div class="grid-2" style="margin-bottom:1rem">
+<div class="card" style="border-color:rgba(74,222,128,.3)"><div style="color:var(--green);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🟢 Conservative — $1,649,000 – $1,699,000</div><div style="font-size:.87rem;color:var(--text-dim);line-height:1.75">Priced below base valuation. Generates maximum buyer traffic, highest probability of competing offers, fastest timeline. Framing: <em>"Based on what's sold recently, this is a confident price point — homes here attract strong activity and often generate competing offers."</em></div></div>
+<div class="card" style="border-color:rgba(197,165,90,.5)"><div style="color:var(--gold);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🥇 Market Middle — $1,749,000 – $1,799,000</div><div style="font-size:.87rem;color:var(--text-dim);line-height:1.75">Where the adjusted comparable sales data converges — a defensible, fair-value range. Framing: <em>"This is where the comparable data lands when we adjust for the differences. It's a strong, defensible number."</em> Expect 25–45 day timeline with the right buyer.</div></div>
+<div class="card" style="border-color:rgba(96,165,250,.35)"><div style="color:var(--blue);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🔵 Optimistic — $1,799,000 – $1,849,000</div><div style="font-size:.87rem;color:var(--text-dim);line-height:1.75">Achievable when full condition premium is recognized by the right buyer. <strong style="color:var(--text)">Recommended list price: $1,849,000.</strong> Sits $50,000 below the stale $1,899,000 competition, captures the premium buyer who passed on Gallant Place, and signals value without staleness risk.</div></div>
+<div class="card" style="border-color:rgba(248,113,113,.4)"><div style="color:var(--red);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">🔴 Overpriced — $1,899,900+ (Current List)</div><div style="font-size:.87rem;color:var(--text-dim);line-height:1.75"><strong style="color:var(--text)">78 Gallant Pl ($1,899,000): 95 DOM, no sale.</strong><br><strong style="color:var(--text)">53 Gallant Pl ($1,949,000): 97 DOM, no sale.</strong><br><br>The market has had nearly 100 days to buy these homes. It hasn't. Pricing here means competing with stale listings and attracting lowball offers — ultimately selling for less than the Market Middle.</div></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- THE ARGUMENT -->
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:1rem">The Argument — Why the Data Supports This Range</div>
+<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;color:var(--gold);margin-bottom:.75rem">Argument 1 — The Best Sold Comp Defines the Base</div><p style="font-size:.88rem;color:var(--text-dim);line-height:1.75">30 Ferrazzano Lane sold in 7 days at 106% of list price for $1,688,000 on March 24, 2026. It is 3,367 sq ft (45 sq ft larger), has an attached garage, corner lot, and unfinished walk-up basement. Net adjustments for the subject's deeper lot (+$25K), comp's corner lot advantage (–$10K), and garage type (–$10K) produce a net-zero adjustment — base value $1,683,000. Every dollar above that is earned by the upgrade quality. The condition overlay adds $50,000–$100,000. That math produces the Market Middle.</p></div>
+<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;color:var(--gold);margin-bottom:.75rem">Argument 2 — The Competition is Proving the Ceiling in Real Time</div><p style="font-size:.88rem;color:var(--text-dim);line-height:1.75">78 Gallant Place listed at $1,899,000 on January 9, 2026 — 95 days ago. 53 Gallant Place listed at $1,949,000 on January 7, 2026 — 97 days ago. Both are Vellore Village detached 2-storeys in the 3,200–3,400 sq ft band. The market has had 3+ months to buy these homes. It has not. When a buyer sees 226 Via Borghese at $1,849,000 — $50,000 below the stale competition with dramatically superior finishes, a deeper lot, and a full outdoor kitchen — the value story is immediately clear. This is how you attract the buyer who walked away from Gallant Place.</p></div>
+<div class="card" style="margin-bottom:1rem"><div style="font-weight:600;color:var(--gold);margin-bottom:.75rem">Argument 3 — The Floor Confirms the Upgrade Premium</div><p style="font-size:.88rem;color:var(--text-dim);line-height:1.75">263 Vellore Ave (2,800 sq ft, 2010, standard finishes) sold for $1,445,000 in 6 days in March. At $516/sq ft × 3,322 sq ft, the subject's size alone implies $1,714,000. Add a conservative condition premium of $50,000 and you're at $1,764,000. Add the optimistic premium of $100,000 and you're at $1,814,000. The $1,849,000 recommended list is at the very top of this range — defensible, but not reckless.</p></div>
+
+<div class="divider"></div>
+
+<!-- BUYER SEARCH BRACKETS -->
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:.75rem">Buyer Search Brackets — Where Does This Home Show Up?</div>
+<div class="card" style="margin-bottom:1.5rem">
+<p style="font-size:.85rem;color:var(--text-dim);margin-bottom:1rem;line-height:1.7">Buyers search in price brackets. The wrong bracket puts you in front of the wrong audience. Here's the bracket landscape for Vellore Village detached 2-storey homes — and where the subject fits at each price point.</p>
+<div style="overflow-x:auto">
+<table class="bracket-table">
+<thead><tr><th>Price Bracket</th><th>What Buyers Expect</th><th>Subject Competitive?</th><th>Outcome</th></tr></thead>
+<tbody>
+<tr><td>$1,500K – $1,650K</td><td>2,500–2,800 sq ft, standard finishes, attached garage, good condition</td><td><span class="penalty-badge badge-g">Best Value Win</span></td><td>Subject is the largest, best-finished option in the bracket. Multiple offers likely.</td></tr>
+<tr><td>$1,650K – $1,799K</td><td>2,800–3,200 sq ft, above-avg finishes, Vellore standard</td><td><span class="penalty-badge badge-g">Strong Fit</span></td><td>Subject is larger and better finished than most competition. Well-positioned.</td></tr>
+<tr class="hl"><td><strong>$1,799K – $1,849K ★</strong></td><td>3,000–3,500 sq ft, premium upgrades, outdoor kitchen or pool</td><td><span class="penalty-badge badge-g">Sweet Spot</span></td><td>Subject has luxury appliances + full outdoor kitchen. Fits this bracket perfectly without requiring a pool or ravine.</td></tr>
+<tr><td>$1,849K – $1,949K</td><td>3,000–3,500 sq ft WITH pool, ravine, or 2018+ build</td><td><span class="penalty-badge badge-y">Weak Fit</span></td><td>Subject competes against pool homes and newer builds. Buyers at this level expect features the subject doesn't have.</td></tr>
+<tr><td>$1,949K – $2,100K</td><td>Newer builds, park-backing, pool + premium finishes</td><td><span class="penalty-badge badge-r">Does Not Compete</span></td><td>Subject is a 2010 build with no pool or special lot. This buyer walks past it.</td></tr>
+<tr><td>$2,100K+</td><td>Estate lots, Thermador/Wolf suites, 3-car garage, pool, 2017+ build</td><td><span class="penalty-badge badge-rr">Wrong Audience</span></td><td>67 Garyscholl territory. Subject cannot compete at this level.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="narrative" style="margin-top:1rem"><strong>At $1,849,000:</strong> The subject enters the sweet spot bracket as the best-finishes home — capturing buyers who stretched from the $1.75M range and buyers who walked away from $1.9M pool homes. This is how you create competition. <strong>At $1,899,900:</strong> The subject competes in the pool/ravine/newer-build bracket where buyers expect features it doesn't have — and loses every comparison. This is how you create staleness.</div>
+</div>
+
+<!-- OVERPRICING PENALTY TABLE -->
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:.75rem">Overpricing Penalty Table — What Overpricing Actually Costs</div>
+<div class="card" style="margin-bottom:1.5rem">
+<p style="font-size:.85rem;color:var(--text-dim);margin-bottom:1rem;line-height:1.7">Based on York Region market data (Mar 2026: 98% avg SP/LP, 31 avg DOM) and observed behaviour of stale listings in Vellore Village. Market Middle anchor = $1,779,000 (mid-tier). Optimal recommended list = $1,849,000.</p>
+<div style="overflow-x:auto">
+<table class="bracket-table">
+<thead><tr><th>List Price</th><th>vs Market Middle</th><th>Est. DOM</th><th>Cut Risk</th><th>Likely Sale Price</th><th>Net vs $1,849K List</th></tr></thead>
+<tbody>
+<tr><td>$1,699,000</td><td style="color:var(--green)">–4.5% under</td><td>14–21 days</td><td><span class="penalty-badge badge-g">Very Low 5%</span></td><td>$1,699K–$1,740K</td><td style="color:var(--red)">Leaves $70K–$100K on table</td></tr>
+<tr><td>$1,749,000</td><td style="color:var(--green)">–1.7%</td><td>18–28 days</td><td><span class="penalty-badge badge-g">Low 15%</span></td><td>$1,720K–$1,749K</td><td style="color:var(--red)">Leaves $50K–$80K on table</td></tr>
+<tr class="hl"><td>$1,799,000</td><td style="color:var(--green)">+1.1%</td><td>25–38 days</td><td><span class="penalty-badge badge-g">Low 20%</span></td><td>$1,755K–$1,799K</td><td style="color:var(--green)">Solid outcome</td></tr>
+<tr class="hl"><td style="font-weight:700">$1,849,000 ★</td><td style="color:var(--gold)">+3.9%</td><td>30–50 days</td><td><span class="penalty-badge badge-y">Moderate 35%</span></td><td>$1,779K–$1,830K</td><td style="color:var(--green);font-weight:700">Optimal recommended</td></tr>
+<tr><td style="color:var(--red)">$1,899,900 (current)</td><td style="color:var(--red)">+6.8%</td><td>65–100 days</td><td><span class="penalty-badge badge-r">High 65%</span></td><td>$1,730K–$1,770K</td><td style="color:var(--red)">–$50K to –$70K vs optimal</td></tr>
+<tr><td style="color:var(--red)">$1,949,000</td><td style="color:var(--red)">+9.6%</td><td>90–140 days</td><td><span class="penalty-badge badge-r">Very High 80%</span></td><td>$1,680K–$1,720K</td><td style="color:var(--red)">–$100K to –$130K vs optimal</td></tr>
+<tr><td style="color:var(--red)">$2,000,000+</td><td style="color:var(--red)">+12.4%+</td><td>120+ days</td><td><span class="penalty-badge badge-rr">Extreme 90%+</span></td><td>$1,600K–$1,670K</td><td style="color:var(--red)">–$150K+ vs optimal</td></tr>
+</tbody>
+</table>
+</div>
+<div class="narrative" style="margin-top:1rem"><strong>The Overpricing Paradox:</strong> Sellers pricing high hoping to negotiate down almost always net less than those priced correctly from day one. Stale listings attract lowball offers, not negotiated ones. After 90+ days, buyers assume something is wrong with the property — not the price. The Gallant Place comps at 95–97 DOM will almost certainly sell below what they would have achieved priced correctly in January.</div>
+</div>
+
+<!-- WHAT-IF SLIDER -->
+<div style="font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);font-weight:600;margin-bottom:.75rem">What-If Slider — Real-Time Pricing Scenarios</div>
+<div class="slider-wrap">
+<label>Adjust List Price — See Estimated Outcomes in Real Time</label>
+<div style="display:flex;justify-content:space-between;font-size:.78rem;color:var(--text-dim);margin-bottom:.4rem">
+<span>$1,649,000</span>
+<span id="sliderDisplay" style="color:var(--gold);font-weight:700;font-size:1.05rem;font-family:'Cormorant Garamond',serif">$1,849,000</span>
+<span>$2,100,000</span>
+</div>
+<input type="range" id="priceSlider" min="1649000" max="2100000" step="10000" value="1849000" oninput="updateSlider(this.value)">
+<div class="slider-output">
+<div class="slider-stat"><div class="slider-stat-val" id="out-dom">35</div><div class="slider-stat-lbl">Est. Days on Market</div></div>
+<div class="slider-stat"><div class="slider-stat-val" id="out-sale">$1,809K</div><div class="slider-stat-lbl">Likely Sale Price</div></div>
+<div class="slider-stat"><div class="slider-stat-val" id="out-prob" style="color:#facc15">35%</div><div class="slider-stat-lbl">Price Cut Risk</div></div>
+<div class="slider-stat"><div class="slider-stat-val" id="out-net" style="color:var(--green)">Baseline</div><div class="slider-stat-lbl">vs Optimal Net</div></div>
+</div>
+<div style="margin-top:1rem;padding:.85rem;background:rgba(255,255,255,.04);border-radius:8px;font-size:.82rem;color:var(--text-muted);line-height:1.6;min-height:3rem" id="out-verdict">Move the slider to see how different list prices affect estimated outcomes in real time.</div>
+</div>
+
+<div class="divider"></div>
+
+<div style="text-align:center;padding:1.5rem 0">
+<div class="section-label">Recommended List Price</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:700;color:var(--gold);margin:.5rem 0">$1,849,000</div>
+<div style="font-size:.9rem;color:#6a6a6a;max-width:600px;margin:0 auto;line-height:1.7">Top of the Optimistic tier — below the stale competition, full condition overlay included. At 98% SP/LP, expected close range: <strong>$1,812,000 – $1,832,000.</strong></div>
+<div style="margin-top:1.5rem">
+<div class="section-label">Base Evaluation Range (No Condition Overlay)</div>
+<div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--page-text)">$1,683,000 — $1,748,000</div>
+<div style="font-size:.82rem;color:#6a6a6a;margin-top:.25rem">Market Middle — adjusted comparable sales + floor-band $/sq ft analysis · April 14, 2026</div>
+</div>
+</div>
+</div>
+
+<div class="dash-footer">
+<div class="brand-foot">SOLDMIKE — RE/MAX Premier, The OP Team, Brokerage</div>
+<div>Michael Barillari, Broker &nbsp;·&nbsp; Nick Oppedisano, Salesperson</div>
+<div style="margin-top:.25rem">416-987-8000 &nbsp;·&nbsp; <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f19c989a94b18599949e818594909cdf9290">[email&#160;protected]</a> &nbsp;·&nbsp; soldmike.ca</div>
+<div style="margin-top:.25rem">3550 Rutherford Rd #80, Vaughan ON L4H3T8</div>
+<div style="margin-top:.75rem;font-size:.65rem;max-width:800px;margin-left:auto;margin-right:auto">This evaluation is based on comparable sales data and market analysis as of April 14, 2026. It is not a certified appraisal. Values are estimates and actual sale price may vary based on market conditions, buyer demand, and property presentation. Habistat data covers all property types across York Region. Comparable sales analysis specific to Vellore Village detached 2-storey homes, 3,000–3,500 sq ft band.</div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><!-- ============================================================ PAGE 5: FULL ANALYSIS ============================================================ -->
+<div class="page" id="analysis">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:1rem">
+<div>
+<div class="section-label">Written Evaluation Report</div>
+<div class="section-title serif">Full Analysis — 226 Via Borghese St</div>
+<div class="section-sub" style="margin-bottom:0">Complete narrative · Vellore Village, Vaughan · April 14, 2026</div>
+</div>
+<button onclick="window.print()" style="background:var(--gold);color:#1a1a26;border:none;padding:.65rem 1.25rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:.5rem;white-space:nowrap">⬇ Print / Save PDF</button>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 1: PROPERTY -->
+<div class="analysis-section">
+<div class="analysis-heading">1. Subject Property Profile</div>
+<p class="analysis-body">The subject property is located at 226 Via Borghese Street in the Vellore Village community of Vaughan, Ontario (L4H 0Y6). It is a detached, 2-storey single family home comprising 3,322 square feet of above-grade living space as confirmed by MPAC. The lot measures 46.05 × 118.24 feet (5,436 square feet / 0.125 acres) — a notably deep lot by Vellore Village standards. The home was built in 2010 and has been owner-occupied by the Albonese family since January 2011, making them the original occupants of this property from builder registration.</p>
+<p class="analysis-body">The home offers 4 bedrooms and 4 bathrooms (1 × 2-piece main floor, 1 × 4-piece, 1 × 5-piece, and 1 × 6-piece en suite on the second floor). The garage is a detached 2-car structure, heated with epoxy flooring, an EV charger, and upgraded doors — providing 7 total parking spaces including the 5-car driveway. The basement is full but unfinished, insulated floor-to-ceiling, with rough-in plumbing for a future bathroom. The MPAC assessed value is $1,109,000 (valuation date January 1, 2016, frozen through 2026). 2025 property taxes were $8,125.50.</p>
+<p class="analysis-body">The property has been listed on MLS (N12992384) at $1,899,900 as of April 13, 2026. This evaluation analyzes whether that price is supported by current market evidence, and provides a four-tier pricing framework with a specific recommendation.</p>
+</div>
+
+<div class="analysis-section">
+<div class="analysis-heading">2. Premium Upgrade Profile</div>
+<p class="analysis-body">One of the distinguishing characteristics of 226 Via Borghese is the depth and quality of owner upgrades accumulated over 15 years. These are tracked separately from the base evaluation — they form a condition overlay that is applied after the base market value is established from comparable sales.</p>
+<p class="analysis-body"><strong>Kitchen and Appliances:</strong> The kitchen has been outfitted with a Miele 48" fridge/freezer, Miele 36" 5-burner induction cooktop, Miele 30" wall oven, Miele 24" speed oven, and a Bosch 800 Series dishwasher. Custom cabinetry, granite countertops, and a full suite of closet organizers complete the interior finish package. A media loft has been converted into a full custom home office. The spa-like ensuite includes a glass shower with body spray, rain head, and hand sprayer.</p>
+<p class="analysis-body"><strong>Outdoor Living:</strong> The backyard is a fully built-out outdoor living space, featuring a 42" Lynx Stainless BBQ outdoor kitchen with two bar fridges and a sink, an interlock patio on a concrete base, composite deck with storage, artificial turf front and back, professional landscape lighting, a gazebo, and natural gas lines for both heaters and BBQs.</p>
+<p class="analysis-body"><strong>Systems and Smart Home:</strong> A heated tiled garage with EV charger and upgraded doors. Owned tankless hot water heater. Steam humidifier. 200-amp electrical service. Ethernet cabling throughout. Smart locks, Ring exterior cameras, and a wired alarm system with door/window sensors. Interlock driveway on a concrete base.</p>
+<p class="analysis-body">Total estimated upgrade investment: $180,000–$200,000+. In the current buyer's market, premium finishes recover at approximately 40–60 cents on the dollar, producing a condition overlay of $50,000 (conservative) to $100,000 (optimistic). These are tracked as a separate overlay and presented after the base evaluation is established from comparable sales data.</p>
+</div>
+
+<div class="analysis-section">
+<div class="analysis-heading">3. Comparable Sales Analysis</div>
+<p class="analysis-body">The evaluation applies a three-band comparable sales framework: direct comps in the same 3,000–3,500 sq ft band as the subject, floor comps in the 2,500–3,000 sq ft band below, and ceiling comps from active listings above. All comparables are Vellore Village detached 2-storey properties.</p>
+
+<div class="analysis-sub-heading">3.1 Direct Sold Comparable — 30 Ferrazzano Lane</div>
+<p class="analysis-body">The most relevant sold comparable is 30 Ferrazzano Lane, which sold on March 24, 2026 for $1,688,000 — over asking — in 7 days on market, at 106% of its $1,598,000 list price. The property is 3,367 square feet above grade (per MPAC), a detached 2-storey with 4 bedrooms and 4 bathrooms, an unfinished walk-up basement, and a built-in 2-car garage. It sits on an irregular corner lot measuring 49.26 × 87.28 feet (approximately 4,299 square feet).</p>
+<p class="analysis-body">Comparing the Ferrazzano comp to the subject: the comp is 45 sq ft larger (–$5,000 adjustment to subject); the subject's lot is 36% deeper with 1,137 more square feet of land (+$25,000 adjustment to subject); the comp benefits from a corner lot position (–$10,000 to subject); and the comp has a built-in garage while the subject's garage is detached (–$10,000 to subject, partially offset by heated/EV). Net adjustment: approximately zero. Adjusted comparable value: $1,683,000.</p>
+<p class="analysis-body">This Ferrazzano sale is highly credible as a market anchor — it sold in 7 days at 106% of list, which means the market had strong conviction around that price. It was not a distressed or below-market sale.</p>
+
+<div class="analysis-sub-heading">3.2 Direct Active Comparable — Stale Competition</div>
+<p class="analysis-body">Two active comparables in the same sq footage band provide the most important pricing signal in this evaluation: the market rejection of the $1,899,000–$1,949,000 price range. 78 Gallant Place (3,234 sq ft, newer 0–5 year build, attached garage, unfinished basement) listed at $1,698,000 on January 9, 2026, failed to sell at a February 3 offer night, and was subsequently relisted at $1,899,000. As of April 14, 2026 — 95 days since the original listing — it remains unsold. 53 Gallant Place (3,378 sq ft, attached garage, walk-up unfinished basement, ravine lot) listed at $1,949,000 on January 7, 2026. As of April 14, it has 97 days on market with no sale despite the premium of a ravine location.</p>
+<p class="analysis-body">Both are Vellore Village detached 2-storeys in the same square footage band as the subject. The market has had nearly 100 days to buy either of these homes at their current prices. It has not. This is not simply a matter of price — it is a market-level rejection of the $1.9M+ price band for properties without pools, established ravine-backing, or meaningful features that justify the premium. This evidence directly informs the overpriced tier.</p>
+
+<div class="analysis-sub-heading">3.3 Floor Comparables</div>
+<p class="analysis-body">263 Vellore Avenue (2,800 sq ft MPAC, 2010 build, detached garage, finished basement, 45 × 78.74 ft lot) sold on March 4, 2026 for $1,445,000 in 6 days — at $516/sq ft. 48 Braden Way (2,700 sq ft, bungaloft configuration, older finishes including parquet and Corian, attached garage) sold on February 28, 2026 for $1,420,000 after a 200-day listing — at $526/sq ft. The floor band is clearing at $516–$526/sq ft. Applying this range to the subject's 3,322 sq ft produces an implied base of $1,714,000–$1,747,000 — entirely consistent with the Ferrazzano-derived base of $1,683,000.</p>
+
+<div class="analysis-sub-heading">3.4 Ceiling Comparables</div>
+<p class="analysis-body">67 Garyscholl Road ($2,168,888, 13 DOM active) is a 3,300 sq ft 2017-build home backing directly onto Chatfield District Park, featuring 10-ft main floor ceilings, Thermador appliances throughout, a quartzite waterfall island, Sonos surround sound, a built-in BBQ with gas firepit, and over $250,000 in upgrades. This property commands its premium through a combination of newer build era, park backing, and institutional-quality appliances — features the subject does not possess. 66 Oldham Street ($2,488,800, 50 DOM active) offers a 61-foot corner lot, 3-car tandem garage, inground saltwater pool, finished apartment basement, and 10-ft ceilings on a premium oversized lot — again, features categorically above the subject's offering. These ceiling comps define the upper limit of what the local market supports for homes with genuine differentiators.</p>
+</div>
+
+<div class="analysis-section">
+<div class="analysis-heading">4. Market Trend Analysis — York Region</div>
+<p class="analysis-body">Market trend data is sourced from Habistat's York Region dataset, covering all property types across Vaughan, Richmond Hill, Markham, Newmarket, Aurora, King, and Whitchurch-Stouffville.</p>
+<p class="analysis-body"><strong>6-Month Window (October 2025 – March 2026):</strong> Average sale price of $1,172,025 across 4,767 transactions. Average LDOM of 38.8 days. Average SP/LP ratio of 97.5%. Average MOI of 5.78 months. SNLR ranging from 28%–63% (averaging 38.7%). The trend direction over this six-month period is flat-to-declining.</p>
+<p class="analysis-body"><strong>3-Month Window (January – March 2026):</strong> Average sale price of $1,131,973 across 2,146 transactions. Average LDOM of 39.3 days. Average SP/LP of 97.3%. Average MOI of 5.79 months. SNLR averaging 31.3% — well below the 60% threshold that defines a sellers' market. The three-month window shows buyers gaining ground and average prices declining from the already-declining six-month trend.</p>
+<p class="analysis-body"><strong>Most Recent Month (March 2026):</strong> 882 sales; average price $1,150,703; median price $1,050,009; 2,847 new listings; 4,447 active listings; MOI of 5.11 months; SNLR of 31%; average LDOM 31 days; SP/LP 98%. Year-over-year, average prices in March 2026 are down 4.6% from March 2025 ($1,206,731). The April 2026 partial data (as of April 14) shows 248 sales, SNLR 20%, MOI 6.61 — an early-month reading that suggests April may continue the buyer's market pattern.</p>
+<p class="analysis-body"><strong>Market Classification: Buyers' Market.</strong> Three independent signals confirm this: MOI of 5.11 months (threshold for buyers' market is above 3.0 months, and York Region has been consistently above this threshold for over a year); SNLR of 31% (threshold for sellers' market is above 60%; at 31%, fewer than one in three new listings is finding a buyer); and year-over-year price decline of 4.6%. In a confirmed buyers' market with these conditions, properties priced above fair value do not simply negotiate down — they go stale, attract lowball offers, and ultimately sell for less than correctly priced comparable homes.</p>
+</div>
+
+<div class="analysis-section">
+<div class="analysis-heading">5. Four-Tier Pricing Framework</div>
+
+<div class="analysis-sub-heading">5.1 Base Evaluation (No Condition Overlay)</div>
+<p class="analysis-body">The base market value of 226 Via Borghese — without accounting for the premium upgrade profile — is approximately $1,683,000. This figure is derived from two independent methods that converge: (1) the adjusted Ferrazzano comparable (sold $1,688,000, net-zero adjustments), and (2) floor-band price-per-square-foot analysis ($516–$526/sq ft × 3,322 sq ft = $1,714,000–$1,747,000). Both methods produce a consistent range of $1,683,000–$1,747,000 as the base before any condition premium.</p>
+
+<div class="analysis-sub-heading">5.2 Condition Overlay</div>
+<p class="analysis-body">The Miele appliance suite, outdoor kitchen, smart home systems, EV-equipped heated garage, and professional landscaping represent an estimated $180,000–$200,000+ in upgrade investment. In the current buyer's market, premium finishes recover at approximately 40–60 cents on the dollar. Conservative overlay: +$50,000. Optimistic overlay: +$100,000. This produces a base-plus-condition range of $1,733,000–$1,847,000.</p>
+
+<div class="analysis-sub-heading">5.3 Conservative Tier — $1,649,000 – $1,699,000</div>
+<p class="analysis-body">Priced below the base evaluation. This tier prioritizes maximum buyer traffic, the highest probability of competing offers, and the shortest possible time on market. Framing with sellers: "Based on what's sold recently, this is a confident price point — homes priced here tend to attract strong activity and often produce competing offers." This tier is recommended when sellers have a hard deadline or a specific flexibility requirement that demands a quick, clean close.</p>
+
+<div class="analysis-sub-heading">5.4 Market Middle — $1,749,000 – $1,799,000</div>
+<p class="analysis-body">The fair-value range where adjusted comparable sales data converges. This is a defensible, data-supported position. Framing with sellers: "This is where the comparable data lands when we adjust for the differences between properties. It's a strong, defensible number — not a guess." The Market Middle attracts qualified buyers who have done their research and will recognize the value. Expected sell timeline of 25–45 days in the current market.</p>
+
+<div class="analysis-sub-heading">5.5 Optimistic Tier — $1,799,000 – $1,849,000 (Recommended)</div>
+<p class="analysis-body">The upper end of what the data supports when the full condition overlay is recognized by the right buyer. This tier is achievable, but requires the right buyer — one who appreciates the Miele appliance suite, the outdoor kitchen, the smart home infrastructure, and the overall pride-of-ownership condition. Recommended list price: <strong>$1,849,000.</strong></p>
+<p class="analysis-body">At $1,849,000, the property is positioned $50,000 below the stale Gallant Place competition, at the top of the premium upgrade bracket, and squarely within reach of buyers who have looked at pool/ravine homes in the $1.9M range and found them lacking in interior finish quality. This is a strategic positioning, not a compromise — it attracts a wider buyer pool than $1,899,900 while still capturing the full condition premium.</p>
+
+<div class="analysis-sub-heading">5.6 Overpriced — $1,899,900+ (Current List)</div>
+<p class="analysis-body">The current list price of $1,899,900 falls into the overpriced tier — not because the upgrades don't have value, but because the market has actively proven it will not pay that price for a 2010-build Vellore Village detached without a pool or ravine. Two direct comparables — 78 Gallant Place at $1,899,000 (95 DOM) and 53 Gallant Place at $1,949,000 (97 DOM) — have been sitting unsold for over three months. Buyers in this bracket expect features that 226 Via Borghese does not have: an inground pool, ravine or park backing, or a significantly newer build era. Maintaining the current list price means competing in the wrong bracket, attracting the wrong audience, and eventually selling for less than the Market Middle through a demoralized, discounted negotiation.</p>
+</div>
+
+<div class="analysis-section">
+<div class="analysis-heading">6. Recommended Pricing Strategy</div>
+<p class="analysis-body">The recommended list price is <strong>$1,849,000</strong>. This recommendation is supported by three independent evidence streams: the adjusted Ferrazzano comparable (base $1,683,000 + optimistic condition overlay $100,000 = $1,783,000, rounded to the optimistic tier ceiling), the floor-band $/sq ft analysis ($1,714,000–$1,747,000 base + overlay), and the market rejection of the $1,899,000–$1,949,000 range as proven by 95–97 DOM stale comps. At 98% SP/LP (current York Region average), a $1,849,000 list is expected to produce a sale price in the $1,812,000–$1,832,000 range.</p>
+<p class="analysis-body">The strategic case for $1,849,000 over $1,899,900 is clear: it places the property $50,000 below stale competition with identical or greater upgrade profiles; it positions the home in the $1.75M–$1.85M search bracket where buyers actively searching for premium upgrades without pool/ravine requirements will find it; and it signals that the sellers and their agent understand market reality — a signal that attracts serious, qualified buyers rather than curious tire-kickers looking to lowball an overpriced listing.</p>
+<p class="analysis-body">If the sellers prefer to start at $1,899,900, this evaluation does not recommend proceeding beyond 21 days without a price adjustment. After 21 days without an accepted offer at that price, the competitive advantage of being "fresh to market" is lost, and a quick reduction to $1,849,000 is far more effective than a slow, incremental decline that signals desperation over multiple weeks.</p>
+
+<div style="background:rgba(197,165,90,.12);border:1px solid var(--gold);border-radius:10px;padding:1.5rem;margin-top:1.5rem">
+<div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:.5rem;font-weight:600">Summary — Recommended Pricing</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+<div><div style="font-size:.78rem;color:var(--text-dim);margin-bottom:.25rem">Base Evaluation (No Condition)</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text);font-weight:700">$1,683,000 – $1,748,000</div></div>
+<div><div style="font-size:.78rem;color:var(--text-dim);margin-bottom:.25rem">Recommended List Price</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);font-weight:700">$1,849,000</div></div>
+<div><div style="font-size:.78rem;color:var(--text-dim);margin-bottom:.25rem">Expected Sale Range (98% SP/LP)</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text);font-weight:700">$1,812,000 – $1,832,000</div></div>
+<div><div style="font-size:.78rem;color:var(--text-dim);margin-bottom:.25rem">Market Classification</div><div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--red);font-weight:700">Buyers' Market</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<style>
+.analysis-section{margin-bottom:2.5rem}
+.analysis-heading{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--page-text);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:2px solid #e8e5df}
+.analysis-sub-heading{font-size:.9rem;font-weight:700;color:var(--page-text);margin:1.25rem 0 .5rem;text-transform:none;letter-spacing:0}
+.analysis-body{font-size:.9rem;color:#3a3a3a;line-height:1.85;margin-bottom:.9rem}
+.analysis-body strong{color:#1a1a1a}
+@media print{
+.topbar,.tab{display:none!important}
+.page{display:block!important;max-width:none;padding:1.5rem}
+#overview,#comps,#market,#pricing{display:none!important}
+#analysis{display:block!important}
+.analysis-body{color:#111;font-size:10pt;line-height:1.7}
+.analysis-heading{font-size:14pt;color:#000;border-bottom:1px solid #ccc}
+.analysis-sub-heading{font-size:11pt;color:#000}
+.dash-footer{display:block;padding:1rem 0;border-top:1px solid #ccc;color:#555;font-size:8pt}
+body{background:#fff;color:#111}
+:root{--card:#f8f7f4;--border:#ddd;--text:#111;--gold:#b8943e;--page-text:#000;--text-dim:#444;--red:#cc2222;--green:#1a7a3a}
+.card{background:#f8f7f4;border:1px solid #ddd}
+}
+</style>
+
+<script>
+function showPage(id,el){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+if(el)el.classList.add('active');
+window.scrollTo({top:0,behavior:'smooth'});
+}
+Chart.defaults.color='#8a8a9a';
+Chart.defaults.borderColor='rgba(255,255,255,.08)';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.font.size=11;
+
+new Chart(document.getElementById('chart6mo'),{type:'line',data:{
+labels:['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+datasets:[{label:'Avg Sale Price',data:[1227495,1197988,1210750,1092707,1152508,1150703],borderColor:'#c5a55a',backgroundColor:'rgba(197,165,90,.08)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#c5a55a',pointBorderColor:'#fff',pointBorderWidth:2},{label:'Median Sale Price',data:[1100000,1050500,1052500,1050000,1080000,1050009],borderColor:'#60a5fa',backgroundColor:'rgba(96,165,250,.04)',fill:false,tension:.3,pointRadius:4,pointBackgroundColor:'#60a5fa',borderDash:[5,3]}]},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,padding:15}}},scales:{y:{ticks:{callback:v=>'$'+(v/1000)+'K'},grid:{color:'rgba(255,255,255,.07)'}},x:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('chart3mo'),{type:'bar',data:{
+labels:['Jan 2026','Feb 2026','Mar 2026'],
+datasets:[{label:'Sales Volume',data:[570,694,882],backgroundColor:'rgba(197,165,90,.35)',borderColor:'#c5a55a',borderWidth:1,borderRadius:4},{label:'New Listings',data:[2062,2009,2847],backgroundColor:'rgba(96,165,250,.25)',borderColor:'#60a5fa',borderWidth:1,borderRadius:4}]},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,padding:12}}},scales:{y:{grid:{color:'rgba(255,255,255,.07)'}},x:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('chartMOI'),{type:'line',data:{
+labels:['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+datasets:[{label:'Months of Inventory',data:[5.57,5.67,6.04,6.75,5.52,5.11],borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.08)',fill:true,tension:.3,pointRadius:5,pointBackgroundColor:'#f87171',pointBorderColor:'#fff',pointBorderWidth:2},{label:'Sellers Market Line (3.0 mo)',data:[3,3,3,3,3,3],borderColor:'rgba(74,222,128,.5)',borderDash:[6,4],pointRadius:0,fill:false,borderWidth:1.5}]},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{usePointStyle:true,padding:12}}},scales:{y:{min:0,max:8,ticks:{callback:v=>v+' mo'},grid:{color:'rgba(255,255,255,.07)'}},x:{grid:{display:false}}}}});
+
+new Chart(document.getElementById('scatterChart'),{type:'scatter',data:{datasets:[
+{label:'Sold Comps',data:[{x:2700,y:1420000,label:'48 Braden Way (SLD $1.42M)'},{x:2800,y:1445000,label:'263 Vellore Ave (SLD $1.445M)'},{x:3367,y:1688000,label:'30 Ferrazzano Ln (SLD $1.688M)'}],backgroundColor:'rgba(74,222,128,.7)',pointRadius:9,pointHoverRadius:12},
+{label:'Active Comps',data:[{x:2767,y:1679000,label:'139 Hatton Garden (ACT)'},{x:2581,y:1688000,label:'277 Chatfield S (ACT)'},{x:3108,y:1699999,label:'324 Chatfield (ACT)'},{x:2785,y:1888800,label:'208 Maria Antonia (ACT)'},{x:3234,y:1899000,label:'78 Gallant Pl 95DOM (ACT)'},{x:3378,y:1949000,label:'53 Gallant Pl 97DOM (ACT)'},{x:2511,y:1949000,label:'67 Hatton Garden w/Pool (ACT)'},{x:3300,y:2168888,label:'67 Garyscholl ParkBacking (ACT)'},{x:3404,y:2488800,label:'66 Oldham Pool+3Car (ACT)'}],backgroundColor:'rgba(96,165,250,.55)',pointRadius:7,pointHoverRadius:10},
+{label:'Subject — 226 Via Borghese',data:[{x:3322,y:1849000,label:'226 Via Borghese ★ Recommended $1,849,000'}],backgroundColor:'#c5a55a',pointRadius:14,pointStyle:'triangle',pointHoverRadius:16}
+]},
+options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:15}},tooltip:{callbacks:{title:items=>{const d=items[0].raw;return d.label||'Property'},label:item=>'$'+item.parsed.y.toLocaleString()+' · '+item.parsed.x.toLocaleString()+' sq ft'}}},scales:{x:{title:{display:true,text:'Square Footage (Above Grade)',color:'#8a8a9a'},min:2400,max:3600,grid:{color:'rgba(255,255,255,.07)'}},y:{title:{display:true,text:'List / Sold Price (CAD)',color:'#8a8a9a'},ticks:{callback:v=>'$'+(v/1000000).toFixed(2)+'M'},grid:{color:'rgba(255,255,255,.07)'}}}}});
+
+const AVG_SPLP=0.978,AVG_DOM=35,OPTIMAL=1849000,MARKET_MIDDLE=1779000;
+function updateSlider(val){
+const price=parseInt(val);
+document.getElementById('sliderDisplay').textContent='$'+price.toLocaleString();
+const over=(price-MARKET_MIDDLE)/MARKET_MIDDLE;
+let domM,cutR,saleP;
+if(over<=-0.04){domM=0.45;cutR=4;saleP=AVG_SPLP+0.025;}
+else if(over<=-0.01){domM=0.65;cutR=10;saleP=AVG_SPLP+0.012;}
+else if(over<=0.015){domM=0.85;cutR=16;saleP=AVG_SPLP+0.003;}
+else if(over<=0.04){domM=1.1;cutR=30;saleP=AVG_SPLP-0.004;}
+else if(over<=0.07){domM=2.1;cutR=55;saleP=AVG_SPLP-0.015;}
+else if(over<=0.10){domM=3.3;cutR=70;saleP=AVG_SPLP-0.026;}
+else if(over<=0.135){domM=4.6;cutR=82;saleP=AVG_SPLP-0.042;}
+else{domM=6.5;cutR=93;saleP=AVG_SPLP-0.06;}
+const estDOM=Math.round(AVG_DOM*domM);
+const sale=Math.round(price*saleP);
+const optSale=Math.round(OPTIMAL*(AVG_SPLP-0.005));
+const net=sale-optSale;
+document.getElementById('out-dom').textContent=estDOM<5?'<5':estDOM>150?'150+':estDOM;
+document.getElementById('out-sale').textContent='$'+(sale/1000).toFixed(0)+'K';
+const probEl=document.getElementById('out-prob');
+probEl.textContent=cutR+'%';
+probEl.style.color=cutR<=20?'var(--green)':cutR<=45?'#facc15':'var(--red)';
+const netEl=document.getElementById('out-net');
+if(Math.abs(net)<5000){netEl.textContent='Baseline';netEl.style.color='var(--gold)';}
+else if(net>0){netEl.textContent='+$'+(net/1000).toFixed(0)+'K';netEl.style.color='var(--green)';}
+else{netEl.textContent='–$'+(Math.abs(net)/1000).toFixed(0)+'K';netEl.style.color='var(--red)';}
+const msgs=['','','','','','',''];
+let msg='';
+if(over<=-0.04)msg='⚡ Priced to generate fast action. Risk of leaving money on the table — you may get multiple offers but the ceiling is lower.';
+else if(over<=-0.01)msg='✅ Conservative pricing — excellent buyer traffic, high close probability, solid result. Good if speed is the priority.';
+else if(over<=0.015)msg='✅ Market range pricing — balanced approach. Attracts qualified buyers without the staleness risk. Defensible and clean.';
+else if(over<=0.04)msg='🥇 Optimal zone — includes full condition overlay. Recommended pricing territory. Attracts buyers looking for premium finishes. $1,849,000 sits here.';
+else if(over<=0.07)msg='⚠ Approaching overpriced territory. Longer DOM, fewer showings. Buyers at $1.85M–$1.95M expect pool or ravine backing. This home does not have those.';
+else if(over<=0.10)msg='🔴 Overpriced — identical to Gallant Place territory (95–97 DOM, no sale). Strong staleness risk. Likely price cut required. Net proceeds will be lower.';
+else msg='🚨 Severely overpriced. This price requires park-backing + pool + 2018+ build. Market will largely ignore this listing. Net proceeds will be significantly lower than at $1,849,000.';
+document.getElementById('out-verdict').textContent=msg;
+}
+updateSlider(1849000);
+</script>
+</body>
+</html>
