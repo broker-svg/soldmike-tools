@@ -13,90 +13,91 @@
 html{scroll-behavior:smooth;}
 body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--light-grey);box-shadow:0 1px 8px rgba(0,0,0,0.04);}
-.nav-logo img{height:44px;width:auto;}
-.nav-cta{background:var(--navy);color:#fff;text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:10px 20px;transition:all 0.2s;}
+/* NAV — INCLUDES HEADLINE */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:8px 20px;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--light-grey);box-shadow:0 1px 8px rgba(0,0,0,0.04);}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-logo img{height:38px;width:auto;}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:clamp(16px,3vw,22px);font-weight:400;letter-spacing:1px;color:var(--text);}
+.nav-title span{color:var(--gold);}
+.nav-cta{background:var(--navy);color:#fff;text-decoration:none;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:9px 18px;transition:all 0.2s;white-space:nowrap;}
 .nav-cta:hover{background:#1e2d75;}
 
-/* HERO — COMPACT */
-.hero{padding:76px 20px 24px;text-align:center;background:var(--white);border-bottom:1px solid var(--light-grey);}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.35);color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:5px 14px;margin-bottom:10px;}
-.hero-badge::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
-.hero h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(26px,6vw,42px);letter-spacing:2px;line-height:1.15;margin-bottom:8px;color:var(--text);}
-.hero h1 span{color:var(--gold);}
-.hero p{color:var(--grey);font-size:clamp(12px,2.2vw,14px);max-width:480px;margin:0 auto;line-height:1.6;font-weight:300;}
-
 /* LISTINGS GRID */
-.listings{padding:28px 16px 48px;max-width:900px;margin:0 auto;}
-.listings-grid{display:grid;grid-template-columns:1fr;gap:20px;}
-.card{background:var(--card-bg);border:1px solid var(--card-border);overflow:hidden;transition:transform 0.25s,box-shadow 0.25s;border-radius:4px;}
-.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
+.listings{padding:68px 16px 40px;max-width:1300px;margin:0 auto;}
+.listings-grid{display:grid;grid-template-columns:1fr;gap:16px;}
+.card{background:var(--card-bg);border:1px solid var(--card-border);overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;border-radius:4px;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.07);}
 .card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-.card-body{padding:18px;}
-.card-price{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--navy);margin-bottom:3px;}
-.card-price .price-cut{font-size:12px;color:#cc4444;font-family:'Montserrat',sans-serif;font-weight:600;margin-left:6px;}
-.card-address{font-size:13px;font-weight:500;letter-spacing:0.3px;margin-bottom:8px;color:var(--text);}
-.card-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
-.card-stats span{font-size:11px;color:var(--grey);display:flex;align-items:center;gap:3px;}
+.card-body{padding:14px;}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:2px;}
+.card-price .price-cut{font-size:11px;color:#cc4444;font-family:'Montserrat',sans-serif;font-weight:600;margin-left:4px;}
+.card-address{font-size:12px;font-weight:500;letter-spacing:0.2px;margin-bottom:6px;color:var(--text);}
+.card-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.card-stats span{font-size:10px;color:var(--grey);display:flex;align-items:center;gap:2px;}
 .card-stats span strong{color:var(--text);font-weight:500;}
-.card-tag{display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;font-weight:600;border-radius:2px;}
+.card-tag{display:inline-block;font-size:7px;letter-spacing:1.2px;text-transform:uppercase;padding:2px 7px;font-weight:600;border-radius:2px;}
 .tag-new{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);}
 .tag-reduced{background:rgba(204,68,68,0.08);color:#cc4444;border:1px solid rgba(204,68,68,0.25);}
-.card-buttons{display:flex;gap:8px;margin-top:14px;}
-.card-btn{flex:1;text-align:center;text-decoration:none;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:12px 8px;transition:all 0.2s;border-radius:2px;}
+.card-buttons{display:flex;gap:6px;margin-top:10px;}
+.card-btn{flex:1;text-align:center;text-decoration:none;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;padding:10px 4px;transition:all 0.2s;border-radius:2px;}
 .btn-inquiry{background:var(--gold);color:var(--white);}
 .btn-inquiry:hover{background:var(--gold-light);}
 .btn-view{background:var(--navy);color:var(--white);}
 .btn-view:hover{background:#1e2d75;}
-.card-mls{font-size:9px;color:#bbb;margin-top:8px;}
+.card-mls{font-size:8px;color:#bbb;margin-top:6px;}
 
-/* CTA SECTION */
-.cta-section{padding:40px 20px;text-align:center;background:var(--white);border-top:1px solid var(--light-grey);border-bottom:1px solid var(--light-grey);}
-.cta-section h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(22px,4.5vw,32px);margin-bottom:6px;color:var(--text);}
-.cta-section h2 span{color:var(--gold);}
-.cta-section p{color:var(--grey);font-size:13px;margin-bottom:20px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6;}
+/* BOTTOM CTA */
+.cta-section{padding:32px 20px;text-align:center;background:var(--white);border-top:1px solid var(--light-grey);}
+.cta-tagline{font-family:Georgia,'Times New Roman',serif;font-size:13px;color:var(--grey);font-style:italic;margin-bottom:16px;}
 .cta-buttons{display:flex;flex-direction:column;gap:10px;align-items:center;}
-.cta-btn{display:inline-block;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:14px 32px;min-width:240px;text-align:center;transition:all 0.2s;border-radius:2px;}
+.cta-btn{display:inline-block;text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:13px 28px;min-width:220px;text-align:center;transition:all 0.2s;border-radius:2px;}
 .cta-primary{background:var(--navy);color:#fff;}
 .cta-primary:hover{background:#1e2d75;}
 .cta-secondary{border:1px solid var(--card-border);color:var(--text);background:transparent;}
 .cta-secondary:hover{background:rgba(0,0,0,0.03);}
 
 /* FOOTER */
-footer{padding:28px 20px;text-align:center;}
-footer img{height:36px;margin-bottom:8px;opacity:0.7;}
-footer p{font-size:10px;color:#aaa;letter-spacing:0.5px;}
+footer{padding:20px;text-align:center;}
+footer img{height:32px;margin-bottom:6px;opacity:0.6;}
+footer p{font-size:9px;color:#aaa;letter-spacing:0.5px;}
 footer a{color:var(--gold);text-decoration:none;}
 
-/* DESKTOP — 2 COLUMNS */
-@media(min-width:640px){
-  nav{padding:10px 32px;}
-  .nav-logo img{height:52px;}
-  .hero{padding:84px 32px 28px;}
-  .listings{padding:32px 24px 56px;}
-  .listings-grid{grid-template-columns:repeat(2,1fr);gap:24px;}
+/* TABLET — 2 COLUMNS */
+@media(min-width:540px){
+  nav{padding:8px 24px;}
+  .nav-logo img{height:42px;}
+  .listings{padding:64px 20px 48px;}
+  .listings-grid{grid-template-columns:repeat(2,1fr);gap:18px;}
   .cta-buttons{flex-direction:row;justify-content:center;}
+}
+
+/* DESKTOP — 4 COLUMNS */
+@media(min-width:960px){
+  nav{padding:8px 32px;}
+  .nav-logo img{height:48px;}
+  .nav-title{font-size:22px;}
+  .listings{padding:72px 28px 56px;}
+  .listings-grid{grid-template-columns:repeat(4,1fr);gap:18px;}
+  .card-body{padding:14px;}
+  .card-price{font-size:20px;}
+  .card-address{font-size:11px;}
+  .card-stats span{font-size:9px;}
+  .card-btn{font-size:8px;padding:9px 4px;letter-spacing:1px;}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- NAV WITH HEADLINE -->
 <nav>
-  <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="THE OP TEAM"></a>
+  <div class="nav-left">
+    <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="THE OP TEAM"></a>
+    <div class="nav-title">These Deals Are <span>Real</span></div>
+  </div>
   <a href="tel:+16472782237" class="nav-cta">Call Now</a>
 </nav>
 
-<!-- HERO — COMPACT -->
-<section class="hero">
-  <div class="hero-badge">Hot Deals Alert</div>
-  <h1>These Deals Are <span>Real</span></h1>
-  <p>Priced to move — some brand new to market, some with serious price cuts. If you've been waiting, this is it.</p>
-</section>
-
-<!-- LISTINGS -->
+<!-- LISTINGS — IMMEDIATELY VISIBLE -->
 <section class="listings">
   <div class="listings-grid">
 
@@ -243,10 +244,9 @@ footer a{color:var(--gold);text-decoration:none;}
   </div>
 </section>
 
-<!-- CTA SECTION -->
+<!-- BOTTOM CTA — TAGLINE + CONTACT -->
 <section class="cta-section">
-  <h2>Ready to <span>Make a Move</span>?</h2>
-  <p>These won't sit. See something you like? Reach out — I'll get you in before anyone else.</p>
+  <p class="cta-tagline">Priced to move — some brand new to market, some with serious price cuts. If you've been waiting, this is it.</p>
   <div class="cta-buttons">
     <a href="tel:+16472782237" class="cta-btn cta-primary">Call Michael</a>
     <a href="mailto:Mike@TheOPTeam.ca?subject=Hot%20Deals%20—%20I%27m%20Interested" class="cta-btn cta-secondary">Send an Email</a>
