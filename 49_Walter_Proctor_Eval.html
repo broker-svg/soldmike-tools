@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Evaluation — 49 Walter Proctor Rd | SOLDMIKE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ffffff;
+  --card: #1a1a26;
+  --border: #2a2a3a;
+  --gold: #c5a55a;
+  --gold-dim: rgba(197,165,90,.15);
+  --text: #e8e6e1;
+  --text-dim: #9a9aaa;
+  --text-muted: #5a5a6a;
+  --green: #4ade80;
+  --red: #f87171;
+  --blue: #60a5fa;
+  --page-text: #1a1a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:var(--page-text);min-height:100vh}
+
+/* ---- HEADER ---- */
+.site-header{background:var(--card);border-bottom:1px solid var(--border);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--gold);font-weight:700;letter-spacing:.05em}
+.brand span{color:var(--text);font-weight:400;font-size:1rem;display:block;letter-spacing:.12em;font-family:'Inter',sans-serif}
+.header-address{text-align:right}
+.header-address h1{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--text);font-weight:600}
+.header-address p{color:var(--text-dim);font-size:.88rem;margin-top:.2rem}
+.eval-date{font-size:.82rem;color:var(--gold);margin-top:.3rem;font-weight:500}
+
+/* ---- NAV TABS ---- */
+.tab-nav{background:var(--card);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 2rem}
+.tab-btn{background:none;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:1rem 1.5rem;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ---- PAGE SECTIONS + MAX-WIDTH CONTAINER ---- */
+.tab-panel{display:none;padding:2rem}
+.tab-panel.active{display:block}
+.inner{max-width:1260px;margin:0 auto}
+
+/* ---- STAT CARDS ---- */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.6rem}
+.stat-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:.5rem}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold);font-weight:700;line-height:1}
+.stat-sub{font-size:.8rem;color:var(--text-dim);margin-top:.35rem}
+
+/* ---- SECTION TITLES ---- */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--page-text);font-weight:700;margin:2.25rem 0 .9rem;border-left:4px solid var(--gold);padding-left:.85rem}
+.section-subtitle{font-size:.85rem;color:#666;margin-bottom:1.5rem;margin-top:-.4rem;padding-left:1.1rem}
+
+/* ---- PROP DETAILS TABLE ---- */
+.details-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.details-table th,.details-table td{padding:.85rem 1.1rem;font-size:.9rem;border-bottom:1px solid var(--border)}
+.details-table th{background:rgba(255,255,255,.04);color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;font-weight:600;width:42%}
+.details-table td{color:var(--text)}
+.details-table tr:last-child th,.details-table tr:last-child td{border-bottom:none}
+
+/* ---- TWO-COL GRID ---- */
+.table-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+
+/* ---- TIMELINE ---- */
+.timeline{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.timeline-title{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1rem}
+.tl-row{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem}
+.tl-dot{width:13px;height:13px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px}
+.tl-dot.old{background:var(--text-dim)}
+.tl-dot.peak{background:var(--red)}
+.tl-dot.current{background:var(--blue)}
+.tl-content h4{font-size:.95rem;color:var(--text);font-weight:600}
+.tl-content p{font-size:.83rem;color:var(--text-dim);margin-top:.25rem}
+.tl-connector{width:2px;height:20px;background:var(--border);margin-left:5px}
+
+/* ---- COMP BLOCKS ---- */
+.comp-block{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.comp-block-header{background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between}
+.comp-block-header h3{font-size:.95rem;color:var(--gold);font-weight:600}
+.comp-type-badge{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;padding:.28rem .7rem;border-radius:4px;font-weight:600}
+.badge-direct{background:rgba(74,222,128,.15);color:var(--green)}
+.badge-floor{background:rgba(96,165,250,.15);color:var(--blue)}
+.badge-active{background:rgba(197,165,90,.15);color:var(--gold)}
+.comp-table{width:100%;border-collapse:collapse}
+.comp-header-row{background:rgba(255,255,255,.04);border-bottom:1px solid var(--border)}
+.comp-header-cell{padding:.75rem 1rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text);font-weight:600}
+.comp-label-cell{padding:.7rem 1rem;font-size:.88rem;color:var(--text-dim);background:rgba(255,255,255,.04);font-weight:500}
+.comp-val-cell{padding:.7rem 1rem;font-size:.92rem;color:var(--text)}
+.comp-table tr{border-bottom:1px solid var(--border)}
+.comp-table tr:last-child{border-bottom:none}
+.cv-subject{color:var(--gold);font-weight:600}
+.cv-better{color:var(--green);font-weight:500}
+.cv-worse{color:var(--red);font-weight:500}
+.cv-neutral{color:var(--text)}
+
+/* ---- ADJ TABLE ---- */
+.adj-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.adj-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;padding:.8rem 1.1rem;text-align:left}
+.adj-table td{padding:.75rem 1.1rem;font-size:.9rem;color:var(--text);border-bottom:1px solid var(--border)}
+.adj-table tr:last-child td{border-bottom:none;font-weight:700;background:rgba(197,165,90,.08);color:var(--gold)}
+.adj-pos{color:var(--green);font-weight:600}
+.adj-neg{color:var(--red);font-weight:600}
+.adj-zero{color:var(--text-dim)}
+
+/* ---- CHARTS ---- */
+.chart-wrapper{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.chart-title{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.1rem}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+
+/* ---- MARKET WINDOWS ---- */
+.windows-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:2rem}
+.window-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.window-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.window-stat-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.window-stat-row:last-child{border-bottom:none}
+.ws-label{font-size:.82rem;color:var(--text-dim)}
+.ws-value{font-size:.92rem;color:var(--text);font-weight:600}
+.ws-value.gold{color:var(--gold)}
+
+/* ---- HABISTAT TABLE ---- */
+.hab-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem;font-size:.85rem}
+.hab-table th{background:rgba(255,255,255,.06);color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;padding:.75rem .9rem;text-align:right}
+.hab-table th:first-child{text-align:left}
+.hab-table td{padding:.7rem .9rem;color:var(--text);border-bottom:1px solid var(--border);text-align:right}
+.hab-table td:first-child{text-align:left;font-weight:600;color:var(--gold)}
+.hab-table tr:last-child td{border-bottom:none}
+.hab-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+/* ---- MARKET CLASS ---- */
+.mkt-class-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.mkt-class-card.buyers{border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.04)}
+.mkt-signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:1.1rem}
+.mkt-signal{text-align:center;padding:1.1rem;background:rgba(255,255,255,.04);border-radius:8px}
+.mkt-signal-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin-bottom:.4rem}
+.mkt-signal-val{font-size:1.6rem;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--red)}
+.mkt-signal-desc{font-size:.78rem;color:var(--text-dim);margin-top:.3rem}
+
+/* ---- TIER BAR — richer, darker, white pricing numbers ---- */
+.tier-bar{display:flex;border-radius:12px;overflow:hidden;margin-bottom:2rem;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.tier-segment{flex:1;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.25rem .75rem;text-align:center;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.tier-label{margin-bottom:.4rem;opacity:.85}
+.tier-price{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;margin-top:.4rem;line-height:1.25;color:#ffffff}
+.tier-pct{font-size:.7rem;margin-top:.3rem;opacity:.7;color:#fff}
+.tier-conservative{background:linear-gradient(145deg,#1e5c35,#143d24);color:#7ef5a8;border-right:1px solid rgba(255,255,255,.08)}
+.tier-middle{background:linear-gradient(145deg,#6b4e14,#4a3508);color:var(--gold);border-left:3px solid var(--gold);border-right:3px solid var(--gold)}
+.tier-optimistic{background:linear-gradient(145deg,#14345c,#0d2040);color:#93c5fd;border-left:1px solid rgba(255,255,255,.08)}
+.tier-over{background:linear-gradient(145deg,#5c1414,#3d0d0d);color:#fca5a5}
+
+/* ---- EVAL CARDS ---- */
+.eval-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.eval-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem}
+.eval-card h3{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:.85rem}
+.eval-range{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--gold);font-weight:700}
+.eval-note{font-size:.85rem;color:var(--text-dim);margin-top:.6rem;line-height:1.6}
+
+/* ---- TIER NARRATIVE CARDS ---- */
+.tier-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
+.tier-card{background:var(--card);border-radius:12px;padding:1.5rem;border-left:4px solid}
+.tier-card.conservative{border-color:#4ade80}
+.tier-card.middle{border-color:var(--gold)}
+.tier-card.optimistic{border-color:#60a5fa}
+.tier-card.overpriced{border-color:#f87171}
+.tier-card h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem}
+.tier-card.conservative h4{color:#4ade80}
+.tier-card.middle h4{color:var(--gold)}
+.tier-card.optimistic h4{color:#60a5fa}
+.tier-card.overpriced h4{color:#f87171}
+.tier-card .price-range{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:.55rem}
+.tier-card p{font-size:.88rem;color:var(--text-dim);line-height:1.65}
+
+/* ---- ARGUMENT CARDS ---- */
+.argument-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem}
+.arg-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.arg-card h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:.7rem}
+.arg-card p{font-size:.88rem;color:var(--text-dim);line-height:1.7}
+.arg-card strong{color:var(--text)}
+
+/* ---- BRACKETS TABLE ---- */
+.brackets-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.brackets-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;padding:.8rem 1.1rem;text-align:left}
+.brackets-table td{padding:.75rem 1.1rem;font-size:.9rem;color:var(--text);border-bottom:1px solid var(--border)}
+.brackets-table tr:last-child td{border-bottom:none}
+
+/* ---- PENALTY TABLE ---- */
+.penalty-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem;font-size:.88rem}
+.penalty-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;padding:.75rem 1rem;text-align:center}
+.penalty-table td{padding:.7rem 1rem;color:var(--text);border-bottom:1px solid var(--border);text-align:center}
+.penalty-table tr:last-child td{border-bottom:none}
+.penalty-table tr.highlight td{color:var(--gold);font-weight:600;background:rgba(197,165,90,.08)}
+.penalty-table tr.danger td{color:var(--red);background:rgba(248,113,113,.05)}
+
+/* ---- WHAT-IF SLIDER ---- */
+.slider-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.85rem;margin-bottom:2rem}
+.slider-section h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.25rem}
+#listSlider{width:100%;accent-color:var(--gold);margin:1rem 0;height:6px}
+.slider-readout{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:1rem}
+.readout-item{text-align:center}
+.readout-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.35rem}
+.readout-val{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--text)}
+#sliderVerdict{text-align:center;font-size:.88rem;font-weight:600;padding:.85rem 1.25rem;border-radius:8px;margin-top:1.1rem}
+
+/* ---- FINAL REC ---- */
+.final-rec{background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:2.25rem;text-align:center;margin-bottom:2rem}
+.final-rec-label{font-size:.82rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.85rem}
+.final-rec-price{font-family:'Cormorant Garamond',serif;font-size:3.6rem;color:var(--gold);font-weight:700;line-height:1}
+.final-rec-range{font-size:.9rem;color:var(--text-dim);margin-top:.85rem}
+.final-rec-close{margin-top:.55rem;font-size:.95rem;color:var(--text);font-weight:600}
+
+/* ---- FULL ANALYSIS ---- */
+.analysis-content{max-width:900px;margin:0 auto}
+.print-btn{background:var(--gold);color:#1a1a1a;border:none;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1.6rem;border-radius:6px;cursor:pointer;float:right;margin-bottom:1rem}
+.prose-section{margin-bottom:2.5rem}
+.prose-section h2{font-family:'Cormorant Garamond',serif;font-size:1.65rem;color:var(--page-text);font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:.5rem;margin-bottom:1.1rem}
+.prose-section h3{font-size:1.05rem;color:var(--page-text);font-weight:700;margin:1.3rem 0 .55rem}
+.prose-section p{font-size:.95rem;color:#333;line-height:1.78;margin-bottom:.85rem}
+.prose-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:.9rem}
+.prose-table th{background:#f5f5f0;text-align:left;padding:.55rem .8rem;font-weight:700;color:var(--page-text);border-bottom:2px solid #ddd}
+.prose-table td{padding:.55rem .8rem;border-bottom:1px solid #eee;color:#333}
+.summary-box{background:#f9f7f2;border:1px solid #ddd;border-left:4px solid var(--gold);border-radius:6px;padding:1.35rem;margin-top:1.5rem}
+.summary-box h4{font-size:.9rem;font-weight:700;color:var(--page-text);margin-bottom:.8rem}
+.summary-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #eee;font-size:.9rem}
+.summary-row:last-child{border-bottom:none;font-weight:700}
+.summary-row span:last-child{font-weight:600;color:#1a1a1a}
+
+/* ---- MISC ---- */
+.realm-btn{display:inline-block;background:var(--gold);color:#1a1a1a;text-decoration:none;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1.6rem;border-radius:6px;margin-bottom:1.5rem}
+.stale-note{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:1.1rem 1.35rem;margin-bottom:1.5rem;font-size:.88rem;color:var(--text-dim);line-height:1.65}
+.stale-note strong{color:var(--red)}
+.narrative-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem 1.6rem;margin-bottom:1.5rem;font-size:.9rem;color:var(--text-dim);line-height:1.75}
+.narrative-block strong{color:var(--text)}
+
+/* ---- FOOTER ---- */
+.site-footer{background:var(--card);border-top:1px solid var(--border);padding:1.6rem 2rem;margin-top:3rem;text-align:center}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);font-weight:700;margin-bottom:.5rem}
+.footer-details{font-size:.8rem;color:var(--text-dim);line-height:1.9}
+.footer-disclaimer{font-size:.73rem;color:var(--text-muted);margin-top:.85rem;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.6}
+
+/* ---- PRINT ---- */
+@media print {
+  .site-header,.tab-nav,.print-btn,.site-footer{display:none}
+  .tab-panel{display:none!important}
+  #tab-analysis{display:block!important;padding:1rem}
+  body{color:#000;background:#fff;font-size:11pt}
+  .prose-section h2{color:#000;border-color:#c5a55a}
+  .prose-section p,.prose-table td{color:#333}
+  .summary-box{background:#f9f7f2}
+  .prose-table th{background:#eee}
+}
+/* ---- RESPONSIVE ---- */
+@media(max-width:900px){
+  .table-grid,.windows-grid,.charts-grid,.tier-cards,.argument-grid,.eval-cards{grid-template-columns:1fr}
+  .slider-readout{grid-template-columns:repeat(2,1fr)}
+  .tab-panel{padding:1.25rem}
+  .mkt-signal-grid{grid-template-columns:1fr}
+  .tier-bar{flex-direction:column}
+  .tier-segment{min-height:80px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div>
+    <div class="brand">SOLDMIKE <span>RE/MAX PREMIER · THE OP TEAM</span></div>
+  </div>
+  <div class="header-address">
+    <h1>49 Walter Proctor Rd</h1>
+    <p>East Gwillimbury, ON L9N 0P1 · Sharon Village</p>
+    <div class="eval-date">Evaluation Date: April 14, 2026</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('overview',this)">1 · Overview</button>
+  <button class="tab-btn" onclick="showTab('comps',this)">2 · Comparables</button>
+  <button class="tab-btn" onclick="showTab('market',this)">3 · Market Trends</button>
+  <button class="tab-btn" onclick="showTab('pricing',this)">4 · Pricing</button>
+  <button class="tab-btn" onclick="showTab('analysis',this)">5 · Full Analysis</button>
+</nav>
+
+<!-- ==================== TAB 1: OVERVIEW ==================== -->
+<div id="tab-overview" class="tab-panel active">
+<div class="inner">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Above Grade Sq Ft</div>
+      <div class="stat-value">1,806</div>
+      <div class="stat-sub">MPAC Source · Range: 1,500–1,999</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bedrooms</div>
+      <div class="stat-value">3</div>
+      <div class="stat-sub">All above grade</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bathrooms</div>
+      <div class="stat-value">3</div>
+      <div class="stat-sub">2pc Main · 5pc Ensuite · 4pc 2nd</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Year Built</div>
+      <div class="stat-value">2017</div>
+      <div class="stat-sub">Rodeo Fine Homes · MPAC Confirmed</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Property Details</h2>
+  <div class="table-grid">
+    <table class="details-table">
+      <tr><th>Property Type</th><td>Freehold Att/Row Townhouse</td></tr>
+      <tr><th>Style</th><td>2-Storey</td></tr>
+      <tr><th>Sq Ft Above Grade</th><td>1,806 sq ft (MPAC)</td></tr>
+      <tr><th>Lot Size</th><td>18.8 ft × 90.22 ft (Irregular)</td></tr>
+      <tr><th>Lot Area</th><td>2,228 sq ft (GeoWarehouse)</td></tr>
+      <tr><th>Frontage</th><td>18.8 ft</td></tr>
+      <tr><th>Garage</th><td>Attached · 1 Space</td></tr>
+      <tr><th>Total Parking</th><td>3 (1 garage + 2 driveway)</td></tr>
+    </table>
+    <table class="details-table">
+      <tr><th>Basement</th><td>Unfinished</td></tr>
+      <tr><th>Fireplace</th><td>Yes · Gas</td></tr>
+      <tr><th>Heat</th><td>Forced Air / Gas</td></tr>
+      <tr><th>A/C</th><td>Central Air</td></tr>
+      <tr><th>Exterior</th><td>Brick / Stone</td></tr>
+      <tr><th>Water / Sewer</th><td>Municipal / Sewers</td></tr>
+      <tr><th>PIN</th><td>034331999</td></tr>
+      <tr><th>ARN</th><td>195400002437006</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title">Assessment & Tax History</h2>
+  <div class="table-grid">
+    <table class="details-table">
+      <tr><th>MPAC Assessment</th><td>$561,000</td></tr>
+      <tr><th>Valuation Date</th><td>January 1, 2016</td></tr>
+      <tr><th>Last Notice Date</th><td>November 2, 2022</td></tr>
+      <tr><th>Property Code</th><td>309 – Freehold Town/Rowhouse</td></tr>
+      <tr><th>Zoning</th><td>R9-X(H)</td></tr>
+    </table>
+    <table class="details-table">
+      <tr><th>2025 Property Tax</th><td>$4,984</td></tr>
+      <tr><th>2024 Property Tax</th><td>$4,682</td></tr>
+      <tr><th>2023 Property Tax</th><td>$4,606</td></tr>
+      <tr><th>2022 Property Tax</th><td>$4,458</td></tr>
+      <tr><th>2021 Property Tax</th><td>$4,361</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title">Ownership History</h2>
+  <div class="timeline">
+    <div class="timeline-title">Sales History — Source: GeoWarehouse / MPAC / MLS</div>
+    <div class="tl-row">
+      <div class="tl-dot old"></div>
+      <div class="tl-content">
+        <h4>June 15, 2017 — $441,375</h4>
+        <p>Original new build sale · Builder: Rodeo Fine Homes · First transfer</p>
+      </div>
+    </div>
+    <div class="tl-connector"></div>
+    <div class="tl-row">
+      <div class="tl-dot old"></div>
+      <div class="tl-content">
+        <h4>January 25, 2021 — $788,888</h4>
+        <p>Second transfer · +$347,513 (+79%) from 2017 over 3.5 years</p>
+      </div>
+    </div>
+    <div class="tl-connector"></div>
+    <div class="tl-row">
+      <div class="tl-dot peak"></div>
+      <div class="tl-content">
+        <h4>January 25, 2022 — $1,027,000 ⚑ Market Peak Purchase</h4>
+        <p>Current owners (Alidadi / Pakdaman) · Purchased near the GTA market peak · +$238,112 (+30%) from 2021 in just 12 months</p>
+      </div>
+    </div>
+    <div class="tl-connector"></div>
+    <div class="tl-row">
+      <div class="tl-dot" style="background:var(--red)"></div>
+      <div class="tl-content">
+        <h4>August – October 2024 — Listed $998,800 · TERMINATED (85 DOM)</h4>
+        <p>Prior listing terminated after 85 days on market with no sale · Overpriced relative to then-current market conditions</p>
+      </div>
+    </div>
+    <div class="tl-connector"></div>
+    <div class="tl-row">
+      <div class="tl-dot current"></div>
+      <div class="tl-content">
+        <h4>April 14, 2026 — Evaluation Date</h4>
+        <p>Current market value evaluation · Market has continued to correct since 2022 peak · Recommended list price significantly below purchase price</p>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Condition Notes</h2>
+  <div class="narrative-block">
+    <strong>Base Condition: Original Builder Finish (No Major Upgrades Noted)</strong><br>
+    The subject property was built in 2017 by Rodeo Fine Homes. The prior MLS listing noted granite countertops and backsplash on the main floor — consistent with original builder-grade finishes for this subdivision. No significant upgrades, renovations, or condition deficiencies have been identified in the available data. The unfinished basement represents a future renovation opportunity for a buyer but does not add value to the current base evaluation. Any subsequent condition updates or renovations noted by the seller should be assessed as a separate overlay on top of the base evaluation range.
+  </div>
+
+</div><!-- end inner -->
+</div><!-- end tab-overview -->
+
+<!-- ==================== TAB 2: COMPARABLES ==================== -->
+<div id="tab-comps" class="tab-panel">
+<div class="inner">
+  <a class="realm-btn" href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/DXoy2ej5R9Ua3nBPP28zckDqE87kjaszKEBzqwKAin5rGpWNWMFrQpN9zpPYTBYJkAJa6GfwMlLyaJM4CJ4mrO75wYiBo4zXJWM8hb1DKNVjaoh87Mr2r47ktRyVjrZ1KrfmrDwLo767sJQkl58qkQCRgmPXyayMI4kE7zQGqEUwLEP1QD1VHBooA4L27?q=treb%2FlistingID%3AN12903166%2CN12680700%2CN12995400%2CN12634122%2CN12829378%2CN12716214%2CN12850156%2CN12833412" target="_blank">🔗 Open REALM Portal — Sharon / East Gwillimbury Comps</a>
+
+  <h2 class="section-title">Direct Comparable Sales</h2>
+  <p class="section-subtitle">Same property type (Att/Row/Twnhouse), same style (2-Storey), 1,500–2,000 sq ft band, Sharon Village / East Gwillimbury</p>
+
+  <!-- Direct Comp 1: 17 Carratuck -->
+  <div class="comp-block">
+    <div class="comp-block-header">
+      <h3>17 Carratuck St — SOLD $965,000 | MLS# N12850156</h3>
+      <span class="comp-type-badge badge-direct">Direct Comp · Sold</span>
+    </div>
+    <table class="comp-table">
+      <tr class="comp-header-row">
+        <td class="comp-header-cell">Factor</td>
+        <td class="comp-header-cell cv-subject">Subject · 49 Walter Proctor</td>
+        <td class="comp-header-cell cv-neutral">17 Carratuck St</td>
+      </tr>
+      <tr><td class="comp-label-cell">Sold / List Price</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">$965,000 / $998,000</td></tr>
+      <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">March 26, 2026</td></tr>
+      <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">24 days</td></tr>
+      <tr><td class="comp-label-cell">SP/LP Ratio</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">97%</td></tr>
+      <tr><td class="comp-label-cell">Sq Ft (Source)</td><td class="comp-val-cell cv-subject">1,806 (MPAC)</td><td class="comp-val-cell cv-worse">1,914 (MPAC) ↑108</td></tr>
+      <tr><td class="comp-label-cell">Bedrooms</td><td class="comp-val-cell cv-subject">3</td><td class="comp-val-cell cv-worse">3+1</td></tr>
+      <tr><td class="comp-label-cell">Bathrooms</td><td class="comp-val-cell cv-subject">3</td><td class="comp-val-cell cv-worse">4</td></tr>
+      <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-subject">Unfinished</td><td class="comp-val-cell cv-worse">Full · Finished ↑↑</td></tr>
+      <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell cv-subject">1-car Attached</td><td class="comp-val-cell cv-worse">2-car Attached ↑</td></tr>
+      <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-subject">18.8 × 90.22 ft</td><td class="comp-val-cell cv-neutral">22.01 × 103.02 ft</td></tr>
+      <tr><td class="comp-label-cell">Fireplace</td><td class="comp-val-cell cv-subject">Yes</td><td class="comp-val-cell cv-neutral">Yes (+ bsmt)</td></tr>
+      <tr><td class="comp-label-cell">Year Built</td><td class="comp-val-cell cv-subject">2017</td><td class="comp-val-cell cv-neutral">2018</td></tr>
+      <tr><td class="comp-label-cell">Taxes (2025)</td><td class="comp-val-cell cv-subject">$4,984</td><td class="comp-val-cell cv-neutral">$5,340</td></tr>
+    </table>
+  </div>
+
+  <!-- Adjustment Table for Carratuck -->
+  <h2 class="section-title">Adjustment Analysis — 17 Carratuck St</h2>
+  <p class="section-subtitle">Comp adjusted to match subject characteristics · Negative = comp is superior to subject · Positive = comp is inferior to subject</p>
+  <table class="adj-table">
+    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th><th>Rationale</th></tr>
+    <tr>
+      <td>Square Footage (108 sqft)</td>
+      <td><span class="adj-neg">↓ Comp Superior</span></td>
+      <td class="adj-neg">-$27,000</td>
+      <td>Comp 108 sqft larger @ est. $250/sqft marginal value</td>
+    </tr>
+    <tr>
+      <td>Finished Basement</td>
+      <td><span class="adj-neg">↓ Comp Superior</span></td>
+      <td class="adj-neg">-$45,000</td>
+      <td>Comp has full finished bsmt + 4th bed + gas FP; subject unfinished</td>
+    </tr>
+    <tr>
+      <td>2-Car Garage</td>
+      <td><span class="adj-neg">↓ Comp Superior</span></td>
+      <td class="adj-neg">-$18,000</td>
+      <td>Double garage vs single; significant demand driver in this market</td>
+    </tr>
+    <tr>
+      <td>Bathrooms (4 vs 3)</td>
+      <td><span class="adj-neg">↓ Comp Superior</span></td>
+      <td class="adj-neg">-$5,000</td>
+      <td>Extra powder/bath configuration adds marginal value</td>
+    </tr>
+    <tr>
+      <td>Lot Size (similar)</td>
+      <td><span class="adj-zero">— Neutral</span></td>
+      <td class="adj-zero">$0</td>
+      <td>Both lots in similar range for this subdivision; no material difference</td>
+    </tr>
+    <tr>
+      <td>Fireplace</td>
+      <td><span class="adj-zero">— Neutral</span></td>
+      <td class="adj-zero">$0</td>
+      <td>Both have gas fireplaces; no adjustment warranted</td>
+    </tr>
+    <tr>
+      <td><strong>NET TOTAL</strong></td>
+      <td colspan="2" class="adj-neg"><strong>-$95,000</strong></td>
+      <td><strong>Adjusted Carratuck Value: ~$870,000</strong></td>
+    </tr>
+  </table>
+
+  <!-- Direct Comp 2: 24 Briarfield -->
+  <div class="comp-block">
+    <div class="comp-block-header">
+      <h3>24 Briarfield Ave — SOLD $871,888 | MLS# N12680700</h3>
+      <span class="comp-type-badge badge-direct">Direct Comp · Sold · Closest Match</span>
+    </div>
+    <table class="comp-table">
+      <tr class="comp-header-row">
+        <td class="comp-header-cell">Factor</td>
+        <td class="comp-header-cell cv-subject">Subject · 49 Walter Proctor</td>
+        <td class="comp-header-cell cv-neutral">24 Briarfield Ave</td>
+      </tr>
+      <tr><td class="comp-label-cell">Sold / List Price</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">$871,888 / $899,000</td></tr>
+      <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">January 16, 2026</td></tr>
+      <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell cv-neutral">7 days ✓</td></tr>
+      <tr><td class="comp-label-cell">SP/LP Ratio</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">97%</td></tr>
+      <tr><td class="comp-label-cell">Sq Ft (Source)</td><td class="comp-val-cell cv-subject">1,806 (MPAC)</td><td class="comp-val-cell cv-neutral">1,800 (Owner) ≈ same</td></tr>
+      <tr><td class="comp-label-cell">Bedrooms</td><td class="comp-val-cell cv-subject">3</td><td class="comp-val-cell cv-neutral">3</td></tr>
+      <tr><td class="comp-label-cell">Bathrooms</td><td class="comp-val-cell cv-subject">3</td><td class="comp-val-cell cv-neutral">3</td></tr>
+      <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-subject">Unfinished</td><td class="comp-val-cell cv-worse">Unfinished · Walk-Out ↑</td></tr>
+      <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell cv-subject">1-car Attached</td><td class="comp-val-cell cv-neutral">1-car Attached</td></tr>
+      <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-subject">18.8 × 90.22 ft</td><td class="comp-val-cell cv-neutral">20.01 × 118.11 ft</td></tr>
+      <tr><td class="comp-label-cell">Fireplace</td><td class="comp-val-cell cv-better">Yes ✓</td><td class="comp-val-cell cv-worse">No</td></tr>
+      <tr><td class="comp-label-cell">Year Built</td><td class="comp-val-cell cv-subject">2017</td><td class="comp-val-cell cv-neutral">6–15 yrs (similar era)</td></tr>
+      <tr><td class="comp-label-cell">Taxes (2025)</td><td class="comp-val-cell cv-subject">$4,984</td><td class="comp-val-cell cv-neutral">$5,144</td></tr>
+    </table>
+  </div>
+
+  <!-- Adjustment for Briarfield -->
+  <h2 class="section-title">Adjustment Analysis — 24 Briarfield Ave</h2>
+  <table class="adj-table">
+    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th><th>Rationale</th></tr>
+    <tr>
+      <td>Square Footage (6 sqft)</td>
+      <td><span class="adj-zero">— Neutral</span></td>
+      <td class="adj-zero">$0</td>
+      <td>Virtually identical (1,800 vs 1,806 sqft); no material adjustment</td>
+    </tr>
+    <tr>
+      <td>Basement Walkout</td>
+      <td><span class="adj-neg">↓ Comp Slightly Superior</span></td>
+      <td class="adj-neg">-$7,000</td>
+      <td>Briarfield has unfinished walkout (natural light, yard access); subject has standard unfinished</td>
+    </tr>
+    <tr>
+      <td>Fireplace</td>
+      <td><span class="adj-pos">↑ Subject Superior</span></td>
+      <td class="adj-pos">+$5,000</td>
+      <td>Subject has gas fireplace; Briarfield does not — desirable feature in family townhomes</td>
+    </tr>
+    <tr>
+      <td>Lot (similar)</td>
+      <td><span class="adj-zero">— Neutral</span></td>
+      <td class="adj-zero">$0</td>
+      <td>Briarfield is slightly wider/deeper, but both in comparable range for the subdivision</td>
+    </tr>
+    <tr>
+      <td>Garage / Parking</td>
+      <td><span class="adj-zero">— Neutral</span></td>
+      <td class="adj-zero">$0</td>
+      <td>Both 1-car attached, 3 total parking; equivalent</td>
+    </tr>
+    <tr>
+      <td><strong>NET TOTAL</strong></td>
+      <td colspan="2" class="adj-neg"><strong>-$2,000</strong></td>
+      <td><strong>Adjusted Briarfield Value: ~$870,000</strong></td>
+    </tr>
+  </table>
+
+  <div class="narrative-block">
+    <strong>Convergence Note:</strong> Both direct sold comps, after adjustments, converge at approximately <strong>$870,000</strong>. The Carratuck adjustment is larger because of the significantly superior features (finished basement + 2-car garage). The Briarfield adjustment is minimal because the properties are near-identical. The convergence at $870K from two independent comps using different adjustment paths is a strong anchor for the base evaluation.
+  </div>
+
+  <!-- Stale Active in Direct Band -->
+  <h2 class="section-title">Active Listing — Direct Band (Stale Reference)</h2>
+  <div class="stale-note">
+    <strong>107 Beechborough Cres — Listed $968,000 (PC) · DOM 45 · MLS# N12829378</strong><br>
+    Originally listed at $998,000, this 3-storey freehold townhouse (NOT same style as subject — subject is 2-storey) has been on market 45 days with a price reduction. While it features a 2-car garage, ravine/forest views, a corner lot, and premium upgrades (~$968K ask), the <strong>style mismatch (3-storey vs 2-storey) and elevated feature set</strong> make it a ceiling reference rather than a direct comp. Its extended DOM at $968K confirms that asking prices above the $870–$890K zone require exceptional feature differentiation in the current market.
+  </div>
+
+  <!-- Floor Comps -->
+  <h2 class="section-title">Floor Comps — Establishing the Price Floor</h2>
+  <p class="section-subtitle">Semi-detached homes, Sharon Village / East Gwillimbury · 1,000–1,500 sq ft band · These are a different property type but establish what buyers can get for less money nearby. Semis typically command a slight premium over towns in this market.</p>
+
+  <div class="comp-block">
+    <div class="comp-block-header">
+      <h3>124 Countryman Rd — SOLD $950,000 | MLS# N12716214</h3>
+      <span class="comp-type-badge badge-floor">Floor Reference · Semi · Ravine Lot Premium</span>
+    </div>
+    <table class="comp-table">
+      <tr class="comp-header-row">
+        <td class="comp-header-cell">Factor</td>
+        <td class="comp-header-cell cv-subject">Subject</td>
+        <td class="comp-header-cell">124 Countryman</td>
+      </tr>
+      <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">$950,000 / $979,900</td></tr>
+      <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">March 6, 2026</td></tr>
+      <tr><td class="comp-label-cell">DOM / SP/LP</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">44 days / 97%</td></tr>
+      <tr><td class="comp-label-cell">Type</td><td class="comp-val-cell cv-subject">Freehold Town</td><td class="comp-val-cell cv-worse">Semi-Detached</td></tr>
+      <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell cv-subject">1,806 (MPAC)</td><td class="comp-val-cell cv-worse">1,473 (MPAC) ↓333</td></tr>
+      <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-subject">Unfinished</td><td class="comp-val-cell cv-neutral">Unfinished Walkout</td></tr>
+      <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-subject">18.8 × 90.22 ft</td><td class="comp-val-cell cv-worse">24.02 × 154.33 ft · Ravine ↑↑</td></tr>
+    </table>
+  </div>
+
+  <div class="narrative-block">
+    <strong>Floor Comp Interpretation:</strong> 124 Countryman is a semi-detached home with a premium ravine lot (24 × 154 ft) on the smallest footprint (1,473 sqft). Despite being 333 sqft smaller than the subject and a semi (typically commands premium over towns), it sold for $950,000 — driven primarily by its exceptional ravine lot. At $645/sqft, it represents a lot-premium outlier, not the norm. Implied floor for the subject with its standard 18.8 × 90 ft lot and freehold town classification: the premium lot semi data confirms that standard-lot freehold towns without ravine premiums should price in the $850,000–$900,000 zone in current conditions.
+  </div>
+
+  <!-- Ceiling Comps -->
+  <h2 class="section-title">Ceiling Comps / Active Listings — Market Context</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem">
+
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header">
+        <h3>130 Countryman Rd — SOLD $900,000</h3>
+        <span class="comp-type-badge badge-direct">Semi · 1,660 sqft · Sold</span>
+      </div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell">$900,000 / $850,000</td></tr>
+        <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell">11 days</td></tr>
+        <tr><td class="comp-label-cell">SP/LP</td><td class="comp-val-cell cv-better">106% — Under-listed</td></tr>
+        <tr><td class="comp-label-cell">Type</td><td class="comp-val-cell">Semi-Detached</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell">1,660 (MPAC)</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell">Unfinished Walkout</td></tr>
+        <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell">1-car</td></tr>
+        <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell">March 31, 2026</td></tr>
+      </table>
+    </div>
+
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header">
+        <h3>46 Deer Pass Rd — SOLD $904,900</h3>
+        <span class="comp-type-badge badge-direct">Semi · 1,950 sqft · Sold</span>
+      </div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell">$904,900 / $949,901</td></tr>
+        <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell">32 days</td></tr>
+        <tr><td class="comp-label-cell">SP/LP</td><td class="comp-val-cell">95%</td></tr>
+        <tr><td class="comp-label-cell">Type</td><td class="comp-val-cell">Semi-Detached</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell">1,950 (Owner)</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell">Unfinished</td></tr>
+        <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell">1-car</td></tr>
+        <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell">January 15, 2026</td></tr>
+      </table>
+    </div>
+
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header">
+        <h3>1 Silver Charm Dr — ACTIVE $1,049,900</h3>
+        <span class="comp-type-badge badge-active">Semi · 2,141 sqft · Active</span>
+      </div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List Price</td><td class="comp-val-cell">$1,049,900</td></tr>
+        <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell">43 days</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell">2,141 (Owner)</td></tr>
+        <tr><td class="comp-label-cell">Type</td><td class="comp-val-cell">Semi-Detached</td></tr>
+        <tr><td class="comp-label-cell">Beds</td><td class="comp-val-cell">4</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell">Full Unfinished</td></tr>
+        <tr><td class="comp-label-cell">Note</td><td class="comp-val-cell cv-worse">43 DOM · Not sold yet</td></tr>
+      </table>
+    </div>
+
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header">
+        <h3>11 Kester Crt — ACTIVE $920,000</h3>
+        <span class="comp-type-badge badge-active">Semi · 2,015 sqft · New</span>
+      </div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List Price</td><td class="comp-val-cell">$920,000</td></tr>
+        <tr><td class="comp-label-cell">DOM</td><td class="comp-val-cell">0 (New Listing)</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell">2,015 (Estimated)</td></tr>
+        <tr><td class="comp-label-cell">Type</td><td class="comp-val-cell">Semi-Detached</td></tr>
+        <tr><td class="comp-label-cell">Beds</td><td class="comp-val-cell">3</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell">Unfinished</td></tr>
+        <tr><td class="comp-label-cell">Note</td><td class="comp-val-cell cv-neutral">Pie lot · 10.5 ft ceilings</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="narrative-block">
+    <strong>Ceiling Context:</strong> The active and recently sold semi-detached homes in the $900,000–$1,049,900 range confirm where the ceiling sits. Semi-detacheds — which typically command a 5–10% premium over attached freehold townhouses due to the additional side privacy, lot ownership, and perceived status — are trading at $900,000–$950,000 for comparable or larger footprints. <strong>This tells us that a 1,806 sq ft freehold town with no premium lot features, an unfinished basement, and a single garage has a clear ceiling below the semi-detached market.</strong> Reaching $910,000+ for the subject would require exceptional conditions: multiple competing offers, a highly motivated buyer with an emotional connection to the home, and ideal market timing.
+  </div>
+
+  <!-- Scatter Chart -->
+  <h2 class="section-title">Price vs. Square Footage — All Comps</h2>
+  <div class="chart-wrapper">
+    <div class="chart-title">Sold (green) · Active (blue) · Subject (gold triangle)</div>
+    <canvas id="scatterChart" height="300"></canvas>
+  </div>
+
+</div><!-- end inner -->
+</div><!-- end tab-comps -->
+
+<!-- ==================== TAB 3: MARKET TRENDS ==================== -->
+<div id="tab-market" class="tab-panel">
+<div class="inner">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Avg Sale Price (6-Mo)</div>
+      <div class="stat-value">$876K</div>
+      <div class="stat-sub">East Gwillimbury Freehold Towns</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg DOM (6-Mo)</div>
+      <div class="stat-value">33</div>
+      <div class="stat-sub">Days on Market · Improving</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg SP/LP Ratio</div>
+      <div class="stat-value">97%</div>
+      <div class="stat-sub">Row towns: 103% (Feb 2026) · Overall market softening</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">MOI (Feb 2026)</div>
+      <div class="stat-value" style="color:var(--red)">5.31</div>
+      <div class="stat-sub">Buyer's Market (&gt;5) · Improving from 7.33 in Jan</div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Market Windows — East Gwillimbury Freehold Townhouses</h2>
+  <p class="section-subtitle">Source: TRREB MLS data via published reports · York Region / East Gwillimbury context · Data supplemented with comp analysis · Verify against Habistat York.xlsx for full monthly breakdown</p>
+
+  <div class="windows-grid">
+    <div class="window-card">
+      <div class="window-title">6-Month Window · Oct 2025 – Mar 2026</div>
+      <div class="window-stat-row"><span class="ws-label">Avg Sale Price</span><span class="ws-value gold">$876,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Median Sale Price</span><span class="ws-value">~$872,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM</span><span class="ws-value">33 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP Ratio</span><span class="ws-value">~97%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg MOI</span><span class="ws-value">~5.9</span></div>
+      <div class="window-stat-row"><span class="ws-label">SNLR</span><span class="ws-value">~37%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--red)">↓ Softening</span></div>
+    </div>
+    <div class="window-card">
+      <div class="window-title">3-Month Window · Jan 2026 – Mar 2026</div>
+      <div class="window-stat-row"><span class="ws-label">Avg Sale Price</span><span class="ws-value gold">$878,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Median Sale Price</span><span class="ws-value">~$872,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM</span><span class="ws-value">27 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP Ratio</span><span class="ws-value">~97–103%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg MOI</span><span class="ws-value">~5.8</span></div>
+      <div class="window-stat-row"><span class="ws-label">SNLR</span><span class="ws-value">~38%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--blue)">→ Stabilizing</span></div>
+    </div>
+    <div class="window-card">
+      <div class="window-title">1-Month Snapshot · March–April 2026</div>
+      <div class="window-stat-row"><span class="ws-label">GTA Freehold Town Avg</span><span class="ws-value gold">$931,740</span></div>
+      <div class="window-stat-row"><span class="ws-label">YoY Change</span><span class="ws-value" style="color:var(--red)">-6.9%</span></div>
+      <div class="window-stat-row"><span class="ws-label">MoM Change</span><span class="ws-value" style="color:var(--blue)">+0.1% (flat)</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM</span><span class="ws-value">27 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP (EG Towns)</span><span class="ws-value gold">~97%</span></div>
+      <div class="window-stat-row"><span class="ws-label">MOI (Mar 2026 GTA)</span><span class="ws-value">4.3</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--green)">→ Stabilizing / Spring lift</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Monthly Data — East Gwillimbury Area Townhouses</h2>
+  <p class="section-subtitle">Based on available TRREB data, published market reports, and comp-derived analysis. Verify full detail against Habistat York.xlsx (Google Drive: SOLDMIKE Market Data folder). SNLR: Sale-to-New-Listings Ratio.</p>
+  <table class="hab-table">
+    <tr>
+      <th>Month</th><th>Avg Price</th><th>Med Price</th><th>Sales Vol</th><th>New Listings</th><th>SNLR</th><th>Active</th><th>MOI</th><th>Avg DOM</th><th>SP/LP</th>
+    </tr>
+    <tr><td>Oct 2025</td><td>$878K</td><td>$872K</td><td>~7</td><td>~22</td><td>~36%</td><td>~44</td><td>6.2</td><td>38</td><td>96%</td></tr>
+    <tr><td>Nov 2025</td><td>$873K</td><td>$866K</td><td>~6</td><td>~18</td><td>~33%</td><td>~41</td><td>6.8</td><td>42</td><td>96%</td></tr>
+    <tr><td>Dec 2025</td><td>$866K</td><td>$860K</td><td>~5</td><td>~12</td><td>~42%</td><td>~35</td><td>5.9</td><td>45</td><td>96%</td></tr>
+    <tr><td>Jan 2026</td><td>$872K</td><td>$870K</td><td>~7</td><td>~19</td><td>~37%</td><td>~54</td><td>7.3</td><td>32</td><td>97%</td></tr>
+    <tr><td>Feb 2026</td><td>$878K</td><td>$872K</td><td>~8</td><td>~17</td><td>39%*</td><td>~43</td><td>5.3</td><td>29</td><td>97%</td></tr>
+    <tr><td>Mar 2026</td><td>$882K</td><td>$872K</td><td>~9</td><td>~16</td><td>~41%</td><td>~38</td><td>4.9</td><td>27</td><td>97%</td></tr>
+  </table>
+  <p style="font-size:.7rem;color:#999;margin-bottom:1.5rem">* Feb 2026 SNLR confirmed by TRREB via published East Gwillimbury market report. MOI and other figures are directional estimates based on available comp data and York Region trends — reconcile with Habistat York.xlsx for precision.</p>
+
+  <div class="charts-grid">
+    <div class="chart-wrapper">
+      <div class="chart-title">Avg & Median Sale Price — 6-Month Trend</div>
+      <canvas id="priceChart" height="250"></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <div class="chart-title">Sales Volume vs New Listings — 3-Month</div>
+      <canvas id="volChart" height="250"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-wrapper">
+    <div class="chart-title">Months of Inventory Trend — with 3.0 Sellers' Market Threshold</div>
+    <canvas id="moiChart" height="200"></canvas>
+  </div>
+
+  <h2 class="section-title">Market Classification</h2>
+  <div class="mkt-class-card buyers">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--red);font-weight:700">Buyer's Market — Improving</span>
+      <span style="font-size:.75rem;color:var(--text-dim);font-style:italic">East Gwillimbury · Q1–Q2 2026</span>
+    </div>
+    <div class="mkt-signal-grid">
+      <div class="mkt-signal">
+        <div class="mkt-signal-label">MOI</div>
+        <div class="mkt-signal-val">5.3</div>
+        <div class="mkt-signal-desc">Buyer's (&gt;5.0) · Tightening from 7.3 in Jan</div>
+      </div>
+      <div class="mkt-signal">
+        <div class="mkt-signal-label">SNLR</div>
+        <div class="mkt-signal-val">39%</div>
+        <div class="mkt-signal-desc">Buyer's (&lt;40%) · Improving · Sellers' = &gt;60%</div>
+      </div>
+      <div class="mkt-signal">
+        <div class="mkt-signal-label">Price Trend YoY</div>
+        <div class="mkt-signal-val">-6.9%</div>
+        <div class="mkt-signal-desc">GTA freehold towns · Still below prior year levels</div>
+      </div>
+    </div>
+    <div style="margin-top:1.25rem;font-size:.82rem;color:var(--text-dim);line-height:1.75;background:rgba(255,255,255,.04);padding:1rem;border-radius:8px">
+      <strong style="color:var(--text)">Pricing Implication:</strong> In a buyer's market, correctly priced properties sell — overpriced properties sit and accumulate stigma. The East Gwillimbury data from February 2026 showed a promising signal: row townhouses that were well-priced achieved 103% SP/LP at a 14-day average DOM. The wide spread between average DOM (47 days) and median DOM (29 days) tells you exactly what's happening — <strong style="color:var(--text)">stale, overpriced listings are dragging up the average while correct-priced listings are moving fast</strong>. For the subject property, this means: price right, sell quickly. Price above the data, and you'll sit again — just like the terminated listing in 2024. Spring 2026 is showing stabilization with GTA freehold towns flat month-over-month in March. This is the window. Price it to move.
+    </div>
+  </div>
+
+</div><!-- end inner -->
+</div><!-- end tab-market -->
+
+<!-- ==================== TAB 4: PRICING ==================== -->
+<div id="tab-pricing" class="tab-panel">
+<div class="inner">
+  <h2 class="section-title">Four-Tier Pricing Framework</h2>
+  <div class="tier-bar">
+    <div class="tier-segment tier-conservative">
+      <span class="tier-label">Conservative</span>
+      <span class="tier-price">$849,000<br>– $864,900</span>
+      <span class="tier-pct">Floor of market</span>
+    </div>
+    <div class="tier-segment tier-middle">
+      <span class="tier-label">★ Market Middle</span>
+      <span class="tier-price">$865,000<br>– $884,900</span>
+      <span class="tier-pct">Comp-derived fair value</span>
+    </div>
+    <div class="tier-segment tier-optimistic">
+      <span class="tier-label">Optimistic</span>
+      <span class="tier-price">$885,000<br>– $909,900</span>
+      <span class="tier-pct">Best-case scenario</span>
+    </div>
+    <div class="tier-segment tier-over">
+      <span class="tier-label">⚠ Overpriced</span>
+      <span class="tier-price">$910,000+</span>
+      <span class="tier-pct">Prior TER: $998,800</span>
+    </div>
+  </div>
+
+  <div class="eval-cards">
+    <div class="eval-card">
+      <h3>Base Evaluation Range</h3>
+      <div class="eval-range">$865,000 – $884,900</div>
+      <div class="eval-note">Derived from two direct adjusted comps (17 Carratuck: adj. $870,000 · 24 Briarfield: adj. $870,000). Convergence of both comps at ~$870K anchors the Market Middle. Semi-detached ceiling data ($900–$950K) confirms the upper bound before the type-premium kicks in.</div>
+    </div>
+    <div class="eval-card" style="border-color:rgba(96,165,250,.3)">
+      <h3>Condition Overlay (Separate)</h3>
+      <div class="eval-range" style="color:var(--blue)">$0 Overlay</div>
+      <div class="eval-note">No major renovations or upgrades identified. Original 2017 builder finish. Granite countertops/backsplash noted in prior listing — consistent with standard builder-grade for this subdivision. No positive or negative condition adjustment warranted at this time. If seller discloses updates (kitchen, baths, flooring, HVAC, etc.), reassess as a separate overlay above the base range.</div>
+    </div>
+  </div>
+
+  <div class="tier-cards">
+    <div class="tier-card conservative">
+      <h4>Conservative</h4>
+      <div class="price-range">$849,000 – $864,900</div>
+      <p>This is the safety-net number — slightly below where the comparable data lands. A property priced in this range will attract strong showing activity and multiple qualified buyers quickly. In the current buyer's market, a conservative price often generates more competition than a stretched ask. If the goal is a fast, clean sale with minimal conditions and minimal negotiation, this tier delivers that outcome most reliably. Expected close at 97–100% SP/LP: <strong style="color:var(--text)">$849,000 – $864,900</strong>.</p>
+    </div>
+    <div class="tier-card middle">
+      <h4>★ Market Middle</h4>
+      <div class="price-range">$865,000 – $884,900</div>
+      <p>This is where the comp data converges. Both adjusted direct comps land at approximately $870,000 after accounting for differences in size, basement, garage, and lot. This is not a guaranteed number — it's where a well-presented, well-exposed property should trade if the market cooperates. Strong preparation, good photography, and an aggressive marketing push give you the best shot at the top of this range. Recommended list price: <strong style="color:var(--text)">$879,900</strong>. Expected close: <strong style="color:var(--text)">$853,000 – $879,900</strong>.</p>
+    </div>
+    <div class="tier-card optimistic">
+      <h4>Optimistic</h4>
+      <div class="price-range">$885,000 – $909,900</div>
+      <p>Reachable, but requires conditions to align perfectly: a motivated buyer who has been searching for a while in this exact neighbourhood, low competing inventory at the time of offer, and exceptional home presentation (staging, professional photography, open house traffic). The semi-detached comps selling at $900–$950K show that buyers will pay in this range — but for a freehold town with 1-car garage and unfinished basement, they'll need to feel like they're getting something special. Don't set expectations here as a base case.</p>
+    </div>
+    <div class="tier-card overpriced">
+      <h4>⚠ Overpriced</h4>
+      <div class="price-range">$910,000+</div>
+      <p>This is what we already tried. The previous listing at <strong style="color:var(--text)">$998,800 terminated after 85 days</strong> with zero sale. The market has not recovered to those levels — in fact, GTA freehold towns are down 6.9% year-over-year as of March 2026. The active ceiling comps (107 Beechborough at $968,000 with 45 DOM and a price reduction; 1 Silver Charm at $1,049,900 with 43 DOM unsold) confirm that overpriced product sits. Overpricing above $910K means sitting, price cuts, and ultimately selling for less than the Market Middle. The stale listing penalty is real.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">The Argument</h2>
+  <div class="argument-grid">
+    <div class="arg-card">
+      <h4>Argument 1 — Direct Comp Convergence</h4>
+      <p><strong>24 Briarfield Ave</strong> sold for <strong>$871,888</strong> in January 2026. It's a 1,800 sqft freehold townhouse — virtually identical to the subject in size, type, style, and configuration. One key difference: Briarfield has a walkout basement; the subject does not. The subject has a fireplace; Briarfield does not. Net adjustment is essentially zero. After 7 DOM at 97% SP/LP, the market spoke clearly at <strong>$871,888</strong>.</p>
+    </div>
+    <div class="arg-card">
+      <h4>Argument 2 — Adjusted Ceiling Comp</h4>
+      <p><strong>17 Carratuck St</strong> sold for <strong>$965,000</strong> in March 2026 — but it had a full finished basement (with 4th bedroom + gas fireplace), a 2-car garage, and is 108 sqft larger than the subject. Adjusting for those advantages: -$27K (size) -$45K (finished bsmt) -$18K (garage) -$5K (bath) = <strong>-$95,000</strong>. Adjusted value: <strong>~$870,000</strong>. Two completely different comps reaching the same number is a strong signal.</p>
+    </div>
+    <div class="arg-card">
+      <h4>Argument 3 — The Overpriced Warning</h4>
+      <p>This exact property was listed at <strong>$998,800 in 2024 and terminated after 85 days</strong>. The market has not recovered since then — freehold towns are down 6.9% YoY as of March 2026. <strong>107 Beechborough Cres</strong> (a superior 3-storey town with 2-car garage, ravine view, and corner lot) has been sitting at <strong>$968,000 for 45+ days</strong> with a price reduction. The market is telling a consistent story: standard freehold towns in Sharon without premium features trade at $850K–$885K right now.</p>
+    </div>
+  </div>
+
+  <hr style="border:none;border-top:1px solid #eee;margin:2rem 0">
+
+  <h2 class="section-title">Buyer Search Bracket Analysis</h2>
+  <table class="brackets-table">
+    <tr><th>Price Bracket</th><th>Who's Searching Here?</th><th>Competitive Assessment</th><th>Likely Outcome</th></tr>
+    <tr>
+      <td>$799,000 – $849,000</td>
+      <td>Entry-level buyers, budget-conscious first-timers</td>
+      <td>High activity, multiple competing properties at lower price points</td>
+      <td>Strong interest but leaves money on the table</td>
+    </tr>
+    <tr style="background:rgba(74,222,128,.05)">
+      <td>$849,000 – $879,900 ✓</td>
+      <td>Move-up buyers, young families, qualified pre-approvals</td>
+      <td>Active buyer pool; matches comparable sales data exactly</td>
+      <td><strong>Best chance of sale — recommended zone</strong></td>
+    </tr>
+    <tr style="background:rgba(74,222,128,.05)">
+      <td>$879,901 – $909,900 ✓</td>
+      <td>Same as above, slightly fewer buyers; requires justification</td>
+      <td>Reachable if well-staged and presented; competitive with semi-detacheds</td>
+      <td>Possible but needs ideal conditions</td>
+    </tr>
+    <tr>
+      <td>$910,000 – $949,900</td>
+      <td>Buyers who expect semi-detached or superior features</td>
+      <td>Subject will lose comparison to semis ($900–950K) with more space/privacy</td>
+      <td>Extended DOM; likely price reduction</td>
+    </tr>
+    <tr>
+      <td>$950,000 – $999,900</td>
+      <td>Same as above; competing with detached homes in some markets</td>
+      <td>Very poor value vs alternatives; buyers will move elsewhere</td>
+      <td>Probable TER (previously proven at $998,800)</td>
+    </tr>
+    <tr>
+      <td>$1,000,000+</td>
+      <td>Buyers expecting executive detached or major upgrades</td>
+      <td>Not competitive at any level for this product type</td>
+      <td>No sale</td>
+    </tr>
+  </table>
+
+  <h2 class="section-title">Overpricing Penalty Table</h2>
+  <table class="penalty-table">
+    <tr>
+      <th>List Price</th><th>vs Market Middle</th><th>Est DOM</th><th>Price Cut Risk</th><th>Likely Sale Price</th><th>Net vs Optimal</th>
+    </tr>
+    <tr style="background:rgba(74,222,128,.06)">
+      <td>$849,900</td><td>-2.9%</td><td>7–14 days</td><td>Low</td><td>$849,900–$865K</td><td>-$14,000</td>
+    </tr>
+    <tr class="highlight">
+      <td>$879,900 ★</td><td>Recommended</td><td>14–28 days</td><td>Low</td><td>$853K–$879K</td><td>Optimal</td>
+    </tr>
+    <tr>
+      <td>$909,900</td><td>+4.0%</td><td>30–50 days</td><td>Medium</td><td>$870K–$890K</td><td>Similar or less</td>
+    </tr>
+    <tr>
+      <td>$939,900</td><td>+7.5%</td><td>45–75 days</td><td>High</td><td>$860K–$880K</td><td>-$5K to -$15K</td>
+    </tr>
+    <tr class="danger">
+      <td>$969,900</td><td>+11%</td><td>60–90+ days</td><td>Very High</td><td>$845K–$870K</td><td>-$15K to -$25K</td>
+    </tr>
+    <tr class="danger">
+      <td>$998,800 (Prior TER)</td><td>+14.5%</td><td>85+ days → TER</td><td>Virtually Certain</td><td>N/A (TER'd)</td><td>-$15K+ vs if priced right</td>
+    </tr>
+  </table>
+
+  <h2 class="section-title">What-If Pricing Simulator</h2>
+  <div class="slider-section">
+    <h3>Drag the slider to model different list prices</h3>
+    <input type="range" id="listSlider" min="849000" max="1050000" step="5000" value="879900">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text-dim);margin-top:-.5rem;margin-bottom:.5rem">
+      <span>$849,000</span><span>$950,000</span><span>$1,050,000</span>
+    </div>
+    <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:700;margin:1rem 0" id="sliderPrice">$879,900</div>
+    <div class="slider-readout">
+      <div class="readout-item">
+        <div class="readout-label">Est DOM</div>
+        <div class="readout-val" id="siDOM">21</div>
+      </div>
+      <div class="readout-item">
+        <div class="readout-label">Likely Sale Price</div>
+        <div class="readout-val" id="siSale">$861,600</div>
+      </div>
+      <div class="readout-item">
+        <div class="readout-label">Price Cut Risk</div>
+        <div class="readout-val" id="siRisk">12%</div>
+      </div>
+      <div class="readout-item">
+        <div class="readout-label">Net vs Optimal</div>
+        <div class="readout-val" id="siNet">Baseline</div>
+      </div>
+      <div class="readout-item">
+        <div class="readout-label">vs Market Middle</div>
+        <div class="readout-val" id="siVsMM">+0.6%</div>
+      </div>
+    </div>
+    <div id="sliderVerdict" style="background:rgba(197,165,90,.12);color:var(--gold)">✓ Well-positioned within Market Middle — recommended range</div>
+  </div>
+
+  <h2 class="section-title">Recommended Pricing Strategy</h2>
+  <div class="final-rec">
+    <div class="final-rec-label">Recommended List Price</div>
+    <div class="final-rec-price">$879,900</div>
+    <div class="final-rec-range">Base Evaluation Range: $865,000 – $884,900</div>
+    <div class="final-rec-close">Expected Close Range: $853,000 – $879,900 (at 97% SP/LP)</div>
+  </div>
+  <div class="narrative-block">
+    <strong>Rationale:</strong> $879,900 sits at the upper end of the Market Middle tier — justified because: (1) the property is an original Rodeo Fine Homes build with brick/stone exterior and a fireplace, both strong buyer draw features; (2) the spring 2026 market is showing stabilization with month-over-month price recovery; (3) correctly priced row townhouses in East Gwillimbury achieved 103% SP/LP in February 2026, meaning there is genuine buyer demand for well-priced product. Pricing at $879,900 rather than $869,900 reflects realistic optimism without gambling on the "we'll see what we get" pricing that led to the 2024 termination. <strong style="color:var(--text)">At $879,900, the sellers are well-positioned. At $900,000 and above, they are competing against semi-detached homes with more space, more privacy, and more buyer appeal.</strong>
+  </div>
+
+</div><!-- end inner -->
+</div><!-- end tab-pricing -->
+
+<!-- ==================== TAB 5: FULL ANALYSIS ==================== -->
+<div id="tab-analysis" class="tab-panel">
+<div class="inner">
+  <div class="analysis-content">
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save PDF</button>
+
+    <div class="prose-section">
+      <h2>1. Subject Property Profile</h2>
+      <p>The subject property is a freehold attached/row townhouse located at 49 Walter Proctor Road, East Gwillimbury, Ontario, within the Sharon Village subdivision near Green Lane and Leslie Street. Built in 2017 by Rodeo Fine Homes, the property offers 1,806 square feet of above-grade living space (confirmed by MPAC) across a two-storey layout. The home features 3 bedrooms, 3 bathrooms (2-piece powder room on the main floor, 5-piece ensuite and 4-piece bath on the second floor), an attached single-car garage, main-floor laundry, and a gas fireplace. The exterior is brick and stone, consistent with the higher-end finishes typical of this Rodeo subdivision. The basement is unfinished, representing an opportunity for future value-add. The lot measures approximately 18.8 by 90.22 feet (2,228 sq ft total per GeoWarehouse), irregular in shape.</p>
+      <table class="prose-table">
+        <tr><th>Feature</th><th>Detail</th><th>Source</th></tr>
+        <tr><td>Property Type</td><td>Freehold Att/Row Townhouse</td><td>MLS / MPAC</td></tr>
+        <tr><td>Style</td><td>2-Storey</td><td>MLS</td></tr>
+        <tr><td>Above Grade Sq Ft</td><td>1,806 sq ft</td><td>MPAC (Propertyline)</td></tr>
+        <tr><td>Bedrooms / Baths</td><td>3 beds / 3 baths</td><td>MLS</td></tr>
+        <tr><td>Garage</td><td>Attached, 1 space</td><td>MPAC / MLS</td></tr>
+        <tr><td>Basement</td><td>Unfinished</td><td>MLS</td></tr>
+        <tr><td>Fireplace</td><td>Yes – Gas</td><td>MLS</td></tr>
+        <tr><td>Year Built</td><td>2017</td><td>MPAC</td></tr>
+        <tr><td>MPAC Assessment</td><td>$561,000 (Jan 1, 2016 valuation)</td><td>MPAC</td></tr>
+        <tr><td>2025 Property Tax</td><td>$4,984</td><td>GeoWarehouse</td></tr>
+        <tr><td>PIN</td><td>034331999</td><td>GeoWarehouse</td></tr>
+      </table>
+    </div>
+
+    <div class="prose-section">
+      <h2>2. Ownership History &amp; Purchase Context</h2>
+      <p>The property has changed hands three times since its original construction. The original builder sale in June 2017 was at $441,375. It traded again in January 2021 for $788,888, reflecting the strong appreciation through the 2019–2021 market run. The current owners — Ahmad Alidadi and Rosa Pakdaman — purchased on January 25, 2022, for $1,027,000, effectively buying at the peak of the GTA market cycle.</p>
+      <p>The market peaked in early 2022 and has since experienced a sustained correction, particularly in the York Region and East Gwillimbury market. As of the evaluation date (April 2026), the property has declined approximately 14–16% from the purchase price in real dollar terms based on comparable sales evidence. The prior attempt to sell at $998,800 in August–October 2024 resulted in a termination after 85 days on market — a clear signal that the market price expectation was materially above where buyers were transacting.</p>
+      <p>The straight-line appreciation from the 2017 new build price ($441,375) would suggest approximately $1,150,000+ at historical GTA growth rates. However, the 2022 peak and subsequent correction mean the current market does not support that trajectory. The comparable sales data is the authoritative input — not the purchase price history.</p>
+    </div>
+
+    <div class="prose-section">
+      <h2>3. Comparable Sales Analysis</h2>
+      <h3>Direct Comps — Freehold Townhouse, 2-Storey, 1,500–2,000 Sq Ft, Sharon Village</h3>
+      <p><strong>17 Carratuck Street</strong> (MLS# N12850156) sold March 26, 2026 for $965,000 at 97% of its $998,000 list price after 24 days on market. This 1,914 sq ft freehold townhouse (MPAC measurement) built in 2018 features a full finished basement with a 4th bedroom and gas fireplace, a 2-car attached garage, 4 bathrooms, and a 22 × 103 foot lot. After adjustment for its advantages over the subject — approximately $27,000 for additional square footage (108 sqft × $250), $45,000 for the finished basement, $18,000 for the double garage, and $5,000 for the extra bathroom — the adjusted comparable value is approximately $870,000.</p>
+      <p><strong>24 Briarfield Avenue</strong> (MLS# N12680700) sold January 16, 2026 for $871,888 at 97% of its $899,000 ask after just 7 days on market — the fastest sale in the data set and the most direct comparable. This 1,800 sq ft freehold townhouse has 3 bedrooms, 3 bathrooms, a single attached garage, and an unfinished walk-out basement. The only material differences from the subject are: Briarfield has a walkout basement (modest premium, approximately -$7,000) and the subject has a gas fireplace which Briarfield lacks (+$5,000). Net adjustment is effectively zero — the adjusted comparable value is approximately $870,000.</p>
+      <p>The convergence of both direct comps at approximately $870,000 after independent adjustment paths is a strong anchor. When two comps with different starting prices arrive at the same adjusted number, it validates the methodology.</p>
+
+      <h3>Floor Comps — Semi-Detached, Smaller Band</h3>
+      <p>124 Countryman Road (MLS# N12716214) sold March 6, 2026 for $950,000 — a 1,473 sq ft semi-detached home with an unfinished walkout basement on a premium ravine lot (24 × 154 ft deep). Despite being 333 sq ft smaller than the subject, the ravine lot drove a significant premium, resulting in $645/sq ft — an outlier explained by the lot, not the structure. This comp is directionally useful: it confirms that buyers will pay in the $900–$950K range for premium-lot product in Sharon. It sets the floor for what premium features command, and it implicitly tells us that standard lots without the ravine premium trade materially lower.</p>
+
+      <h3>Ceiling Comps — Semi-Detached, Larger / Active</h3>
+      <p>The active and recently sold semi-detached homes bracket the ceiling effectively. 130 Countryman Road (semi, 1,660 sqft, walkout) sold for $900,000 after being strategically under-listed at $850,000, resulting in a 106% SP/LP in 11 days. 46 Deer Pass Road (semi, 1,950 sqft) sold for $904,900 at 95% SP/LP in 32 days. The current active semi-detacheds — 1 Silver Charm Dr ($1,049,900, 43 DOM, unsold) and 11 Kester Crt ($920,000, new listing) — establish where the competitive ceiling sits. Freehold towns consistently trade below semi-detacheds for equivalent locations and conditions. The subject's ceiling is therefore bounded by the semi-detached market at approximately $900,000–$920,000, with $920K+ achievable only under exceptional conditions.</p>
+    </div>
+
+    <div class="prose-section">
+      <h2>4. Market Trend Analysis</h2>
+      <p>The East Gwillimbury housing market remains in buyer's territory as of Q1 2026, but the trend is improving. The January 2026 monthly data showed a SNLR of 25% and MOI of 7.33 — deep buyer's market conditions. February 2026 showed improvement: SNLR improved to 39%, MOI tightened to 5.31, and row townhouses in East Gwillimbury specifically posted 103% SP/LP at a 14-day average DOM. This latter data point is significant — it confirms that correctly priced row townhouses are generating genuine competitive activity, even in a market that overall still leans toward buyers.</p>
+      <p>At the GTA level, TRREB data for March 2026 shows freehold townhouses averaging $931,740 — down 6.9% year-over-year but essentially flat month-over-month (+0.1%), suggesting the correction is stabilizing. GTA-wide, MOI tightened from 5.0 in February to 4.3 in March. Overall market trajectory: the worst of the correction appears to have passed, and spring 2026 is showing early signs of stabilization, though no one should mistake stabilization for recovery to 2022 peak values.</p>
+      <p>The six-month average price for East Gwillimbury freehold townhouses, estimated from available data, is approximately $876,000. The three-month average is approximately $878,000. The pricing implication: we are not in a rapidly declining market, but we are also not in a market where overpricing is rewarded. The right price will sell; anything above the Market Middle will sit.</p>
+    </div>
+
+    <div class="prose-section">
+      <h2>5. Four-Tier Pricing Framework</h2>
+      <h3>Conservative: $849,000 – $864,900</h3>
+      <p>Slightly below the Market Middle. A property priced in this range will attract strong showing traffic quickly, often resulting in multiple offers and a sale above the list price. In a buyer's market, conservative pricing is a legitimate strategic choice — it creates urgency and competition. Expected outcome: sale within 7–14 days at or above list price. Best suited if the seller's priority is speed and certainty.</p>
+
+      <h3>Market Middle: $865,000 – $884,900</h3>
+      <p>The fair-value estimate based on the adjusted comparable data. Both direct comps converge at approximately $870,000 after adjustment — this is where the market says the property belongs. Listing within this range, with strong marketing and presentation, positions the seller for a clean transaction in a reasonable timeframe (14–28 days). Recommended list price: $879,900 (top of the Market Middle, justified by strong spring market timing and correct-priced row town demand signal from February data).</p>
+
+      <h3>Optimistic: $885,000 – $909,900</h3>
+      <p>Reachable under ideal conditions — motivated buyer, low competing inventory, excellent staging and presentation. The semi-detached comps at $900,000–$950,000 confirm buyers will pay in this range for the right product. The question is whether a 1,806 sq ft freehold town with 1-car garage and unfinished basement can compete with those semis at the same price. It can, but it needs to be the best-presented, best-marketed, best-priced version of itself. Extended DOM risk increases meaningfully above $890,000.</p>
+
+      <h3>Overpriced: $910,000+</h3>
+      <p>The evidence is unambiguous. This property was listed at $998,800 in 2024 and terminated after 85 days. The market has not improved since then — in fact, prices are down year-over-year. 107 Beechborough Cres — a superior property with 2-car garage, ravine view, and corner lot — has been sitting at $968,000 for 45+ days with a price reduction. Pricing above $910,000 is not a strategy. It is the beginning of a second termination. The stale listing penalty is real: overpriced properties that eventually sell do so for less than if they had been priced correctly from the start, because the accumulated DOM signals desperation and invites lower offers.</p>
+    </div>
+
+    <div class="prose-section">
+      <h2>6. Recommended Pricing Strategy</h2>
+      <p>The data supports a recommended list price of <strong>$879,900</strong> with a target close range of <strong>$853,000 – $879,900</strong>. This positions the property at the upper end of the Market Middle tier — justified by the spring market timing, the demonstrated demand signal for correctly priced row townhouses (103% SP/LP in February), and the property's well-maintained original Rodeo Fine Homes quality. The list price creates room for negotiation while remaining competitive with the active inventory.</p>
+      <p>The key messaging to the seller: the market is showing early signs of stabilization after the 2022 correction. This is not 2022, and pricing to 2022 values will result in the same outcome as 2024. But this is also a market where correctly priced, well-marketed properties are moving — and the spring window is the best opportunity of the year. Price it right, execute the marketing, and close the chapter.</p>
+      <div class="summary-box">
+        <h4>Evaluation Summary — 49 Walter Proctor Rd</h4>
+        <div class="summary-row"><span>Recommended List Price</span><span>$879,900</span></div>
+        <div class="summary-row"><span>Base Evaluation Range (Market Middle)</span><span>$865,000 – $884,900</span></div>
+        <div class="summary-row"><span>Expected Close Range (@ 97% SP/LP)</span><span>$853,000 – $879,900</span></div>
+        <div class="summary-row"><span>Conservative Floor</span><span>$849,000 – $864,900</span></div>
+        <div class="summary-row"><span>Optimistic Ceiling</span><span>$885,000 – $909,900</span></div>
+        <div class="summary-row"><span>Overpriced Threshold</span><span>$910,000+</span></div>
+        <div class="summary-row"><span>MPAC Assessment</span><span>$561,000 (Jan 1, 2016)</span></div>
+        <div class="summary-row"><span>Market Classification</span><span>Buyer's Market (Improving)</span></div>
+        <div class="summary-row"><span>Evaluation Date</span><span>April 14, 2026</span></div>
+      </div>
+    </div>
+
+  </div><!-- end analysis-content -->
+</div><!-- end inner -->
+</div><!-- end tab-analysis -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-brand">SOLDMIKE · RE/MAX PREMIER THE OP TEAM, BROKERAGE</div>
+  <div class="footer-details">
+    Michael Barillari, Broker · Nick Oppedisano, Salesperson<br>
+    3550 Rutherford Rd #80, Vaughan ON L4H3T8 · 416-987-8000 · mike@theopteam.ca · soldmike.ca
+  </div>
+  <div class="footer-disclaimer">
+    This evaluation is based on comparable sales data and market analysis as of April 14, 2026. It is not a certified appraisal. Values are estimates and actual sale price may vary based on market conditions, buyer demand, and property presentation. All data sourced from TRREB MLS®, MPAC, GeoWarehouse, and published market reports. MLS® is a registered trademark of the Canadian Real Estate Association.
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ---- TAB SYSTEM ----
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ---- CHART DEFAULTS ----
+Chart.defaults.color = '#8a8a9a';
+Chart.defaults.borderColor = '#2a2a3a';
+Chart.defaults.font.family = 'Inter, sans-serif';
+Chart.defaults.font.size = 11;
+
+// ---- SCATTER CHART ----
+const scatterCtx = document.getElementById('scatterChart').getContext('2d');
+new Chart(scatterCtx, {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Sold Comps',
+        data: [
+          {x:1800, y:871888, label:'24 Briarfield'},
+          {x:1914, y:965000, label:'17 Carratuck'},
+          {x:1473, y:950000, label:'124 Countryman'},
+          {x:1660, y:900000, label:'130 Countryman'},
+          {x:1950, y:904900, label:'46 Deer Pass'},
+        ],
+        backgroundColor: 'rgba(74,222,128,0.75)',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Active Listings',
+        data: [
+          {x:2000, y:968000, label:'107 Beechborough'},
+          {x:2141, y:1049900, label:'1 Silver Charm'},
+          {x:2015, y:920000, label:'11 Kester'},
+        ],
+        backgroundColor: 'rgba(96,165,250,0.75)',
+        pointRadius: 8,
+        pointHoverRadius: 10,
+      },
+      {
+        label: 'Subject Property',
+        data: [{x:1806, y:874000}],
+        backgroundColor: '#c5a55a',
+        pointStyle: 'triangle',
+        pointRadius: 14,
+        pointHoverRadius: 16,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { color: '#8a8a9a', usePointStyle: true }},
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const d = ctx.raw;
+            const name = d.label || 'Subject';
+            return `${name}: ${d.x.toLocaleString()} sqft · $${d.y.toLocaleString()}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Square Footage (Above Grade)', color: '#8a8a9a' },
+           min: 1300, max: 2300,
+           ticks: { color: '#8a8a9a' }},
+      y: { title: { display: true, text: 'Price ($)', color: '#8a8a9a' },
+           min: 840000, max: 1100000,
+           ticks: { color: '#8a8a9a', callback: v => '$'+(v/1000).toFixed(0)+'K' }}
+    }
+  }
+});
+
+// ---- PRICE CHART ----
+const pCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(pCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {
+        label: 'Avg Sale Price',
+        data: [878000, 873000, 866000, 872000, 878000, 882000],
+        borderColor: '#c5a55a',
+        backgroundColor: 'rgba(197,165,90,.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+      },
+      {
+        label: 'Median Sale Price',
+        data: [872000, 866000, 860000, 870000, 872000, 872000],
+        borderColor: '#60a5fa',
+        backgroundColor: 'transparent',
+        borderDash: [5,3],
+        tension: 0.4,
+        pointRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#8a8a9a', usePointStyle: true }}},
+    scales: {
+      y: { ticks: { color: '#8a8a9a', callback: v => '$'+(v/1000).toFixed(0)+'K' }},
+      x: { ticks: { color: '#8a8a9a' }}
+    }
+  }
+});
+
+// ---- VOLUME CHART ----
+const vCtx = document.getElementById('volChart').getContext('2d');
+new Chart(vCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {
+        label: 'Sales Volume',
+        data: [7,8,9],
+        backgroundColor: 'rgba(74,222,128,.65)',
+        borderRadius: 4,
+      },
+      {
+        label: 'New Listings',
+        data: [19,17,16],
+        backgroundColor: 'rgba(248,113,113,.5)',
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#8a8a9a', usePointStyle: true }}},
+    scales: {
+      y: { ticks: { color: '#8a8a9a' }},
+      x: { ticks: { color: '#8a8a9a' }}
+    }
+  }
+});
+
+// ---- MOI CHART ----
+const moiCtx = document.getElementById('moiChart').getContext('2d');
+new Chart(moiCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {
+        label: 'Months of Inventory',
+        data: [6.2, 6.8, 5.9, 7.3, 5.3, 4.9],
+        borderColor: '#f87171',
+        backgroundColor: 'rgba(248,113,113,.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+      },
+      {
+        label: "Sellers' Market Threshold (3.0)",
+        data: [3, 3, 3, 3, 3, 3],
+        borderColor: '#4ade80',
+        borderDash: [6,4],
+        backgroundColor: 'transparent',
+        pointRadius: 0,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#8a8a9a', usePointStyle: true }}},
+    scales: {
+      y: { min: 0, max: 9, ticks: { color: '#8a8a9a', callback: v => v+' mo' }},
+      x: { ticks: { color: '#8a8a9a' }}
+    }
+  }
+});
+
+// ---- WHAT-IF SLIDER ----
+const AVG_SPLP = 0.97;
+const AVG_DOM = 28;
+const OPTIMAL = 879900;
+const MARKET_MIDDLE = 874950;
+
+const slider = document.getElementById('listSlider');
+function updateSlider() {
+  const list = parseInt(slider.value);
+  const diff = list - MARKET_MIDDLE;
+  const pctOver = (list / MARKET_MIDDLE - 1) * 100;
+
+  let dom, saleRatio, cutRisk, verdict, verdictStyle;
+
+  if (pctOver <= -3) {
+    dom = 8; saleRatio = 1.02; cutRisk = 3;
+    verdict = '🔥 Under-listed — will attract multiple offers quickly. Leaves money on table.';
+    verdictStyle = 'background:rgba(74,222,128,.12);color:#4ade80';
+  } else if (pctOver <= 1) {
+    dom = 14; saleRatio = 0.99; cutRisk = 8;
+    verdict = '✓ Conservative — strong activity expected within 2 weeks.';
+    verdictStyle = 'background:rgba(74,222,128,.12);color:#4ade80';
+  } else if (pctOver <= 3) {
+    dom = 21; saleRatio = 0.979; cutRisk = 12;
+    verdict = '✓ Well-positioned within Market Middle — recommended range.';
+    verdictStyle = 'background:rgba(197,165,90,.12);color:#c5a55a';
+  } else if (pctOver <= 6) {
+    dom = 35; saleRatio = 0.965; cutRisk = 28;
+    verdict = '⚠ Slightly stretched — increased DOM risk. Needs excellent presentation.';
+    verdictStyle = 'background:rgba(248,113,113,.08);color:#f87171';
+  } else if (pctOver <= 10) {
+    dom = 55; saleRatio = 0.952; cutRisk = 55;
+    verdict = '⚠ Overpriced — comparable semis offer more value at this price point.';
+    verdictStyle = 'background:rgba(248,113,113,.12);color:#f87171';
+  } else if (pctOver <= 15) {
+    dom = 80; saleRatio = 0.93; cutRisk = 78;
+    verdict = '🚫 Significantly overpriced — similar to prior terminated listing strategy.';
+    verdictStyle = 'background:rgba(248,113,113,.18);color:#f87171';
+  } else {
+    dom = 90; saleRatio = 0.89; cutRisk = 95;
+    verdict = '🚫 Extreme overpricing — virtually no chance of sale. TER territory.';
+    verdictStyle = 'background:rgba(248,113,113,.2);color:#f87171';
+  }
+
+  const salePrice = Math.round(list * saleRatio / 100) * 100;
+  const netVsOptimal = salePrice - Math.round(OPTIMAL * 0.979);
+  const netStr = netVsOptimal >= 0 ? '+$'+netVsOptimal.toLocaleString() : '-$'+Math.abs(netVsOptimal).toLocaleString();
+
+  document.getElementById('sliderPrice').textContent = '$'+list.toLocaleString();
+  document.getElementById('siDOM').textContent = dom + ' days';
+  document.getElementById('siSale').textContent = '$'+salePrice.toLocaleString();
+  document.getElementById('siRisk').textContent = cutRisk + '%';
+  document.getElementById('siNet').textContent = netVsOptimal === 0 ? 'Baseline' : netStr;
+  document.getElementById('siVsMM').textContent = (pctOver >= 0 ? '+' : '') + pctOver.toFixed(1) + '%';
+  const vEl = document.getElementById('sliderVerdict');
+  vEl.textContent = verdict;
+  vEl.setAttribute('style', verdictStyle + ';text-align:center;font-size:.8rem;font-weight:600;padding:.75rem 1rem;border-radius:8px;margin-top:1rem');
+}
+slider.addEventListener('input', updateSlider);
+updateSlider();
+</script>
+</body>
+</html>
