@@ -8,80 +8,76 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--black:#0a0a0a;--white:#fafaf8;--gold:#c9a84c;--gold-light:#e8c97a;--grey:#888;--dark-grey:#141414;--card-bg:#111;}
+:root{--bg:#f0edea;--white:#ffffff;--text:#1a1a1a;--gold:#c9a84c;--gold-light:#e8c97a;--navy:#28388F;--grey:#777;--light-grey:#e8e4df;--card-bg:#ffffff;--card-border:#e0dbd5;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{background:var(--black);color:var(--white);font-family:'Montserrat',sans-serif;font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(10,10,10,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(201,168,76,0.12);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--light-grey);box-shadow:0 1px 8px rgba(0,0,0,0.04);}
 .nav-logo img{height:44px;width:auto;}
-.nav-cta{background:var(--gold);color:var(--black);text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:10px 20px;transition:all 0.2s;}
-.nav-cta:hover{background:var(--gold-light);}
+.nav-cta{background:var(--navy);color:#fff;text-decoration:none;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:10px 20px;transition:all 0.2s;}
+.nav-cta:hover{background:#1e2d75;}
 
-/* HERO */
-.hero{padding:100px 20px 40px;text-align:center;background:linear-gradient(to bottom,var(--black),var(--dark-grey));}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.4);color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;margin-bottom:16px;}
+/* HERO — COMPACT */
+.hero{padding:76px 20px 24px;text-align:center;background:var(--white);border-bottom:1px solid var(--light-grey);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.35);color:var(--gold);font-size:9px;letter-spacing:3px;text-transform:uppercase;padding:5px 14px;margin-bottom:10px;}
 .hero-badge::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
-.hero h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(32px,7vw,56px);letter-spacing:2px;line-height:1.15;margin-bottom:12px;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(26px,6vw,42px);letter-spacing:2px;line-height:1.15;margin-bottom:8px;color:var(--text);}
 .hero h1 span{color:var(--gold);}
-.hero p{color:var(--grey);font-size:clamp(13px,2.5vw,16px);max-width:560px;margin:0 auto 24px;line-height:1.6;font-weight:300;}
-.hero-stat-row{display:flex;justify-content:center;gap:32px;flex-wrap:wrap;}
-.hero-stat{text-align:center;}
-.hero-stat .num{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);font-weight:600;}
-.hero-stat .lab{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-top:2px;}
+.hero p{color:var(--grey);font-size:clamp(12px,2.2vw,14px);max-width:480px;margin:0 auto;line-height:1.6;font-weight:300;}
 
 /* LISTINGS GRID */
-.listings{padding:40px 16px 60px;max-width:1100px;margin:0 auto;}
+.listings{padding:28px 16px 48px;max-width:900px;margin:0 auto;}
 .listings-grid{display:grid;grid-template-columns:1fr;gap:20px;}
-.card{background:var(--card-bg);border:1px solid rgba(255,255,255,0.04);overflow:hidden;transition:transform 0.25s,border-color 0.25s;}
-.card:hover{transform:translateY(-3px);border-color:rgba(201,168,76,0.2);}
+.card{background:var(--card-bg);border:1px solid var(--card-border);overflow:hidden;transition:transform 0.25s,box-shadow 0.25s;border-radius:4px;}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.08);}
 .card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;}
-.card-body{padding:20px;}
-.card-price{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--gold);margin-bottom:4px;}
-.card-price .price-cut{font-size:13px;color:#e05555;font-family:'Montserrat',sans-serif;font-weight:500;margin-left:8px;}
-.card-address{font-size:14px;font-weight:400;letter-spacing:0.5px;margin-bottom:10px;}
-.card-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;}
-.card-stats span{font-size:12px;color:var(--grey);display:flex;align-items:center;gap:4px;}
-.card-stats span strong{color:var(--white);font-weight:500;}
-.card-tag{display:inline-block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;font-weight:600;}
-.tag-new{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid rgba(201,168,76,0.3);}
-.tag-reduced{background:rgba(224,85,85,0.12);color:#e05555;border:1px solid rgba(224,85,85,0.3);}
-.card-cta{display:block;text-align:center;background:var(--gold);color:var(--black);text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:14px;margin-top:16px;transition:background 0.2s;}
-.card-cta:hover{background:var(--gold-light);}
-.card-mls{font-size:10px;color:rgba(255,255,255,0.25);margin-top:8px;}
+.card-body{padding:18px;}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--navy);margin-bottom:3px;}
+.card-price .price-cut{font-size:12px;color:#cc4444;font-family:'Montserrat',sans-serif;font-weight:600;margin-left:6px;}
+.card-address{font-size:13px;font-weight:500;letter-spacing:0.3px;margin-bottom:8px;color:var(--text);}
+.card-stats{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+.card-stats span{font-size:11px;color:var(--grey);display:flex;align-items:center;gap:3px;}
+.card-stats span strong{color:var(--text);font-weight:500;}
+.card-tag{display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;font-weight:600;border-radius:2px;}
+.tag-new{background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.3);}
+.tag-reduced{background:rgba(204,68,68,0.08);color:#cc4444;border:1px solid rgba(204,68,68,0.25);}
+.card-buttons{display:flex;gap:8px;margin-top:14px;}
+.card-btn{flex:1;text-align:center;text-decoration:none;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:12px 8px;transition:all 0.2s;border-radius:2px;}
+.btn-inquiry{background:var(--gold);color:var(--white);}
+.btn-inquiry:hover{background:var(--gold-light);}
+.btn-view{background:var(--navy);color:var(--white);}
+.btn-view:hover{background:#1e2d75;}
+.card-mls{font-size:9px;color:#bbb;margin-top:8px;}
 
 /* CTA SECTION */
-.cta-section{padding:48px 20px;text-align:center;background:var(--dark-grey);border-top:1px solid rgba(201,168,76,0.1);border-bottom:1px solid rgba(201,168,76,0.1);}
-.cta-section h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(24px,5vw,36px);margin-bottom:8px;}
+.cta-section{padding:40px 20px;text-align:center;background:var(--white);border-top:1px solid var(--light-grey);border-bottom:1px solid var(--light-grey);}
+.cta-section h2{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:clamp(22px,4.5vw,32px);margin-bottom:6px;color:var(--text);}
 .cta-section h2 span{color:var(--gold);}
-.cta-section p{color:var(--grey);font-size:14px;margin-bottom:24px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6;}
-.cta-buttons{display:flex;flex-direction:column;gap:12px;align-items:center;}
-.cta-btn{display:inline-block;text-decoration:none;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:16px 36px;min-width:260px;text-align:center;transition:all 0.2s;}
-.cta-primary{background:var(--gold);color:var(--black);}
-.cta-primary:hover{background:var(--gold-light);}
-.cta-secondary{border:1px solid rgba(201,168,76,0.4);color:var(--gold);background:transparent;}
-.cta-secondary:hover{background:rgba(201,168,76,0.08);}
+.cta-section p{color:var(--grey);font-size:13px;margin-bottom:20px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6;}
+.cta-buttons{display:flex;flex-direction:column;gap:10px;align-items:center;}
+.cta-btn{display:inline-block;text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;padding:14px 32px;min-width:240px;text-align:center;transition:all 0.2s;border-radius:2px;}
+.cta-primary{background:var(--navy);color:#fff;}
+.cta-primary:hover{background:#1e2d75;}
+.cta-secondary{border:1px solid var(--card-border);color:var(--text);background:transparent;}
+.cta-secondary:hover{background:rgba(0,0,0,0.03);}
 
 /* FOOTER */
-footer{padding:32px 20px;text-align:center;border-top:1px solid rgba(255,255,255,0.04);}
-footer img{height:40px;margin-bottom:10px;opacity:0.8;}
-footer p{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;}
+footer{padding:28px 20px;text-align:center;}
+footer img{height:36px;margin-bottom:8px;opacity:0.7;}
+footer p{font-size:10px;color:#aaa;letter-spacing:0.5px;}
 footer a{color:var(--gold);text-decoration:none;}
 
-/* DESKTOP */
+/* DESKTOP — 2 COLUMNS */
 @media(min-width:640px){
-  nav{padding:12px 32px;}
-  .nav-logo img{height:56px;}
-  .hero{padding:120px 32px 56px;}
-  .listings{padding:56px 24px 80px;}
+  nav{padding:10px 32px;}
+  .nav-logo img{height:52px;}
+  .hero{padding:84px 32px 28px;}
+  .listings{padding:32px 24px 56px;}
   .listings-grid{grid-template-columns:repeat(2,1fr);gap:24px;}
   .cta-buttons{flex-direction:row;justify-content:center;}
-}
-@media(min-width:960px){
-  .listings-grid{grid-template-columns:repeat(3,1fr);}
-  .card-body{padding:24px;}
 }
 </style>
 </head>
@@ -90,19 +86,14 @@ footer a{color:var(--gold);text-decoration:none;}
 <!-- NAV -->
 <nav>
   <a href="https://soldmike.ca" class="nav-logo"><img src="https://photos.alphotoscdn.com/file/al-cms/MediaLibrary/20358/a9ac81bf-87d9-4a97-9d52-8db041552c35.png" alt="THE OP TEAM"></a>
-  <a href="tel:+16474717704" class="nav-cta">Call Now</a>
+  <a href="tel:+16472782237" class="nav-cta">Call Now</a>
 </nav>
 
-<!-- HERO -->
+<!-- HERO — COMPACT -->
 <section class="hero">
   <div class="hero-badge">Hot Deals Alert</div>
   <h1>These Deals Are <span>Real</span></h1>
-  <p>I don't put this out unless I mean it. These are priced to move — some brand new to market, some with serious price cuts. If you've been waiting for the right time, this is it.</p>
-  <div class="hero-stat-row">
-    <div class="hero-stat"><div class="num">7</div><div class="lab">Exclusive Deals</div></div>
-    <div class="hero-stat"><div class="num">$999K</div><div class="lab">Starting From</div></div>
-    <div class="hero-stat"><div class="num">April</div><div class="lab">2026</div></div>
-  </div>
+  <p>Priced to move — some brand new to market, some with serious price cuts. If you've been waiting, this is it.</p>
 </section>
 
 <!-- LISTINGS -->
@@ -121,7 +112,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>1,500–2,000</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">New Listing</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%2056%20Wildberry%20Cres%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12947288" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12947288</div>
       </div>
     </div>
@@ -138,7 +132,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>3,000–3,500</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">New Listing</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%20179%20Lio%20Ave%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12951520" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12951520</div>
       </div>
     </div>
@@ -155,7 +152,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>2,500–3,000</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">73 Days — Motivated Seller</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%208%20Elite%20Rd%2C%20Caledon" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-W12743592" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# W12743592</div>
       </div>
     </div>
@@ -164,7 +164,7 @@ footer a{color:var(--gold);text-decoration:none;}
     <div class="card">
       <img class="card-img" src="https://raw.githubusercontent.com/broker-svg/soldmike-tools/main/hot-deals-imgs/fifth.jpg" alt="55 Fifth Ave, Vaughan" loading="lazy">
       <div class="card-body">
-        <div class="card-price">$1,719,999 <span class="price-cut">&darr; $129K</span></div>
+        <div class="card-price">$1,719,999 <span class="price-cut">&darr;$129K</span></div>
         <div class="card-address">55 Fifth Ave, Vaughan</div>
         <div class="card-stats">
           <span><strong>4</strong> Beds</span>
@@ -172,7 +172,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>3,500–5,000</strong> sqft</span>
         </div>
         <span class="card-tag tag-reduced">Price Reduced</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%2055%20Fifth%20Ave%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12834456" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12834456</div>
       </div>
     </div>
@@ -189,7 +192,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>3,000–3,500</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">New Listing</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%2016%20St%20Michele%20Pl%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12979408" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12979408</div>
       </div>
     </div>
@@ -206,7 +212,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>3,000–3,500</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">Just Listed</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%20226%20Via%20Borghese%20St%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12992384" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12992384</div>
       </div>
     </div>
@@ -223,7 +232,10 @@ footer a{color:var(--gold);text-decoration:none;}
           <span><strong>5,000+</strong> sqft</span>
         </div>
         <span class="card-tag tag-new">Just Listed</span>
-        <a href="tel:+16474717704" class="card-cta">Book a Showing</a>
+        <div class="card-buttons">
+          <a href="mailto:Mike@TheOPTeam.ca?subject=Inquiry%20—%20118%20Cowan%20Dr%2C%20Vaughan" class="card-btn btn-inquiry">Inquiry</a>
+          <a href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/1X8mlOM5yWUQDeZ44PGotLwmPVnLG2TX9R8XJD9juJ4VrDMNMBur7WVkOWJ9UQYM5gBprETrYwpWJ44KIXQKQRqkgJFy4P3jPmyjIgXzalMb4YfV9NQlQa9pcDnRNXa2mXtb3AoazAPpcDgr1NwEGlUAlOLn5258FL7bKJBw1bu8j7XmblmJiLbbry9lR?active=TREB-N12990568" target="_blank" class="card-btn btn-view">View Listing</a>
+        </div>
         <div class="card-mls">MLS# N12990568</div>
       </div>
     </div>
@@ -234,9 +246,9 @@ footer a{color:var(--gold);text-decoration:none;}
 <!-- CTA SECTION -->
 <section class="cta-section">
   <h2>Ready to <span>Make a Move</span>?</h2>
-  <p>These properties won't sit. If you see something you like, reach out now — I'll get you in the door before anyone else does.</p>
+  <p>These won't sit. See something you like? Reach out — I'll get you in before anyone else.</p>
   <div class="cta-buttons">
-    <a href="tel:+16474717704" class="cta-btn cta-primary">Call Michael</a>
+    <a href="tel:+16472782237" class="cta-btn cta-primary">Call Michael</a>
     <a href="mailto:Mike@TheOPTeam.ca?subject=Hot%20Deals%20—%20I%27m%20Interested" class="cta-btn cta-secondary">Send an Email</a>
   </div>
 </section>
