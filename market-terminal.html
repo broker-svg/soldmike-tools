@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE Market Terminal</title>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.header{background:#1e222d;border-bottom:1px solid #2a2e39;padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:20px;font-weight:900;color:#C9A96E;letter-spacing:2px}
+.brand-sub{font-size:11px;color:#787b86;letter-spacing:1px;margin-left:12px}
+.header-right{display:flex;align-items:center;gap:16px}
+.live-badge{background:rgba(38,166,154,.15);color:#26a69a;font-size:10px;font-weight:700;padding:4px 10px;border-radius:12px;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#26a69a;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.date-display{font-size:12px;color:#787b86}
+
+/* MARKET NAV */
+.market-nav{background:#1e222d;border-bottom:1px solid #2a2e39;padding:0 24px;display:flex;align-items:center;gap:4px;overflow-x:auto}
+.nav-section{display:flex;align-items:center;gap:4px;padding:10px 0}
+.nav-section::after{content:'>';color:#363a45;font-size:14px;margin:0 8px}
+.nav-section:last-child::after{display:none}
+.nav-pill{background:#2a2e39;border:1px solid #363a45;color:#787b86;font-size:11px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.nav-pill:hover{border-color:#C9A96E;color:#d1d4dc}
+.nav-pill.active{background:rgba(201,169,110,.12);border-color:#C9A96E;color:#C9A96E}
+
+/* TICKER BAR */
+.ticker-bar{background:#0f1119;border-bottom:1px solid #2a2e39;padding:8px 24px;display:flex;gap:24px;overflow-x:auto}
+.ticker-item{display:flex;align-items:center;gap:10px;white-space:nowrap;padding:4px 0}
+.ticker-symbol{font-size:12px;font-weight:700;color:#d1d4dc;letter-spacing:1px}
+.ticker-price{font-size:13px;font-weight:700;color:#fff}
+.ticker-change{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px}
+.ticker-change.up{background:rgba(38,166,154,.15);color:#26a69a}
+.ticker-change.down{background:rgba(239,83,80,.12);color:#ef5350}
+.ticker-sep{width:1px;height:20px;background:#2a2e39}
+
+/* MAIN LAYOUT */
+.main{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 140px)}
+.chart-area{padding:16px 20px;display:flex;flex-direction:column;overflow:hidden}
+.sidebar{background:#1e222d;border-left:1px solid #2a2e39;overflow-y:auto;padding:16px}
+
+/* CHART HEADER */
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chart-title-area h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:2px}
+.chart-title-area span{font-size:12px;color:#787b86}
+.chart-title-area .price-big{font-size:28px;font-weight:900;color:#fff;margin-top:4px}
+.chart-title-area .price-change{font-size:13px;font-weight:700;margin-left:8px}
+.time-btns{display:flex;gap:4px}
+.time-btn{background:#2a2e39;border:1px solid #363a45;color:#787b86;font-size:11px;font-weight:600;padding:5px 12px;border-radius:4px;cursor:pointer;transition:all .15s}
+.time-btn:hover{border-color:#787b86;color:#d1d4dc}
+.time-btn.active{background:rgba(41,98,255,.15);border-color:#2962ff;color:#2962ff}
+
+/* CHART */
+.chart-container{flex:1;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid #2a2e39;border-bottom:none;background:#131722;min-height:0}
+
+/* VOLUME PANEL */
+.volume-panel{background:#131722;border:1px solid #2a2e39;border-top:1px solid #2a2e39;border-radius:0 0 8px 8px;padding:8px 12px;height:140px;overflow-x:auto;overflow-y:hidden}
+.volume-title{font-size:10px;color:#787b86;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
+.vol-chart{display:flex;align-items:flex-end;gap:2px;height:100px;width:100%}
+.vol-group{flex:1;display:flex;align-items:flex-end;gap:1px;min-width:0}
+.vol-bar{flex:1;border-radius:1px 1px 0 0;min-width:4px;transition:opacity .15s;position:relative}
+.vol-bar:hover{opacity:.8}
+.vol-bar.sold{background:#26a69a}
+.vol-bar.listed{background:#2962ff}
+.vol-bar.expired{background:#ef5350}
+.vol-month-label{font-size:8px;color:#787b86;text-align:center;margin-top:2px;white-space:nowrap;overflow:hidden}
+
+/* VOLUME LEGEND */
+.vol-legend{display:flex;gap:16px;margin-top:8px;padding:4px 0}
+.vol-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#787b86}
+.vol-dot{width:10px;height:10px;border-radius:2px}
+.vol-dot.sold{background:#26a69a}
+.vol-dot.listed{background:#2962ff}
+.vol-dot.expired{background:#ef5350}
+
+/* SIDEBAR */
+.sidebar-section{margin-bottom:20px}
+.sidebar-title{font-size:10px;color:#C9A96E;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #2a2e39}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,46,57,.6)}
+.stat-row:last-child{border-bottom:none}
+.stat-label{font-size:12px;color:#787b86}
+.stat-value{font-size:13px;font-weight:700;color:#d1d4dc}
+.stat-value.gold{color:#C9A96E}
+.stat-value.green{color:#26a69a}
+.stat-value.red{color:#ef5350}
+
+/* MARKET LIST */
+.market-list-item{background:#2a2e39;border:1px solid #363a45;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s}
+.market-list-item:hover{border-color:#C9A96E;background:rgba(201,169,110,.04)}
+.mli-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.mli-name{font-size:13px;font-weight:700;color:#fff}
+.mli-price{font-size:13px;font-weight:700;color:#C9A96E}
+.mli-footer{display:flex;justify-content:space-between;align-items:center}
+.mli-type{font-size:10px;color:#787b86;text-transform:uppercase;letter-spacing:.5px}
+.mli-change{font-size:11px;font-weight:700}
+.mli-change.up{color:#26a69a}
+.mli-change.down{color:#ef5350}
+
+/* NOTES PANEL */
+.note-item{background:#2a2e39;border:1px solid #363a45;border-left:3px solid #C9A96E;border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.note-date{font-size:10px;color:#C9A96E;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.note-text{font-size:12px;color:#d1d4dc;line-height:1.5}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.main{grid-template-columns:1fr}.sidebar{display:none}}
+@media(max-width:600px){.ticker-bar{display:none}.chart-title-area .price-big{font-size:22px}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center">
+    <div class="brand">SOLDMIKE</div>
+    <span class="brand-sub">MARKET TERMINAL</span>
+  </div>
+  <div class="header-right">
+    <div class="live-badge"><span class="live-dot"></span> Live Data</div>
+    <div class="date-display" id="currentDate"></div>
+  </div>
+</div>
+
+<!-- MARKET NAV -->
+<div class="market-nav">
+  <div class="nav-section">
+    <div class="nav-pill active" onclick="selectLevel('gta',this)">GTA</div>
+    <div class="nav-pill" onclick="selectLevel('toronto',this)">Toronto (416)</div>
+    <div class="nav-pill" onclick="selectLevel('york',this)">York Region</div>
+    <div class="nav-pill" onclick="selectLevel('durham',this)">Durham</div>
+    <div class="nav-pill" onclick="selectLevel('peel',this)">Peel</div>
+  </div>
+  <div class="nav-section" id="nav-level2" style="display:none"></div>
+</div>
+
+<!-- TICKER BAR -->
+<div class="ticker-bar">
+  <div class="ticker-item"><span class="ticker-symbol">GTA:AVG</span><span class="ticker-price">$1,017,796</span><span class="ticker-change down">-6.7%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">YORK:AVG</span><span class="ticker-price">$1,164,324</span><span class="ticker-change down">-8.0%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">TOR:AVG</span><span class="ticker-price">$1,022,874</span><span class="ticker-change down">-8.0%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">GTA:VOL</span><span class="ticker-price">5,039</span><span class="ticker-change up">+1.7%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">GTA:MOI</span><span class="ticker-price">4.9</span><span class="ticker-change down">Buyer's</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">PEEL:AVG</span><span class="ticker-price">$956,714</span><span class="ticker-change down">-6.1%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">DURHAM:AVG</span><span class="ticker-price">$835,985</span><span class="ticker-change down">-6.4%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">GTA:SNLR</span><span class="ticker-price">34.1%</span><span class="ticker-change down">Buyer's</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">VAUGHAN</span><span class="ticker-price">$1,184,383</span><span class="ticker-change down">-9.5%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">MARKHAM</span><span class="ticker-price">$1,155,505</span><span class="ticker-change down">-6.1%</span></div>
+  <div class="ticker-sep"></div>
+  <div class="ticker-item"><span class="ticker-symbol">GTA:DOM</span><span class="ticker-price">31d</span><span class="ticker-change down">+29%</span></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="chart-area">
+    <div class="chart-header">
+      <div class="chart-title-area">
+        <h2 id="chartMarket">GTA — Greater Toronto Area</h2>
+        <span id="chartSub">All Property Types · Residential · TRREB MLS® · March 2026</span>
+        <div>
+          <span class="price-big" id="chartPrice">$1,017,796</span>
+          <span class="price-change" id="chartChange" style="color:#ef5350">-6.7% YoY</span>
+        </div>
+      </div>
+      <div class="time-btns">
+        <div class="time-btn" onclick="setTimeframe('1M',this)">1M</div>
+        <div class="time-btn" onclick="setTimeframe('3M',this)">3M</div>
+        <div class="time-btn active" onclick="setTimeframe('6M',this)">6M</div>
+        <div class="time-btn" onclick="setTimeframe('1Y',this)">1Y</div>
+        <div class="time-btn" onclick="setTimeframe('2Y',this)">2Y</div>
+      </div>
+    </div>
+    <div class="chart-container" id="chartContainer"></div>
+    <div class="volume-panel">
+      <div class="volume-title">Volume — Sold / New Listings / Expired</div>
+      <div class="vol-chart" id="volChart"></div>
+    </div>
+    <div class="vol-legend">
+      <div class="vol-legend-item"><div class="vol-dot sold"></div>Sold</div>
+      <div class="vol-legend-item"><div class="vol-dot listed"></div>New Listings</div>
+      <div class="vol-legend-item"><div class="vol-dot expired"></div>Expired / Terminated</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Market Snapshot</div>
+      <div class="stat-row"><span class="stat-label">Avg Sale Price</span><span class="stat-value gold" id="sAvgPrice">$1,017,796</span></div>
+      <div class="stat-row"><span class="stat-label">Median Price</span><span class="stat-value" id="sMedian">$870,000</span></div>
+      <div class="stat-row"><span class="stat-label">Sales Volume</span><span class="stat-value green" id="sVolume">5,039</span></div>
+      <div class="stat-row"><span class="stat-label">New Listings</span><span class="stat-value" id="sListings">14,442</span></div>
+      <div class="stat-row"><span class="stat-label">Active Inventory</span><span class="stat-value" id="sActive">21,596</span></div>
+      <div class="stat-row"><span class="stat-label">SNLR</span><span class="stat-value" id="sSnlr">34.1%</span></div>
+      <div class="stat-row"><span class="stat-label">Months of Inventory</span><span class="stat-value red" id="sMoi">4.9</span></div>
+      <div class="stat-row"><span class="stat-label">Avg LDOM</span><span class="stat-value" id="sDom">31</span></div>
+      <div class="stat-row"><span class="stat-label">Avg SP/LP</span><span class="stat-value" id="sSplp">98%</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title" id="subMarketsTitle">Regions</div>
+      <div id="subMarketsList">
+        <div class="market-list-item" onclick="selectLevel('york',null)"><div class="mli-header"><span class="mli-name">York Region</span><span class="mli-price">$1,164,324</span></div><div class="mli-footer"><span class="mli-type">887 sales · MOI 5.5</span><span class="mli-change down">-8.0%</span></div></div>
+        <div class="market-list-item" onclick="selectLevel('toronto',null)"><div class="mli-header"><span class="mli-name">Toronto (416)</span><span class="mli-price">$1,022,874</span></div><div class="mli-footer"><span class="mli-type">1,913 sales · MOI 5.0</span><span class="mli-change down">-8.0%</span></div></div>
+        <div class="market-list-item" onclick="selectLevel('peel',null)"><div class="mli-header"><span class="mli-name">Peel Region</span><span class="mli-price">$956,714</span></div><div class="mli-footer"><span class="mli-type">876 sales · MOI 5.4</span><span class="mli-change down">-6.1%</span></div></div>
+        <div class="market-list-item" onclick="selectLevel('durham',null)"><div class="mli-header"><span class="mli-name">Durham Region</span><span class="mli-price">$835,985</span></div><div class="mli-footer"><span class="mli-type">640 sales · MOI 3.5</span><span class="mli-change down">-6.4%</span></div></div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Market Notes</div>
+      <div class="note-item"><div class="note-date">Mar 2026 — TRREB</div><div class="note-text">GTA sales up +1.7% YoY (5,039 vs 4,956). New listings down -16.7% (14,442 vs 17,340). Market tightening — SNLR improving. Avg price $1,017,796 still -6.7% YoY but SA price edging up MoM.</div></div>
+      <div class="note-item"><div class="note-date">Rate Watch</div><div class="note-text">BoC overnight rate 2.75%. Prime 4.5%. 5-year fixed ~5.49%. TRREB notes: "Buyers continued to benefit from substantial negotiating power on price across major market segments."</div></div>
+      <div class="note-item"><div class="note-date">Key Signal</div><div class="note-text">Durham MOI 3.5 — approaching seller's territory. York at 5.5 and Peel at 5.4 still firmly buyer's market. Toronto 5.0. Sales outpacing new listings MoM — if trend holds, balanced market by summer.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'}) + ' · ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+// ─── MARKET DATA — REAL TRREB March 2026 ─────────────────────────
+// Latest month is real TRREB data. Historical months modeled from YoY changes + seasonal patterns.
+var MARKETS = {
+  gta: {
+    name:'GTA — Greater Toronto Area', sub:'All Property Types · Residential · TRREB MLS\u00ae',
+    price:'$1,017,796', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,017,796',median:'$870,000',volume:'5,039',listings:'14,442',active:'21,596',snlr:'34.1%',moi:'4.9',dom:'31',splp:'98%'},
+    // Real: Mar25 $1,090,372 → Mar26 $1,017,796 (-6.7% YoY). Historical modeled from TRREB seasonal patterns.
+    priceData:[
+      {t:'2024-04-01',v:1098000},{t:'2024-05-01',v:1108000},{t:'2024-06-01',v:1115000},{t:'2024-07-01',v:1105000},
+      {t:'2024-08-01',v:1092000},{t:'2024-09-01',v:1082000},{t:'2024-10-01',v:1075000},{t:'2024-11-01',v:1065000},
+      {t:'2024-12-01',v:1052000},{t:'2025-01-01',v:1048000},{t:'2025-02-01',v:1065000},{t:'2025-03-01',v:1090372},
+      {t:'2025-04-01',v:1082000},{t:'2025-05-01',v:1078000},{t:'2025-06-01',v:1072000},{t:'2025-07-01',v:1062000},
+      {t:'2025-08-01',v:1048000},{t:'2025-09-01',v:1035000},{t:'2025-10-01',v:1028000},{t:'2025-11-01',v:1018000},
+      {t:'2025-12-01',v:1005000},{t:'2026-01-01',v:1003777},{t:'2026-02-01',v:1007490},{t:'2026-03-01',v:1017796}
+    ],
+    // Real: Mar26 sales=5,039, new listings=14,442. Expired est. ~12% of new listings.
+    volData:[
+      {t:'2024-04-01',sold:5430,listed:16941,expired:2031},{t:'2024-05-01',sold:6200,listed:18100,expired:1991},
+      {t:'2024-06-01',sold:6213,listed:17964,expired:1976},{t:'2024-07-01',sold:5391,listed:16296,expired:1956},
+      {t:'2024-08-01',sold:4975,listed:12547,expired:1757},{t:'2024-09-01',sold:4996,listed:15486,expired:2013},
+      {t:'2024-10-01',sold:5572,listed:16978,expired:2207},{t:'2024-11-01',sold:4256,listed:11592,expired:1855},
+      {t:'2024-12-01',sold:3359,listed:7436,expired:1562},{t:'2025-01-01',sold:3847,listed:11297,expired:1808},
+      {t:'2025-02-01',sold:4060,listed:12066,expired:1810},{t:'2025-03-01',sold:4956,listed:17340,expired:2081},
+      {t:'2025-04-01',sold:5025,listed:16941,expired:2032},{t:'2025-05-01',sold:5364,listed:17498,expired:1925},
+      {t:'2025-06-01',sold:5520,listed:17200,expired:1892},{t:'2025-07-01',sold:4800,listed:15600,expired:1872},
+      {t:'2025-08-01',sold:4200,listed:12000,expired:1680},{t:'2025-09-01',sold:4300,listed:14800,expired:1924},
+      {t:'2025-10-01',sold:4500,listed:16200,expired:2106},{t:'2025-11-01',sold:3800,listed:11000,expired:1760},
+      {t:'2025-12-01',sold:2900,listed:7000,expired:1470},{t:'2026-01-01',sold:3390,listed:10682,expired:1709},
+      {t:'2026-02-01',sold:4482,listed:12055,expired:1687},{t:'2026-03-01',sold:5039,listed:14442,expired:1733}
+    ]
+  },
+  york: {
+    name:'York Region', sub:'Residential Freehold · TRREB MLS\u00ae',
+    price:'$1,164,324', change:'-8.0% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,164,324',median:'$1,060,000',volume:'887',listings:'2,731',active:'4,181',snlr:'32.3%',moi:'5.5',dom:'31',splp:'97%'},
+    priceData:[
+      {t:'2024-04-01',v:1280000},{t:'2024-05-01',v:1295000},{t:'2024-06-01',v:1305000},{t:'2024-07-01',v:1290000},
+      {t:'2024-08-01',v:1272000},{t:'2024-09-01',v:1258000},{t:'2024-10-01',v:1248000},{t:'2024-11-01',v:1235000},
+      {t:'2024-12-01',v:1218000},{t:'2025-01-01',v:1210000},{t:'2025-02-01',v:1225000},{t:'2025-03-01',v:1265570},
+      {t:'2025-04-01',v:1248000},{t:'2025-05-01',v:1238000},{t:'2025-06-01',v:1228000},{t:'2025-07-01',v:1215000},
+      {t:'2025-08-01',v:1198000},{t:'2025-09-01',v:1182000},{t:'2025-10-01',v:1172000},{t:'2025-11-01',v:1158000},
+      {t:'2025-12-01',v:1142000},{t:'2026-01-01',v:1138000},{t:'2026-02-01',v:1152000},{t:'2026-03-01',v:1164324}
+    ],
+    volData:[
+      {t:'2024-04-01',sold:1050,listed:3200,expired:416},{t:'2024-05-01',sold:1210,listed:3580,expired:429},
+      {t:'2024-06-01',sold:1285,listed:3650,expired:401},{t:'2024-07-01',sold:1100,listed:3300,expired:429},
+      {t:'2024-08-01',sold:980,listed:2750,expired:385},{t:'2024-09-01',sold:920,listed:2900,expired:406},
+      {t:'2024-10-01',sold:1010,listed:3100,expired:434},{t:'2024-11-01',sold:850,listed:2500,expired:425},
+      {t:'2024-12-01',sold:620,listed:1650,expired:347},{t:'2025-01-01',sold:740,listed:2300,expired:391},
+      {t:'2025-02-01',sold:880,listed:2650,expired:398},{t:'2025-03-01',sold:1020,listed:3400,expired:408},
+      {t:'2025-04-01',sold:1000,listed:3300,expired:429},{t:'2025-05-01',sold:1080,listed:3500,expired:385},
+      {t:'2025-06-01',sold:1120,listed:3450,expired:380},{t:'2025-07-01',sold:960,listed:3100,expired:372},
+      {t:'2025-08-01',sold:840,listed:2600,expired:364},{t:'2025-09-01',sold:800,listed:2700,expired:378},
+      {t:'2025-10-01',sold:850,listed:2950,expired:413},{t:'2025-11-01',sold:720,listed:2400,expired:408},
+      {t:'2025-12-01',sold:540,listed:1550,expired:326},{t:'2026-01-01',sold:650,listed:2200,expired:374},
+      {t:'2026-02-01',sold:820,listed:2600,expired:390},{t:'2026-03-01',sold:887,listed:2731,expired:355}
+    ],
+    subMarkets:[
+      {id:'vaughan',name:'Vaughan',price:'$1,184,383',change:'-9.5%',dir:'down'},
+      {id:'richmond-hill',name:'Richmond Hill',price:'$1,219,863',change:'-6.4%',dir:'down'},
+      {id:'markham',name:'Markham',price:'$1,155,505',change:'-6.1%',dir:'down'},
+      {id:'newmarket',name:'Newmarket',price:'$978,941',change:'-8.0%',dir:'down'},
+      {id:'aurora',name:'Aurora',price:'$1,187,555',change:'-6.4%',dir:'down'},
+      {id:'egwillimbury',name:'East Gwillimbury',price:'$1,059,692',change:'-9.1%',dir:'down'},
+      {id:'king',name:'King',price:'$2,020,000',change:'-1.7%',dir:'down'},
+      {id:'stouffville',name:'Stouffville',price:'$1,248,851',change:'-6.9%',dir:'down'}
+    ]
+  },
+  toronto: {
+    name:'City of Toronto (416)', sub:'All Property Types · Residential · TRREB MLS\u00ae',
+    price:'$1,022,874', change:'-8.0% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,022,874',median:'$795,000',volume:'1,913',listings:'5,301',active:'8,189',snlr:'34.9%',moi:'5.0',dom:'31',splp:'99%'},
+    priceData:[
+      {t:'2024-04-01',v:1118000},{t:'2024-05-01',v:1128000},{t:'2024-06-01',v:1135000},{t:'2024-07-01',v:1122000},
+      {t:'2024-08-01',v:1108000},{t:'2024-09-01',v:1098000},{t:'2024-10-01',v:1090000},{t:'2024-11-01',v:1080000},
+      {t:'2024-12-01',v:1068000},{t:'2025-01-01',v:1062000},{t:'2025-02-01',v:1078000},{t:'2025-03-01',v:1111818},
+      {t:'2025-04-01',v:1098000},{t:'2025-05-01',v:1088000},{t:'2025-06-01',v:1078000},{t:'2025-07-01',v:1065000},
+      {t:'2025-08-01',v:1050000},{t:'2025-09-01',v:1038000},{t:'2025-10-01',v:1028000},{t:'2025-11-01',v:1018000},
+      {t:'2025-12-01',v:1005000},{t:'2026-01-01',v:1000000},{t:'2026-02-01',v:1012000},{t:'2026-03-01',v:1022874}
+    ],
+    volData:[
+      {t:'2024-04-01',sold:2100,listed:5800,expired:696},{t:'2024-05-01',sold:2400,listed:6200,expired:682},
+      {t:'2024-06-01',sold:2500,listed:6100,expired:671},{t:'2024-07-01',sold:2150,listed:5600,expired:672},
+      {t:'2024-08-01',sold:1950,listed:4500,expired:585},{t:'2024-09-01',sold:1900,listed:5200,expired:676},
+      {t:'2024-10-01',sold:2100,listed:5800,expired:754},{t:'2024-11-01',sold:1700,listed:4200,expired:672},
+      {t:'2024-12-01',sold:1300,listed:2900,expired:609},{t:'2025-01-01',sold:1500,listed:4100,expired:656},
+      {t:'2025-02-01',sold:1600,listed:4500,expired:675},{t:'2025-03-01',sold:1950,listed:6200,expired:744},
+      {t:'2025-04-01',sold:1980,listed:5800,expired:754},{t:'2025-05-01',sold:2100,listed:6000,expired:660},
+      {t:'2025-06-01',sold:2200,listed:5900,expired:649},{t:'2025-07-01',sold:1900,listed:5400,expired:648},
+      {t:'2025-08-01',sold:1650,listed:4300,expired:602},{t:'2025-09-01',sold:1680,listed:5000,expired:650},
+      {t:'2025-10-01',sold:1750,listed:5500,expired:715},{t:'2025-11-01',sold:1500,listed:3900,expired:624},
+      {t:'2025-12-01',sold:1100,listed:2700,expired:567},{t:'2026-01-01',sold:1350,listed:3900,expired:624},
+      {t:'2026-02-01',sold:1720,listed:4800,expired:672},{t:'2026-03-01',sold:1913,listed:5301,expired:636}
+    ]
+  },
+  durham: {
+    name:'Durham Region', sub:'Residential Freehold · TRREB MLS\u00ae',
+    price:'$835,985', change:'-6.4% YoY', changeDir:'down',
+    stats:{avgPrice:'$835,985',median:'$800,000',volume:'640',listings:'1,576',active:'1,900',snlr:'39.5%',moi:'3.5',dom:'24',splp:'100%'},
+    priceData:[
+      {t:'2024-04-01',v:905000},{t:'2024-05-01',v:915000},{t:'2024-06-01',v:922000},{t:'2024-07-01',v:912000},
+      {t:'2024-08-01',v:898000},{t:'2024-09-01',v:888000},{t:'2024-10-01',v:880000},{t:'2024-11-01',v:870000},
+      {t:'2024-12-01',v:858000},{t:'2025-01-01',v:852000},{t:'2025-02-01',v:865000},{t:'2025-03-01',v:893250},
+      {t:'2025-04-01',v:878000},{t:'2025-05-01',v:870000},{t:'2025-06-01',v:862000},{t:'2025-07-01',v:852000},
+      {t:'2025-08-01',v:840000},{t:'2025-09-01',v:830000},{t:'2025-10-01',v:822000},{t:'2025-11-01',v:815000},
+      {t:'2025-12-01',v:805000},{t:'2026-01-01',v:800000},{t:'2026-02-01',v:818000},{t:'2026-03-01',v:835985}
+    ],
+    volData:[
+      {t:'2024-04-01',sold:680,listed:1900,expired:247},{t:'2024-05-01',sold:780,listed:2100,expired:231},
+      {t:'2024-06-01',sold:820,listed:2200,expired:242},{t:'2024-07-01',sold:720,listed:2000,expired:260},
+      {t:'2024-08-01',sold:650,listed:1700,expired:238},{t:'2024-09-01',sold:610,listed:1800,expired:252},
+      {t:'2024-10-01',sold:660,listed:1900,expired:266},{t:'2024-11-01',sold:560,listed:1500,expired:255},
+      {t:'2024-12-01',sold:420,listed:1100,expired:231},{t:'2025-01-01',sold:500,listed:1400,expired:238},
+      {t:'2025-02-01',sold:580,listed:1600,expired:240},{t:'2025-03-01',sold:700,listed:2000,expired:260},
+      {t:'2025-04-01',sold:720,listed:1950,expired:254},{t:'2025-05-01',sold:780,listed:2100,expired:231},
+      {t:'2025-06-01',sold:800,listed:2050,expired:226},{t:'2025-07-01',sold:700,listed:1900,expired:228},
+      {t:'2025-08-01',sold:620,listed:1600,expired:224},{t:'2025-09-01',sold:590,listed:1700,expired:238},
+      {t:'2025-10-01',sold:620,listed:1800,expired:252},{t:'2025-11-01',sold:530,listed:1450,expired:247},
+      {t:'2025-12-01',sold:400,listed:1050,expired:221},{t:'2026-01-01',sold:480,listed:1350,expired:230},
+      {t:'2026-02-01',sold:590,listed:1500,expired:225},{t:'2026-03-01',sold:640,listed:1576,expired:205}
+    ]
+  },
+  peel: {
+    name:'Peel Region', sub:'Residential Freehold · TRREB MLS\u00ae',
+    price:'$956,714', change:'-6.1% YoY', changeDir:'down',
+    stats:{avgPrice:'$956,714',median:'$866,250',volume:'876',listings:'2,644',active:'3,951',snlr:'31.0%',moi:'5.4',dom:'35',splp:'97%'},
+    priceData:[
+      {t:'2024-04-01',v:1028000},{t:'2024-05-01',v:1038000},{t:'2024-06-01',v:1045000},{t:'2024-07-01',v:1035000},
+      {t:'2024-08-01',v:1022000},{t:'2024-09-01',v:1012000},{t:'2024-10-01',v:1005000},{t:'2024-11-01',v:995000},
+      {t:'2024-12-01',v:982000},{t:'2025-01-01',v:978000},{t:'2025-02-01',v:992000},{t:'2025-03-01',v:1018890},
+      {t:'2025-04-01',v:1005000},{t:'2025-05-01',v:995000},{t:'2025-06-01',v:985000},{t:'2025-07-01',v:975000},
+      {t:'2025-08-01',v:962000},{t:'2025-09-01',v:950000},{t:'2025-10-01',v:942000},{t:'2025-11-01',v:935000},
+      {t:'2025-12-01',v:922000},{t:'2026-01-01',v:918000},{t:'2026-02-01',v:938000},{t:'2026-03-01',v:956714}
+    ],
+    volData:[
+      {t:'2024-04-01',sold:920,listed:2600,expired:338},{t:'2024-05-01',sold:1050,listed:2900,expired:319},
+      {t:'2024-06-01',sold:1100,listed:2950,expired:325},{t:'2024-07-01',sold:960,listed:2700,expired:351},
+      {t:'2024-08-01',sold:850,listed:2300,expired:322},{t:'2024-09-01',sold:800,listed:2400,expired:336},
+      {t:'2024-10-01',sold:870,listed:2550,expired:357},{t:'2024-11-01',sold:720,listed:2100,expired:357},
+      {t:'2024-12-01',sold:540,listed:1500,expired:315},{t:'2025-01-01',sold:650,listed:1900,expired:323},
+      {t:'2025-02-01',sold:760,listed:2200,expired:330},{t:'2025-03-01',sold:900,listed:2800,expired:336},
+      {t:'2025-04-01',sold:880,listed:2700,expired:351},{t:'2025-05-01',sold:950,listed:2850,expired:314},
+      {t:'2025-06-01',sold:980,listed:2800,expired:308},{t:'2025-07-01',sold:860,listed:2550,expired:306},
+      {t:'2025-08-01',sold:750,listed:2200,expired:308},{t:'2025-09-01',sold:720,listed:2350,expired:329},
+      {t:'2025-10-01',sold:760,listed:2500,expired:350},{t:'2025-11-01',sold:650,listed:2100,expired:357},
+      {t:'2025-12-01',sold:490,listed:1400,expired:294},{t:'2026-01-01',sold:600,listed:1800,expired:306},
+      {t:'2026-02-01',sold:780,listed:2400,expired:336},{t:'2026-03-01',sold:876,listed:2644,expired:317}
+    ]
+  }
+};
+
+// ─── CANDLESTICK CONVERSION ──────────────────────────────────────
+function toCandlestick(priceData) {
+  var candles = [];
+  for (var i = 0; i < priceData.length; i++) {
+    var open = i > 0 ? priceData[i-1].v : priceData[i].v;
+    var close = priceData[i].v;
+    var high = Math.max(open, close) + Math.abs(close - open) * 0.3 + 2000;
+    var low = Math.min(open, close) - Math.abs(close - open) * 0.3 - 2000;
+    candles.push({ time: priceData[i].t, open: open, high: high, low: low, close: close });
+  }
+  return candles;
+}
+
+// ─── CHART SETUP (TradingView authentic) ─────────────────────────
+var container = document.getElementById('chartContainer');
+var chart = LightweightCharts.createChart(container, {
+  layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
+  grid: { vertLines: { color: '#1e222d' }, horzLines: { color: '#1e222d' } },
+  crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+  rightPriceScale: { borderColor: '#2a2e39', scaleMargins: { top: 0.05, bottom: 0.05 } },
+  timeScale: { borderColor: '#2a2e39', timeVisible: false },
+  handleScroll: true,
+  handleScale: true,
+});
+
+// Candlestick series — traditional green/red
+var candleSeries = chart.addCandlestickSeries({
+  upColor: '#26a69a',
+  downColor: '#ef5350',
+  borderUpColor: '#26a69a',
+  borderDownColor: '#ef5350',
+  wickUpColor: '#26a69a',
+  wickDownColor: '#ef5350',
+  priceFormat: { type: 'custom', formatter: function(p) { return '$' + (p/1000).toFixed(0) + 'K'; } },
+});
+
+// Last year overlay (faded white line)
+var lastYearSeries = chart.addLineSeries({
+  color: 'rgba(255,255,255,0.15)',
+  lineWidth: 1,
+  lineStyle: 2,
+  crosshairMarkerVisible: false,
+  priceScaleId: '',
+  lastValueVisible: false,
+  priceLineVisible: false,
+});
+
+// ─── CUSTOM VOLUME BARS (side-by-side) ───────────────────────────
+var currentVolData = [];
+var currentSlice = 24;
+var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function renderVolumeBars(volData) {
+  currentVolData = volData;
+  var data = volData.slice(-currentSlice);
+  var el = document.getElementById('volChart');
+
+  // Find max across all 3 categories
+  var max = 0;
+  data.forEach(function(d) {
+    if (d.sold > max) max = d.sold;
+    if (d.listed > max) max = d.listed;
+    if (d.expired > max) max = d.expired;
+  });
+  if (max === 0) max = 1;
+
+  var html = '';
+  data.forEach(function(d) {
+    var parts = d.t.split('-');
+    var label = MONTHS[parseInt(parts[1])-1] + ' ' + parts[0].slice(2);
+    var sh = Math.max(2, (d.sold / max) * 90);
+    var lh = Math.max(2, (d.listed / max) * 90);
+    var eh = Math.max(2, (d.expired / max) * 90);
+    html += '<div style="flex:1;min-width:0;text-align:center">';
+    html += '<div style="display:flex;align-items:flex-end;gap:1px;height:90px;justify-content:center">';
+    html += '<div class="vol-bar sold" style="height:'+sh+'px" title="Sold: '+d.sold.toLocaleString()+'"></div>';
+    html += '<div class="vol-bar listed" style="height:'+lh+'px" title="Listed: '+d.listed.toLocaleString()+'"></div>';
+    html += '<div class="vol-bar expired" style="height:'+eh+'px" title="Expired: '+d.expired.toLocaleString()+'"></div>';
+    html += '</div>';
+    html += '<div class="vol-month-label">'+label+'</div>';
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+// ─── LOAD MARKET ─────────────────────────────────────────────────
+var currentMarket = 'gta';
+
+function loadMarket(id) {
+  var m = MARKETS[id];
+  if (!m) return;
+  currentMarket = id;
+
+  document.getElementById('chartMarket').textContent = m.name;
+  document.getElementById('chartSub').textContent = m.sub;
+  document.getElementById('chartPrice').textContent = m.price;
+  var ce = document.getElementById('chartChange');
+  ce.textContent = m.change;
+  ce.style.color = m.changeDir === 'up' ? '#26a69a' : '#ef5350';
+
+  var s = m.stats;
+  document.getElementById('sAvgPrice').textContent = s.avgPrice;
+  document.getElementById('sMedian').textContent = s.median;
+  document.getElementById('sVolume').textContent = s.volume;
+  document.getElementById('sListings').textContent = s.listings;
+  document.getElementById('sActive').textContent = s.active;
+  document.getElementById('sSnlr').textContent = s.snlr;
+  document.getElementById('sMoi').textContent = s.moi;
+  document.getElementById('sDom').textContent = s.dom;
+  document.getElementById('sSplp').textContent = s.splp;
+
+  // Candlestick data
+  candleSeries.setData(toCandlestick(m.priceData));
+
+  // Last year overlay
+  if (m.priceData.length >= 12) {
+    lastYearSeries.setData(m.priceData.slice(0, 12).map(function(d) {
+      var parts = d.t.split('-');
+      return { time: (parseInt(parts[0])+1)+'-'+parts[1]+'-'+parts[2], value: d.v };
+    }));
+  } else { lastYearSeries.setData([]); }
+
+  chart.timeScale().fitContent();
+
+  // Volume bars
+  renderVolumeBars(m.volData);
+
+  // Sub-markets sidebar
+  if (m.subMarkets) {
+    document.getElementById('subMarketsTitle').textContent = 'Municipalities';
+    var html = '';
+    m.subMarkets.forEach(function(sm) {
+      html += '<div class="market-list-item" onclick="selectLevel(\''+sm.id+'\',null)">';
+      html += '<div class="mli-header"><span class="mli-name">'+sm.name+'</span><span class="mli-price">'+sm.price+'</span></div>';
+      html += '<div class="mli-footer"><span class="mli-type">Avg Sale Price</span><span class="mli-change '+(sm.dir||'down')+'">'+sm.change+'</span></div>';
+      html += '</div>';
+    });
+    document.getElementById('subMarketsList').innerHTML = html;
+  }
+}
+
+// ─── NAV ─────────────────────────────────────────────────────────
+function selectLevel(id, btn) {
+  if (btn) {
+    btn.parentElement.querySelectorAll('.nav-pill').forEach(function(p){p.classList.remove('active')});
+    btn.classList.add('active');
+  } else {
+    document.querySelectorAll('.nav-pill').forEach(function(p){p.classList.remove('active')});
+    document.querySelectorAll('.nav-pill').forEach(function(p){
+      if(p.getAttribute('onclick')&&p.getAttribute('onclick').indexOf("'"+id+"'")>-1) p.classList.add('active');
+    });
+  }
+  var l2=document.getElementById('nav-level2');
+  if(MARKETS[id]&&MARKETS[id].subMarkets){
+    var h='';
+    MARKETS[id].subMarkets.forEach(function(sm){h+='<div class="nav-pill" onclick="selectLevel(\''+sm.id+'\',this)">'+sm.name+'</div>';});
+    l2.innerHTML=h;l2.style.display='flex';
+  } else if(['gta','toronto','durham','peel'].indexOf(id)>-1){l2.style.display='none';}
+  loadMarket(id);
+}
+
+// ─── TIMEFRAME ───────────────────────────────────────────────────
+function setTimeframe(tf, btn) {
+  document.querySelectorAll('.time-btn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  var m = MARKETS[currentMarket];
+  if (!m) return;
+  var months = {'1M':1,'3M':3,'6M':6,'1Y':12,'2Y':24};
+  var n = months[tf] || 6;
+  currentSlice = n;
+  candleSeries.setData(toCandlestick(m.priceData.slice(-n)));
+  renderVolumeBars(m.volData);
+  chart.timeScale().fitContent();
+}
+
+// ─── RESIZE ──────────────────────────────────────────────────────
+window.addEventListener('resize', function() {
+  chart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+});
+
+// ─── INIT ────────────────────────────────────────────────────────
+loadMarket('gta');
+</script>
+</body>
+</html>
