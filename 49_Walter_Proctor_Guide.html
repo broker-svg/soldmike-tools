@@ -1,0 +1,452 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Appointment Guide — 49 Walter Proctor Rd</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--border:#30363d;--gold:#c9a84c;--gold-dim:rgba(201,168,76,.15);--text:#e8e6e1;--text-dim:#8b949e;--green:#3fb950;--red:#f85149;--blue:#60a5fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:var(--text);min-height:100vh;padding:0}
+.site-header{background:#161b22;border-bottom:1px solid var(--border);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--gold);font-weight:700}
+.brand span{color:var(--text-dim);font-weight:400;font-size:.9rem;display:block;font-family:'Inter',sans-serif}
+.private-badge{background:rgba(248,113,113,.15);border:1px solid rgba(248,113,113,.4);color:#f85149;font-size:.75rem;padding:.4rem 1rem;border-radius:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.guide-wrap{max-width:900px;margin:0 auto;padding:2rem}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--text);font-weight:700;margin:0 0 .4rem;border-left:4px solid var(--gold);padding-left:.85rem}
+.section-subtitle{font-size:.85rem;color:var(--text-dim);margin-bottom:1.75rem;padding-left:1.1rem}
+
+/* Carry over guide styles with correct vars */
+.guide-phase{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:1.75rem;overflow:hidden}
+.guide-phase-header{padding:1.1rem 1.6rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border)}
+.phase-number{background:var(--gold);color:#000;font-weight:700;font-size:.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--text);font-weight:600;flex:1}
+.phase-time{font-size:.78rem;color:var(--text-dim);background:rgba(255,255,255,.06);padding:.25rem .65rem;border-radius:4px;white-space:nowrap}
+.phase-body{padding:1.6rem}
+.phase-intro{font-size:.92rem;color:var(--text-dim);line-height:1.75;margin-bottom:1.25rem;border-left:3px solid var(--gold);padding-left:1rem;font-style:italic}
+.q-block{margin-bottom:1.1rem}
+.q-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:.35rem}
+.q-text{font-size:.95rem;color:var(--text);line-height:1.7;background:rgba(255,255,255,.04);border-radius:8px;padding:.85rem 1.1rem;border-left:3px solid rgba(201,168,76,.3)}
+.q-note{font-size:.82rem;color:var(--text-dim);margin-top:.4rem;line-height:1.6;padding-left:.5rem}
+.q-note strong{color:var(--text)}
+.checklist{list-style:none;margin:0;padding:0}
+.checklist li{padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;color:var(--text);display:flex;align-items:flex-start;gap:.75rem;line-height:1.5}
+.checklist li:last-child{border-bottom:none}
+.check-icon{color:var(--gold);font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.phase-divider{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin:1.1rem 0 .65rem;font-weight:700}
+.alert-box{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.1rem;font-size:.9rem;color:#fca5a5;line-height:1.7}
+.alert-box strong{color:#f85149}
+.tip-box{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.1rem;font-size:.9rem;color:var(--text-dim);line-height:1.7}
+.tip-box strong{color:var(--gold)}
+.data-callout{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem}
+.dc-item{text-align:center}
+.dc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.3rem}
+.dc-value{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--gold);font-weight:700}
+.dc-sub{font-size:.75rem;color:var(--text-dim);margin-top:.2rem}
+.objection-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:.85rem}
+.obj-q{font-size:.88rem;color:#f85149;font-weight:600;margin-bottom:.5rem}
+.obj-a{font-size:.9rem;color:var(--text);line-height:1.7}
+.guide-tabs-ref{display:none}
+</style>
+</head>
+<body>
+<div class="site-header">
+  <div class="brand">SOLDMIKE <span>RE/MAX PREMIER · THE OP TEAM</span></div>
+  <div class="private-badge">🔒 Agent Reference — Not for Client</div>
+</div>
+<div class="guide-wrap">
+<\!-- ==================== TAB 6: LISTING APPOINTMENT GUIDE ==================== -->
+
+<style>
+.guide-phase{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:1.75rem;overflow:hidden}
+.guide-phase-header{padding:1.1rem 1.6rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.guide-phase-header:hover{background:rgba(255,255,255,.03)}
+.phase-number{background:var(--gold);color:#000;font-weight:700;font-size:.85rem;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.phase-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--text);font-weight:600;flex:1}
+.phase-time{font-size:.78rem;color:var(--text-dim);background:rgba(255,255,255,.06);padding:.25rem .65rem;border-radius:4px;white-space:nowrap}
+.phase-body{padding:1.6rem}
+.phase-intro{font-size:.92rem;color:var(--text-dim);line-height:1.75;margin-bottom:1.25rem;border-left:3px solid var(--gold);padding-left:1rem;font-style:italic}
+.q-block{margin-bottom:1.1rem}
+.q-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:.35rem}
+.q-text{font-size:.95rem;color:var(--text);line-height:1.7;background:rgba(255,255,255,.04);border-radius:8px;padding:.85rem 1.1rem;border-left:3px solid rgba(197,165,90,.3)}
+.q-note{font-size:.82rem;color:var(--text-dim);margin-top:.4rem;line-height:1.6;padding-left:.5rem}
+.q-note strong{color:var(--text)}
+.checklist{list-style:none;margin:0;padding:0}
+.checklist li{padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem;color:var(--text);display:flex;align-items:flex-start;gap:.75rem;line-height:1.5}
+.checklist li:last-child{border-bottom:none}
+.check-icon{color:var(--gold);font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.phase-divider{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text-dim);margin:1.1rem 0 .65rem;font-weight:700}
+.alert-box{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.1rem;font-size:.9rem;color:#fca5a5;line-height:1.7}
+.alert-box strong{color:#f87171}
+.tip-box{background:rgba(197,165,90,.08);border:1px solid rgba(197,165,90,.25);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.1rem;font-size:.9rem;color:var(--text-dim);line-height:1.7}
+.tip-box strong{color:var(--gold)}
+.data-callout{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem}
+.dc-item{text-align:center}
+.dc-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.3rem}
+.dc-value{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--gold);font-weight:700}
+.dc-sub{font-size:.75rem;color:var(--text-dim);margin-top:.2rem}
+.objection-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:.85rem}
+.obj-q{font-size:.88rem;color:#f87171;font-weight:600;margin-bottom:.5rem}
+.obj-a{font-size:.9rem;color:var(--text);line-height:1.7}
+.guide-tabs-ref{display:flex;gap:.75rem;flex-wrap:wrap;margin:1rem 0}
+.guide-tab-chip{background:rgba(197,165,90,.12);border:1px solid rgba(197,165,90,.3);color:var(--gold);font-size:.8rem;padding:.35rem .85rem;border-radius:20px;font-weight:600;cursor:pointer}
+.guide-tab-chip:hover{background:rgba(197,165,90,.25)}
+</style>
+
+<h2 class="section-title">Listing Appointment Guide</h2>
+<p class="section-subtitle">49 Walter Proctor Rd · East Gwillimbury · Personalized to this seller situation · For your eyes only</p>
+
+<div class="alert-box">
+  <strong>⚑ Know Before You Walk In</strong><br>
+  These sellers bought at the absolute GTA peak — <strong>$1,027,000 in January 2022</strong>. They already tried to sell at $998,800 in 2024 and sat for 85 days with no deal. They know something is wrong. Your job is not to be the bearer of bad news — it's to be the first agent who actually explains it clearly and gives them a path forward. The number they need to hear is around <strong>$879,900</strong>. That conversation has to be built on trust first.
+</div>
+
+<\!-- PHASE 0: PRE-ARRIVAL -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">0</div>
+    <div class="phase-title">Pre-Arrival Prep</div>
+    <div class="phase-time">Before you leave</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Don't wing this one. These sellers are sophisticated — they've been through this before and they know they're underwater. Walk in with everything loaded and ready.</p>
+    <ul class="checklist">
+      <li><span class="check-icon">◆</span> This evaluation HTML open on your tablet or laptop — tabs 1–5 ready to present</li>
+      <li><span class="check-icon">◆</span> Know the two comps cold: 17 Carratuck ($965K → adjusted $870K) and 24 Briarfield ($871,888, 7 DOM)</li>
+      <li><span class="check-icon">◆</span> Know their ownership history by heart: bought $441K (2017) → $788K (2021) → $1,027,000 at peak (Jan 2022)</li>
+      <li><span class="check-icon">◆</span> Know their 2024 terminated listing: $998,800, 85 DOM, no sale</li>
+      <li><span class="check-icon">◆</span> Research current active competition — pull any live townhomes in Sharon Village before you go</li>
+      <li><span class="check-icon">◆</span> Pre-listing package already sent? If not, send it now so they've seen your background before the door opens</li>
+      <li><span class="check-icon">◆</span> Business cards, listing agreement, feature sheet template ready</li>
+      <li><span class="check-icon">◆</span> Arrive 5 min early. Sit in the car. Take a breath. You have the data — trust it.</li>
+    </ul>
+  </div>
+</div>
+
+<\!-- PHASE 1: ARRIVAL & RAPPORT -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">1</div>
+    <div class="phase-title">Arrival & Rapport</div>
+    <div class="phase-time">First 5–10 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">You win or lose the listing before you open the laptop. Make them feel seen and heard — not sold to. Walk in warm, observe everything, compliment something specific (not generic).</p>
+
+    <div class="phase-divider">When they open the door</div>
+    <div class="q-block">
+      <div class="q-label">Opening Line</div>
+      <div class="q-text">"Hey, great to meet you — I appreciate you having me over. I've done a lot of work on this property ahead of time, so I want to make sure tonight is actually useful for you, not just a sales pitch."</div>
+      <div class="q-note">Sets the tone immediately — you're here to work, not perform.</div>
+    </div>
+
+    <div class="phase-divider">As they show you in — observe silently</div>
+    <ul class="checklist">
+      <li><span class="check-icon">◆</span> Condition of the entryway, flooring, walls — original builder or upgraded?</li>
+      <li><span class="check-icon">◆</span> Natural light — how does it feel vs. what a buyer will feel?</li>
+      <li><span class="check-icon">◆</span> Any obvious repairs needed? (note mentally, bring up gently in tour)</li>
+      <li><span class="check-icon">◆</span> Are they nervous? Defensive? Tired? Read the room.</li>
+    </ul>
+
+    <div class="phase-divider">Rapport openers — pick one, keep it genuine</div>
+    <div class="q-block">
+      <div class="q-text">"How long have you been in Sharon Village? Do you know the neighbourhood well — did you see a lot of the other streets when you were buying?"</div>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"Rodeo Fine Homes built this one, right? Were you involved in the build process or did you purchase it finished?"</div>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"Before we get into everything — can I grab a quick tour of the home first? I like to see it through a buyer's eyes before we sit down and talk numbers."</div>
+      <div class="q-note">This buys you time, lets you observe, and makes the tour feel natural.</div>
+    </div>
+  </div>
+</div>
+
+<\!-- PHASE 2: HOME TOUR -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">2</div>
+    <div class="phase-title">Home Tour — See It Like a Buyer</div>
+    <div class="phase-time">10–15 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Walk every room. Don't rush. Ask questions that get them talking and reveal what they've done (or haven't done). What you learn here changes how you position the property and handle the condition conversation.</p>
+
+    <div class="phase-divider">Main Floor</div>
+    <div class="q-block">
+      <div class="q-label">Kitchen</div>
+      <div class="q-text">"Are these the original countertops and backsplash from the builder? They look clean — have they been well maintained?"</div>
+      <div class="q-note"><strong>Note:</strong> Prior MLS listing confirmed granite countertops, builder-grade. No major kitchen upgrades identified. Confirms the base evaluation — no positive condition overlay needed unless they tell you otherwise.</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Living Area</div>
+      <div class="q-text">"The gas fireplace is a nice feature — does it get used? Buyers always love seeing that especially in townhomes."</div>
+      <div class="q-note">The fireplace is actually a positive differentiator vs. 24 Briarfield which didn't have one. Remember this for the pricing conversation — it's a +$5K adjustment in the comps.</div>
+    </div>
+
+    <div class="phase-divider">Upper Level</div>
+    <div class="q-block">
+      <div class="q-label">Primary Suite</div>
+      <div class="q-text">"5-piece ensuite — is this original? Any updates to the bathrooms since you moved in?"</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Secondary Rooms</div>
+      <div class="q-text">"Are these being used as bedrooms right now, or has anything been set up differently? Staging-wise, I always like to think about what will feel most natural to a buyer walking through."</div>
+    </div>
+
+    <div class="phase-divider">Basement</div>
+    <div class="q-block">
+      <div class="q-text">"So it's unfinished right now — any work started down here, or completely raw? Have you thought about whether to finish it before listing or leave it for the buyer?"</div>
+      <div class="q-note"><strong>Important:</strong> The unfinished basement is baked into the evaluation. 17 Carratuck had a fully finished basement and that alone accounts for a $45K downward adjustment. If they've done any work down here, you need to know — it could change the overlay. If it's completely raw, leave the evaluation as-is.</div>
+    </div>
+
+    <div class="phase-divider">Parking & Exterior</div>
+    <div class="q-block">
+      <div class="q-text">"3-car parking total with the single garage — that's solid for a townhome in this area. Is the garage fully functional, any shelving or storage built in?"</div>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"The brick and stone exterior looks like it's held up well. Any maintenance done on the roof, HVAC, or major systems since 2017?"</div>
+      <div class="q-note">Mechanical updates (furnace, A/C, roof) don't typically change the market value dramatically, but they give you ammunition for the listing description and buyer conversations.</div>
+    </div>
+  </div>
+</div>
+
+<\!-- PHASE 3: DISCOVERY QUESTIONS -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">3</div>
+    <div class="phase-title">Sit Down — Discovery & Their Story</div>
+    <div class="phase-time">15–20 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">You're at the table now. Close the laptop for a few minutes. This phase is all about understanding their why, their timeline, their emotional state, and their expectations — before you show them a single number. The more they talk, the better you can frame everything that follows.</p>
+
+    <div class="phase-divider">Why & Motivation</div>
+    <div class="q-block">
+      <div class="q-label">Question 1</div>
+      <div class="q-text">"What's driving the decision to sell now? Is this more of a lifestyle change, a financial decision, or are you buying somewhere else?"</div>
+      <div class="q-note">Listen for urgency. If they're buying elsewhere, they have a hard deadline. If it's financial, the loss conversation becomes even more delicate — but more necessary.</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Question 2</div>
+      <div class="q-text">"When you think about the ideal outcome here — is it a specific number you need, a specific timeline, or a combination of both?"</div>
+      <div class="q-note">This separates price-focused sellers from timeline-focused ones. It changes your entire strategy and how you present the pricing tiers.</div>
+    </div>
+
+    <div class="phase-divider">The 2024 Listing — Address It Directly</div>
+    <div class="tip-box">
+      <strong>💡 Don't avoid the elephant in the room.</strong> They tried to sell in 2024 and it didn't work. Bring it up yourself — it builds massive trust. If you pretend it didn't happen, you've lost credibility before you've opened the dashboard.
+    </div>
+    <div class="q-block">
+      <div class="q-label">Bring It Up</div>
+      <div class="q-text">"I noticed from the data that there was a prior listing in 2024 — $998,800 and it came off market after about 85 days. Without getting into what happened with that agent, what was your experience? What did buyers say, or did you get any feedback at all?"</div>
+      <div class="q-note">You already know the answer — it was overpriced for the market conditions. But let them tell their version. It reveals what they believe, how frustrated they are, and how ready they are for a different approach.</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Follow Up</div>
+      <div class="q-text">"And since then, has the market improved in your mind, stayed the same, or do you feel like it's gotten worse? What's your read on where Sharon Village townhomes are trading right now?"</div>
+      <div class="q-note">This tells you how anchored they are to the $998,800 or $1,027,000 number in their head. You'll need this information when you deliver the pricing conversation.</div>
+    </div>
+
+    <div class="phase-divider">Financial Situation (Handle with care)</div>
+    <div class="q-block">
+      <div class="q-label">Question</div>
+      <div class="q-text">"I want to make sure I understand your situation fully — do you have flexibility in the number you walk away with, or are there financial targets that need to be hit for this move to make sense?"</div>
+      <div class="q-note">You don't need to know their mortgage balance. But you need to know if they're handcuffed to a number. If they bought at $1,027,000 and owe close to that, pricing at $879,900 might not work for them — which is a conversation you need to have before you sign anything.</div>
+    </div>
+
+    <div class="phase-divider">Buy/Sell Situation</div>
+    <div class="q-block">
+      <div class="q-label">Question</div>
+      <div class="q-text">"Are you planning to buy something after this sells, or are you moving to something that's already lined up? And if you're buying — is the purchase conditional on this sale, or do you have flexibility there?"</div>
+    </div>
+
+    <div class="phase-divider">Their Expectations of You</div>
+    <div class="q-block">
+      <div class="q-label">Last Discovery Question</div>
+      <div class="q-text">"Before I show you everything I've put together — what does working with the right agent look like to you? What did the last experience teach you about what you want differently this time?"</div>
+      <div class="q-note">This is gold. Whatever they say becomes your positioning for the rest of the night.</div>
+    </div>
+  </div>
+</div>
+
+<\!-- PHASE 4: MARKETING -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">4</div>
+    <div class="phase-title">Marketing Presentation</div>
+    <div class="phase-time">10–12 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">Open the laptop. Pull up this evaluation. Start with the marketing — NOT the price. Sellers need to trust your process before they accept your number. Show them how you work first.</p>
+
+    <div class="tip-box">
+      <strong>💡 Sequence matters.</strong> If you show the price first, they spend the entire marketing section calculating whether they agree with your number. Show marketing first — they're more receptive to the price when they understand what they're getting for it.
+    </div>
+
+    <div class="phase-divider">Open Tab 1 — Overview</div>
+    <div class="q-block">
+      <div class="q-text">"So this is what I built specifically for 49 Walter Proctor — let me start by walking you through what I found on the property itself, because the data I'm about to show you comes from MPAC, GeoWarehouse, and MLS. It's not opinion — it's public record."</div>
+    </div>
+    <div class="guide-tabs-ref">
+      <span class="guide-tab-chip" onclick="showTab('overview',document.querySelector('[onclick*=overview]'))">→ Open Tab 1</span>
+    </div>
+
+    <div class="phase-divider">Your Marketing Approach — Speak It in Your Own Words</div>
+    <ul class="checklist">
+      <li><span class="check-icon">◆</span> <strong>Photography & Video:</strong> "The way buyers shop now is online first. The photos are the showing before the showing. I use professional photography, twilight shots where they work, and video walkthroughs — because the first 48 hours a listing is live is when you get the most traffic, and you need to capture that."</li>
+      <li><span class="check-icon">◆</span> <strong>Social Media:</strong> "I run paid campaigns on Instagram and Facebook that target buyers actively searching in East Gwillimbury and surrounding areas. Your property gets exposure beyond just MLS."</li>
+      <li><span class="check-icon">◆</span> <strong>Staging Consultation:</strong> "I'll walk through with you and give you specific recommendations on what to declutter, what to move, and how to set the space so a buyer sees the potential — not the furniture."</li>
+      <li><span class="check-icon">◆</span> <strong>Open Houses:</strong> "I do strategic open houses — not just to get neighbours in, but because the buyers who show up on a Sunday are usually the ones without an agent who are still in early research mode. That's a conversion opportunity."</li>
+      <li><span class="check-icon">◆</span> <strong>Agent Network:</strong> "I work the agent community directly — I let other buyer agents know what's coming to market before it hits, so on Day 1 we have pre-interested buyers, not just passive searchers."</li>
+    </ul>
+  </div>
+</div>
+
+<\!-- PHASE 5: PRICING -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">5</div>
+    <div class="phase-title">Pricing Conversation</div>
+    <div class="phase-time">15–20 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">This is the most important phase for this listing. The sellers paid $1,027,000 at the absolute peak. They need to hear a number around $879,900. That's a $147,100 gap from their purchase price. You need to be honest, direct, and compassionate — but do not soften the data to avoid discomfort. The truth delivered with empathy is more powerful than a comfortable lie.</p>
+
+    <div class="data-callout">
+      <div class="dc-item"><div class="dc-label">They Paid</div><div class="dc-value" style="color:#f87171">$1,027,000</div><div class="dc-sub">Jan 2022 — Market Peak</div></div>
+      <div class="dc-item"><div class="dc-label">Prior Listing</div><div class="dc-value" style="color:#f87171">$998,800</div><div class="dc-sub">Terminated · 85 DOM · 2024</div></div>
+      <div class="dc-item"><div class="dc-label">Market Middle</div><div class="dc-value">$865K–$884,900</div><div class="dc-sub">Comp-Derived Fair Value</div></div>
+      <div class="dc-item"><div class="dc-label">Recommended List</div><div class="dc-value">$879,900</div><div class="dc-sub">Targets top of middle tier</div></div>
+    </div>
+
+    <div class="phase-divider">Open Tab 2 — Comparables</div>
+    <div class="guide-tabs-ref">
+      <span class="guide-tab-chip" onclick="showTab('comps',document.querySelector('[onclick*=comps]'))">→ Open Tab 2</span>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"Let me show you the two properties that set the ceiling for yours. The first one is 17 Carratuck — it sold for $965,000 in March 2026. But here's the thing — that one has a fully finished basement with an extra bedroom, a 2-car garage, and it's 108 square feet bigger than your property. Once I adjust for those differences, it lands at about $870,000. The second comp is 24 Briarfield — sold January 2026 for $871,888 in 7 days. It's virtually identical to yours in size, type, and style. Two completely different properties reaching the same number independently — that's not a coincidence. That's what the market is saying."</div>
+    </div>
+
+    <div class="phase-divider">Open Tab 4 — Pricing</div>
+    <div class="guide-tabs-ref">
+      <span class="guide-tab-chip" onclick="showTab('pricing',document.querySelector('[onclick*=pricing]'))">→ Open Tab 4</span>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"I've broken the pricing down into four tiers — not to give you a range that's too wide to be useful, but to be transparent about what each strategy actually means for your outcome. Let me walk you through each one."</div>
+    </div>
+
+    <div class="phase-divider">Walk Through Each Tier</div>
+    <div class="q-block">
+      <div class="q-label">Conservative — $849K–$864,900</div>
+      <div class="q-text">"This is the safety-net number. You will get showings immediately, you will likely get multiple offers, and it will be over fast. If your priority is certainty and speed — this is it. You trade some dollars for a clean, quick exit."</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">★ Market Middle — $865K–$884,900 · Recommend $879,900</div>
+      <div class="q-text">"This is where the comp data says you should trade. I recommend listing at $879,900 — it's aspirational but grounded. Good marketing, good presentation, and we catch the right buyer in that first week. Expected close at $853K to $879K depending on competition at the time."</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Optimistic — $885K–$909,900</div>
+      <div class="q-text">"This is reachable, but you need everything to line up — a motivated buyer who's been searching this area for a while, low competition on the market that week, and the home presented exceptionally. It's not a base case. If you want to test it for a week, that's a conversation — but I want to be honest that the window to achieve this is narrow."</div>
+    </div>
+    <div class="q-block">
+      <div class="q-label">Overpriced — $910,000+</div>
+      <div class="q-text">"I have to be straight with you here — this is exactly where the 2024 listing sat. $998,800. And we know how that ended. The market hasn't recovered to that level — GTA freehold towns are actually down 6.9% year-over-year as of March 2026. There are active listings in your area right now at $968K and $1.05M that have been sitting 40+ days with price cuts already. Overpricing means sitting, and sitting means stigma, and stigma means selling for less than the Market Middle anyway. It's not a path I can recommend."</div>
+    </div>
+
+    <div class="phase-divider">The Hard Conversation — Their Purchase Price</div>
+    <div class="alert-box">
+      <strong>Address it directly. Don't let them bring it up first.</strong>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"I want to address something directly because I think it needs to be said — you bought this property in January 2022 for $1,027,000. That was the peak of the GTA market. We've seen a significant correction since then, and this property, based on what the market is actually doing right now, is worth approximately $870,000. That's not a reflection of the home — the home is in good shape. It's a reflection of what the entire market has done since 2022. I know that's a hard number to hear. But you already experienced what happens when you try to fight the market — 85 days, no sale. My job is to get you the best number the market will give you right now, get the deal done cleanly, and let you move forward. That's what I'm here to do."</div>
+    </div>
+
+    <div class="phase-divider">Open Tab 3 — Market Trends (if they push back)</div>
+    <div class="guide-tabs-ref">
+      <span class="guide-tab-chip" onclick="showTab('market',document.querySelector('[onclick*=market]'))">→ Open Tab 3</span>
+    </div>
+    <div class="q-block">
+      <div class="q-text">"If you want to understand why the market is here — let me show you the market data. This isn't my opinion. This is what's happened to freehold townhomes in this area over the last 24 months. The buyers are informed. They're running the same numbers we are."</div>
+    </div>
+  </div>
+</div>
+
+<\!-- PHASE 6: CLOSE -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">6</div>
+    <div class="phase-title">The Close & Objection Handling</div>
+    <div class="phase-time">10–15 min</div>
+  </div>
+  <div class="phase-body">
+    <p class="phase-intro">You've shown your work, you've been honest, you've built trust. Now it's time to ask for the business — directly. Don't hover around it. Don't oversell. Just ask.</p>
+
+    <div class="phase-divider">The Ask</div>
+    <div class="q-block">
+      <div class="q-label">Closing Line</div>
+      <div class="q-text">"Based on everything I've shown you tonight and everything you've told me — are you ready to move forward? I'd like to get this on market properly and get you the outcome you deserve. I'm ready to go whenever you are."</div>
+    </div>
+
+    <div class="phase-divider">Common Objections</div>
+
+    <div class="objection-block">
+      <div class="obj-q">❝ We need at least $900,000 to make the numbers work ❞</div>
+      <div class="obj-a">"I hear you — and I respect that you need to know the outcome before you commit. Let me ask you this: if we list at $879,900 and we get an offer at $875,000, is that a deal you can do? Because that's what the market supports right now, and I'd rather have that conversation honestly now than have you go through another 85 days at a number buyers won't touch. What does walking away at $875K mean for your situation?"</div>
+    </div>
+
+    <div class="objection-block">
+      <div class="obj-q">❝ We want to wait until the market improves ❞</div>
+      <div class="obj-a">"That's a completely reasonable thought — and if your timeline allows for it, that's a valid strategy. What I'd caution is this: rates haven't given buyers significant relief, inventory is building, and we've already seen the market correct 6.9% year-over-year. I can't promise that waiting 6 months gets you more money — it might, or it might not. What I can control is getting you the best price in today's market with exceptional execution. How much time do you realistically have before you have to make a decision?"</div>
+    </div>
+
+    <div class="objection-block">
+      <div class="obj-q">❝ We're talking to a few other agents ❞</div>
+      <div class="obj-a">"Absolutely — you should. I'd actually encourage it. All I ask is that when you're comparing agents, you compare the data, not the price they tell you they can get you. Any agent can write a higher number on a piece of paper. The question is: which agent is going to give you an honest market read and execute flawlessly when the listing goes live? I think what I put in front of you tonight shows you how I work. I'll let you make the call."</div>
+    </div>
+
+    <div class="objection-block">
+      <div class="obj-q">❝ We think it's worth more because of what we paid ❞</div>
+      <div class="obj-a">"I completely understand — and that number is real, the pain of it is real. But buyers don't care what you paid. They care what the market is doing today. 24 Briarfield sold for $871,888 in 7 days in January. That's the same house, same street, same everything. The buyer who walks into your property is going to pull that comp on their phone. Our job is to be ahead of that conversation, not behind it."</div>
+    </div>
+
+    <div class="phase-divider">If They're Not Ready to Sign Tonight</div>
+    <div class="q-block">
+      <div class="q-text">"That's completely fine — I don't want you to feel rushed. Here's what I'll do: I'll leave you with everything I showed you tonight. Take a couple of days. But I do want to be honest — if you decide to move forward, I'd like to get the marketing process started within the week so we hit the spring market at the right time. Can we agree to connect again by [specific day]?"</div>
+      <div class="q-note">Always leave with a specific next step. "I'll call you" is not a next step.</div>
+    </div>
+
+    <div class="phase-divider">If They Sign</div>
+    <div class="q-block">
+      <div class="q-text">"Perfect — I appreciate your trust and I'm going to take care of you. Here's what happens next: I'll get the listing setup checklist going tonight, we'll book photography within the next few days, and I'll have a launch plan to you by tomorrow. You made the right call."</div>
+    </div>
+  </div>
+</div>
+
+<\!-- QUICK REFERENCE -->
+<div class="guide-phase">
+  <div class="guide-phase-header">
+    <div class="phase-number">★</div>
+    <div class="phase-title">Quick Reference — Key Numbers</div>
+    <div class="phase-time">Memorize these</div>
+  </div>
+  <div class="phase-body">
+    <div class="data-callout">
+      <div class="dc-item"><div class="dc-label">Built</div><div class="dc-value">2017</div><div class="dc-sub">Rodeo Fine Homes</div></div>
+      <div class="dc-item"><div class="dc-label">Size</div><div class="dc-value">1,806</div><div class="dc-sub">sq ft above grade (MPAC)</div></div>
+      <div class="dc-item"><div class="dc-label">Original Sale</div><div class="dc-value">$441K</div><div class="dc-sub">June 2017</div></div>
+      <div class="dc-item"><div class="dc-label">Peak Purchase</div><div class="dc-value" style="color:#f87171">$1.027M</div><div class="dc-sub">Jan 2022 — Alidadi/Pakdaman</div></div>
+      <div class="dc-item"><div class="dc-label">2024 Terminated</div><div class="dc-value" style="color:#f87171">$998,800</div><div class="dc-sub">85 DOM · No sale</div></div>
+      <div class="dc-item"><div class="dc-label">Comp 1 Adjusted</div><div class="dc-value">$870K</div><div class="dc-sub">17 Carratuck · Mar 2026</div></div>
+      <div class="dc-item"><div class="dc-label">Comp 2 Sold</div><div class="dc-value">$871,888</div><div class="dc-sub">24 Briarfield · 7 DOM</div></div>
+      <div class="dc-item"><div class="dc-label">Recommend List</div><div class="dc-value" style="color:#4ade80">$879,900</div><div class="dc-sub">Market Middle — Top of range</div></div>
+      <div class="dc-item"><div class="dc-label">Expected Close</div><div class="dc-value">$853K–$879K</div><div class="dc-sub">97–100% SP/LP</div></div>
+      <div class="dc-item"><div class="dc-label">2025 Property Tax</div><div class="dc-value">$4,984</div><div class="dc-sub">Annual</div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
