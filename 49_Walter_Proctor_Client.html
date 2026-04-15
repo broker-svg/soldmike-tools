@@ -1093,17 +1093,16 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
 </div><!-- end tab-analysis -->
 
 <!-- FOOTER -->
+
 <\!-- ==================== TAB 6: CMA PRICING DASHBOARD ==================== -->
 <div id="tab-cma-pricing" class="tab-panel">
 <div class="inner">
 
 <style>
-/* CMA-specific styles */
 .cma-hero{background:linear-gradient(135deg,#0D1B2A 0%,#1A2B4A 100%);border:1px solid #2a3a5a;border-radius:16px;padding:2rem;margin-bottom:2rem;text-align:center}
-.cma-hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;color:#C9A96E;font-weight:700;margin-bottom:.35rem}
+.cma-hero-title{font-family:"Cormorant Garamond",serif;font-size:2rem;color:#C9A96E;font-weight:700;margin-bottom:.35rem}
 .cma-hero-sub{font-size:.88rem;color:#8899aa;letter-spacing:.06em;text-transform:uppercase}
 .strategy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:2rem}
-@media(max-width:900px){.strategy-grid{grid-template-columns:1fr 1fr}}
 .strategy-card{border-radius:14px;padding:1.6rem;text-align:center;position:relative;overflow:hidden}
 .strategy-card.offer-date{background:linear-gradient(145deg,#0a2a1a,#061a0f);border:2px solid #4ade80}
 .strategy-card.market-middle{background:linear-gradient(145deg,#2a1f08,#1a1305);border:3px solid #C9A96E}
@@ -1114,14 +1113,14 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
 .market-middle .strategy-badge{background:rgba(201,169,110,.15);color:#C9A96E}
 .optimistic .strategy-badge{background:rgba(96,165,250,.15);color:#60a5fa}
 .overpriced .strategy-badge{background:rgba(248,113,113,.15);color:#f87171}
-.strategy-price{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;line-height:1.1;margin-bottom:.5rem}
+.strategy-price{font-family:"Cormorant Garamond",serif;font-size:1.85rem;font-weight:700;line-height:1.1;margin-bottom:.5rem}
 .offer-date .strategy-price{color:#4ade80}
 .market-middle .strategy-price{color:#C9A96E}
 .optimistic .strategy-price{color:#60a5fa}
 .overpriced .strategy-price{color:#f87171}
 .strategy-desc{font-size:.8rem;color:#8899aa;line-height:1.6;margin-top:.5rem}
 .star-badge{position:absolute;top:.75rem;right:.75rem;font-size:.65rem;background:#C9A96E;color:#000;padding:.2rem .5rem;border-radius:4px;font-weight:700}
-.cma-section-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:#e8e6e1;font-weight:700;margin:2rem 0 1rem;border-left:4px solid #C9A96E;padding-left:.85rem}
+.cma-section-title{font-family:"Cormorant Garamond",serif;font-size:1.5rem;color:#e8e6e1;font-weight:700;margin:2rem 0 1rem;border-left:4px solid #C9A96E;padding-left:.85rem}
 .cma-table{width:100%;border-collapse:collapse;background:#1A2B4A;border-radius:12px;overflow:hidden;margin-bottom:2rem}
 .cma-table th{background:rgba(201,169,110,.12);color:#C9A96E;font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;padding:.85rem 1rem;text-align:left;border-bottom:1px solid #2a3a5a}
 .cma-table td{padding:.8rem 1rem;font-size:.88rem;color:#c8d8e8;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -1130,7 +1129,6 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
 .cma-table td.highlight{color:#C9A96E;font-weight:700}
 .cma-table td.green{color:#4ade80;font-weight:600}
 .cma-table td.red{color:#f87171;font-weight:600}
-.cma-table td.blue{color:#60a5fa;font-weight:600}
 .adj-net{background:rgba(201,169,110,.08);font-weight:700;color:#C9A96E}
 .cma-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
 .cma-chart-box{background:#1A2B4A;border:1px solid #2a3a5a;border-radius:12px;padding:1.5rem}
@@ -1147,9 +1145,7 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
   <div class="cma-hero-sub">East Gwillimbury · Sharon Village · Freehold Att/Row Townhouse · 1,806 sq ft · April 2026</div>
 </div>
 
-<\!-- STRATEGY CARDS -->
 <h2 class="cma-section-title">Pricing Strategy</h2>
-
 <div class="strategy-grid">
   <div class="strategy-card offer-date">
     <div class="strategy-badge">Offer Date</div>
@@ -1157,7 +1153,7 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
     <div class="strategy-desc">Priced to generate competition. Designed to drive multiple offers on offer night and push buyers to their ceiling.</div>
   </div>
   <div class="strategy-card market-middle">
-    <div class="star-badge">★ TARGET</div>
+    <div class="star-badge">TARGET</div>
     <div class="strategy-badge">Market Middle</div>
     <div class="strategy-price">$865K – $884,900</div>
     <div class="strategy-desc">Where the comp data converges. Both adjusted comps land at ~$870K independently. Recommend listing at $879,900 to target the top of this range.</div>
@@ -1168,179 +1164,82 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
     <div class="strategy-desc">Achievable if inventory is low, buyer is motivated, and the home presents exceptionally. Requires everything to align.</div>
   </div>
   <div class="strategy-card overpriced">
-    <div class="strategy-badge">⚠ Overpriced</div>
+    <div class="strategy-badge">Overpriced</div>
     <div class="strategy-price">$910,000+</div>
-    <div class="strategy-desc">Already tested. $998,800 sat for 85 DOM in 2024 with no sale. Market has not recovered. Active listings at this level are sitting with cuts.</div>
+    <div class="strategy-desc">Already tested. $998,800 sat 85 DOM in 2024 with no sale. Active listings at this level are sitting with cuts.</div>
   </div>
 </div>
 
-<\!-- SOLD COMPS TABLE -->
 <h2 class="cma-section-title">Sold Comparables</h2>
 <table class="cma-table">
   <thead>
     <tr>
-      <th>Address</th>
-      <th>Sold Price</th>
-      <th>List Price</th>
-      <th>SP/LP</th>
-      <th>DOM</th>
-      <th>Sq Ft</th>
-      <th>Beds</th>
-      <th>Baths</th>
-      <th>Basement</th>
-      <th>Garage</th>
-      <th>Sold Date</th>
-      <th>Net Adj.</th>
-      <th>Adj. Value</th>
+      <th>Address</th><th>Sold Price</th><th>List Price</th><th>SP/LP</th><th>DOM</th>
+      <th>Sq Ft</th><th>Beds</th><th>Baths</th><th>Basement</th><th>Garage</th><th>Sold Date</th><th>Net Adj.</th><th>Adj. Value</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td class="highlight">49 Walter Proctor<br><span style="font-size:.75rem;color:#8899aa">Subject Property</span></td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>1,806</td>
-      <td>3</td>
-      <td>3</td>
-      <td>Unfinished</td>
-      <td>1-Car</td>
-      <td>—</td>
-      <td>—</td>
-      <td class="highlight">$870,000</td>
+      <td>—</td><td>—</td><td>—</td><td>—</td><td>1,806</td><td>3</td><td>3</td><td>Unfinished</td><td>1-Car</td><td>—</td><td>—</td><td class="highlight">$870,000</td>
     </tr>
     <tr>
       <td>17 Carratuck St<br><span style="font-size:.75rem;color:#8899aa">N12850156</span></td>
-      <td class="green">$965,000</td>
-      <td>$998,000</td>
-      <td>97%</td>
-      <td>24</td>
-      <td>1,914</td>
-      <td>3+1</td>
-      <td>4</td>
-      <td>Full Finished</td>
-      <td>2-Car</td>
-      <td>Mar 26, 2026</td>
-      <td class="red">-$95,000</td>
-      <td class="highlight">~$870,000</td>
+      <td class="green">$965,000</td><td>$998,000</td><td>97%</td><td>24</td><td>1,914</td><td>3+1</td><td>4</td><td>Full Finished</td><td>2-Car</td><td>Mar 26, 2026</td><td class="red">-$95,000</td><td class="highlight">~$870,000</td>
     </tr>
     <tr>
       <td>24 Briarfield Ave<br><span style="font-size:.75rem;color:#8899aa">N12680700</span></td>
-      <td class="green">$871,888</td>
-      <td>$899,000</td>
-      <td>97%</td>
-      <td class="green">7</td>
-      <td>1,800</td>
-      <td>3</td>
-      <td>3</td>
-      <td>Unfinished W/O</td>
-      <td>1-Car</td>
-      <td>Jan 16, 2026</td>
-      <td class="red">-$2,000</td>
-      <td class="highlight">~$874,888</td>
+      <td class="green">$871,888</td><td>$899,000</td><td>97%</td><td class="green">7</td><td>1,800</td><td>3</td><td>3</td><td>Unfinished W/O</td><td>1-Car</td><td>Jan 16, 2026</td><td class="red">-$2,000</td><td class="highlight">~$874,888</td>
     </tr>
   </tbody>
 </table>
 
-<\!-- ADJUSTMENT DETAIL -->
 <h2 class="cma-section-title">Adjustment Detail</h2>
-<div class="cma-charts-grid" style="grid-template-columns:1fr 1fr;gap:1.5rem">
-
-<div>
-<table class="cma-table">
-  <thead>
-    <tr><th colspan="3">17 Carratuck St → Adjusted to Subject</th></tr>
-    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Sq Ft (+108 sqft)</td><td class="red">Comp Superior</td><td class="red">-$27,000</td></tr>
-    <tr><td>Finished Basement</td><td class="red">Comp Superior</td><td class="red">-$45,000</td></tr>
-    <tr><td>2-Car Garage</td><td class="red">Comp Superior</td><td class="red">-$18,000</td></tr>
-    <tr><td>Bathrooms (4 vs 3)</td><td class="red">Comp Superior</td><td class="red">-$5,000</td></tr>
-    <tr><td>Lot Size</td><td>Neutral</td><td>$0</td></tr>
-    <tr><td>Fireplace</td><td>Neutral</td><td>$0</td></tr>
-    <tr class="adj-net"><td colspan="2">NET ADJUSTMENT</td><td>-$95,000</td></tr>
-    <tr class="adj-net"><td colspan="2">ADJUSTED VALUE</td><td>~$870,000</td></tr>
-  </tbody>
-</table>
+<div class="cma-charts-grid">
+  <div>
+    <table class="cma-table">
+      <thead><tr><th colspan="3">17 Carratuck St — Adjusted to Subject</th></tr><tr><th>Factor</th><th>Direction</th><th>Adjustment</th></tr></thead>
+      <tbody>
+        <tr><td>Sq Ft (+108 sqft)</td><td class="red">Comp Superior</td><td class="red">-$27,000</td></tr>
+        <tr><td>Finished Basement</td><td class="red">Comp Superior</td><td class="red">-$45,000</td></tr>
+        <tr><td>2-Car Garage</td><td class="red">Comp Superior</td><td class="red">-$18,000</td></tr>
+        <tr><td>Bathrooms (4 vs 3)</td><td class="red">Comp Superior</td><td class="red">-$5,000</td></tr>
+        <tr><td>Lot Size</td><td>Neutral</td><td>$0</td></tr>
+        <tr><td>Fireplace</td><td>Neutral</td><td>$0</td></tr>
+        <tr class="adj-net"><td colspan="2">NET ADJUSTMENT</td><td>-$95,000</td></tr>
+        <tr class="adj-net"><td colspan="2">ADJUSTED VALUE</td><td>~$870,000</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div>
+    <table class="cma-table">
+      <thead><tr><th colspan="3">24 Briarfield Ave — Adjusted to Subject</th></tr><tr><th>Factor</th><th>Direction</th><th>Adjustment</th></tr></thead>
+      <tbody>
+        <tr><td>Sq Ft (6 sqft diff)</td><td>Neutral</td><td>$0</td></tr>
+        <tr><td>Basement Walkout</td><td class="red">Comp Superior</td><td class="red">-$7,000</td></tr>
+        <tr><td>Fireplace (subject has)</td><td class="green">Subject Superior</td><td class="green">+$5,000</td></tr>
+        <tr><td>Lot Size</td><td>Neutral</td><td>$0</td></tr>
+        <tr><td>Garage</td><td>Neutral</td><td>$0</td></tr>
+        <tr><td>Bathrooms</td><td>Neutral</td><td>$0</td></tr>
+        <tr class="adj-net"><td colspan="2">NET ADJUSTMENT</td><td>-$2,000</td></tr>
+        <tr class="adj-net"><td colspan="2">ADJUSTED VALUE</td><td>~$874,888</td></tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<div>
-<table class="cma-table">
-  <thead>
-    <tr><th colspan="3">24 Briarfield Ave → Adjusted to Subject</th></tr>
-    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Sq Ft (6 sqft diff)</td><td>Neutral</td><td>$0</td></tr>
-    <tr><td>Basement Walkout</td><td class="red">Comp Superior</td><td class="red">-$7,000</td></tr>
-    <tr><td>Fireplace (subject has)</td><td class="green">Subject Superior</td><td class="green">+$5,000</td></tr>
-    <tr><td>Lot Size</td><td>Neutral</td><td>$0</td></tr>
-    <tr><td>Garage</td><td>Neutral</td><td>$0</td></tr>
-    <tr><td>Bathrooms</td><td>Neutral</td><td>$0</td></tr>
-    <tr class="adj-net"><td colspan="2">NET ADJUSTMENT</td><td>-$2,000</td></tr>
-    <tr class="adj-net"><td colspan="2">ADJUSTED VALUE</td><td>~$874,888</td></tr>
-  </tbody>
-</table>
-</div>
-
-</div>
-
-<\!-- ACTIVE LISTINGS TABLE -->
 <h2 class="cma-section-title">Active Listings — Competitive Ceiling</h2>
 <table class="cma-table">
   <thead>
-    <tr>
-      <th>Address</th>
-      <th>List Price</th>
-      <th>DOM</th>
-      <th>Sq Ft</th>
-      <th>Beds</th>
-      <th>Baths</th>
-      <th>Basement</th>
-      <th>Garage</th>
-      <th>Status</th>
-    </tr>
+    <tr><th>Address</th><th>List Price</th><th>DOM</th><th>Sq Ft</th><th>Beds</th><th>Baths</th><th>Status</th></tr>
   </thead>
   <tbody>
-    <tr>
-      <td>107 Beechborough Cres</td>
-      <td class="red">$968,000</td>
-      <td class="red">45</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td class="red">Price Reduced · Sitting</td>
-    </tr>
-    <tr>
-      <td>1 Silver Charm Dr</td>
-      <td class="red">$1,049,900</td>
-      <td class="red">43</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td>—</td>
-      <td class="red">Unsold · No Activity</td>
-    </tr>
-    <tr>
-      <td class="highlight">49 Walter Proctor<br><span style="font-size:.75rem;color:#8899aa">Prior Listing 2024</span></td>
-      <td class="red">$998,800</td>
-      <td class="red">85 DOM</td>
-      <td>1,806</td>
-      <td>3</td>
-      <td>3</td>
-      <td>Unfinished</td>
-      <td>1-Car</td>
-      <td class="red">TERMINATED · No Sale</td>
-    </tr>
+    <tr><td>107 Beechborough Cres</td><td class="red">$968,000</td><td class="red">45</td><td>—</td><td>—</td><td>—</td><td class="red">Price Reduced · Sitting</td></tr>
+    <tr><td>1 Silver Charm Dr</td><td class="red">$1,049,900</td><td class="red">43</td><td>—</td><td>—</td><td>—</td><td class="red">Unsold · No Activity</td></tr>
+    <tr><td class="highlight">49 Walter Proctor (2024)</td><td class="red">$998,800</td><td class="red">85</td><td>1,806</td><td>3</td><td>3</td><td class="red">TERMINATED · No Sale</td></tr>
   </tbody>
 </table>
 
-<\!-- CHARTS -->
 <h2 class="cma-section-title">Pricing Visual</h2>
 <div class="cma-charts-grid">
   <div class="cma-chart-box">
@@ -1353,71 +1252,8 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
   </div>
 </div>
 
-<script>
-(function(){
-  const gold = '#C9A96E', green = '#4ade80', blue = '#60a5fa', red = '#f87171', navy = '#1A2B4A';
-
-  // Pricing chart
-  new Chart(document.getElementById('cmaPricingChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Offer Date','24 Briarfield\n(Adj.)','17 Carratuck\n(Adj.)','Market Middle\n(Target)','Optimistic','Overpriced\nZone'],
-      datasets: [{
-        label: 'Price',
-        data: [798000, 874888, 870000, 879900, 897000, 998800],
-        backgroundColor: [green, 'rgba(201,169,110,.5)', 'rgba(201,169,110,.5)', gold, blue, red],
-        borderColor: [green, gold, gold, gold, blue, red],
-        borderWidth: 2,
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: false,
-          min: 750000,
-          ticks: { color: '#8899aa', callback: v => '$' + (v/1000).toFixed(0) + 'K' },
-          grid: { color: 'rgba(255,255,255,.05)' }
-        },
-        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
-      }
-    }
-  });
-
-  // DOM chart
-  new Chart(document.getElementById('cmaDomChart'), {
-    type: 'bar',
-    data: {
-      labels: ['24 Briarfield\n(Sold)', '17 Carratuck\n(Sold)', '107 Beechborough\n(Active)', '1 Silver Charm\n(Active)', '49 Walter P.\n(2024 TER)'],
-      datasets: [{
-        label: 'Days on Market',
-        data: [7, 24, 45, 43, 85],
-        backgroundColor: [green, green, red, red, red],
-        borderColor: [green, green, red, red, red],
-        borderWidth: 2,
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { color: '#8899aa', callback: v => v + 'd' },
-          grid: { color: 'rgba(255,255,255,.05)' }
-        },
-        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
-      }
-    }
-  });
-})();
-</script>
-
-</div><\!-- /inner -->
-</div><\!-- /tab-cma-pricing -->
+</div>
+</div>
 
 <\!-- ==================== TAB 7: MARKET ANALYTICS ==================== -->
 <div id="tab-cma-analytics" class="tab-panel">
@@ -1428,7 +1264,6 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
   <div class="cma-hero-sub">Freehold Townhouse Segment · April 2026 · Data: MLS / TRREB / GeoWarehouse</div>
 </div>
 
-<\!-- CHARTS ROW 1 -->
 <h2 class="cma-section-title">List Price vs. Sale Price Gap</h2>
 <div class="cma-chart-box" style="margin-bottom:1.5rem">
   <div class="cma-chart-label">SP/LP Ratio — Sold Comps (How close to asking did buyers pay?)</div>
@@ -1446,117 +1281,24 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
   </div>
 </div>
 
-<\!-- INSIGHT BOXES -->
 <h2 class="cma-section-title">Market Insights</h2>
 <div class="cma-insight-row">
   <div class="cma-insight">
-    <div class="cma-insight-label">📉 Where the Market Stands</div>
-    <div class="cma-insight-text">GTA freehold townhomes are down <strong>6.9% year-over-year</strong> as of March 2026. Sharon Village hasn't been immune — the sold comps confirm that buyers are paying in the <strong>$870K–$875K range</strong> for properties matching this profile, regardless of what sellers believe their property is worth based on 2022 purchase prices. The market has repriced and buyers know it.</div>
+    <div class="cma-insight-label">Where the Market Stands</div>
+    <div class="cma-insight-text">GTA freehold townhomes are down <strong>6.9% year-over-year</strong> as of March 2026. Sharon Village confirms it — buyers are paying in the <strong>$870K–$875K range</strong> for properties matching this profile, regardless of what sellers believe based on 2022 purchase prices. The market has repriced and buyers know it.</div>
   </div>
   <div class="cma-insight">
-    <div class="cma-insight-label">⚠️ What Overpricing Costs You</div>
-    <div class="cma-insight-text">The active ceiling comps tell the story clearly. Properties listed above $960K in this segment are sitting — <strong>45+ days with no deal</strong>. The 2024 listing at $998,800 terminated after 85 DOM. Every week a property sits, buyer perception shifts from "new listing" to "what's wrong with it." The stale listing penalty is real and it compounds. Overpricing doesn't protect value — it destroys it.</div>
+    <div class="cma-insight-label">What Overpricing Costs You</div>
+    <div class="cma-insight-text">Properties listed above $960K in this segment are sitting — <strong>45+ days with no deal</strong>. The 2024 listing at $998,800 terminated after 85 DOM. Every week a property sits, buyer perception shifts from "new listing" to "what is wrong with it." The stale listing penalty compounds. Overpricing does not protect value — it destroys it.</div>
   </div>
   <div class="cma-insight">
-    <div class="cma-insight-label">✅ The Offer Date Advantage</div>
-    <div class="cma-insight-text">24 Briarfield listed at $899,000 and sold for <strong>$871,888 in 7 days</strong> — 97% SP/LP. The offer date strategy works in this market because it creates urgency, compresses the decision timeline for buyers, and prevents the stale listing dynamic. A well-priced property at <strong>$798,000</strong> with strong marketing gets buyers competing — which is the only way to push the number above the Market Middle.</div>
+    <div class="cma-insight-label">The Offer Date Advantage</div>
+    <div class="cma-insight-text">24 Briarfield listed at $899,000 and sold for <strong>$871,888 in 7 days</strong> — 97% SP/LP. The offer date strategy creates urgency, compresses buyer decision timelines, and prevents the stale listing dynamic. A well-priced property at <strong>$798,000</strong> with strong marketing gets buyers competing — the only way to push above Market Middle.</div>
   </div>
 </div>
 
-<script>
-(function(){
-  const gold = '#C9A96E', green = '#4ade80', blue = '#60a5fa', red = '#f87171';
-
-  // Gap chart - SP/LP
-  new Chart(document.getElementById('gapChart'), {
-    type: 'bar',
-    data: {
-      labels: ['17 Carratuck (Mar 2026)', '24 Briarfield (Jan 2026)', '107 Beechborough (Active)', '1 Silver Charm (Active)', '49 Walter P. 2024 (TER)'],
-      datasets: [{
-        label: 'SP/LP %',
-        data: [97, 97, null, null, null],
-        backgroundColor: [green, green, 'transparent', 'transparent', 'transparent'],
-        borderColor: [green, green, red, red, red],
-        borderWidth: 2,
-        borderRadius: 4
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ctx.raw ? ctx.raw + '% SP/LP' : 'No sale' } }
-      },
-      scales: {
-        x: { min: 0, max: 105, ticks: { color: '#8899aa', callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,.05)' } },
-        y: { ticks: { color: '#8899aa', font: { size: 11 } }, grid: { display: false } }
-      }
-    }
-  });
-
-  // 6-month trend
-  new Chart(document.getElementById('trendChart'), {
-    type: 'line',
-    data: {
-      labels: ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'],
-      datasets: [{
-        label: 'Avg Sold Price',
-        data: [895000, 882000, 868000, 871888, 874000, 870000],
-        borderColor: gold,
-        backgroundColor: 'rgba(201,169,110,.08)',
-        pointBackgroundColor: gold,
-        pointRadius: 5,
-        tension: 0.4,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: false,
-          min: 840000,
-          ticks: { color: '#8899aa', callback: v => '$' + (v/1000).toFixed(0) + 'K' },
-          grid: { color: 'rgba(255,255,255,.05)' }
-        },
-        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
-      }
-    }
-  });
-
-  // Absorption
-  new Chart(document.getElementById('absorptionChart'), {
-    type: 'bar',
-    data: {
-      labels: ['Sold (60 days)', 'Active Now'],
-      datasets: [{
-        label: 'Units',
-        data: [2, 2],
-        backgroundColor: [green, red],
-        borderColor: [green, red],
-        borderWidth: 2,
-        borderRadius: 8
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { afterLabel: () => 'Months of inventory: ~2.0 · Balanced-to-Buyers market' } }
-      },
-      scales: {
-        y: { beginAtZero: true, ticks: { color: '#8899aa', stepSize: 1 }, grid: { color: 'rgba(255,255,255,.05)' } },
-        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
-      }
-    }
-  });
-})();
-</script>
-
-</div><\!-- /inner -->
-</div><\!-- /tab-cma-analytics -->
-
+</div>
+</div>
 
 <footer class="site-footer">
   <div class="footer-brand">SOLDMIKE · RE/MAX PREMIER THE OP TEAM, BROKERAGE</div>
@@ -1815,5 +1557,134 @@ function updateSlider() {
 slider.addEventListener('input', updateSlider);
 updateSlider();
 </script>
+
+<script>
+// CMA Charts — run after Chart.js is loaded
+(function() {
+  var gold = '#C9A96E', green = '#4ade80', blue = '#60a5fa', red = '#f87171';
+
+  // Tab 6 — Pricing bars
+  new Chart(document.getElementById('cmaPricingChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Offer Date','24 Briarfield (Adj.)','17 Carratuck (Adj.)','Market Middle','Optimistic','Overpriced'],
+      datasets: [{
+        data: [798000, 874888, 870000, 879900, 897000, 998800],
+        backgroundColor: [green,'rgba(201,169,110,.5)','rgba(201,169,110,.5)',gold,blue,red],
+        borderColor: [green,gold,gold,gold,blue,red],
+        borderWidth: 2, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: false, min: 750000,
+             ticks: { color: '#8899aa', callback: function(v){ return '$'+(v/1000).toFixed(0)+'K'; } },
+             grid: { color: 'rgba(255,255,255,.05)' } },
+        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Tab 6 — DOM bars
+  new Chart(document.getElementById('cmaDomChart'), {
+    type: 'bar',
+    data: {
+      labels: ['24 Briarfield (Sold)','17 Carratuck (Sold)','107 Beechborough (Active)','1 Silver Charm (Active)','49 Walter P. (2024 TER)'],
+      datasets: [{
+        data: [7, 24, 45, 43, 85],
+        backgroundColor: [green, green, red, red, red],
+        borderColor: [green, green, red, red, red],
+        borderWidth: 2, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true,
+             ticks: { color: '#8899aa', callback: function(v){ return v+'d'; } },
+             grid: { color: 'rgba(255,255,255,.05)' } },
+        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Tab 7 — SP/LP gap horizontal bar
+  new Chart(document.getElementById('gapChart'), {
+    type: 'bar',
+    data: {
+      labels: ['17 Carratuck (Mar 2026)', '24 Briarfield (Jan 2026)'],
+      datasets: [{
+        data: [97, 97],
+        backgroundColor: [green, green],
+        borderColor: [green, green],
+        borderWidth: 2, borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { min: 90, max: 102,
+             ticks: { color: '#8899aa', callback: function(v){ return v+'%'; } },
+             grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { ticks: { color: '#8899aa', font: { size: 11 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Tab 7 — 6-month trend
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'],
+      datasets: [{
+        data: [895000, 882000, 868000, 871888, 874000, 870000],
+        borderColor: gold,
+        backgroundColor: 'rgba(201,169,110,.08)',
+        pointBackgroundColor: gold,
+        pointRadius: 5, tension: 0.4, fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: false, min: 840000,
+             ticks: { color: '#8899aa', callback: function(v){ return '$'+(v/1000).toFixed(0)+'K'; } },
+             grid: { color: 'rgba(255,255,255,.05)' } },
+        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Tab 7 — Absorption
+  new Chart(document.getElementById('absorptionChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Sold (60 days)', 'Active Now'],
+      datasets: [{
+        data: [2, 2],
+        backgroundColor: [green, red],
+        borderColor: [green, red],
+        borderWidth: 2, borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true,
+             ticks: { color: '#8899aa', stepSize: 1 },
+             grid: { color: 'rgba(255,255,255,.05)' } },
+        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
+      }
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
