@@ -1319,10 +1319,13 @@ function showTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
   btn.classList.add('active');
-  // Lazy-init CMA charts the first time tab becomes visible
-  if ((id === 'cma-pricing' || id === 'cma-analytics') && \!window.cmaChartsReady) {
-    window.cmaChartsReady = true;
-    initCMACharts();
+  if (id === 'cma-pricing' && \!window.cmaPricingReady) {
+    window.cmaPricingReady = true;
+    requestAnimationFrame(function(){ requestAnimationFrame(initCMAPricingCharts); });
+  }
+  if (id === 'cma-analytics' && \!window.cmaAnalyticsReady) {
+    window.cmaAnalyticsReady = true;
+    requestAnimationFrame(function(){ requestAnimationFrame(initCMAAnalyticsCharts); });
   }
 }
 
@@ -1565,126 +1568,96 @@ updateSlider();
 
 <script>
 // CMA Charts — lazy init, called when tab first opens
-function initCMACharts() {
+function initCMAPricingCharts() {
   var gold = '#C9A96E', green = '#4ade80', blue = '#60a5fa', red = '#f87171';
 
-  // Tab 6 — Pricing bars
   new Chart(document.getElementById('cmaPricingChart'), {
     type: 'bar',
     data: {
       labels: ['Offer Date','24 Briarfield (Adj.)','17 Carratuck (Adj.)','Market Middle','Optimistic','Overpriced'],
-      datasets: [{
-        data: [798000, 874888, 870000, 879900, 897000, 998800],
-        backgroundColor: [green,'rgba(201,169,110,.5)','rgba(201,169,110,.5)',gold,blue,red],
-        borderColor: [green,gold,gold,gold,blue,red],
-        borderWidth: 2, borderRadius: 6
-      }]
+      datasets: [{ data: [798000,874888,870000,879900,897000,998800],
+        backgroundColor:[green,'rgba(201,169,110,.5)','rgba(201,169,110,.5)',gold,blue,red],
+        borderColor:[green,gold,gold,gold,blue,red], borderWidth:2, borderRadius:6 }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: false, min: 750000,
-             ticks: { color: '#8899aa', callback: function(v){ return '$'+(v/1000).toFixed(0)+'K'; } },
-             grid: { color: 'rgba(255,255,255,.05)' } },
-        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
+    options: { responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:false,min:750000,
+           ticks:{color:'#8899aa',callback:function(v){return '$'+(v/1000).toFixed(0)+'K';}},
+           grid:{color:'rgba(255,255,255,.05)'}},
+        x:{ticks:{color:'#8899aa',font:{size:10}},grid:{display:false}}
       }
     }
   });
 
-  // Tab 6 — DOM bars
   new Chart(document.getElementById('cmaDomChart'), {
     type: 'bar',
     data: {
-      labels: ['24 Briarfield (Sold)','17 Carratuck (Sold)','107 Beechborough (Active)','1 Silver Charm (Active)','49 Walter P. (2024 TER)'],
-      datasets: [{
-        data: [7, 24, 45, 43, 85],
-        backgroundColor: [green, green, red, red, red],
-        borderColor: [green, green, red, red, red],
-        borderWidth: 2, borderRadius: 6
-      }]
+      labels: ['24 Briarfield\n(Sold)','17 Carratuck\n(Sold)','107 Beechborough\n(Active)','1 Silver Charm\n(Active)','49 Walter P.\n(2024 TER)'],
+      datasets: [{ data:[7,24,45,43,85],
+        backgroundColor:[green,green,red,red,red],
+        borderColor:[green,green,red,red,red], borderWidth:2, borderRadius:6 }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true,
-             ticks: { color: '#8899aa', callback: function(v){ return v+'d'; } },
-             grid: { color: 'rgba(255,255,255,.05)' } },
-        x: { ticks: { color: '#8899aa', font: { size: 10 } }, grid: { display: false } }
+    options: { responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true,
+           ticks:{color:'#8899aa',callback:function(v){return v+'d';}},
+           grid:{color:'rgba(255,255,255,.05)'}},
+        x:{ticks:{color:'#8899aa',font:{size:10}},grid:{display:false}}
       }
     }
   });
+}
 
-  // Tab 7 — SP/LP gap horizontal bar
+function initCMAAnalyticsCharts() {
+  var gold = '#C9A96E', green = '#4ade80', red = '#f87171';
+
   new Chart(document.getElementById('gapChart'), {
     type: 'bar',
     data: {
-      labels: ['17 Carratuck (Mar 2026)', '24 Briarfield (Jan 2026)'],
-      datasets: [{
-        data: [97, 97],
-        backgroundColor: [green, green],
-        borderColor: [green, green],
-        borderWidth: 2, borderRadius: 4
-      }]
+      labels: ['17 Carratuck (Mar 2026)','24 Briarfield (Jan 2026)'],
+      datasets: [{ data:[97,97], backgroundColor:[green,green],
+        borderColor:[green,green], borderWidth:2, borderRadius:4 }]
     },
-    options: {
-      indexAxis: 'y', responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { min: 90, max: 102,
-             ticks: { color: '#8899aa', callback: function(v){ return v+'%'; } },
-             grid: { color: 'rgba(255,255,255,.05)' } },
-        y: { ticks: { color: '#8899aa', font: { size: 11 } }, grid: { display: false } }
+    options: { indexAxis:'y', responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        x:{min:90,max:102,
+           ticks:{color:'#8899aa',callback:function(v){return v+'%';}},
+           grid:{color:'rgba(255,255,255,.05)'}},
+        y:{ticks:{color:'#8899aa',font:{size:11}},grid:{display:false}}
       }
     }
   });
 
-  // Tab 7 — 6-month trend
   new Chart(document.getElementById('trendChart'), {
     type: 'line',
     data: {
       labels: ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'],
-      datasets: [{
-        data: [895000, 882000, 868000, 871888, 874000, 870000],
-        borderColor: gold,
-        backgroundColor: 'rgba(201,169,110,.08)',
-        pointBackgroundColor: gold,
-        pointRadius: 5, tension: 0.4, fill: true
-      }]
+      datasets: [{ data:[895000,882000,868000,871888,874000,870000],
+        borderColor:gold, backgroundColor:'rgba(201,169,110,.08)',
+        pointBackgroundColor:gold, pointRadius:5, tension:0.4, fill:true }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: false, min: 840000,
-             ticks: { color: '#8899aa', callback: function(v){ return '$'+(v/1000).toFixed(0)+'K'; } },
-             grid: { color: 'rgba(255,255,255,.05)' } },
-        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
+    options: { responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:false,min:840000,
+           ticks:{color:'#8899aa',callback:function(v){return '$'+(v/1000).toFixed(0)+'K';}},
+           grid:{color:'rgba(255,255,255,.05)'}},
+        x:{ticks:{color:'#8899aa'},grid:{display:false}}
       }
     }
   });
 
-  // Tab 7 — Absorption
   new Chart(document.getElementById('absorptionChart'), {
     type: 'bar',
     data: {
-      labels: ['Sold (60 days)', 'Active Now'],
-      datasets: [{
-        data: [2, 2],
-        backgroundColor: [green, red],
-        borderColor: [green, red],
-        borderWidth: 2, borderRadius: 8
-      }]
+      labels: ['Sold (60 days)','Active Now'],
+      datasets: [{ data:[2,2], backgroundColor:[green,red],
+        borderColor:[green,red], borderWidth:2, borderRadius:8 }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true,
-             ticks: { color: '#8899aa', stepSize: 1 },
-             grid: { color: 'rgba(255,255,255,.05)' } },
-        x: { ticks: { color: '#8899aa' }, grid: { display: false } }
+    options: { responsive:true, plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true, ticks:{color:'#8899aa',stepSize:1},
+           grid:{color:'rgba(255,255,255,.05)'}},
+        x:{ticks:{color:'#8899aa'},grid:{display:false}}
       }
     }
   });
