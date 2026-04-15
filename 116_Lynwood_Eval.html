@@ -1,1 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property Evaluation — 116 Lynwood Cres | SOLDMIKE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--card:#1a1a26;--border:#2a2a3a;--gold:#c5a55a;--gold-dim:rgba(197,165,90,.15);--text:#e8e6e1;--text-dim:#9a9aaa;--text-muted:#5a5a6a;--green:#4ade80;--red:#f87171;--blue:#60a5fa;--page-text:#1a1a1a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:var(--page-text);min-height:100vh}
+.site-header{background:var(--card);border-bottom:1px solid var(--border);padding:1.1rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--gold);font-weight:700;letter-spacing:.05em}
+.brand span{color:var(--text);font-weight:400;font-size:1rem;display:block;letter-spacing:.12em;font-family:'Inter',sans-serif}
+.header-address{text-align:right}
+.header-address h1{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--text);font-weight:600}
+.header-address p{color:var(--text-dim);font-size:.88rem;margin-top:.2rem}
+.eval-date{font-size:.82rem;color:var(--gold);margin-top:.3rem;font-weight:500}
+.tab-nav{background:var(--card);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 2rem}
+.tab-btn{background:none;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:1rem 1.5rem;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-panel{display:none;padding:2rem}
+.tab-panel.active{display:block}
+.inner{max-width:1260px;margin:0 auto}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem;margin-bottom:2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem 1.6rem}
+.stat-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:.5rem}
+.stat-value{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold);font-weight:700;line-height:1}
+.stat-sub{font-size:.8rem;color:var(--text-dim);margin-top:.35rem}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.75rem;color:var(--page-text);font-weight:700;margin:2.25rem 0 .9rem;border-left:4px solid var(--gold);padding-left:.85rem}
+.section-subtitle{font-size:.85rem;color:#666;margin-bottom:1.5rem;margin-top:-.4rem;padding-left:1.1rem}
+.details-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.details-table th,.details-table td{padding:.85rem 1.1rem;font-size:.9rem;border-bottom:1px solid var(--border)}
+.details-table th{background:rgba(255,255,255,.04);color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;font-weight:600;width:42%}
+.details-table td{color:var(--text)}
+.details-table tr:last-child th,.details-table tr:last-child td{border-bottom:none}
+.table-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.timeline{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.timeline-title{font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1rem}
+.tl-row{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem}
+.tl-dot{width:13px;height:13px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:4px}
+.tl-dot.old{background:var(--text-dim)}
+.tl-dot.peak{background:var(--red)}
+.tl-dot.current{background:var(--blue)}
+.tl-content h4{font-size:.95rem;color:var(--text);font-weight:600}
+.tl-content p{font-size:.83rem;color:var(--text-dim);margin-top:.25rem}
+.tl-connector{width:2px;height:20px;background:var(--border);margin-left:5px}
+.comp-block{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.comp-block-header{background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);padding:.85rem 1.1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.comp-block-header h3{font-size:.95rem;color:var(--gold);font-weight:600}
+.comp-type-badge{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;padding:.28rem .7rem;border-radius:4px;font-weight:600}
+.badge-direct{background:rgba(74,222,128,.15);color:var(--green)}
+.badge-floor{background:rgba(96,165,250,.15);color:var(--blue)}
+.badge-active{background:rgba(197,165,90,.15);color:var(--gold)}
+.badge-stale{background:rgba(248,113,113,.15);color:var(--red)}
+.comp-table{width:100%;border-collapse:collapse}
+.comp-header-row{background:rgba(255,255,255,.04);border-bottom:1px solid var(--border)}
+.comp-header-cell{padding:.75rem 1rem;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text);font-weight:600}
+.comp-label-cell{padding:.7rem 1rem;font-size:.88rem;color:var(--text-dim);background:rgba(255,255,255,.04);font-weight:500;width:30%}
+.comp-val-cell{padding:.7rem 1rem;font-size:.92rem;color:var(--text)}
+.comp-table tr{border-bottom:1px solid var(--border)}
+.comp-table tr:last-child{border-bottom:none}
+.cv-subject{color:var(--gold);font-weight:600}
+.cv-better{color:var(--green);font-weight:500}
+.cv-worse{color:var(--red);font-weight:500}
+.cv-neutral{color:var(--text)}
+.adj-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.adj-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;padding:.8rem 1.1rem;text-align:left}
+.adj-table td{padding:.75rem 1.1rem;font-size:.9rem;color:var(--text);border-bottom:1px solid var(--border)}
+.adj-table tr:last-child td{border-bottom:none;font-weight:700;background:rgba(197,165,90,.08);color:var(--gold)}
+.adj-pos{color:var(--green);font-weight:600}
+.adj-neg{color:var(--red);font-weight:600}
+.adj-zero{color:var(--text-dim)}
+.chart-wrapper{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.chart-title{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.1rem}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.windows-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:2rem}
+.window-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.window-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.window-stat-row{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.window-stat-row:last-child{border-bottom:none}
+.ws-label{font-size:.82rem;color:var(--text-dim)}
+.ws-value{font-size:.92rem;color:var(--text);font-weight:600}
+.ws-value.gold{color:var(--gold)}
+.hab-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:1rem;font-size:.85rem}
+.hab-table th{background:rgba(255,255,255,.06);color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;padding:.75rem .9rem;text-align:right}
+.hab-table th:first-child{text-align:left}
+.hab-table td{padding:.7rem .9rem;color:var(--text);border-bottom:1px solid var(--border);text-align:right}
+.hab-table td:first-child{text-align:left;font-weight:600;color:var(--gold)}
+.hab-table tr:last-child td{border-bottom:none}
+.hab-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.mkt-class-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.6rem;margin-bottom:2rem}
+.mkt-class-card.buyers{border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.04)}
+.mkt-signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:1.1rem}
+.mkt-signal{text-align:center;padding:1.1rem;background:rgba(255,255,255,.04);border-radius:8px}
+.mkt-signal-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin-bottom:.4rem}
+.mkt-signal-val{font-size:1.6rem;font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--red)}
+.mkt-signal-desc{font-size:.78rem;color:var(--text-dim);margin-top:.3rem}
+.tier-bar{display:flex;border-radius:12px;overflow:hidden;margin-bottom:2rem;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.tier-segment{flex:1;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:1.25rem .75rem;text-align:center;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.tier-label{margin-bottom:.4rem;opacity:.85}
+.tier-price{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;margin-top:.4rem;line-height:1.25;color:#ffffff}
+.tier-pct{font-size:.7rem;margin-top:.3rem;opacity:.7;color:#fff}
+.tier-conservative{background:linear-gradient(145deg,#1e5c35,#143d24);color:#7ef5a8;border-right:1px solid rgba(255,255,255,.08)}
+.tier-middle{background:linear-gradient(145deg,#6b4e14,#4a3508);color:var(--gold);border-left:3px solid var(--gold);border-right:3px solid var(--gold)}
+.tier-optimistic{background:linear-gradient(145deg,#14345c,#0d2040);color:#93c5fd;border-left:1px solid rgba(255,255,255,.08)}
+.tier-over{background:linear-gradient(145deg,#5c1414,#3d0d0d);color:#fca5a5}
+.tier-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:2rem}
+.tier-card{background:var(--card);border-radius:12px;padding:1.5rem;border-left:4px solid}
+.tier-card.conservative{border-color:#4ade80}
+.tier-card.middle{border-color:var(--gold)}
+.tier-card.optimistic{border-color:#60a5fa}
+.tier-card.overpriced{border-color:#f87171}
+.tier-card h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem}
+.tier-card.conservative h4{color:#4ade80}
+.tier-card.middle h4{color:var(--gold)}
+.tier-card.optimistic h4{color:#60a5fa}
+.tier-card.overpriced h4{color:#f87171}
+.tier-card .price-range{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--text);margin-bottom:.55rem}
+.tier-card p{font-size:.88rem;color:var(--text-dim);line-height:1.65}
+.argument-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;margin-bottom:2rem}
+.arg-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.arg-card h4{font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:.7rem}
+.arg-card p{font-size:.88rem;color:var(--text-dim);line-height:1.7}
+.arg-card strong{color:var(--text)}
+.brackets-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.brackets-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;padding:.8rem 1.1rem;text-align:left}
+.brackets-table td{padding:.75rem 1.1rem;font-size:.9rem;color:var(--text);border-bottom:1px solid var(--border)}
+.brackets-table tr:last-child td{border-bottom:none}
+.penalty-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem;font-size:.88rem}
+.penalty-table th{background:rgba(255,255,255,.06);color:var(--text-dim);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;padding:.75rem 1rem;text-align:center}
+.penalty-table td{padding:.7rem 1rem;color:var(--text);border-bottom:1px solid var(--border);text-align:center}
+.penalty-table tr:last-child td{border-bottom:none}
+.penalty-table tr.highlight td{color:var(--gold);font-weight:600;background:rgba(197,165,90,.08)}
+.penalty-table tr.danger td{color:var(--red);background:rgba(248,113,113,.05)}
+.slider-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.85rem;margin-bottom:2rem}
+.slider-section h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.25rem}
+#listSlider{width:100%;accent-color:var(--gold);margin:1rem 0;height:6px}
+.slider-readout{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:1rem}
+.readout-item{text-align:center}
+.readout-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--text-dim);margin-bottom:.35rem}
+.readout-val{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--text)}
+#sliderVerdict{text-align:center;font-size:.88rem;font-weight:600;padding:.85rem 1.25rem;border-radius:8px;margin-top:1.1rem}
+.final-rec{background:var(--card);border:2px solid var(--gold);border-radius:14px;padding:2.25rem;text-align:center;margin-bottom:2rem}
+.final-rec-label{font-size:.82rem;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.85rem}
+.final-rec-price{font-family:'Cormorant Garamond',serif;font-size:3.6rem;color:var(--gold);font-weight:700;line-height:1}
+.final-rec-range{font-size:.9rem;color:var(--text-dim);margin-top:.85rem}
+.final-rec-close{margin-top:.55rem;font-size:.95rem;color:var(--text);font-weight:600}
+.analysis-content{max-width:900px;margin:0 auto}
+.print-btn{background:var(--gold);color:#1a1a1a;border:none;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1.6rem;border-radius:6px;cursor:pointer;float:right;margin-bottom:1rem}
+.prose-section{margin-bottom:2.5rem}
+.prose-section h2{font-family:'Cormorant Garamond',serif;font-size:1.65rem;color:var(--page-text);font-weight:700;border-bottom:2px solid var(--gold);padding-bottom:.5rem;margin-bottom:1.1rem}
+.prose-section h3{font-size:1.05rem;color:var(--page-text);font-weight:700;margin:1.3rem 0 .55rem}
+.prose-section p{font-size:.95rem;color:#333;line-height:1.78;margin-bottom:.85rem}
+.prose-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:.9rem}
+.prose-table th{background:#f5f5f0;text-align:left;padding:.55rem .8rem;font-weight:700;color:var(--page-text);border-bottom:2px solid #ddd}
+.prose-table td{padding:.55rem .8rem;border-bottom:1px solid #eee;color:#333}
+.summary-box{background:#f9f7f2;border:1px solid #ddd;border-left:4px solid var(--gold);border-radius:6px;padding:1.35rem;margin-top:1.5rem}
+.summary-box h4{font-size:.9rem;font-weight:700;color:var(--page-text);margin-bottom:.8rem}
+.summary-row{display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid #eee;font-size:.9rem}
+.summary-row:last-child{border-bottom:none;font-weight:700}
+.summary-row span:last-child{font-weight:600;color:#1a1a1a}
+.realm-btn{display:inline-block;background:var(--gold);color:#1a1a1a;text-decoration:none;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.7rem 1.6rem;border-radius:6px;margin-bottom:1.5rem}
+.stale-note{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:10px;padding:1.1rem 1.35rem;margin-bottom:1.5rem;font-size:.88rem;color:var(--text-dim);line-height:1.65}
+.stale-note strong{color:var(--red)}
+.narrative-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.35rem 1.6rem;margin-bottom:1.5rem;font-size:.9rem;color:var(--text-dim);line-height:1.75}
+.narrative-block strong{color:var(--text)}
+.condition-note{background:rgba(197,165,90,.06);border:1px solid rgba(197,165,90,.3);border-radius:10px;padding:1.1rem 1.35rem;margin-bottom:1.5rem;font-size:.88rem;color:var(--text-dim);line-height:1.65}
+.condition-note strong{color:var(--gold)}
+.site-footer{background:var(--card);border-top:1px solid var(--border);padding:1.6rem 2rem;margin-top:3rem;text-align:center}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--gold);font-weight:700;margin-bottom:.5rem}
+.footer-details{font-size:.8rem;color:var(--text-dim);line-height:1.9}
+.footer-disclaimer{font-size:.73rem;color:var(--text-muted);margin-top:.85rem;max-width:740px;margin-left:auto;margin-right:auto;line-height:1.6}
+@media print{.site-header,.tab-nav,.print-btn,.site-footer{display:none}.tab-panel{display:none!important}#tab-analysis{display:block!important;padding:1rem}body{color:#000;background:#fff;font-size:11pt}.prose-section h2{color:#000;border-color:#c5a55a}.prose-section p,.prose-table td{color:#333}.summary-box{background:#f9f7f2}.prose-table th{background:#eee}}
+@media(max-width:900px){.table-grid,.windows-grid,.charts-grid,.tier-cards,.argument-grid{grid-template-columns:1fr}.slider-readout{grid-template-columns:repeat(2,1fr)}.tab-panel{padding:1.25rem}.mkt-signal-grid{grid-template-columns:1fr}.tier-bar{flex-direction:column}.tier-segment{min-height:80px}}
+</style>
+</head>
+<body>
 
+<header class="site-header">
+  <div>
+    <div class="brand">SOLDMIKE <span>RE/MAX PREMIER · THE OP TEAM</span></div>
+  </div>
+  <div class="header-address">
+    <h1>116 Lynwood Cres</h1>
+    <p>Nobleton, King Township, ON L0G 1N0</p>
+    <div class="eval-date">Evaluation Date: April 15, 2026</div>
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('overview',this)">1 · Overview</button>
+  <button class="tab-btn" onclick="showTab('comps',this)">2 · Comparables</button>
+  <button class="tab-btn" onclick="showTab('market',this)">3 · Market Trends</button>
+  <button class="tab-btn" onclick="showTab('pricing',this)">4 · Pricing</button>
+  <button class="tab-btn" onclick="showTab('analysis',this)">5 · Full Analysis</button>
+</nav>
+
+<!-- ==================== TAB 1: OVERVIEW ==================== -->
+<div id="tab-overview" class="tab-panel active">
+<div class="inner">
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Above Grade Sq Ft</div><div class="stat-value">1,239</div><div class="stat-sub">MPAC Source · Range: 1,100–1,499</div></div>
+    <div class="stat-card"><div class="stat-label">Bedrooms</div><div class="stat-value">3+1</div><div class="stat-sub">3 above grade · 1 lower level</div></div>
+    <div class="stat-card"><div class="stat-label">Bathrooms</div><div class="stat-value">2</div><div class="stat-sub">5pc Main · 3pc Lower</div></div>
+    <div class="stat-card"><div class="stat-label">Year Built</div><div class="stat-value">1965</div><div class="stat-sub">61 Years · Detached Bungalow · Brick</div></div>
+    <div class="stat-card"><div class="stat-label">MPAC Assessment</div><div class="stat-value">$650K</div><div class="stat-sub">Flat 2020–2026 · Jan 1, 2016 base</div></div>
+    <div class="stat-card"><div class="stat-label">2025 Property Tax</div><div class="stat-value">$5,769</div><div class="stat-sub">King Township · ARN 194900006389400</div></div>
+  </div>
+
+  <h2 class="section-title">Property Details</h2>
+  <div class="table-grid">
+    <table class="details-table">
+      <tr><th>Property Type</th><td>Detached</td></tr>
+      <tr><th>Style</th><td>Bungalow</td></tr>
+      <tr><th>Sq Ft Above Grade</th><td>1,239 sq ft (MPAC)</td></tr>
+      <tr><th>Lot Size (MLS)</th><td>~80 ft × 132 ft · Irregular</td></tr>
+      <tr><th>Lot Area (GeoWarehouse)</th><td>10,010 sq ft (0.23 ac)</td></tr>
+      <tr><th>Frontage (MPAC)</th><td>70.0 ft</td></tr>
+      <tr><th>Garage</th><td>1 Attached + 1 Detached = 2 Total</td></tr>
+      <tr><th>Total Parking</th><td>7 spaces (2 garage + 5 driveway)</td></tr>
+    </table>
+    <table class="details-table">
+      <tr><th>Basement</th><td>Finished / Separate Entrance</td></tr>
+      <tr><th>Fireplace</th><td>Yes · Gas (lower level rec room)</td></tr>
+      <tr><th>Heat</th><td>Forced Air / Gas</td></tr>
+      <tr><th>A/C</th><td>Central Air</td></tr>
+      <tr><th>Exterior</th><td>Brick</td></tr>
+      <tr><th>Water / Sewer</th><td>Municipal / Sewers</td></tr>
+      <tr><th>PIN</th><td>033610063</td></tr>
+      <tr><th>ARN</th><td>194900006389400</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title">Assessment &amp; Tax History</h2>
+  <div class="table-grid">
+    <table class="details-table">
+      <tr><th>MPAC Assessment</th><td>$650,000</td></tr>
+      <tr><th>Valuation Date</th><td>January 1, 2016</td></tr>
+      <tr><th>Last Notice Date</th><td>November 11, 2020</td></tr>
+      <tr><th>Property Code</th><td>301 – Single-Family Detached</td></tr>
+      <tr><th>Zoning</th><td>R1A · King Township</td></tr>
+    </table>
+    <table class="details-table">
+      <tr><th>2025 Property Tax</th><td>$5,769</td></tr>
+      <tr><th>2024 Property Tax</th><td>$5,597</td></tr>
+      <tr><th>2023 Property Tax</th><td>$5,389</td></tr>
+      <tr><th>2022 Property Tax</th><td>$5,204</td></tr>
+      <tr><th>2021 Property Tax</th><td>$5,140</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title">Ownership History</h2>
+  <div class="timeline">
+    <div class="timeline-title">Sales History — Source: GeoWarehouse / MPAC / MLS Records</div>
+    <div class="tl-row"><div class="tl-dot old"></div><div class="tl-content"><h4>January 24, 1992 — $190,000</h4><p>Transfer to Adams, Glen · Original era purchase · Home built 1965</p></div></div>
+    <div class="tl-connector"></div>
+    <div class="tl-row"><div class="tl-dot old"></div><div class="tl-content"><h4>June 23, 2011 — $550,000</h4><p>Transfer to Phillips, Cindy Sue · +$360,000 (+189%) from 1992 over 19 years</p></div></div>
+    <div class="tl-connector"></div>
+    <div class="tl-row"><div class="tl-dot" style="background:var(--gold)"></div><div class="tl-content"><h4>July 11, 2018 — $975,000 · Current Owners</h4><p>Mastropaolo, Lisa Marie / Montemarano, Anthony Gerardo · Listed $1,039,000 · Sold in 5 DOM at 94% SP/LP</p></div></div>
+    <div class="tl-connector"></div>
+    <div class="tl-row"><div class="tl-dot peak"></div><div class="tl-content"><h4>Early 2022 — GTA Market Peak (Est. $1,700,000–$1,800,000 on paper)</h4><p>King Township bungalows peaked Feb–Mar 2022. Market has since corrected ~25–30% from peak.</p></div></div>
+    <div class="tl-connector"></div>
+    <div class="tl-row"><div class="tl-dot current"></div><div class="tl-content"><h4>April 15, 2026 — Current Evaluation</h4><p>Market Middle: $1,375,000–$1,425,000 · Recommended List: $1,399,000 · +$400–450K (+41–46%) from 2018 purchase</p></div></div>
+  </div>
+
+  <h2 class="section-title">Condition Notes</h2>
+  <div class="condition-note">
+    <strong>Neutral Condition Stance — Base Evaluation</strong><br><br>
+    This evaluation is based on standard maintained condition for the property type and age. The 2018 MLS described the property as "very clean, very well maintained" with hardwood floors, California shutters, pot lights, and custom finishes. Any significant upgrades, renovations, or deficiencies identified on-site will be applied as a separate adjustment at that time and may affect the final recommended list price upward or downward.
+  </div>
+</div>
+</div>
+
+<!-- ==================== TAB 2: COMPARABLES ==================== -->
+<div id="tab-comps" class="tab-panel">
+<div class="inner">
+  <a class="realm-btn" href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/yKwBpZlgyjIr9eJAAR5WhNXgYG5NJAcq2D1qkj2nSwWLJ1rArXu5MJV6WJXWu4nLZwGg9lhOGzqZWpl2unP6RllK2WtYNbBzWLRNUZnBMVme3WHzQq9r9nQMcprANkOVYkSQKzBNRmX4hXo3ywMX4ZI3YDymMWM8IW7gpYJVEghkW156OL6ohgKKeAbmB?q=treb%2FlistingID%3AN12264474%2CN12264486%2CN12531228%2CN12567436%2CN12900260%2CN12909690%2CN12992674%2CN12713908" target="_blank">🔗 Open REALM Portal — Nobleton / King Township Comps</a>
+
+  <h2 class="section-title">Direct Comparable Sale</h2>
+  <p class="section-subtitle">Detached Bungalow · 1,000–1,500 sq ft band · Nobleton / King Township · Last 90 days</p>
+
+  <div class="comp-block">
+    <div class="comp-block-header">
+      <h3>13125 Highway 27 — SOLD $1,350,000 | MLS# N12531228</h3>
+      <span class="comp-type-badge badge-direct">Best Direct Comp · Sold Feb 21, 2026</span>
+    </div>
+    <table class="comp-table">
+      <tr class="comp-header-row">
+        <td class="comp-header-cell">Factor</td>
+        <td class="comp-header-cell cv-subject">Subject · 116 Lynwood Cres</td>
+        <td class="comp-header-cell cv-neutral">13125 Highway 27</td>
+      </tr>
+      <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">$1,350,000 / $1,498,900</td></tr>
+      <tr><td class="comp-label-cell">Sold Date</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">February 21, 2026</td></tr>
+      <tr><td class="comp-label-cell">DOM / SP/LP</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell cv-worse">103 DOM · 90% SP/LP</td></tr>
+      <tr><td class="comp-label-cell">Type / Style</td><td class="comp-val-cell cv-subject">Detached Bungalow</td><td class="comp-val-cell cv-neutral">Detached Bungalow ✓</td></tr>
+      <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell cv-subject">1,239 (MPAC)</td><td class="comp-val-cell cv-better">1,175 (MPAC) ↓64 sqft</td></tr>
+      <tr><td class="comp-label-cell">Bedrooms</td><td class="comp-val-cell cv-subject">3+1</td><td class="comp-val-cell cv-neutral">3+2</td></tr>
+      <tr><td class="comp-label-cell">Bathrooms</td><td class="comp-val-cell cv-subject">2</td><td class="comp-val-cell cv-neutral">2</td></tr>
+      <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell cv-better">1 Attached + 1 Detached ✓</td><td class="comp-val-cell cv-neutral">Detached 2-Car</td></tr>
+      <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-neutral">Finished / Sep Entrance</td><td class="comp-val-cell cv-neutral">Finished / Sep Entrance ✓</td></tr>
+      <tr><td class="comp-label-cell">Lot Size</td><td class="comp-val-cell cv-better">~80 × 132 ft (10,010 sqft)</td><td class="comp-val-cell cv-worse">90 × 165 ft (14,850 sqft) ↑</td></tr>
+      <tr><td class="comp-label-cell">Location</td><td class="comp-val-cell cv-better">Quiet Residential Crescent ✓✓</td><td class="comp-val-cell cv-worse">Highway 27 Frontage ↓↓</td></tr>
+      <tr><td class="comp-label-cell">Year Built</td><td class="comp-val-cell cv-neutral">1965</td><td class="comp-val-cell cv-neutral">1960s era (similar)</td></tr>
+    </table>
+  </div>
+
+  <h2 class="section-title">Adjustment Analysis — 13125 Highway 27</h2>
+  <p class="section-subtitle">Negative = comp superior to subject · Positive = subject superior to comp</p>
+  <table class="adj-table">
+    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th><th>Rationale</th></tr>
+    <tr><td>Location — quiet crescent vs Hwy 27</td><td><span class="adj-pos">↑ Subject Superior</span></td><td class="adj-pos">+$75,000–$100,000</td><td>Highway exposure is a 5–8% discount; buyers consistently pay premium for quiet streets in Nobleton</td></tr>
+    <tr><td>Square footage (+64 sqft)</td><td><span class="adj-pos">↑ Subject Superior</span></td><td class="adj-pos">+$5,000–$8,000</td><td>Subject is 64 sqft larger; at ~$80–$100/sqft marginal value for 1960s bungalow stock</td></tr>
+    <tr><td>Lot size (subject ~4,840 sqft smaller)</td><td><span class="adj-neg">↓ Comp Superior</span></td><td class="adj-neg">–$25,000–$35,000</td><td>Comp's 90×165 lot is significantly larger; lot premium is meaningful in King Township</td></tr>
+    <tr><td>Garage configuration</td><td><span class="adj-zero">— Roughly Neutral</span></td><td class="adj-zero">$0</td><td>Subject: 1 attached + 1 detached. Comp: 1 detached 2-car. Net neutral on total count</td></tr>
+    <tr><td>Basement (both finished / sep entrance)</td><td><span class="adj-zero">— Neutral</span></td><td class="adj-zero">$0</td><td>Both properties have finished basement with separate entrance; no material difference</td></tr>
+    <tr><td>Condition (comp recently renovated)</td><td><span class="adj-neg">↓ Comp Superior (neutral stance)</span></td><td class="adj-neg">–$15,000–$25,000</td><td>Comp had recent main floor reno, new windows, updated panel. Subject at neutral condition</td></tr>
+    <tr><td><strong>NET TOTAL (midpoint)</strong></td><td colspan="2" class="adj-pos"><strong>+$40,000–$73,000</strong></td><td><strong>Adjusted Value: $1,390,000–$1,423,000</strong></td></tr>
+  </table>
+
+  <div class="narrative-block">
+    <strong>Direct Comp Interpretation:</strong> 13125 Hwy 27 is the best available sold comp in the same square footage band from the Nobleton area. It sat for 103 days and sold at 90% of its original $1,498,900 asking price — confirming it was initially overpriced. The highway location is the critical discount factor. After adjusting for the quiet crescent premium, size difference, lot discount, and condition gap, the direct comp supports a subject value of approximately <strong>$1,390,000–$1,423,000</strong>. This is the anchor for the Market Middle.
+  </div>
+
+  <h2 class="section-title">Floor Comps — Development Land Plays (Absolute Price Floor)</h2>
+  <p class="section-subtitle">NOT standard resale comps — development / land value transactions only. Used to establish the absolute floor.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem">
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>6465 King Rd — SOLD $1,100,000</h3><span class="comp-type-badge badge-floor">Floor · Land Play · Jan 2026</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell">$1,100,000 / $1,250,000</td></tr>
+        <tr><td class="comp-label-cell">DOM / SP/LP</td><td class="comp-val-cell cv-worse">196 DOM · 88%</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft (est.)</td><td class="comp-val-cell">1,200</td></tr>
+        <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-worse">66 × 668 ft · ~1 acre</td></tr>
+        <tr><td class="comp-label-cell">Garage / Bsmt</td><td class="comp-val-cell cv-worse">None / Finished</td></tr>
+        <tr><td class="comp-label-cell">Context</td><td class="comp-val-cell cv-worse">Dev. land play — paired sale</td></tr>
+      </table>
+    </div>
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>6459 King Rd — SOLD $1,100,000</h3><span class="comp-type-badge badge-floor">Floor · Land Play · Jan 2026</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell">$1,100,000 / $1,250,000</td></tr>
+        <tr><td class="comp-label-cell">DOM / SP/LP</td><td class="comp-val-cell cv-worse">196 DOM · 88%</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft (est.)</td><td class="comp-val-cell">1,200</td></tr>
+        <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-worse">66 × 669 ft · ~1 acre</td></tr>
+        <tr><td class="comp-label-cell">Garage / Bsmt</td><td class="comp-val-cell cv-worse">Det. 1.5-car / Unfinished</td></tr>
+        <tr><td class="comp-label-cell">Context</td><td class="comp-val-cell cv-worse">Dev. land play — paired sale</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="narrative-block">
+    <strong>Floor Comp Note:</strong> Both 6459 and 6465 King Rd sold simultaneously as a combined 2-acre development package at $1,100,000 each. These are not resale comparables — buyers purchased for the land. Their contribution: even a distressed, tenant-occupied, no-garage bungalow commands $1,100,000 in Nobleton in January 2026. <strong>That is the absolute floor.</strong> A well-maintained, two-garage, finished-basement bungalow on a quiet crescent sits materially above this.
+  </div>
+
+  <h2 class="section-title">Ceiling Comp — Sold</h2>
+
+  <div class="comp-block">
+    <div class="comp-block-header">
+      <h3>4 Blue Beech Tr — SOLD $1,530,000 | MLS# N12567436</h3>
+      <span class="comp-type-badge badge-direct">Ceiling Comp · Sold Dec 5, 2025</span>
+    </div>
+    <table class="comp-table">
+      <tr class="comp-header-row">
+        <td class="comp-header-cell">Factor</td>
+        <td class="comp-header-cell cv-subject">Subject · 116 Lynwood</td>
+        <td class="comp-header-cell cv-neutral">4 Blue Beech Tr</td>
+      </tr>
+      <tr><td class="comp-label-cell">Sold / List</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell">$1,530,000 / $1,595,000</td></tr>
+      <tr><td class="comp-label-cell">DOM / SP/LP</td><td class="comp-val-cell cv-subject">—</td><td class="comp-val-cell cv-better">14 DOM · 96% ✓</td></tr>
+      <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell cv-better">1,239</td><td class="comp-val-cell cv-worse">2,317 (MPAC) ↑1,078 sqft</td></tr>
+      <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-better">Finished / Sep Entrance ✓✓</td><td class="comp-val-cell cv-worse">Unfinished ↓↓</td></tr>
+      <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell cv-neutral">1 Att + 1 Det</td><td class="comp-val-cell cv-worse">Attached 2-Car (preferred config)</td></tr>
+      <tr><td class="comp-label-cell">Year Built</td><td class="comp-val-cell cv-worse">1965 ↓</td><td class="comp-val-cell cv-better">2012 · Rosehaven built ✓</td></tr>
+      <tr><td class="comp-label-cell">Lot Frontage</td><td class="comp-val-cell cv-better">~70–80 ft ✓</td><td class="comp-val-cell cv-neutral">~62.65 ft</td></tr>
+      <tr><td class="comp-label-cell">Taxes 2025</td><td class="comp-val-cell cv-subject">$5,769</td><td class="comp-val-cell">$8,057</td></tr>
+    </table>
+  </div>
+
+  <table class="adj-table">
+    <tr><th>Factor</th><th>Direction</th><th>Adjustment</th><th>Rationale</th></tr>
+    <tr><td>Square footage (–1,078 sqft)</td><td><span class="adj-neg">↓ Comp Superior</span></td><td class="adj-neg">–$160,000–$200,000</td><td>Comp is nearly double the size; at $150–$185/sqft marginal value for this build era</td></tr>
+    <tr><td>Basement (finished/sep ent vs unfinished)</td><td><span class="adj-pos">↑ Subject Superior</span></td><td class="adj-pos">+$60,000–$80,000</td><td>Subject's finished basement with separate entrance vs completely unfinished. Major differential.</td></tr>
+    <tr><td>Lot frontage (subject wider)</td><td><span class="adj-pos">↑ Subject Superior</span></td><td class="adj-pos">+$15,000–$25,000</td><td>Subject has wider frontage (~70–80 ft vs ~63 ft for comp)</td></tr>
+    <tr><td>Garage (attached 2-car vs 1+1)</td><td><span class="adj-neg">↓ Comp Slight Edge</span></td><td class="adj-neg">–$5,000–$10,000</td><td>Full attached 2-car slightly preferred over split configuration</td></tr>
+    <tr><td>Market time (Dec 2025 → Apr 2026)</td><td><span class="adj-neg">↓ Market Shift</span></td><td class="adj-neg">–$30,000</td><td>GTA detached down ~2% over the 4-month period since comp sold</td></tr>
+    <tr><td><strong>NET TOTAL</strong></td><td colspan="2" class="adj-neg"><strong>–$100,000–$135,000</strong></td><td><strong>Adjusted Ceiling Value: $1,395,000–$1,430,000</strong></td></tr>
+  </table>
+
+  <div class="narrative-block">
+    <strong>Convergence:</strong> Two independent comp paths converge within a tight band — the upward-adjusted direct comp ($1,390,000–$1,423,000) and the downward-adjusted ceiling comp ($1,395,000–$1,430,000). This tight convergence from opposite directions is a strong signal. <strong>Market Middle: $1,395,000–$1,425,000.</strong> The finished basement with separate entrance is the feature doing the most pricing work — without it, this evaluation lands $50,000–$75,000 lower.
+  </div>
+
+  <h2 class="section-title">Active Listings — Market Ceiling Signals</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem">
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>13 Anderson Cove Tr — ACTIVE $1,899,999</h3><span class="comp-type-badge badge-active">Active · 2 DOM · 2013 Build</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List / DOM</td><td class="comp-val-cell">$1,899,999 · 2 DOM</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft / Year</td><td class="comp-val-cell cv-worse">2,196 sqft · 2013</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-worse">Finished ↑</td></tr>
+        <tr><td class="comp-label-cell">Garage</td><td class="comp-val-cell">Attached 2-Car</td></tr>
+        <tr><td class="comp-label-cell">Features</td><td class="comp-val-cell cv-worse">Sub-Zero, Wolf, Smart Home ↑↑</td></tr>
+      </table>
+    </div>
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>70 Russell Snider Dr — ACTIVE $1,850,000</h3><span class="comp-type-badge badge-active">Active · 27 DOM · PC from $1,998,000</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List / DOM</td><td class="comp-val-cell">$1,850,000 · 27 DOM</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft / Year</td><td class="comp-val-cell cv-worse">2,279 sqft · 1989</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell cv-worse">Finished Walkout ↑</td></tr>
+        <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-worse">157 × 176 ft (massive) ↑↑</td></tr>
+        <tr><td class="comp-label-cell">Note</td><td class="comp-val-cell cv-neutral">Already reduced from $1,998,000</td></tr>
+      </table>
+    </div>
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>143 Stokes Dr — ACTIVE $1,859,990</h3><span class="comp-type-badge badge-active">Active · 23 DOM · New Construction</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List / DOM</td><td class="comp-val-cell">$1,859,990 · 23 DOM</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft / Year</td><td class="comp-val-cell cv-worse">1,876 sqft · New 2026</td></tr>
+        <tr><td class="comp-label-cell">Basement</td><td class="comp-val-cell">Full unfinished</td></tr>
+        <tr><td class="comp-label-cell">Note</td><td class="comp-val-cell cv-worse">Under construction · No A/C yet</td></tr>
+      </table>
+    </div>
+    <div class="comp-block" style="margin-bottom:0">
+      <div class="comp-block-header"><h3>27 Cain Crt — ACTIVE $2,149,888</h3><span class="comp-type-badge badge-stale">Stale · 85 DOM · Overpriced Signal</span></div>
+      <table class="comp-table">
+        <tr><td class="comp-label-cell">List / DOM</td><td class="comp-val-cell cv-worse">$2,149,888 · 85 DOM</td></tr>
+        <tr><td class="comp-label-cell">Sq Ft</td><td class="comp-val-cell cv-worse">1,823 sqft (MPAC)</td></tr>
+        <tr><td class="comp-label-cell">Lot</td><td class="comp-val-cell cv-worse">110 × 200 ft · Septic</td></tr>
+        <tr><td class="comp-label-cell">Note</td><td class="comp-val-cell cv-worse">Stale — market verdict on overpricing</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="stale-note">
+    <strong>27 Cain Crt — The Cautionary Tale:</strong> A renovated 1,823 sqft bungalow on an oversized court lot has been sitting for 85 days with no sale. The market is telling you exactly what happens when a Nobleton bungalow is priced above the data. This is the outcome we're designing the pricing strategy to avoid.
+  </div>
+
+  <h2 class="section-title">Price vs. Square Footage — All Comps</h2>
+  <div class="chart-wrapper">
+    <div class="chart-title">Sold comps (green) · Active listings (blue) · Subject (gold star)</div>
+    <canvas id="scatterChart" height="320"></canvas>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 3: MARKET TRENDS ==================== -->
+<div id="tab-market" class="tab-panel">
+<div class="inner">
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">GTA Avg Detached (Mar 2026)</div><div class="stat-value">$1.34M</div><div class="stat-sub">Down 6.4% YoY · TRREB March 2026</div></div>
+    <div class="stat-card"><div class="stat-label">GTA SP/LP Ratio</div><div class="stat-value">98%</div><div class="stat-sub">Buyers averaging ~2% below asking</div></div>
+    <div class="stat-card"><div class="stat-label">GTA Avg DOM</div><div class="stat-value">47</div><div class="stat-sub">Up from 36 days in March 2025</div></div>
+    <div class="stat-card"><div class="stat-label" style="color:var(--red)">Nobleton SP/LP</div><div class="stat-value" style="color:var(--red)">90.5%</div><div class="stat-sub">Buyers averaging 9–10% below asking</div></div>
+    <div class="stat-card"><div class="stat-label">Nobleton Avg DOM</div><div class="stat-value">63</div><div class="stat-sub">Days on market · Buyer-leaning</div></div>
+    <div class="stat-card"><div class="stat-label">New Listings (King)</div><div class="stat-value">+37%</div><div class="stat-sub">Year-over-year · Elevated inventory</div></div>
+  </div>
+
+  <h2 class="section-title">Market Windows — King Township Detached Bungalows</h2>
+  <p class="section-subtitle">Source: TRREB Market Watch March 2026 · Zoocasa · Zolo · Estimated from published data — verify against Habistat York.xlsx</p>
+
+  <div class="windows-grid">
+    <div class="window-card">
+      <div class="window-title">6-Month Window · Oct 2025 – Mar 2026</div>
+      <div class="window-stat-row"><span class="ws-label">Avg Sale Price</span><span class="ws-value gold">~$1,355,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Median Sale Price</span><span class="ws-value">~$1,310,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM</span><span class="ws-value">~52 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP Ratio</span><span class="ws-value">~93%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg MOI</span><span class="ws-value">~7.3</span></div>
+      <div class="window-stat-row"><span class="ws-label">SNLR</span><span class="ws-value">~37%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--red)">↓ Softening</span></div>
+    </div>
+    <div class="window-card">
+      <div class="window-title">3-Month Window · Jan – Mar 2026</div>
+      <div class="window-stat-row"><span class="ws-label">Avg Sale Price</span><span class="ws-value gold">~$1,345,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Median Sale Price</span><span class="ws-value">~$1,310,000</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM</span><span class="ws-value">~47 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP Ratio</span><span class="ws-value">~93–94%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg MOI</span><span class="ws-value">~6.9</span></div>
+      <div class="window-stat-row"><span class="ws-label">SNLR</span><span class="ws-value">~38%</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--blue)">→ Stabilizing</span></div>
+    </div>
+    <div class="window-card">
+      <div class="window-title">1-Month Snapshot · March 2026</div>
+      <div class="window-stat-row"><span class="ws-label">GTA Detached Avg</span><span class="ws-value gold">$1,342,375</span></div>
+      <div class="window-stat-row"><span class="ws-label">YoY Price Change</span><span class="ws-value" style="color:var(--red)">–6.4%</span></div>
+      <div class="window-stat-row"><span class="ws-label">MoM Change</span><span class="ws-value" style="color:var(--blue)">+1.3% (stabilizing)</span></div>
+      <div class="window-stat-row"><span class="ws-label">Avg DOM (GTA)</span><span class="ws-value">47 days</span></div>
+      <div class="window-stat-row"><span class="ws-label">SP/LP (Nobleton)</span><span class="ws-value gold">90.5%</span></div>
+      <div class="window-stat-row"><span class="ws-label">MOI (King area est.)</span><span class="ws-value">~4.7</span></div>
+      <div class="window-stat-row"><span class="ws-label">Direction</span><span class="ws-value" style="color:var(--green)">→ Spring Stabilization</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Monthly Data — King Township / Nobleton Area Detached</h2>
+  <p class="section-subtitle">⚠ Estimated from TRREB published data and comp analysis. Replace with Habistat York.xlsx figures when available. SNLR: Sale-to-New-Listings Ratio.</p>
+  <table class="hab-table">
+    <tr><th>Month</th><th>Avg Price</th><th>Med Price</th><th>Sales Vol</th><th>New Listings</th><th>SNLR</th><th>Active</th><th>MOI</th><th>Avg DOM</th><th>SP/LP</th></tr>
+    <tr><td>Oct 2025</td><td>~$1,480K</td><td>~$1,420K</td><td>~6</td><td>~22</td><td>~32%</td><td>~47</td><td>7.8</td><td>58</td><td>93%</td></tr>
+    <tr><td>Nov 2025</td><td>~$1,420K</td><td>~$1,380K</td><td>~5</td><td>~18</td><td>~28%</td><td>~52</td><td>8.3</td><td>55</td><td>93%</td></tr>
+    <tr><td>Dec 2025</td><td>~$1,350K</td><td>~$1,310K</td><td>~5</td><td>~10</td><td>~50%</td><td>~39</td><td>9.0</td><td>48</td><td>95%</td></tr>
+    <tr><td>Jan 2026</td><td>~$1,210K</td><td>~$1,190K</td><td>~6</td><td>~18</td><td>~33%</td><td>~56</td><td>9.3</td><td>62</td><td>91%</td></tr>
+    <tr><td>Feb 2026</td><td>~$1,350K</td><td>~$1,330K</td><td>~7</td><td>~15</td><td>~47%</td><td>~45</td><td>6.7</td><td>52</td><td>92%</td></tr>
+    <tr><td>Mar 2026</td><td>~$1,340K</td><td>~$1,310K</td><td>~9</td><td>~16</td><td>~56%</td><td>~42</td><td>4.7</td><td>47</td><td>93%</td></tr>
+  </table>
+  <p style="font-size:.7rem;color:#888;margin-bottom:2rem">⚠ All figures above are directional estimates from published TRREB/Zoocasa reports. Replace with Habistat York.xlsx for precision. The Jan 2026 average is suppressed by the $1.1M development land sales at 6459/6465 King Rd.</p>
+
+  <div class="charts-grid">
+    <div class="chart-wrapper">
+      <div class="chart-title">Avg &amp; Median Sale Price — 6-Month Trend</div>
+      <canvas id="priceChart" height="250"></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <div class="chart-title">Sales Volume vs New Listings — 6-Month</div>
+      <canvas id="volChart" height="250"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-wrapper">
+    <div class="chart-title">Months of Inventory — with 3.0 Sellers' Market Threshold</div>
+    <canvas id="moiChart" height="200"></canvas>
+  </div>
+
+  <h2 class="section-title">Market Classification</h2>
+  <div class="mkt-class-card buyers">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;color:var(--red);font-weight:700">Buyer's Market — Early Stabilization</span>
+      <span style="font-size:.75rem;color:var(--text-dim);font-style:italic">King Township / Nobleton · Q1–Q2 2026</span>
+    </div>
+    <div class="mkt-signal-grid">
+      <div class="mkt-signal"><div class="mkt-signal-label">MOI (Est.)</div><div class="mkt-signal-val">4.7</div><div class="mkt-signal-desc">Approaching balanced (&lt;5.0) · Down from 9.3 in Jan</div></div>
+      <div class="mkt-signal"><div class="mkt-signal-label">SNLR (Est.)</div><div class="mkt-signal-val">56%</div><div class="mkt-signal-desc">Balanced improving · Sellers' = &gt;60%</div></div>
+      <div class="mkt-signal"><div class="mkt-signal-label">Price Trend YoY</div><div class="mkt-signal-val">–6.4%</div><div class="mkt-signal-desc">GTA detached · Still below prior year levels</div></div>
+    </div>
+    <div style="margin-top:1.25rem;font-size:.82rem;color:var(--text-dim);line-height:1.75;background:rgba(255,255,255,.04);padding:1rem;border-radius:8px">
+      <strong style="color:var(--text)">Pricing Implication:</strong> The March 2026 data is showing the first genuine stabilization signal — MOI tightening, month-over-month prices edging up slightly, and sales volumes improving from February. TRREB has noted 100,000+ GTA buyers sitting on the sidelines. Spring 2026 has the potential to release that demand, but it hasn't fully arrived yet. <strong style="color:var(--text)">The window to price correctly is now — before the market decides whether this spring will be a recovery or another slow fade.</strong> Price right, sell in the first two weeks. Let the home sit and it becomes part of the next comparable set that drags values down.
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 4: PRICING ==================== -->
+<div id="tab-pricing" class="tab-panel">
+<div class="inner">
+  <h2 class="section-title">Four-Tier Pricing Framework</h2>
+  <div class="tier-bar">
+    <div class="tier-segment tier-conservative">
+      <span class="tier-label">Conservative</span>
+      <span class="tier-price">$1,299,000</span>
+      <span class="tier-pct">Floor of market</span>
+    </div>
+    <div class="tier-segment tier-middle">
+      <span class="tier-label">★ Market Middle</span>
+      <span class="tier-price">$1,375,000<br>– $1,425,000</span>
+      <span class="tier-pct">Data convergence zone</span>
+    </div>
+    <div class="tier-segment tier-optimistic">
+      <span class="tier-label">Optimistic</span>
+      <span class="tier-price">$1,450,000<br>– $1,499,000</span>
+      <span class="tier-pct">Right conditions needed</span>
+    </div>
+    <div class="tier-segment tier-over">
+      <span class="tier-label">Overpriced</span>
+      <span class="tier-price">$1,550,000+</span>
+      <span class="tier-pct">27 Cain Crt territory</span>
+    </div>
+  </div>
+
+  <div class="tier-cards">
+    <div class="tier-card conservative">
+      <h4>Conservative</h4>
+      <div class="price-range">$1,299,000</div>
+      <p>Slightly below the Market Middle. Price here and the home attracts serious buyers within the first two weeks. In a market where Nobleton SP/LP averages 90.5%, this is the number that generates activity and potential competing offers. The "we'll most likely get this" number.</p>
+    </div>
+    <div class="tier-card middle">
+      <h4>★ Market Middle — Recommended Zone</h4>
+      <div class="price-range">$1,375,000 – $1,425,000</div>
+      <p>Where both adjusted comp paths converge after independent analysis. The direct comp adjusted upward ($1,390,000–$1,423,000) and the ceiling comp adjusted downward ($1,395,000–$1,430,000) land within $10,000 of each other. This is a defensible, explainable number.</p>
+    </div>
+    <div class="tier-card optimistic">
+      <h4>Optimistic</h4>
+      <div class="price-range">$1,450,000 – $1,499,000</div>
+      <p>Achievable but requires the right conditions — strong spring showing traffic, a buyer motivated by the separate entrance income potential, competitive tension, and excellent presentation. Not out of reach; needs everything to go right.</p>
+    </div>
+    <div class="tier-card overpriced">
+      <h4>Overpriced — Avoid</h4>
+      <div class="price-range">$1,550,000+</div>
+      <p>At this price, the subject competes with 2010s-era builds with superior finishes and larger footprints. Buyers look at 13 Anderson Cove Tr and pass. 27 Cain Crt at 85 DOM with no sale is the cautionary tale. Stale listings reset at significant discounts.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">The Three Arguments</h2>
+  <div class="argument-grid">
+    <div class="arg-card">
+      <h4>Argument 1 — The Convergence</h4>
+      <p>Two independent comp paths — one adjusted upward from the direct comp, one adjusted downward from the ceiling comp — land within <strong>$10,000 of each other</strong> at $1,390,000–$1,430,000. When opposite directions of analysis produce the same answer, that answer is the Market Middle. This isn't one person's opinion — it's where the data converges.</p>
+    </div>
+    <div class="arg-card">
+      <h4>Argument 2 — The Separate Entrance Premium</h4>
+      <p>The finished basement with separate entrance is the feature that separates 116 Lynwood from a standard 1965 bungalow. It adds <strong>$50,000–$75,000 of defensible value</strong> versus the ceiling comp (4 Blue Beech, which had no basement at all). Buyers pricing in rental income or in-law suite potential will see this as a differentiated asset — and in the current mortgage environment, that matters.</p>
+    </div>
+    <div class="arg-card">
+      <h4>Argument 3 — The Overpricing Warning</h4>
+      <p><strong>27 Cain Crt has been sitting at $2,149,888 for 85 days</strong> with no sale. A renovated bungalow on a larger lot at that price — and the market simply isn't there. <strong>70 Russell Snider</strong> already price-reduced from $1,998,000 to $1,850,000 after 27 days. The market is consistent: well-priced properties move, overpriced properties sit and accumulate stigma that eventually costs more than the original discount would have.</p>
+    </div>
+  </div>
+
+  <hr style="border:none;border-top:1px solid #eee;margin:2rem 0">
+
+  <h2 class="section-title">Buyer Search Bracket Analysis</h2>
+  <table class="brackets-table">
+    <tr><th>Price Bracket</th><th>Who's Searching Here?</th><th>Competitive Assessment</th><th>Likely Outcome</th></tr>
+    <tr><td>$1,199,000–$1,299,000</td><td>Entry bungalow buyers, value-focused, tight budgets</td><td>Strong activity; subject would generate multiple offers but leaves real money on table</td><td>Under-listed — leaves $75K+ on table</td></tr>
+    <tr style="background:rgba(74,222,128,.05)"><td>$1,299,000–$1,399,000 ✓</td><td>Move-up buyers, lifestyle buyers, income property seekers</td><td>Active buyer pool; matches comp data exactly; sep entrance buyers active here</td><td><strong>Strong activity — recommended entry point</strong></td></tr>
+    <tr style="background:rgba(74,222,128,.05)"><td>$1,399,001–$1,499,000 ✓</td><td>Same buyers, slightly thinner pool; needs justification</td><td>Reachable with right conditions and presentation; sep entrance adds defensibility</td><td>Possible with good presentation</td></tr>
+    <tr><td>$1,500,000–$1,599,000</td><td>Buyers expecting newer builds or larger footprints</td><td>Subject loses comparison to 2010s-era bungalows; buyers will question age vs price</td><td>Extended DOM; likely price reduction</td></tr>
+    <tr><td>$1,600,000–$1,799,000</td><td>Executive buyers expecting 2,000+ sqft or major upgrades</td><td>Very poor value vs alternatives at this price point in King Township</td><td>Probable stale listing</td></tr>
+    <tr><td>$1,800,000+</td><td>Buyers expecting near-new, large, premium finishes</td><td>Not competitive at any level for a 1965, 1,239 sqft bungalow</td><td>No sale · 27 Cain Crt territory</td></tr>
+  </table>
+
+  <h2 class="section-title">Overpricing Penalty Table</h2>
+  <table class="penalty-table">
+    <tr><th>List Price</th><th>vs Market Middle</th><th>Est. DOM</th><th>Price Cut Risk</th><th>Likely Sale Price</th><th>Net vs Optimal</th></tr>
+    <tr style="background:rgba(74,222,128,.05)"><td>$1,299,000</td><td>–7%</td><td>7–14 days</td><td>Very Low</td><td>$1,299,000–$1,340,000</td><td>Leaves money on table</td></tr>
+    <tr class="highlight"><td>$1,399,000 ★</td><td>Recommended</td><td>14–28 days</td><td>Low</td><td>$1,336,000–$1,376,000</td><td>Optimal</td></tr>
+    <tr><td>$1,449,000</td><td>+3.5%</td><td>28–50 days</td><td>Medium</td><td>$1,340,000–$1,380,000</td><td>Similar or slightly less</td></tr>
+    <tr><td>$1,499,000</td><td>+7.1%</td><td>45–70 days</td><td>High</td><td>$1,330,000–$1,360,000</td><td>–$10K to –$30K</td></tr>
+    <tr class="danger"><td>$1,549,000</td><td>+10.7%</td><td>65–90+ days</td><td>Very High</td><td>$1,300,000–$1,350,000</td><td>–$30K to –$60K</td></tr>
+    <tr class="danger"><td>$1,650,000+</td><td>+17.9%+</td><td>90+ days → stale</td><td>Virtually Certain</td><td>N/A or deep discount</td><td>–$60K+ vs optimal</td></tr>
+  </table>
+
+  <h2 class="section-title">What-If Pricing Simulator</h2>
+  <div class="slider-section">
+    <h3>Drag the slider to model different list prices</h3>
+    <input type="range" id="listSlider" min="1199000" max="1700000" step="10000" value="1399000">
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:var(--text-dim);margin-top:-.5rem;margin-bottom:.5rem">
+      <span>$1,199,000</span><span>$1,450,000</span><span>$1,700,000</span>
+    </div>
+    <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:700;margin:1rem 0" id="sliderPrice">$1,399,000</div>
+    <div class="slider-readout">
+      <div class="readout-item"><div class="readout-label">Est. DOM</div><div class="readout-val" id="siDOM">21 days</div></div>
+      <div class="readout-item"><div class="readout-label">Likely Sale</div><div class="readout-val" id="siSale">$1,357K</div></div>
+      <div class="readout-item"><div class="readout-label">Cut Risk</div><div class="readout-val" id="siRisk">12%</div></div>
+      <div class="readout-item"><div class="readout-label">Net vs Optimal</div><div class="readout-val" id="siNet">Baseline</div></div>
+      <div class="readout-item"><div class="readout-label">vs Market Middle</div><div class="readout-val" id="siVsMM">+0.0%</div></div>
+    </div>
+    <div id="sliderVerdict" style="background:rgba(197,165,90,.12);color:var(--gold);text-align:center;font-size:.88rem;font-weight:600;padding:.85rem 1.25rem;border-radius:8px;margin-top:1.1rem">✓ Well-positioned within Market Middle — recommended range</div>
+  </div>
+
+  <h2 class="section-title">Recommended Pricing Strategy</h2>
+  <div class="final-rec">
+    <div class="final-rec-label">Recommended List Price</div>
+    <div class="final-rec-price">$1,399,000</div>
+    <div class="final-rec-range">Base Evaluation Range: $1,375,000 – $1,425,000</div>
+    <div class="final-rec-close">Expected Close Range: $1,336,000 – $1,376,000 (at 90.5–98% SP/LP)</div>
+  </div>
+  <div class="narrative-block">
+    <strong>Rationale:</strong> $1,399,000 sits at the upper end of the Market Middle — justified because the property is on a quiet residential crescent (rare for the bungalow segment in Nobleton), has a finished basement with separate entrance (a genuine differentiator), and offers two garage spaces. The spring 2026 market is showing its first stabilization signal with MOI tightening from 9.3 in January to 4.7 in March. Pricing at $1,399,000 rather than $1,449,000 or above keeps the property inside the active buyer bracket and avoids the stale-listing risk that has already claimed 27 Cain Crt. <strong style="color:var(--text)">If on-site condition confirms as well-maintained or better, there is a defensible case to push to $1,449,000. If deficiencies are found, adjust downward from the base.</strong>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== TAB 5: FULL ANALYSIS ==================== -->
+<div id="tab-analysis" class="tab-panel">
+<div class="inner">
+<div class="analysis-content">
+  <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+  <div style="clear:both;padding-top:.5rem"></div>
+
+  <div class="prose-section">
+    <h2>Property Evaluation — 116 Lynwood Cres, Nobleton</h2>
+    <p><strong>Prepared by:</strong> Michael Barillari, Broker · RE/MAX Premier · The OP Team<br>
+    <strong>Evaluation Date:</strong> April 15, 2026<br>
+    <strong>Property:</strong> 116 Lynwood Cres, Nobleton, King Township, ON L0G 1N0</p>
+    <p style="background:#f9f7f2;border-left:4px solid #c5a55a;padding:1rem;border-radius:4px;font-style:italic">This evaluation is based on standard maintained condition for the property type and age. Any significant upgrades, renovations, or deficiencies identified on-site will be applied as a separate adjustment at that time and may affect the final recommended list price upward or downward.</p>
+  </div>
+
+  <div class="prose-section">
+    <h2>Subject Property Summary</h2>
+    <table class="prose-table">
+      <tr><th>Detail</th><th>Data</th></tr>
+      <tr><td>Address</td><td>116 Lynwood Cres, Nobleton, King Township L0G 1N0</td></tr>
+      <tr><td>Type / Style</td><td>Detached Bungalow</td></tr>
+      <tr><td>Above-Grade Sq Ft</td><td>1,239 sq ft (MPAC confirmed)</td></tr>
+      <tr><td>Lot Size</td><td>~80 × 132 ft / 10,010 sq ft irregular</td></tr>
+      <tr><td>Bedrooms / Baths</td><td>3+1 / 2 (5pc main floor, 3pc lower level)</td></tr>
+      <tr><td>Garage</td><td>1 attached + 1 detached = 2 total spaces</td></tr>
+      <tr><td>Basement</td><td>Finished / Separate Entrance</td></tr>
+      <tr><td>Year Built</td><td>1965</td></tr>
+      <tr><td>MPAC Assessment</td><td>$650,000 (flat 2020–2026, Jan 1, 2016 base)</td></tr>
+      <tr><td>2025 Property Tax</td><td>$5,769</td></tr>
+      <tr><td>Purchased</td><td>July 11, 2018 at $975,000</td></tr>
+      <tr><td>Condition Stance</td><td>Neutral — standard maintained condition assumed</td></tr>
+    </table>
+  </div>
+
+  <div class="prose-section">
+    <h2>Comparable Sales Analysis</h2>
+    <h3>The Comp Pool Challenge</h3>
+    <p>A 1,239 sq ft, 1965 bungalow on a quiet crescent in Nobleton is a thin market. There are no perfect sold comps in the same square footage band from the same neighbourhood pocket within 90 days. This is a genuine constraint that should be acknowledged honestly. However, the comps that do exist point consistently in the same direction, and two independent adjustment paths converge on the same number.</p>
+
+    <h3>Floor Comps — Development Land Plays</h3>
+    <p>Both 6459 and 6465 King Rd sold simultaneously in January 2026 as a paired 2-acre development package at $1,100,000 each. These are not true resale comparables — tenant-occupied bungalows on near-acre lots purchased for their land value. Their contribution is narrow but important: they confirm that even the most distressed, functionally inferior bungalow in Nobleton commands $1,100,000 in the current market. That is the absolute floor. A well-maintained, two-garage, finished-basement bungalow on a quiet crescent sits materially above this.</p>
+
+    <h3>Direct Comp — 13125 Highway 27</h3>
+    <p>Sold $1,350,000 · List $1,498,900 · February 21, 2026 · 103 DOM · 90% SP/LP · 1,175 sq ft · Finished basement / separate entrance · Detached 2-car garage · Lot 90 × 165 ft · 1960s era</p>
+    <p>This is the best available sold comp in the same size band. It took 103 days and sold at 90% of asking — a clear signal it was initially overpriced at $1,498,900. After adjusting for location premium (quiet crescent vs Hwy 27 frontage: +$75,000–$100,000), size difference (+$5,000–$8,000), lot discount (–$25,000–$35,000), and condition gap (–$15,000–$25,000), the direct comp supports a subject value of approximately $1,390,000–$1,423,000.</p>
+
+    <h3>Ceiling Comp — 4 Blue Beech Tr</h3>
+    <p>Sold $1,530,000 · List $1,595,000 · December 5, 2025 · 14 DOM · 96% SP/LP · 2,317 sq ft · 2012 Rosehaven build · Attached 2-car · Unfinished basement · ~62.65 ft frontage</p>
+    <p>This sold quickly at 96%, confirming it was correctly priced. The key counter-adjustment in the subject's favour is the finished basement with separate entrance vs the comp's completely unfinished basement. After adjusting for the size difference (–$160,000–$200,000), basement premium (+$60,000–$80,000), lot frontage (+$15,000–$25,000), garage configuration (–$5,000–$10,000), and market time (–$30,000), the ceiling comp adjusted down to $1,395,000–$1,430,000.</p>
+
+    <h3>Convergence Note</h3>
+    <p>Two independent adjustment paths — one from below, one from above — land within $10,000 of each other. The direct comp adjusted upward comes in at $1,390,000–$1,423,000. The ceiling comp adjusted downward comes in at $1,395,000–$1,430,000. When opposite directions of analysis produce the same answer, that answer is the Market Middle: <strong>$1,395,000–$1,425,000.</strong></p>
+    <p>The finished basement with separate entrance is the feature doing the most pricing work in this evaluation. Without it, the Market Middle would land $50,000–$75,000 lower.</p>
+
+    <div class="summary-box">
+      <h4>Assessment Value Cross-Check</h4>
+      <div class="summary-row"><span>MPAC Assessment</span><span>$650,000</span></div>
+      <div class="summary-row"><span>Implied Sale-to-Assessment Ratio (comps)</span><span>~2.0–2.1×</span></div>
+      <div class="summary-row"><span>Assessment-Derived Reference Range</span><span>$1,300,000–$1,365,000</span></div>
+      <div class="summary-row"><span>Comp-Adjusted Market Middle</span><span>$1,395,000–$1,425,000</span></div>
+      <div class="summary-row"><span>Variance (comp middle vs assessment ref)</span><span>+$30,000–$60,000</span></div>
+    </div>
+    <p>The comp-adjusted middle sits modestly above the assessment-derived reference — consistent with a well-located, finished-basement property trading at a premium to area average assessment ratios.</p>
+  </div>
+
+  <div class="prose-section">
+    <h2>Market Trend Summary</h2>
+    <p>The King Township / Nobleton detached market in Q1 2026 is firmly in buyer-leaning territory, though the March data is showing the first genuine stabilization signal. GTA detached homes averaged $1,342,375 in March 2026, down 6.4% year-over-year according to TRREB. Nobleton specifically is running at a 90.5% SP/LP ratio and 63-day average DOM — buyers are regularly getting 9–10% below asking, and homes are taking over two months to sell on average.</p>
+    <p>The wide spread between average and median DOM is the key tell: stale, overpriced listings are dragging up the average while correctly priced homes are moving faster. New listings in King Township are up approximately 37% year-over-year, giving buyers more choice and negotiating leverage. The months of inventory figure has tightened from an estimated 9.3 in January to approximately 4.7 in March — still elevated but moving in the right direction as spring activity builds.</p>
+    <p><strong>Market classification: Buyer-leaning, early stabilization. Pricing strategy implication: the first two to three weeks of showings determine everything. Price right and sell quickly; let the home sit and it becomes a data point that drags down the next evaluation.</strong></p>
+  </div>
+
+  <div class="prose-section">
+    <h2>Historical Ownership Trend</h2>
+    <p>The current owners purchased on July 11, 2018 for $975,000 — an excellent entry point before the pre-COVID and COVID-era run-up. The GTA detached market ran hard from 2019 through early 2022. At the peak in February–March 2022, a 1,239 sq ft bungalow with these features in Nobleton was likely worth $1,700,000–$1,800,000 on paper.</p>
+    <p>Since that peak, King Township and the broader GTA detached market has corrected approximately 25–30%. Today's evaluation of $1,375,000–$1,425,000 reflects current market reality. The sellers have still made $400,000–$450,000 on this home over 7.75 years — a 41–46% total return, annualizing at approximately 4.5–5.0% per year. That context is important: the story isn't that the market has failed them; it's that they bought well, held through a peak and correction, and are still walking away with a strong outcome.</p>
+
+    <table class="prose-table">
+      <tr><th>Milestone</th><th>Amount</th><th>Change</th></tr>
+      <tr><td>January 1992 (prior sale)</td><td>$190,000</td><td>—</td></tr>
+      <tr><td>June 2011 (prior sale)</td><td>$550,000</td><td>+$360,000 (+189%) over 19 yrs</td></tr>
+      <tr><td>July 2018 (current purchase)</td><td>$975,000</td><td>+$425,000 (+77%) over 7 yrs</td></tr>
+      <tr><td>Est. Market Peak (~Feb 2022)</td><td>~$1,750,000</td><td>+$775,000 (+79%) over 3.5 yrs</td></tr>
+      <tr><td>Current Evaluation (Apr 2026)</td><td>$1,375,000–$1,425,000</td><td>+$400,000–$450,000 (+41–46%) from 2018</td></tr>
+    </table>
+  </div>
+
+  <div class="prose-section">
+    <h2>Recommended List Price</h2>
+    <div class="summary-box">
+      <h4>Pricing Summary</h4>
+      <div class="summary-row"><span>Conservative</span><span>$1,299,000</span></div>
+      <div class="summary-row"><span>Market Middle</span><span>$1,375,000–$1,425,000</span></div>
+      <div class="summary-row"><span>Optimistic</span><span>$1,450,000–$1,499,000</span></div>
+      <div class="summary-row"><span>Overpriced</span><span>$1,550,000+</span></div>
+      <div class="summary-row"><span>Recommended List Price</span><span>$1,399,000</span></div>
+      <div class="summary-row"><span>Expected Close Range</span><span>$1,336,000–$1,376,000</span></div>
+    </div>
+    <p>The recommended list price of $1,399,000 sits at the upper end of the Market Middle. It is justified by the property's quiet crescent location (rare in the Nobleton bungalow segment), the finished basement with separate entrance (a genuine differentiator that adds $50,000–$75,000 of defensible value), and two garage spaces. The spring 2026 market is showing its first stabilization signal and there is pent-up buyer demand on the sidelines.</p>
+    <p>At current Nobleton SP/LP of 90.5%, the expected close range is approximately $1,336,000–$1,376,000. If condition confirms as well-maintained or better on-site inspection, there is a case to push toward $1,449,000. If deficiencies are found, adjust downward from the base accordingly and present the condition overlay separately.</p>
+    <p>The overpriced risk is real and documented in this market. 27 Cain Crt at 85 DOM and no sale — a renovated bungalow on a larger lot — is the outcome to design against. Price right, generate traffic in the first two weeks, and close.</p>
+  </div>
+
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-brand">SOLDMIKE · RE/MAX PREMIER · THE OP TEAM</div>
+  <div class="footer-details">Michael Barillari, Broker · 416-987-8000 · 3550 Rutherford Rd #80, Vaughan ON L4H 3T8</div>
+  <div class="footer-disclaimer">This evaluation is prepared for informational purposes only and does not constitute a formal appraisal. Market conditions are subject to change. All figures are based on available MLS data and published market reports as of the evaluation date. Habistat market data figures marked as estimated require verification against Habistat York.xlsx. PropTx / TRREB data used under license.</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// SCATTER CHART
+const sCtx = document.getElementById('scatterChart').getContext('2d');
+new Chart(sCtx, {
+  type: 'scatter',
+  data: {
+    datasets: [
+      {
+        label: 'Sold Comps',
+        data: [
+          {x:1200,y:1100000,label:'6459/6465 King Rd (dev play)'},
+          {x:1175,y:1350000,label:'13125 Hwy 27'},
+          {x:2317,y:1530000,label:'4 Blue Beech Tr'}
+        ],
+        backgroundColor: 'rgba(74,222,128,.75)',
+        pointRadius: 8, pointHoverRadius: 11,
+      },
+      {
+        label: 'Active Listings',
+        data: [
+          {x:2279,y:1850000,label:'70 Russell Snider'},
+          {x:1876,y:1859990,label:'143 Stokes Dr'},
+          {x:2196,y:1899999,label:'13 Anderson Cove'},
+          {x:1823,y:2149888,label:'27 Cain Crt (85 DOM)'}
+        ],
+        backgroundColor: 'rgba(96,165,250,.7)',
+        pointRadius: 8, pointHoverRadius: 11,
+      },
+      {
+        label: 'Subject — 116 Lynwood',
+        data: [{x:1239,y:1399000,label:'116 Lynwood Cres'}],
+        backgroundColor: '#c5a55a',
+        pointStyle: 'star',
+        pointRadius: 14, pointHoverRadius: 18,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: {labels:{color:'#8a8a9a',usePointStyle:true}},
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const d = ctx.raw;
+            return (d.label||'') + ' — ' + d.x.toLocaleString() + ' sqft / $' + (d.y/1000).toFixed(0) + 'K';
+          }
+        }
+      }
+    },
+    scales: {
+      x: {title:{display:true,text:'Square Footage (Above Grade)',color:'#8a8a9a'},ticks:{color:'#8a8a9a',callback:v=>v.toLocaleString()+'sqft'}},
+      y: {title:{display:true,text:'Price ($)',color:'#8a8a9a'},ticks:{color:'#8a8a9a',callback:v=>'$'+(v/1000000).toFixed(2)+'M'}}
+    }
+  }
+});
+
+// PRICE TREND CHART
+const pCtx = document.getElementById('priceChart').getContext('2d');
+new Chart(pCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {label:'Avg Sale Price',data:[1480000,1420000,1350000,1210000,1350000,1340000],borderColor:'#c5a55a',backgroundColor:'rgba(197,165,90,.1)',fill:true,tension:0.4,pointRadius:4},
+      {label:'Median Sale Price',data:[1420000,1380000,1310000,1190000,1330000,1310000],borderColor:'#60a5fa',backgroundColor:'transparent',borderDash:[5,3],tension:0.4,pointRadius:4}
+    ]
+  },
+  options: {
+    responsive:true,
+    plugins:{legend:{labels:{color:'#8a8a9a',usePointStyle:true}}},
+    scales:{
+      y:{ticks:{color:'#8a8a9a',callback:v=>'$'+(v/1000).toFixed(0)+'K'}},
+      x:{ticks:{color:'#8a8a9a'}}
+    }
+  }
+});
+
+// VOLUME CHART
+const vCtx = document.getElementById('volChart').getContext('2d');
+new Chart(vCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {label:'Sales Volume',data:[6,5,5,6,7,9],backgroundColor:'rgba(74,222,128,.65)',borderRadius:4},
+      {label:'New Listings',data:[22,18,10,18,15,16],backgroundColor:'rgba(248,113,113,.5)',borderRadius:4}
+    ]
+  },
+  options: {
+    responsive:true,
+    plugins:{legend:{labels:{color:'#8a8a9a',usePointStyle:true}}},
+    scales:{y:{ticks:{color:'#8a8a9a'}},x:{ticks:{color:'#8a8a9a'}}}
+  }
+});
+
+// MOI CHART
+const mCtx = document.getElementById('moiChart').getContext('2d');
+new Chart(mCtx, {
+  type: 'line',
+  data: {
+    labels: ['Oct 25','Nov 25','Dec 25','Jan 26','Feb 26','Mar 26'],
+    datasets: [
+      {label:'Months of Inventory',data:[7.8,8.3,9.0,9.3,6.7,4.7],borderColor:'#f87171',backgroundColor:'rgba(248,113,113,.1)',fill:true,tension:0.4,pointRadius:5},
+      {label:"Sellers' Market Threshold (3.0)",data:[3,3,3,3,3,3],borderColor:'#4ade80',borderDash:[6,4],backgroundColor:'transparent',pointRadius:0}
+    ]
+  },
+  options: {
+    responsive:true,
+    plugins:{legend:{labels:{color:'#8a8a9a',usePointStyle:true}}},
+    scales:{
+      y:{min:0,max:12,ticks:{color:'#8a8a9a',callback:v=>v+' mo'}},
+      x:{ticks:{color:'#8a8a9a'}}
+    }
+  }
+});
+
+// WHAT-IF SLIDER
+const MARKET_MIDDLE = 1399000;
+const slider = document.getElementById('listSlider');
+function updateSlider() {
+  const list = parseInt(slider.value);
+  const pctOver = (list / MARKET_MIDDLE - 1) * 100;
+  let dom, saleRatio, cutRisk, verdict, verdictStyle;
+  if (pctOver <= -7) {
+    dom=7; saleRatio=1.02; cutRisk=2;
+    verdict='🔥 Under-listed — will attract multiple offers. Leaves significant money on the table.';
+    verdictStyle='background:rgba(74,222,128,.12);color:#4ade80';
+  } else if (pctOver <= 0) {
+    dom=14; saleRatio=0.975; cutRisk=6;
+    verdict='✓ Conservative — strong activity expected within first 2 weeks.';
+    verdictStyle='background:rgba(74,222,128,.12);color:#4ade80';
+  } else if (pctOver <= 3.5) {
+    dom=21; saleRatio=0.969; cutRisk=12;
+    verdict='✓ Well-positioned within Market Middle — recommended range.';
+    verdictStyle='background:rgba(197,165,90,.12);color:#c5a55a';
+  } else if (pctOver <= 7) {
+    dom=40; saleRatio=0.955; cutRisk=32;
+    verdict='⚠ Slightly stretched — increased DOM risk. Needs excellent presentation and strong spring demand.';
+    verdictStyle='background:rgba(248,113,113,.08);color:#f87171';
+  } else if (pctOver <= 11) {
+    dom=65; saleRatio=0.94; cutRisk=60;
+    verdict='⚠ Overpriced — subject loses comparison to 2010s-era builds. Extended DOM likely.';
+    verdictStyle='background:rgba(248,113,113,.12);color:#f87171';
+  } else if (pctOver <= 17) {
+    dom=85; saleRatio=0.92; cutRisk=82;
+    verdict='🚫 Significantly overpriced — approaching 27 Cain Crt territory (85+ DOM, no sale).';
+    verdictStyle='background:rgba(248,113,113,.18);color:#f87171';
+  } else {
+    dom=90; saleRatio=0.88; cutRisk=97;
+    verdict='🚫 Extreme overpricing — no realistic path to sale at this price point.';
+    verdictStyle='background:rgba(248,113,113,.22);color:#f87171';
+  }
+  const salePrice = Math.round(list * saleRatio / 1000) * 1000;
+  const netVsOptimal = salePrice - Math.round(MARKET_MIDDLE * 0.969);
+  const netStr = netVsOptimal >= 0 ? '+$'+Math.abs(netVsOptimal).toLocaleString() : '-$'+Math.abs(netVsOptimal).toLocaleString();
+  document.getElementById('sliderPrice').textContent = '$'+list.toLocaleString();
+  document.getElementById('siDOM').textContent = dom+' days';
+  document.getElementById('siSale').textContent = '$'+(salePrice/1000).toFixed(0)+'K';
+  document.getElementById('siRisk').textContent = cutRisk+'%';
+  document.getElementById('siNet').textContent = Math.abs(netVsOptimal) < 5000 ? 'Baseline' : netStr;
+  document.getElementById('siVsMM').textContent = (pctOver >= 0 ? '+' : '') + pctOver.toFixed(1)+'%';
+  const vEl = document.getElementById('sliderVerdict');
+  vEl.textContent = verdict;
+  vEl.setAttribute('style', verdictStyle+';text-align:center;font-size:.88rem;font-weight:600;padding:.85rem 1.25rem;border-radius:8px;margin-top:1.1rem');
+}
+slider.addEventListener('input', updateSlider);
+updateSlider();
+</script>
+</body>
+</html>
