@@ -42,8 +42,19 @@
   .header .status{color:var(--text-on-dark-dim);font-size:12px}
   .header .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}
 
+  /* TOP ROW — priority (left) + at-a-glance (right) */
+  .top-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-light);background:var(--page-bg-soft)}
+
+  /* AT-A-GLANCE (today: morning / afternoon / evening) */
+  .at-a-glance{padding:14px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;border-left:1px solid var(--border-light)}
+  .aag-block{padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-on-dark);display:flex;flex-direction:column;gap:3px;box-shadow:0 2px 6px rgba(10,10,20,0.08);min-width:0}
+  .aag-label{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:var(--gold);font-weight:700;margin-bottom:2px}
+  .aag-time{font-size:11px;color:var(--text-on-dark-dim);font-weight:500}
+  .aag-event{font-size:12px;font-weight:600;color:var(--text-on-dark);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .aag-empty{font-size:12px;color:var(--text-on-dark-dim);font-style:italic}
+
   /* PRIORITY STRIP — WHITE background, dark cards */
-  .priority-strip{display:flex;gap:10px;padding:14px 24px;background:var(--page-bg-soft);border-bottom:1px solid var(--border-light);overflow-x:auto;flex-wrap:nowrap}
+  .priority-strip{display:flex;gap:10px;padding:14px 20px;overflow-x:auto;flex-wrap:nowrap;min-width:0}
   .priority-strip::-webkit-scrollbar{display:none}
   .pri-card{flex:0 0 auto;padding:10px 16px;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-on-dark);min-width:220px;cursor:pointer;transition:all .2s;box-shadow:0 2px 6px rgba(10,10,20,0.08)}
   .pri-card:hover{border-color:var(--gold);box-shadow:0 6px 16px rgba(10,10,20,0.18);transform:translateY(-1px)}
@@ -113,6 +124,8 @@
   /* MOBILE */
   @media(max-width:900px){
     .main{grid-template-columns:1fr;height:auto}
+    .top-row{grid-template-columns:1fr}
+    .at-a-glance{border-left:none;border-top:1px solid var(--border-light);padding:12px 16px}
     .left-panel{border-right:none;border-bottom:1px solid var(--border-light)}
     .right-panel{min-height:500px}
     .section-grid{grid-template-columns:1fr}
@@ -123,6 +136,7 @@
     .header h1{font-size:16px}
     .left-panel{padding:14px 16px}
     .pri-card{min-width:180px;padding:8px 12px}
+    .at-a-glance{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -137,38 +151,62 @@
   </div>
 </div>
 
-<!-- PRIORITY STRIP -->
-<div class="priority-strip">
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label high">High Priority</div>
-    <div class="pri-title">SPF / DKIM / DMARC Setup</div>
-    <div class="pri-due">Blocks all email campaigns on soldmike.com</div>
+<!-- TOP ROW — Priority (left) + At-a-Glance (right) -->
+<div class="top-row">
+
+  <!-- PRIORITY STRIP -->
+  <div class="priority-strip">
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label high">High Priority</div>
+      <div class="pri-title">SPF / DKIM / DMARC Setup</div>
+      <div class="pri-due">Blocks all email campaigns on soldmike.com</div>
+    </div>
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label high">High Priority</div>
+      <div class="pri-title">Create Drive Folder Structure</div>
+      <div class="pri-due">AI Workspace organization</div>
+    </div>
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label high">High Priority</div>
+      <div class="pri-title">Property Website — 16 Saint Keller</div>
+      <div class="pri-due">Use property-website skill</div>
+    </div>
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label queued">Queued</div>
+      <div class="pri-title">FUB Active Buyer Campaign</div>
+      <div class="pri-due">Blocked on deliverability setup</div>
+    </div>
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label med">Medium</div>
+      <div class="pri-title">Form 290 — Page 2+</div>
+      <div class="pri-due">One page at a time, compare against PDF</div>
+    </div>
+    <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
+      <div class="pri-label med">Medium</div>
+      <div class="pri-title">Notion HQ + Cockpit Dashboard</div>
+      <div class="pri-due">Cleanup + Cloudflare live data</div>
+    </div>
   </div>
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label high">High Priority</div>
-    <div class="pri-title">Create Drive Folder Structure</div>
-    <div class="pri-due">AI Workspace organization</div>
+
+  <!-- AT-A-GLANCE (today) -->
+  <div class="at-a-glance">
+    <div class="aag-block">
+      <div class="aag-label">Morning</div>
+      <div class="aag-time">10:00 AM</div>
+      <div class="aag-event">ReMax Premier ReCharge</div>
+    </div>
+    <div class="aag-block">
+      <div class="aag-label">Afternoon</div>
+      <div class="aag-time">1:00 PM</div>
+      <div class="aag-event">Jotform ChatGPT Webinar</div>
+    </div>
+    <div class="aag-block">
+      <div class="aag-label">Evening</div>
+      <div class="aag-time">Clear</div>
+      <div class="aag-empty">No events</div>
+    </div>
   </div>
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label high">High Priority</div>
-    <div class="pri-title">Property Website — 16 Saint Keller</div>
-    <div class="pri-due">Use property-website skill</div>
-  </div>
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label queued">Queued</div>
-    <div class="pri-title">FUB Active Buyer Campaign</div>
-    <div class="pri-due">Blocked on deliverability setup</div>
-  </div>
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label med">Medium</div>
-    <div class="pri-title">Form 290 — Page 2+</div>
-    <div class="pri-due">One page at a time, compare against PDF</div>
-  </div>
-  <div class="pri-card" onclick="window.open('https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453','_blank')">
-    <div class="pri-label med">Medium</div>
-    <div class="pri-title">Notion HQ + Cockpit Dashboard</div>
-    <div class="pri-due">Cleanup + Cloudflare live data</div>
-  </div>
+
 </div>
 
 <!-- MAIN LAYOUT -->
@@ -252,53 +290,6 @@
     </div>
     <div class="cal-frame" id="calFrame">
       <iframe id="calIframe" src="https://calendar.google.com/calendar/embed?src=broker%40soldmike.com&ctz=America%2FToronto&mode=WEEK&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=0&showCalendars=0&bgcolor=%2314141f&color=%23c8a84e" loading="lazy"></iframe>
-    </div>
-    <div class="events-strip">
-      <div class="event-day-label">Today &mdash; April 7</div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--orange)"></div>
-        <div class="event-time">10:00 AM</div>
-        <div class="event-name">ReMax Premier ReCharge</div>
-      </div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--blue)"></div>
-        <div class="event-time">1:00 PM</div>
-        <div class="event-name">Jotform ChatGPT Webinar</div>
-      </div>
-      <div class="event-day-label">Tomorrow &mdash; April 8</div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--purple)"></div>
-        <div class="event-time">3:00 AM</div>
-        <div class="event-name">Book-Keeper Prep</div>
-      </div>
-      <div class="event-day-label">Saturday &mdash; April 11</div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--green)"></div>
-        <div class="event-time">All Day</div>
-        <div class="event-name">Miliania Communion</div>
-      </div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--yellow)"></div>
-        <div class="event-time">11:00 AM</div>
-        <div class="event-name">Financing</div>
-      </div>
-      <div class="event-day-label">Sunday &mdash; April 12</div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--orange)"></div>
-        <div class="event-time">2:45 PM</div>
-        <div class="event-name">Open House</div>
-      </div>
-      <div class="event-day-label">Monday &mdash; April 13</div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--red)"></div>
-        <div class="event-time">9:00 PM</div>
-        <div class="event-name">Listing Feedback Update</div>
-      </div>
-      <div class="event-row">
-        <div class="event-dot" style="background:var(--purple)"></div>
-        <div class="event-time">9:00 PM</div>
-        <div class="event-name">Closings</div>
-      </div>
     </div>
   </div>
 
