@@ -33,8 +33,8 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
 .eval-date{font-size:.82rem;color:var(--gold);margin-top:.3rem;font-weight:500}
 
 /* ---- NAV TABS ---- */
-.tab-nav{background:var(--card);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;padding:0 2rem}
-.tab-btn{background:none;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:1rem 1.5rem;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab-nav{background:var(--card);border-bottom:2px solid var(--border);display:flex;flex-wrap:wrap;padding:0 1rem}
+.tab-btn{background:none;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:.7rem .9rem;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s;font-size:.77rem}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
 
@@ -1099,45 +1099,45 @@ body{font-family:'Inter',sans-serif;font-size:15px;background:var(--bg);color:va
 <div class="inner">
 
 <style>
-.cma-hero{background:linear-gradient(135deg,#0D1B2A 0%,#1A2B4A 100%);border:1px solid #2a3a5a;border-radius:16px;padding:2rem;margin-bottom:2rem;text-align:center}
-.cma-hero-title{font-family:"Cormorant Garamond",serif;font-size:2rem;color:#C9A96E;font-weight:700;margin-bottom:.35rem}
-.cma-hero-sub{font-size:.88rem;color:#8899aa;letter-spacing:.06em;text-transform:uppercase}
+.cma-hero{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:2rem;text-align:center}
+.cma-hero-title{font-family:'Cormorant Garamond',serif;font-size:2rem;color:var(--gold);font-weight:700;margin-bottom:.35rem}
+.cma-hero-sub{font-size:.88rem;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase}
 .strategy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-bottom:2rem}
 .strategy-card{border-radius:14px;padding:1.6rem;text-align:center;position:relative;overflow:hidden}
-.strategy-card.offer-date{background:linear-gradient(145deg,#0a2a1a,#061a0f);border:2px solid #4ade80}
-.strategy-card.market-middle{background:linear-gradient(145deg,#2a1f08,#1a1305);border:3px solid #C9A96E}
-.strategy-card.optimistic{background:linear-gradient(145deg,#0a1a2a,#06101a);border:2px solid #60a5fa}
-.strategy-card.overpriced{background:linear-gradient(145deg,#2a0a0a,#1a0606);border:2px solid #f87171}
+.strategy-card.offer-date{background:rgba(74,222,128,.06);border:2px solid var(--green)}
+.strategy-card.market-middle{background:var(--gold-dim);border:3px solid var(--gold)}
+.strategy-card.optimistic{background:rgba(96,165,250,.06);border:2px solid var(--blue)}
+.strategy-card.overpriced{background:rgba(248,113,113,.06);border:2px solid var(--red)}
 .strategy-badge{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;font-weight:700;margin-bottom:.75rem;padding:.3rem .8rem;border-radius:20px;display:inline-block}
-.offer-date .strategy-badge{background:rgba(74,222,128,.15);color:#4ade80}
-.market-middle .strategy-badge{background:rgba(201,169,110,.15);color:#C9A96E}
-.optimistic .strategy-badge{background:rgba(96,165,250,.15);color:#60a5fa}
-.overpriced .strategy-badge{background:rgba(248,113,113,.15);color:#f87171}
-.strategy-price{font-family:"Cormorant Garamond",serif;font-size:1.85rem;font-weight:700;line-height:1.1;margin-bottom:.5rem}
-.offer-date .strategy-price{color:#4ade80}
-.market-middle .strategy-price{color:#C9A96E}
-.optimistic .strategy-price{color:#60a5fa}
-.overpriced .strategy-price{color:#f87171}
-.strategy-desc{font-size:.8rem;color:#8899aa;line-height:1.6;margin-top:.5rem}
-.star-badge{position:absolute;top:.75rem;right:.75rem;font-size:.65rem;background:#C9A96E;color:#000;padding:.2rem .5rem;border-radius:4px;font-weight:700}
-.cma-section-title{font-family:"Cormorant Garamond",serif;font-size:1.5rem;color:#e8e6e1;font-weight:700;margin:2rem 0 1rem;border-left:4px solid #C9A96E;padding-left:.85rem}
-.cma-table{width:100%;border-collapse:collapse;background:#1A2B4A;border-radius:12px;overflow:hidden;margin-bottom:2rem}
-.cma-table th{background:rgba(201,169,110,.12);color:#C9A96E;font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;padding:.85rem 1rem;text-align:left;border-bottom:1px solid #2a3a5a}
-.cma-table td{padding:.8rem 1rem;font-size:.88rem;color:#c8d8e8;border-bottom:1px solid rgba(255,255,255,.06)}
+.offer-date .strategy-badge{background:rgba(74,222,128,.15);color:var(--green)}
+.market-middle .strategy-badge{background:var(--gold-dim);color:var(--gold)}
+.optimistic .strategy-badge{background:rgba(96,165,250,.15);color:var(--blue)}
+.overpriced .strategy-badge{background:rgba(248,113,113,.15);color:var(--red)}
+.strategy-price{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;line-height:1.1;margin-bottom:.5rem}
+.offer-date .strategy-price{color:var(--green)}
+.market-middle .strategy-price{color:var(--gold)}
+.optimistic .strategy-price{color:var(--blue)}
+.overpriced .strategy-price{color:var(--red)}
+.strategy-desc{font-size:.8rem;color:var(--text-dim);line-height:1.6;margin-top:.5rem}
+.star-badge{position:absolute;top:.75rem;right:.75rem;font-size:.65rem;background:var(--gold);color:#000;padding:.2rem .5rem;border-radius:4px;font-weight:700}
+.cma-section-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--text);font-weight:700;margin:2rem 0 1rem;border-left:4px solid var(--gold);padding-left:.85rem}
+.cma-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;margin-bottom:2rem}
+.cma-table th{background:var(--gold-dim);color:var(--gold);font-size:.76rem;text-transform:uppercase;letter-spacing:.07em;padding:.85rem 1rem;text-align:left;border-bottom:1px solid var(--border)}
+.cma-table td{padding:.8rem 1rem;font-size:.88rem;color:var(--text);border-bottom:1px solid var(--border)}
 .cma-table tr:last-child td{border-bottom:none}
 .cma-table tr:hover td{background:rgba(255,255,255,.03)}
-.cma-table td.highlight{color:#C9A96E;font-weight:700}
-.cma-table td.green{color:#4ade80;font-weight:600}
-.cma-table td.red{color:#f87171;font-weight:600}
-.adj-net{background:rgba(201,169,110,.08);font-weight:700;color:#C9A96E}
+.cma-table td.highlight{color:var(--gold);font-weight:700}
+.cma-table td.green{color:var(--green);font-weight:600}
+.cma-table td.red{color:var(--red);font-weight:600}
+.adj-net{background:var(--gold-dim);font-weight:700;color:var(--gold)}
 .cma-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
-.cma-chart-box{background:#1A2B4A;border:1px solid #2a3a5a;border-radius:12px;padding:1.5rem}
-.cma-chart-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#8899aa;margin-bottom:1.1rem}
+.cma-chart-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.cma-chart-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:1.1rem}
 .cma-insight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-bottom:2rem}
-.cma-insight{background:#1A2B4A;border:1px solid #2a3a5a;border-radius:12px;padding:1.4rem}
-.cma-insight-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:#C9A96E;font-weight:700;margin-bottom:.6rem}
-.cma-insight-text{font-size:.88rem;color:#9aacbc;line-height:1.7}
-.cma-insight-text strong{color:#c8d8e8}
+.cma-insight{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem}
+.cma-insight-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--gold);font-weight:700;margin-bottom:.6rem}
+.cma-insight-text{font-size:.88rem;color:var(--text-dim);line-height:1.7}
+.cma-insight-text strong{color:var(--text)}
 </style>
 
 <div class="cma-hero">
@@ -1569,7 +1569,7 @@ updateSlider();
 <script>
 // CMA Charts — lazy init, called when tab first opens
 function initCMAPricingCharts() {
-  var gold = '#C9A96E', green = '#4ade80', blue = '#60a5fa', red = '#f87171';
+  var gold = '#c5a55a', green = '#4ade80', blue = '#60a5fa', red = '#f87171';
 
   new Chart(document.getElementById('cmaPricingChart'), {
     type: 'bar',
@@ -1609,7 +1609,7 @@ function initCMAPricingCharts() {
 }
 
 function initCMAAnalyticsCharts() {
-  var gold = '#C9A96E', green = '#4ade80', red = '#f87171';
+  var gold = '#c5a55a', green = '#4ade80', red = '#f87171';
 
   new Chart(document.getElementById('gapChart'), {
     type: 'bar',
