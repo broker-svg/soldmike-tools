@@ -69,7 +69,13 @@
   .st-done{background:rgba(136,136,160,.15);color:var(--text-on-dark-dim)}
   .st-parked{background:rgba(167,139,250,.18);color:var(--purple)}
   .st-new{background:rgba(96,165,250,.18);color:var(--blue)}
-  .st-overdue{background:rgba(248,113,113,.18);color:var(--red)}
+  .st-overdue{background:rgba(251,146,60,.18);color:var(--orange)}
+  .st-priority{background:rgba(248,113,113,.18);color:var(--red)}
+
+  /* SIDEBAR HIGH-PRIORITY STYLING */
+  .proj.priority{border-color:var(--red);box-shadow:0 4px 10px rgba(248,113,113,0.18)}
+  .proj.priority:hover{border-color:var(--red);box-shadow:0 6px 14px rgba(248,113,113,0.28)}
+  .proj.priority .proj-name{color:#ffb4b4}
   .proj-sub{font-size:11px;color:var(--text-on-dark-dim);line-height:1.3}
 
   /* QUICK LINKS — compact dim on white */
@@ -110,12 +116,12 @@
   .kanban-col-header{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 10px;border-bottom:2px solid var(--border-light)}
   .kanban-col[data-status="new"] .kanban-col-header{border-bottom-color:var(--blue)}
   .kanban-col[data-status="active"] .kanban-col-header{border-bottom-color:var(--green)}
-  .kanban-col[data-status="overdue"] .kanban-col-header{border-bottom-color:var(--red)}
+  .kanban-col[data-status="overdue"] .kanban-col-header{border-bottom-color:var(--orange)}
   .kanban-col[data-status="done"] .kanban-col-header{border-bottom-color:var(--text-on-light-dim)}
   .kanban-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
   .kanban-col[data-status="new"] .kanban-label{color:var(--blue)}
   .kanban-col[data-status="active"] .kanban-label{color:var(--green)}
-  .kanban-col[data-status="overdue"] .kanban-label{color:var(--red)}
+  .kanban-col[data-status="overdue"] .kanban-label{color:var(--orange)}
   .kanban-col[data-status="done"] .kanban-label{color:var(--text-on-light-dim)}
   .kanban-count{font-size:11px;color:var(--text-on-light-dim);background:var(--page-bg-soft);border:1px solid var(--border-light);border-radius:10px;padding:1px 8px;font-weight:700;min-width:22px;text-align:center}
   .kanban-col-body{display:flex;flex-direction:column;gap:8px}
@@ -124,8 +130,10 @@
   .kanban-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
   .kanban-col[data-status="new"] .kanban-card::before{background:var(--blue)}
   .kanban-col[data-status="active"] .kanban-card::before{background:var(--green)}
-  .kanban-col[data-status="overdue"] .kanban-card::before{background:var(--red)}
+  .kanban-col[data-status="overdue"] .kanban-card::before{background:var(--orange)}
   .kanban-col[data-status="done"] .kanban-card::before{background:var(--text-on-dark-dim)}
+  .kanban-card.priority::before{background:var(--red) !important;width:4px}
+  .kanban-card.priority{border-color:rgba(248,113,113,0.35);box-shadow:0 3px 10px rgba(248,113,113,0.18)}
   .kanban-card .kc-name{font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.3;color:var(--text-on-dark)}
   .kanban-card .kc-note{font-size:11px;color:var(--text-on-dark-dim);line-height:1.35}
   .kanban-empty{font-size:12px;color:var(--text-on-light-dim);font-style:italic;text-align:center;padding:20px 10px;border:2px dashed var(--border-light);border-radius:8px;background:var(--page-bg-soft)}
@@ -195,7 +203,7 @@
   </div>
   <div class="stats">
     <div class="s active"><span class="n">3</span> Active</div>
-    <div class="s queued"><span class="n" style="color:var(--red)">2</span> Overdue</div>
+    <div class="s queued"><span class="n" style="color:var(--orange)">2</span> Overdue</div>
     <div class="s done"><span class="n">3</span> Done</div>
   </div>
 </div>
@@ -204,22 +212,14 @@
 
   <!-- LEFT SIDEBAR -->
   <div class="sidebar">
-    <div class="label">Projects</div>
+    <div class="label">Active Projects</div>
     <div class="proj active" data-proj="overview">
       <div class="proj-name">&#127969; Overview <span class="proj-status st-active">All</span></div>
-      <div class="proj-sub">Full section tree</div>
+      <div class="proj-sub">Full section board</div>
     </div>
-    <div class="proj" data-proj="fub-crm">
-      <div class="proj-name">FUB CRM Build <span class="proj-status st-done">Done</span></div>
-      <div class="proj-sub">55 fields, 7 Smart Lists, 45 tags</div>
-    </div>
-    <div class="proj" data-proj="fub-email">
-      <div class="proj-name">FUB Email Campaign <span class="proj-status st-overdue">Overdue</span></div>
-      <div class="proj-sub">58 emails / 7 phases</div>
-    </div>
-    <div class="proj" data-proj="property-web">
-      <div class="proj-name">Property Websites <span class="proj-status st-active">Active</span></div>
-      <div class="proj-sub">3 variants built</div>
+    <div class="proj priority" data-proj="property-web">
+      <div class="proj-name">Property Websites <span class="proj-status st-priority">High Priority</span></div>
+      <div class="proj-sub">Build site for 16 Saint Keller Pl</div>
     </div>
     <div class="proj" data-proj="form290">
       <div class="proj-name">Form 290 Build <span class="proj-status st-active">Active</span></div>
@@ -228,18 +228,6 @@
     <div class="proj" data-proj="cma">
       <div class="proj-name">CMA Generator <span class="proj-status st-active">Active</span></div>
       <div class="proj-sub">Upload screenshots, auto-generate</div>
-    </div>
-    <div class="proj" data-proj="seller-update">
-      <div class="proj-name">Seller Update System <span class="proj-status st-done">Done</span></div>
-      <div class="proj-sub">Email + HTML page skills</div>
-    </div>
-    <div class="proj" data-proj="deliverability">
-      <div class="proj-name">Deliverability Setup <span class="proj-status st-overdue">Overdue</span></div>
-      <div class="proj-sub">SPF / DKIM / DMARC</div>
-    </div>
-    <div class="proj" data-proj="zapier">
-      <div class="proj-name">Zapier Engine <span class="proj-status st-done">Done</span></div>
-      <div class="proj-sub">Drive folder automation</div>
     </div>
 
     <div class="label">Notion Pages</div>
@@ -299,7 +287,7 @@
               <span class="kanban-count">3</span>
             </div>
             <div class="kanban-col-body">
-              <div class="kanban-card" data-goto="property-web">
+              <div class="kanban-card priority" data-goto="property-web">
                 <div class="kc-name">Property Websites</div>
                 <div class="kc-note">Build site for 16 Saint Keller Pl using property-website skill</div>
               </div>
