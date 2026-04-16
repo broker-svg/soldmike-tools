@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE — Marketing Dashboard</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --page-bg:#ffffff;
+    --page-bg-soft:#f4f6fb;
+    --border-light:rgba(26,31,46,0.10);
+    --text-on-light:#1a1f2e;
+    --text-on-light-dim:#5a6480;
+    --card-bg:#14141f;
+    --card-bg-alt:#1c1c2e;
+    --card-border:#2a2a3d;
+    --text-on-dark:#e8e8f0;
+    --text-on-dark-dim:#8888a0;
+    --gold:#c8a84e;
+    --gold-dim:#9a7d3a;
+    --green:#34d399;
+    --yellow:#fbbf24;
+    --blue:#60a5fa;
+    --purple:#a78bfa;
+    --red:#f87171;
+    --orange:#fb923c;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--page-bg);color:var(--text-on-light);overflow-x:hidden}
+
+  .header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-bottom:1px solid var(--card-border);background:var(--card-bg);color:var(--text-on-dark);position:sticky;top:0;z-index:100}
+  .header-left{display:flex;align-items:center;gap:14px}
+  .back-btn{color:var(--text-on-dark-dim);text-decoration:none;font-size:13px;padding:6px 12px;border:1px solid var(--card-border);border-radius:6px;transition:all .2s;display:flex;align-items:center;gap:6px}
+  .back-btn:hover{border-color:var(--gold);color:var(--gold)}
+  .header h1{font-size:18px;font-weight:700;color:var(--text-on-dark)}
+  .header h1 .section-icon{font-size:22px;margin-right:6px}
+  .header h1 .brand{color:var(--gold);font-size:12px;font-weight:400;letter-spacing:1px;margin-left:8px}
+  .header .stats{display:flex;gap:12px;font-size:12px}
+  .header .stats .s{padding:4px 10px;border-radius:12px;background:var(--card-bg-alt);border:1px solid var(--card-border);color:var(--text-on-dark-dim)}
+  .header .stats .s .n{font-weight:700}
+  .header .stats .s.active .n{color:var(--green)}
+  .header .stats .s.queued .n{color:var(--yellow)}
+  .header .stats .s.done .n{color:var(--text-on-dark)}
+
+  .main{display:grid;grid-template-columns:280px 1fr;gap:0;height:calc(100vh - 56px)}
+
+  .sidebar{padding:16px;overflow-y:auto;border-right:1px solid var(--border-light);background:var(--page-bg)}
+  .sidebar::-webkit-scrollbar{width:3px}
+  .sidebar::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:2px}
+  .label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-dim);font-weight:700;margin:18px 0 10px}
+  .label:first-child{margin-top:0}
+
+  .proj{padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-on-dark);cursor:pointer;transition:all .2s;margin-bottom:5px;box-shadow:0 1px 3px rgba(10,10,20,0.06)}
+  .proj:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 10px rgba(10,10,20,0.12)}
+  .proj.active{border-color:var(--gold);background:var(--card-bg-alt);box-shadow:0 4px 10px rgba(200,168,78,0.12)}
+  .proj-name{font-size:13px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px;color:var(--text-on-dark)}
+  .proj-status{font-size:9px;padding:2px 6px;border-radius:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0}
+  .st-active{background:rgba(52,211,153,.18);color:var(--green)}
+  .st-queued{background:rgba(251,191,36,.18);color:var(--yellow)}
+  .st-done{background:rgba(136,136,160,.15);color:var(--text-on-dark-dim)}
+  .st-parked{background:rgba(167,139,250,.18);color:var(--purple)}
+  .st-new{background:rgba(96,165,250,.18);color:var(--blue)}
+  .st-overdue{background:rgba(251,146,60,.18);color:var(--orange)}
+  .st-priority{background:rgba(248,113,113,.18);color:var(--red)}
+  .proj.priority{border-color:var(--red);box-shadow:0 4px 10px rgba(248,113,113,0.18)}
+  .proj.priority:hover{border-color:var(--red);box-shadow:0 6px 14px rgba(248,113,113,0.28)}
+  .proj.priority .proj-name{color:#ffb4b4}
+  .proj-sub{font-size:11px;color:var(--text-on-dark-dim);line-height:1.3}
+
+  .ql-list{display:flex;flex-direction:column;gap:2px}
+  .ql-item{padding:6px 10px;border-radius:6px;font-size:12px;color:var(--text-on-light-dim);text-decoration:none;transition:all .15s;display:flex;align-items:center;gap:6px}
+  .ql-item:hover{background:var(--page-bg-soft);color:var(--gold-dim)}
+
+  .right-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--page-bg)}
+
+  .proj-tabs{display:flex;border-bottom:1px solid var(--border-light);background:var(--page-bg-soft);overflow-x:auto;flex-shrink:0}
+  .proj-tabs::-webkit-scrollbar{display:none}
+  .ptab{padding:12px 16px;font-size:12px;font-weight:600;color:var(--text-on-light-dim);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+  .ptab:hover{color:var(--text-on-light)}
+  .ptab.active{color:var(--gold-dim);border-bottom-color:var(--gold)}
+
+  .tree-content{flex:1;overflow-y:auto;padding:22px 24px;background:var(--page-bg)}
+  .tree-content::-webkit-scrollbar{width:4px}
+  .tree-content::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:2px}
+
+  .tree-view{display:none}
+  .tree-view.active{display:block}
+
+  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:4px}
+  .kanban-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .kanban-col-header{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 10px;border-bottom:2px solid var(--border-light)}
+  .kanban-col[data-status="new"] .kanban-col-header{border-bottom-color:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-col-header{border-bottom-color:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-col-header{border-bottom-color:var(--orange)}
+  .kanban-col[data-status="done"] .kanban-col-header{border-bottom-color:var(--text-on-light-dim)}
+  .kanban-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+  .kanban-col[data-status="new"] .kanban-label{color:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-label{color:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-label{color:var(--orange)}
+  .kanban-col[data-status="done"] .kanban-label{color:var(--text-on-light-dim)}
+  .kanban-count{font-size:11px;color:var(--text-on-light-dim);background:var(--page-bg-soft);border:1px solid var(--border-light);border-radius:10px;padding:1px 8px;font-weight:700;min-width:22px;text-align:center}
+  .kanban-col-body{display:flex;flex-direction:column;gap:8px}
+  .kanban-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:11px 13px 11px 14px;cursor:pointer;transition:all .2s;color:var(--text-on-dark);box-shadow:0 2px 6px rgba(10,10,20,0.08);position:relative;overflow:hidden}
+  .kanban-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 6px 16px rgba(10,10,20,0.18)}
+  .kanban-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .kanban-col[data-status="new"] .kanban-card::before{background:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-card::before{background:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-card::before{background:var(--orange)}
+  .kanban-col[data-status="done"] .kanban-card::before{background:var(--text-on-dark-dim)}
+  .kanban-card.priority::before{background:var(--red) !important;width:4px}
+  .kanban-card.priority{border-color:rgba(248,113,113,0.35);box-shadow:0 3px 10px rgba(248,113,113,0.18)}
+  .kanban-card .kc-name{font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.3;color:var(--text-on-dark)}
+  .kanban-card .kc-note{font-size:11px;color:var(--text-on-dark-dim);line-height:1.35}
+  .kanban-empty{font-size:12px;color:var(--text-on-light-dim);font-style:italic;text-align:center;padding:20px 10px;border:2px dashed var(--border-light);border-radius:8px;background:var(--page-bg-soft)}
+  @media(max-width:1100px){.kanban{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.kanban{grid-template-columns:1fr}}
+
+  .detail-header{margin-bottom:20px}
+  .detail-title{font-size:22px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:10px;color:var(--text-on-light)}
+  .detail-next{font-size:13px;color:var(--text-on-dark);background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px 16px;margin-top:12px;box-shadow:0 2px 8px rgba(10,10,20,0.10);line-height:1.5}
+  .detail-next strong{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:1px;display:inline-block;margin-right:4px}
+
+  .leaves-title{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold-dim);font-weight:700;margin:22px 0 10px}
+  .leaves-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+  .leaf{border-radius:10px;border:1px solid var(--card-border);padding:12px 14px;background:var(--card-bg);color:var(--text-on-dark);transition:all .2s;box-shadow:0 1px 3px rgba(10,10,20,0.06)}
+  .leaf:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 10px rgba(10,10,20,0.14)}
+  .leaf .leaf-name{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--text-on-dark)}
+  .leaf .leaf-status{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .leaf .leaf-note{font-size:11px;color:var(--text-on-dark-dim);line-height:1.35}
+  .leaf.done{border-left:3px solid var(--green)}
+  .leaf.active{border-left:3px solid var(--yellow)}
+  .leaf.todo{border-left:3px solid var(--text-on-dark-dim)}
+  .leaf.blocked{border-left:3px solid var(--red)}
+
+  .notion-link{display:inline-flex;align-items:center;gap:6px;margin-top:18px;padding:8px 16px;border-radius:8px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-on-dark-dim);text-decoration:none;font-size:12px;transition:all .2s;box-shadow:0 1px 3px rgba(10,10,20,0.06)}
+  .notion-link:hover{border-color:var(--gold);color:var(--gold)}
+
+  @media(max-width:900px){
+    .main{grid-template-columns:1fr;height:auto}
+    .sidebar{border-right:none;border-bottom:1px solid var(--border-light);max-height:300px}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <a class="back-btn" href="https://broker-svg.github.io/soldmike-tools/soldmike-cockpit.html">&#8592; Cockpit</a>
+    <h1><span class="section-icon">&#128227;</span>Marketing<span class="brand">SOLDMIKE</span></h1>
+  </div>
+  <div class="stats">
+    <div class="s active"><span class="n">3</span> Active</div>
+    <div class="s queued"><span class="n" style="color:var(--orange)">0</span> Overdue</div>
+    <div class="s done"><span class="n">1</span> Done</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="sidebar">
+    <div class="label">Active Projects</div>
+    <div class="proj active" data-proj="overview">
+      <div class="proj-name">&#128227; Overview <span class="proj-status st-active">All</span></div>
+      <div class="proj-sub">Full section board</div>
+    </div>
+    <div class="proj priority" data-proj="mika-ai">
+      <div class="proj-name">Mika AI Assistant <span class="proj-status st-priority">High Priority</span></div>
+      <div class="proj-sub">Jotform AI agent, all channels, FUB connected</div>
+    </div>
+    <div class="proj" data-proj="social-automation">
+      <div class="proj-name">Social Media Posting <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">Cowork &rarr; Drive &rarr; Zapier &rarr; Metricool</div>
+    </div>
+    <div class="proj" data-proj="landing-page">
+      <div class="proj-name">SOLDMIKE Landing Page <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">Agent-facing marketing site</div>
+    </div>
+
+    <div class="label">Notion Pages</div>
+    <div class="ql-list">
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a181b2ba4ddfe646645d45" target="_blank">&#128227; Marketing HQ</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a18145aed9ca3cab50bfaf" target="_blank">&#128241; Social Media Posting</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a1810cb996f99cab7f1949" target="_blank">&#128231; Email Marketing</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a181f68b22dd0bd51b3340" target="_blank">&#127991;&#65039; Branding</a>
+      <a class="ql-item" href="https://www.notion.so/33b8b7ae80a181189748e77ae5133ed5" target="_blank">&#128250; YouTube HQ</a>
+      <a class="ql-item" href="https://www.notion.so/3388b7ae80a181b9a89fc5e8d26f7aed" target="_blank">&#127916; Video Scripts HQ</a>
+      <a class="ql-item" href="https://www.notion.so/32f8b7ae80a18166b800e273e5875511" target="_blank">&#128202; Analytics &amp; Reporting</a>
+    </div>
+
+    <div class="label">Tools</div>
+    <div class="ql-list">
+      <a class="ql-item" href="https://metricool.com" target="_blank">&#128197; Metricool</a>
+      <a class="ql-item" href="https://canva.com" target="_blank">&#127912; Canva</a>
+      <a class="ql-item" href="https://buffer.com" target="_blank">&#128257; Buffer</a>
+      <a class="ql-item" href="https://jotform.com" target="_blank">&#129302; Jotform (Mika)</a>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="proj-tabs">
+      <div class="ptab active" data-tab="overview">Overview</div>
+      <div class="ptab" data-tab="mika-ai">Mika AI</div>
+      <div class="ptab" data-tab="social-automation">Social Automation</div>
+      <div class="ptab" data-tab="landing-page">Landing Page</div>
+      <div class="ptab" data-tab="video-scripts">Video Scripts HQ</div>
+      <div class="ptab" data-tab="buffer">Buffer API</div>
+    </div>
+
+    <div class="tree-content">
+
+      <!-- OVERVIEW -->
+      <div class="tree-view active" id="view-overview">
+        <div class="kanban">
+          <div class="kanban-col" data-status="new">
+            <div class="kanban-col-header"><span class="kanban-label">New</span><span class="kanban-count">1</span></div>
+            <div class="kanban-col-body">
+              <div class="kanban-card" data-goto="video-scripts">
+                <div class="kc-name">Video Scripts HQ</div>
+                <div class="kc-note">Build out scripting system for YouTube + reels</div>
+              </div>
+            </div>
+          </div>
+          <div class="kanban-col" data-status="active">
+            <div class="kanban-col-header"><span class="kanban-label">Active</span><span class="kanban-count">3</span></div>
+            <div class="kanban-col-body">
+              <div class="kanban-card priority" data-goto="mika-ai">
+                <div class="kc-name">Mika AI Assistant</div>
+                <div class="kc-note">Jotform AI agent, all channels, FUB connected</div>
+              </div>
+              <div class="kanban-card" data-goto="social-automation">
+                <div class="kc-name">Social Media Posting Automation</div>
+                <div class="kc-note">Cowork &rarr; Google Drive &rarr; Zapier &rarr; Metricool</div>
+              </div>
+              <div class="kanban-card" data-goto="landing-page">
+                <div class="kc-name">SOLDMIKE Landing Page</div>
+                <div class="kc-note">Agent-facing marketing site</div>
+              </div>
+            </div>
+          </div>
+          <div class="kanban-col" data-status="overdue">
+            <div class="kanban-col-header"><span class="kanban-label">Overdue</span><span class="kanban-count">0</span></div>
+            <div class="kanban-col-body">
+              <div class="kanban-empty">Nothing overdue &mdash; all caught up</div>
+            </div>
+          </div>
+          <div class="kanban-col" data-status="done">
+            <div class="kanban-col-header"><span class="kanban-label">Done</span><span class="kanban-count">1</span></div>
+            <div class="kanban-col-body">
+              <div class="kanban-card" data-goto="buffer">
+                <div class="kc-name">Buffer API Integration</div>
+                <div class="kc-note">Account, channels, and post-create wired up</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tree-view" id="view-mika-ai">
+        <div class="detail-header">
+          <div class="detail-title">Mika AI Assistant <span class="proj-status st-priority">High Priority</span></div>
+          <div class="detail-next"><strong>Summary:</strong> Jotform AI chatbot live across channels. Connected to Follow Up Boss for lead capture. Trained on SOLDMIKE Q&amp;A.</div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a181b2ba4ddfe646645d45" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <div class="tree-view" id="view-social-automation">
+        <div class="detail-header">
+          <div class="detail-title">Social Media Posting Automation <span class="proj-status st-active">Active</span></div>
+          <div class="detail-next"><strong>Flow:</strong> Cowork generates &rarr; Google Drive _READY TO POST folder &rarr; Zapier trigger &rarr; Metricool schedules.</div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a18145aed9ca3cab50bfaf" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <div class="tree-view" id="view-landing-page">
+        <div class="detail-header">
+          <div class="detail-title">SOLDMIKE Landing Page <span class="proj-status st-active">Active</span></div>
+          <div class="detail-next"><strong>Goal:</strong> Agent-facing marketing site showcasing SOLDMIKE brand, services, and booking flow.</div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/32f8b7ae80a18160a56dea43d3ed1c28" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <div class="tree-view" id="view-video-scripts">
+        <div class="detail-header">
+          <div class="detail-title">Video Scripts HQ <span class="proj-status st-new">New</span></div>
+          <div class="detail-next"><strong>Idea:</strong> Central hub for YouTube scripts, reel hooks, neighbourhood b-roll notes, voiceover templates.</div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/3388b7ae80a181b9a89fc5e8d26f7aed" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+      <div class="tree-view" id="view-buffer">
+        <div class="detail-header">
+          <div class="detail-title">Buffer API Integration <span class="proj-status st-done">Done</span></div>
+          <div class="detail-next"><strong>Status:</strong> Account, Instagram, Facebook, and LinkedIn channels connected via MCP. Post-create and ideas endpoints live.</div>
+        </div>
+        <a class="notion-link" href="https://www.notion.so/3308b7ae80a180cc91dde66b78e1ab40" target="_blank">&#8599; Open in Notion</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showView(id) {
+    document.querySelectorAll('.tree-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.proj').forEach(p => p.classList.remove('active'));
+    const view = document.getElementById('view-' + id);
+    if (view) view.classList.add('active');
+    document.querySelectorAll(`.ptab[data-tab="${id}"]`).forEach(t => t.classList.add('active'));
+    document.querySelectorAll(`.proj[data-proj="${id}"]`).forEach(p => p.classList.add('active'));
+  }
+  document.querySelectorAll('.ptab').forEach(tab => tab.addEventListener('click', () => showView(tab.dataset.tab)));
+  document.querySelectorAll('.proj').forEach(proj => proj.addEventListener('click', () => showView(proj.dataset.proj)));
+  document.querySelectorAll('.kanban-card').forEach(card => card.addEventListener('click', () => showView(card.dataset.goto)));
+</script>
+</body>
+</html>
