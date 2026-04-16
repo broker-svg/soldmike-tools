@@ -6,73 +6,124 @@
 <title>SOLDMIKE — Real Estate Tree</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0f;min-height:100vh;color:#e8e8f0}
+:root{
+  --page-bg:#ffffff;
+  --page-bg-soft:#f4f6fb;
+  --border-light:rgba(26,31,46,0.10);
+  --text-on-light:#1a1f2e;
+  --text-on-light-dim:#5a6480;
+  --card-bg:#14141f;
+  --card-bg-alt:#1c1c2e;
+  --card-border:#2a2a3d;
+  --text-on-dark:#e8e8f0;
+  --text-on-dark-dim:#8888a0;
+  --gold:#c8a84e;
+  --gold-dim:#9a7d3a;
+  --green:#34d399;
+  --green-deep:#2e7d54;
+  --yellow:#fbbf24;
+  --yellow-deep:#a87a1d;
+  --orange:#fb923c;
+  --orange-deep:#c4641e;
+  --red:#f87171;
+  --red-deep:#c4243c;
+  --blue:#60a5fa;
+  --blue-deep:#2d5db8;
+  --line:#b8bccc;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--page-bg);min-height:100vh;color:var(--text-on-light)}
 
-.top{background:#14141f;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a3d}
-.top h1{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px}
-.top h1 .brand{color:#c8a84e;font-size:11px;font-weight:400;letter-spacing:1px}
+/* TOP HEADER — stays dark */
+.top{background:var(--card-bg);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);color:var(--text-on-dark);position:sticky;top:0;z-index:100}
+.top h1{font-size:16px;font-weight:600;display:flex;align-items:center;gap:10px;color:var(--text-on-dark)}
+.top h1 .brand{color:var(--gold);font-size:11px;font-weight:400;letter-spacing:1px}
 .top-right{display:flex;align-items:center;gap:10px}
-.nav-btn{color:#8888a0;text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid #2a2a3d;border-radius:6px;transition:all .2s;cursor:pointer;background:none}
-.nav-btn:hover{border-color:#c8a84e;color:#c8a84e}
+.nav-btn{color:var(--text-on-dark-dim);text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid var(--card-border);border-radius:6px;transition:all .2s;cursor:pointer;background:none}
+.nav-btn:hover{border-color:var(--gold);color:var(--gold)}
 
-/* VIEW TOGGLE */
-.view-toggle{display:flex;background:#14141f;border-bottom:1px solid #2a2a3d;padding:0 24px}
-.vtab{padding:10px 20px;font-size:13px;font-weight:600;color:#8888a0;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
-.vtab:hover{color:#e8e8f0}
-.vtab.active{color:#c8a84e;border-bottom-color:#c8a84e}
+/* VIEW TOGGLE — white with gold active */
+.view-toggle{display:flex;background:var(--page-bg-soft);border-bottom:1px solid var(--border-light);padding:0 24px}
+.vtab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--text-on-light-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.vtab:hover{color:var(--text-on-light)}
+.vtab.active{color:var(--gold-dim);border-bottom-color:var(--gold)}
 
 .view{display:none}
 .view.active{display:block}
 
-/* ===== SIMPLE VIEW ===== */
-.simple-wrap{padding:24px;overflow:auto}
-.simple-inner{min-width:1400px;background:#14141f;border-radius:14px;border:1px solid #2a2a3d;padding:32px 36px 44px;display:inline-block}
-/* Simple tree nodes - clean gray/white */
-.sn rect{fill:#1c1c2e;stroke:#3a3a4d;stroke-width:1}
-.sn .sth{font-size:12px;font-weight:600;fill:#e8e8f0}
-.sn .sts{font-size:10px;fill:#6b6b80}
-/* Leaf style - lighter so they pop */
-.sl rect{fill:#262640;stroke:#4a4a6a;stroke-width:1}
-.sl .sth{font-size:11px;font-weight:600;fill:#d0d0e0}
-.sl .sts{font-size:9px;fill:#8888a0}
-.sn-root rect{fill:#1c1c2e;stroke:#6b6b80;stroke-width:1.5}
-.sn-root .sth{fill:#e8e8f0;font-size:13px}
-.sn-done .sts{fill:#5a5a70}
-.sn-done .sth::after{content:' done'}
-.sconn{stroke:#3a3a4d;stroke-width:1.2;fill:none}
-.srow-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;fill:#4a4a5e}
+/* ===== SIMPLE VIEW — white container, dark cards ===== */
+.simple-wrap{padding:24px;overflow:auto;background:var(--page-bg)}
+.simple-inner{min-width:1400px;background:var(--page-bg);border-radius:14px;border:1px solid var(--border-light);padding:32px 36px 44px;display:inline-block;box-shadow:0 2px 10px rgba(10,10,20,0.04)}
+/* Dark cards on white */
+.sn rect{fill:var(--card-bg);stroke:var(--card-border);stroke-width:1}
+.sn .sth{font-size:12px;font-weight:600;fill:var(--text-on-dark)}
+.sn .sts{font-size:10px;fill:var(--text-on-dark-dim)}
+.sl rect{fill:var(--card-bg-alt);stroke:var(--card-border);stroke-width:1}
+.sl .sth{font-size:11px;font-weight:600;fill:var(--text-on-dark)}
+.sl .sts{font-size:9px;fill:var(--text-on-dark-dim)}
+.sn-root rect{fill:var(--card-bg);stroke:var(--gold);stroke-width:2}
+.sn-root .sth{fill:var(--gold);font-size:13px}
+.sconn{stroke:var(--line);stroke-width:1.2;fill:none}
+.srow-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;fill:var(--text-on-light-dim)}
 
-/* ===== DEPENDENCY VIEW ===== */
-.dep-wrap{padding:24px;overflow:auto}
-.dep-inner{min-width:1800px;background:#14141f;border-radius:14px;border:1px solid #2a2a3d;padding:32px 36px 44px;display:inline-block}
+/* ===== DEPENDENCY VIEW — white container, translucent colored cards (overlap-tolerant) ===== */
+.dep-wrap{padding:24px;overflow:auto;background:var(--page-bg)}
+.dep-inner{min-width:1800px;background:var(--page-bg);border-radius:14px;border:1px solid var(--border-light);padding:32px 36px 44px;display:inline-block;box-shadow:0 2px 10px rgba(10,10,20,0.04)}
 svg{display:block}
 svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
-.th{font-size:12px;font-weight:600;fill:#e8e8f0}
-.ts{font-size:10px;fill:#8888a0}
-.row-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;fill:#9a7d3a}
-.n-root rect{fill:#1c1c2e;stroke:#c8a84e;stroke-width:2}
-.n-done rect{fill:rgba(52,211,153,.08);stroke:#34d399;stroke-width:1.5}
-.n-done .th{fill:#34d399}
-.n-active rect{fill:rgba(251,191,36,.08);stroke:#fbbf24;stroke-width:1.5}
-.n-active .th{fill:#fbbf24}
-.n-queued rect{fill:rgba(96,165,250,.08);stroke:#60a5fa;stroke-width:1.5}
-.n-queued .th{fill:#60a5fa}
-.n-blocked rect{fill:rgba(248,113,113,.08);stroke:#f87171;stroke-width:1.5;stroke-dasharray:5 3}
-.n-blocked .th{fill:#f87171}
-.n-pending rect{fill:rgba(136,136,160,.06);stroke:#4a4a5e;stroke-width:1}
-.n-pending .th{fill:#8888a0}
-.conn{stroke:#3a3a4d;stroke-width:1.5;fill:none}
-.conn-block{stroke:#f87171;stroke-width:1.5;fill:none;stroke-dasharray:5 4}
-.conn-done{stroke:#34d399;stroke-width:1.5;fill:none;opacity:.4}
-.conn-dep{stroke:#c8a84e;stroke-width:1.5;fill:none;stroke-dasharray:8 4}
+.th{font-size:12px;font-weight:700;fill:var(--text-on-light)}
+.ts{font-size:10px;fill:var(--text-on-light-dim)}
+.row-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;fill:var(--gold-dim)}
 
-.legend{display:flex;gap:14px;flex-wrap:wrap;padding:10px 24px;background:#14141f;border-bottom:1px solid #2a2a3d;font-size:11px;color:#8888a0;align-items:center}
-.legend strong{color:#e8e8f0}
+/* ROOT: dark card with gold border */
+.n-root rect{fill:var(--card-bg);stroke:var(--gold);stroke-width:2}
+.n-root .th{fill:var(--gold)}
+.n-root .ts{fill:var(--text-on-dark)}
+
+/* DONE: soft green fill + deep green border/text */
+.n-done rect{fill:rgba(52,211,153,0.14);stroke:var(--green-deep);stroke-width:1.5}
+.n-done .th{fill:#13502f !important}
+.n-done .ts{fill:var(--green-deep) !important}
+
+/* ACTIVE: soft yellow fill + deep amber border/text */
+.n-active rect{fill:rgba(251,191,36,0.16);stroke:var(--yellow-deep);stroke-width:1.5}
+.n-active .th{fill:#6a4700 !important}
+.n-active .ts{fill:var(--yellow-deep) !important}
+
+/* QUEUED (still used in data): soft blue */
+.n-queued rect{fill:rgba(96,165,250,0.14);stroke:var(--blue-deep);stroke-width:1.5}
+.n-queued .th{fill:#1a3e80 !important}
+.n-queued .ts{fill:var(--blue-deep) !important}
+
+/* OVERDUE: soft orange fill */
+.n-overdue rect{fill:rgba(251,146,60,0.18);stroke:var(--orange-deep);stroke-width:1.5}
+.n-overdue .th{fill:#5e2f0d !important}
+.n-overdue .ts{fill:var(--orange-deep) !important}
+
+/* BLOCKED: soft red dashed */
+.n-blocked rect{fill:rgba(248,113,113,0.14);stroke:var(--red-deep);stroke-width:1.5;stroke-dasharray:5 3}
+.n-blocked .th{fill:#6e0f19 !important}
+.n-blocked .ts{fill:var(--red-deep) !important}
+
+/* PENDING: muted gray */
+.n-pending rect{fill:rgba(136,136,160,0.10);stroke:var(--text-on-light-dim);stroke-width:1}
+.n-pending .th{fill:var(--text-on-light-dim)}
+.n-pending .ts{fill:var(--text-on-light-dim)}
+
+/* CONNECTORS — visible on white */
+.conn{stroke:var(--line);stroke-width:1.5;fill:none}
+.conn-block{stroke:var(--red-deep);stroke-width:1.5;fill:none;stroke-dasharray:5 4}
+.conn-done{stroke:var(--green-deep);stroke-width:1.5;fill:none;opacity:0.45}
+.conn-dep{stroke:var(--gold-dim);stroke-width:1.5;fill:none;stroke-dasharray:8 4}
+
+/* LEGEND — white bg */
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:12px 24px;background:var(--page-bg-soft);border-bottom:1px solid var(--border-light);font-size:11px;color:var(--text-on-light-dim);align-items:center}
+.legend strong{color:var(--text-on-light)}
 .ld{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
 
 @media(max-width:900px){
-  .zone-cards{grid-template-columns:1fr}
-  .exec-bar{flex-direction:column;align-items:flex-start}
+  .simple-wrap,.dep-wrap{padding:16px}
+  .top{padding:12px 16px}
+  .view-toggle{padding:0 16px}
 }
 </style>
 </head>
@@ -323,13 +374,14 @@ svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 
 <div class="legend">
   <strong>Legend:</strong>
-  <span><span class="ld" style="background:rgba(52,211,153,.2);border:1.5px solid #34d399"></span>Done</span>
-  <span><span class="ld" style="background:rgba(251,191,36,.2);border:1.5px solid #fbbf24"></span>Active</span>
-  <span><span class="ld" style="background:rgba(96,165,250,.2);border:1.5px solid #60a5fa"></span>Queued</span>
-  <span><span class="ld" style="background:rgba(248,113,113,.15);border:1.5px dashed #f87171"></span>Blocked</span>
-  <span style="color:#c8a84e">- - - dependency</span>
-  <span style="color:#f87171">- - - blocked by</span>
-  <span style="color:#8888a0">Scroll right to see full map &rarr;</span>
+  <span><span class="ld" style="background:rgba(52,211,153,.2);border:1.5px solid #2e7d54"></span>Done</span>
+  <span><span class="ld" style="background:rgba(251,191,36,.2);border:1.5px solid #a87a1d"></span>Active</span>
+  <span><span class="ld" style="background:rgba(96,165,250,.2);border:1.5px solid #2d5db8"></span>Queued</span>
+  <span><span class="ld" style="background:rgba(251,146,60,.25);border:1.5px solid #c4641e"></span>Overdue</span>
+  <span><span class="ld" style="background:rgba(248,113,113,.15);border:1.5px dashed #c4243c"></span>Blocked</span>
+  <span style="color:#9a7d3a">- - - dependency</span>
+  <span style="color:#c4243c">- - - blocked by</span>
+  <span style="color:#5a6480">Scroll right to see full map &rarr;</span>
 </div>
 
 <div class="dep-wrap">
@@ -441,16 +493,16 @@ svg text{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 <g class="n-done"><rect x="1575" y="295" width="110" height="38" rx="7"/><text class="th" x="1630" y="311" text-anchor="middle" style="font-size:10px">Drive Action</text><text class="ts" x="1630" y="325" text-anchor="middle" style="font-size:9px;fill:#34d399">Done</text></g>
 
 <!-- CRITICAL PATH BOX -->
-<rect x="60" y="370" width="680" height="48" rx="10" fill="rgba(248,113,113,.06)" stroke="#f87171" stroke-width="1"/>
-<text class="th" x="80" y="392" style="fill:#f87171;font-size:11px">CRITICAL PATH:</text>
-<text class="ts" x="200" y="392" style="fill:#f87171;font-size:11px">SPF/DKIM/DMARC</text>
-<text class="ts" x="330" y="392" style="fill:#4a4a5e">&rarr;</text>
-<text class="ts" x="350" y="392" style="fill:#fbbf24;font-size:11px">Active Buyer</text>
-<text class="ts" x="440" y="392" style="fill:#4a4a5e">&rarr;</text>
-<text class="ts" x="460" y="392" style="fill:#fbbf24;font-size:11px">Active Seller</text>
-<text class="ts" x="550" y="392" style="fill:#4a4a5e">&rarr;</text>
-<text class="ts" x="570" y="392" style="fill:#60a5fa;font-size:11px">5 remaining phases</text>
-<text class="ts" x="80" y="408" style="fill:#8888a0;font-size:10px">Parallel: 16 Saint Keller &middot; Form 290 Page 2+ &middot; CMA on demand</text>
+<rect x="60" y="370" width="680" height="48" rx="10" fill="rgba(248,113,113,.10)" stroke="#c4243c" stroke-width="1"/>
+<text class="th" x="80" y="392" style="fill:#6e0f19;font-size:11px">CRITICAL PATH:</text>
+<text class="ts" x="200" y="392" style="fill:#c4243c;font-size:11px">SPF/DKIM/DMARC</text>
+<text class="ts" x="330" y="392" style="fill:#8a94b0">&rarr;</text>
+<text class="ts" x="350" y="392" style="fill:#a87a1d;font-size:11px">Active Buyer</text>
+<text class="ts" x="440" y="392" style="fill:#8a94b0">&rarr;</text>
+<text class="ts" x="460" y="392" style="fill:#a87a1d;font-size:11px">Active Seller</text>
+<text class="ts" x="550" y="392" style="fill:#8a94b0">&rarr;</text>
+<text class="ts" x="570" y="392" style="fill:#2d5db8;font-size:11px">5 remaining phases</text>
+<text class="ts" x="80" y="408" style="fill:#5a6480;font-size:10px">Parallel: 16 Saint Keller &middot; Form 290 Page 2+ &middot; CMA on demand</text>
 
 </svg>
 </div>
