@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Guide — 49 Walter Proctor Rd</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --navy:       #28388F;
+  --navy-dark:  #1a2460;
+  --black:      #111418;
+  --gold:       #C9A04A;
+  --gold-dim:   #a07c30;
+  --white:      #ffffff;
+  --bg:         #f7f8fb;
+  --text:       #1a1f2e;
+  --text-muted: #5a6480;
+  --text-dim:   #8d97b8;
+  --border:     rgba(40,56,143,0.10);
+  --red:        #c0392b;
+  --green:      #2e7d54;
+  --card-dark:  #1c2233;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════
+   HEADER
+═══════════════════════════════════ */
+.header {
+  background: var(--black);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.brand-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #6a7090;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.header-right { text-align: right; }
+.header-address {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.03em;
+}
+.header-meta {
+  font-size: 13px;
+  color: #6a7090;
+  margin-top: 2px;
+}
+.agent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201,160,74,0.12);
+  border: 1px solid rgba(201,160,74,0.35);
+  color: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 3px;
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════
+   KNOW BEFORE BAR
+═══════════════════════════════════ */
+.know-before {
+  background: #1a0a0a;
+  border-left: 4px solid var(--red);
+  padding: 18px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.kb-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.kb-text {
+  font-size: 16px;
+  color: #d4c0c0;
+  line-height: 1.6;
+}
+.kb-text strong { color: #ffffff; }
+.kb-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* ═══════════════════════════════════
+   TABS — scrollable, large touch targets
+═══════════════════════════════════ */
+.tabs-bar {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 0 20px;
+  overflow-x: auto;
+  display: flex;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  position: sticky;
+  top: 72px;
+  z-index: 99;
+}
+.tabs-bar::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 16px 18px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab-btn:hover { color: var(--navy); }
+.tab-btn.active {
+  color: var(--navy);
+  border-bottom-color: var(--gold);
+}
+
+/* ═══════════════════════════════════
+   CONTENT
+═══════════════════════════════════ */
+.content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 36px 28px 100px;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ═══════════════════════════════════
+   PHASE HEADER
+═══════════════════════════════════ */
+.phase-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+.phase-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--navy);
+  opacity: 0.08;
+  flex-shrink: 0;
+}
+.phase-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 4px;
+}
+.phase-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+.phase-timing {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════
+   SECTION HEADING — gold left border
+═══════════════════════════════════ */
+.sh {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 36px 0 18px;
+  padding-left: 18px;
+  border-left: 4px solid var(--gold);
+  line-height: 1.25;
+}
+
+/* ═══════════════════════════════════
+   STAT CARDS — dark cards
+═══════════════════════════════════ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--card-dark);
+  border-radius: 10px;
+  padding: 22px 24px;
+}
+.stat-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5a6480;
+  margin-bottom: 10px;
+}
+.stat-value {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-value.white { color: var(--white); }
+.stat-value.red   { color: #e05252; }
+.stat-value.green { color: #4caf7d; }
+.stat-sub {
+  font-size: 14px;
+  color: #5a6480;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════
+   CHECKLIST — white card, big text
+═══════════════════════════════════ */
+.check-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(40,56,143,0.05);
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(40,56,143,0.07);
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.check-item:last-child { border-bottom: none; }
+.check-item::before {
+  content: '\25C6';
+  color: var(--gold);
+  font-size: 10px;
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.check-item strong { color: var(--navy); }
+
+/* ═══════════════════════════════════
+   SCRIPT BOX — blue tint, gold border
+═══════════════════════════════════ */
+.script-box {
+  background: var(--card-dark);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-left: 5px solid var(--gold);
+  border-radius: 0 10px 10px 0;
+  padding: 22px 26px;
+  margin: 16px 0;
+}
+.script-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.script-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+  color: #e8ecf4;
+  line-height: 1.7;
+}
+.script-sub {
+  font-size: 15px;
+  color: #8090b0;
+  margin-top: 12px;
+  line-height: 1.55;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 12px;
+}
+.script-sub strong { color: var(--white); }
+
+/* ═══════════════════════════════════
+   QUESTION BLOCK
+═══════════════════════════════════ */
+.q-block {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(40,56,143,0.04);
+}
+.q-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.q-text {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+.q-listen {
+  font-size: 16px;
+  color: var(--text-muted);
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  line-height: 1.55;
+}
+.q-listen strong { color: var(--navy); }
+
+/* ═══════════════════════════════════
+   ALERTS
+═══════════════════════════════════ */
+.alert {
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 16px 0;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.alert-gold {
+  background: #fffbf0;
+  border: 1px solid rgba(201,160,74,0.3);
+  color: #6b4f10;
+}
+.alert-gold strong { color: #5a3d08; }
+.alert-red {
+  background: #fff8f8;
+  border: 1px solid rgba(192,57,43,0.25);
+  color: #7a2020;
+}
+.alert-red strong { color: var(--red); }
+.alert-navy {
+  background: var(--card-dark);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #8090b0;
+}
+.alert-navy strong { color: var(--white); }
+
+/* ═══════════════════════════════════
+   ELEPHANT BOX
+═══════════════════════════════════ */
+.elephant-box {
+  background: #fffbf0;
+  border: 2px solid rgba(201,160,74,0.35);
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin: 18px 0;
+}
+.elephant-box .eb-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+}
+.elephant-box p {
+  font-size: 17px;
+  color: #5a4010;
+  line-height: 1.65;
+}
+.elephant-box p strong { color: #3a2a08; }
+
+/* ═══════════════════════════════════
+   DATA TABLE
+═══════════════════════════════════ */
+.data-table {
+  background: var(--card-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.dt-row {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.dt-row:last-child { border-bottom: none; }
+.dt-key {
+  padding: 16px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #5a6480;
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  align-items: center;
+}
+.dt-val {
+  padding: 16px 20px;
+  font-size: 17px;
+  color: #d8dce8;
+  display: flex;
+  align-items: center;
+}
+.dt-val strong { color: var(--white); }
+.dt-val.gold-val { color: var(--gold); font-weight: 600; }
+.dt-val.red-val  { color: #e05252; }
+
+/* ═══════════════════════════════════
+   PRICING TIERS
+═══════════════════════════════════ */
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+.tier-card {
+  background: var(--card-dark);
+  border-radius: 10px;
+  padding: 22px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.tier-card.rec { border: 2px solid var(--gold); }
+.tier-card.rec::before {
+  content: '\2605  RECOMMENDED';
+  display: block;
+  background: var(--gold);
+  color: #1a1200;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  padding: 5px 0;
+  margin: -22px -20px 18px;
+  text-align: center;
+}
+.tier-card.danger { border: 1px solid rgba(224,82,82,0.3); }
+.tier-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #5a6480;
+  margin-bottom: 10px;
+}
+.tier-card.rec .tier-name { color: var(--gold); }
+.tier-card.danger .tier-name { color: #e05252; }
+.tier-price {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.tier-card.danger .tier-price { color: #e08080; }
+.tier-desc {
+  font-size: 14px;
+  color: #5a6480;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════
+   PRICE BAR
+═══════════════════════════════════ */
+.price-bar {
+  background: var(--card-dark);
+  border-radius: 10px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.pb-item { flex: 1; min-width: 130px; }
+.pb-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #5a6480;
+  margin-bottom: 6px;
+}
+.pb-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+}
+.pb-val.gold { color: var(--gold); }
+.pb-val.red  { color: #e05252; }
+.pb-val.dim  { color: #8090b0; font-size: 22px; }
+.pb-sub { font-size: 13px; color: #5a6480; margin-top: 6px; }
+.pb-div { width: 1px; height: 44px; background: rgba(255,255,255,0.06); }
+
+/* ═══════════════════════════════════
+   COMP BLOCKS
+═══════════════════════════════════ */
+.comp-block {
+  background: var(--card-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.comp-header-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 16px;
+}
+.comp-addr {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.comp-detail { font-size: 14px; color: #5a6480; margin-top: 3px; }
+.comp-detail strong { color: #8090b0; }
+.comp-sold {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--gold);
+  text-align: right;
+  white-space: nowrap;
+}
+.comp-adj {
+  font-size: 14px;
+  color: #5a6480;
+  text-align: right;
+  margin-top: 3px;
+}
+.comp-adj strong { color: var(--gold); }
+.comp-adjustment-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 15px;
+  color: #5a6480;
+}
+.comp-adjustment-row:last-child { border-bottom: none; }
+.adj-neg { color: #e08080; font-weight: 600; }
+.adj-pos { color: #4caf7d; font-weight: 600; }
+.adj-neut { color: #5a6480; }
+
+/* ═══════════════════════════════════
+   OBJECTION BLOCKS
+═══════════════════════════════════ */
+.obj-block {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(40,56,143,0.04);
+}
+.obj-q {
+  background: var(--card-dark);
+  padding: 16px 22px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.obj-q::before {
+  content: '\275D';
+  color: var(--gold);
+  font-size: 20px;
+}
+.obj-a {
+  padding: 20px 22px;
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.obj-a em { color: var(--navy); font-style: normal; font-weight: 500; }
+
+/* ═══════════════════════════════════
+   MARKETING CARDS
+═══════════════════════════════════ */
+.mkt-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--navy);
+  border-radius: 0 10px 10px 0;
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 6px rgba(40,56,143,0.04);
+}
+.mkt-card h5 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.mkt-card p { font-size: 17px; color: var(--text); line-height: 1.65; }
+
+/* ═══════════════════════════════════
+   CONVERGE NOTE
+═══════════════════════════════════ */
+.converge-note {
+  background: var(--card-dark);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.cn-icon { font-size: 26px; flex-shrink: 0; }
+.cn-text { font-size: 16px; color: #8090b0; line-height: 1.6; }
+.cn-text strong { color: var(--gold); }
+
+/* ═══════════════════════════════════
+   SIGN-OFF
+═══════════════════════════════════ */
+.sign-off {
+  background: var(--card-dark);
+  border: 2px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 26px 28px;
+  margin-top: 28px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.so-icon { font-size: 30px; flex-shrink: 0; margin-top: 2px; }
+.sign-off h4 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.sign-off p { font-size: 17px; color: #d8dce8; line-height: 1.65; }
+
+/* ═══════════════════════════════════
+   TWO-COL
+═══════════════════════════════════ */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ═══════════════════════════════════
+   ROOM LABEL
+═══════════════════════════════════ */
+.room-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin: 26px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.room-label::before {
+  content: '';
+  width: 24px; height: 2px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════
+   FLOW LIST
+═══════════════════════════════════ */
+.flow-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.55;
+}
+.flow-item:last-child { border-bottom: none; }
+.flow-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--navy);
+  opacity: 0.25;
+  flex-shrink: 0;
+  width: 30px;
+  text-align: center;
+}
+.flow-item strong { color: var(--navy); }
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+.footer {
+  background: var(--black);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.footer-note { font-size: 13px; color: #3a4060; }
+
+/* ═══════════════════════════════════
+   PAGE NAV — bottom fixed
+═══════════════════════════════════ */
+.page-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 2px solid var(--border);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+}
+.nav-btn {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.nav-btn.prev {
+  background: rgba(40,56,143,0.08);
+  color: var(--navy);
+}
+.nav-btn.prev:hover { background: rgba(40,56,143,0.15); }
+.nav-btn.next {
+  background: var(--navy);
+  color: var(--white);
+}
+.nav-btn.next:hover { background: var(--navy-dark); }
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.nav-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width: 860px) {
+  .tier-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .price-bar { gap: 18px; }
+  .pb-div { display: none; }
+}
+@media (max-width: 600px) {
+  body { font-size: 17px; }
+  .header { padding: 16px 20px; }
+  .brand { font-size: 22px; }
+  .header-address { font-size: 17px; }
+  .tabs-bar { padding: 0 12px; }
+  .tab-btn { font-size: 13px; padding: 14px 12px 11px; }
+  .content { padding: 28px 20px 120px; }
+  .phase-title { font-size: 34px; }
+  .phase-num { font-size: 60px; }
+  .sh { font-size: 22px; }
+  .script-text { font-size: 18px; }
+  .q-text { font-size: 17px; }
+  .tier-grid { grid-template-columns: 1fr 1fr; }
+  .comp-header-row { grid-template-columns: 1fr; }
+  .comp-sold { text-align: left; }
+  .comp-adj { text-align: left; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .dt-row { grid-template-columns: 1fr; }
+  .dt-key { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 20px 6px; }
+  .dt-val { padding: 6px 20px 14px; }
+  .nav-btn { padding: 12px 16px; font-size: 14px; }
+}
+@media (max-width: 420px) {
+  .tier-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<div class="header">
+  <div>
+    <div class="brand">SOLDMIKE</div>
+    <div class="brand-sub">RE/MAX PREMIER &middot; THE OP TEAM</div>
+  </div>
+  <div class="header-right">
+    <div class="header-address">49 Walter Proctor Rd</div>
+    <div class="header-meta">East Gwillimbury &middot; April 2026</div>
+    <div class="agent-badge">Agent Reference Only</div>
+  </div>
+</div>
+
+<!-- ═══════ KNOW BEFORE ═══════ -->
+<div class="know-before">
+  <span class="kb-label">Know Before You Walk In</span>
+  <span class="kb-text">
+    Bought at GTA peak — <strong>$1,027,000 &middot; Jan 2022</strong>. Listed in 2024 at <strong>$998,800 &middot; sat 85 days &middot; no sale</strong>. They know something is wrong. Give them the first clear explanation they've had. The number is <span class="kb-num">$879,900</span> — but earn the trust first.
+  </span>
+</div>
+
+<!-- ═══════ TABS ═══════ -->
+<div class="tabs-bar" id="tabBar">
+  <button class="tab-btn active" onclick="go(0)">PREP</button>
+  <button class="tab-btn" onclick="go(1)">ARRIVAL</button>
+  <button class="tab-btn" onclick="go(2)">HOME TOUR</button>
+  <button class="tab-btn" onclick="go(3)">DISCOVERY</button>
+  <button class="tab-btn" onclick="go(4)">MARKETING</button>
+  <button class="tab-btn" onclick="go(5)">PRICING</button>
+  <button class="tab-btn" onclick="go(6)">THE CLOSE</button>
+  <button class="tab-btn" onclick="go(7)">QUICK REF</button>
+</div>
+
+<!-- ═══════ CONTENT ═══════ -->
+<div class="content">
+
+  <!-- ──── TAB 0 — PREP ──── -->
+  <div class="tab-panel active" id="p0">
+    <div class="phase-header">
+      <div class="phase-num">0</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 0</div>
+        <div class="phase-title">Pre-Arrival Prep</div>
+        <div class="phase-timing">Before you leave the car &middot; sit, breathe, trust the data</div>
+      </div>
+    </div>
+
+    <div class="alert alert-gold">
+      <strong>Don't wing this one.</strong> These sellers are sophisticated — they've been through this before and they know they're underwater. Walk in with everything loaded and ready.
+    </div>
+
+    <div class="sh">Checklist — Before You Walk In</div>
+    <div class="check-card">
+      <div class="check-item">This evaluation HTML open on tablet or laptop — <strong>Tabs 1-5 ready to present</strong></div>
+      <div class="check-item">Know the two comps cold: <strong>17 Carratuck ($965K adj. $870K)</strong> and <strong>24 Briarfield ($871,888 &middot; 7 DOM)</strong></div>
+      <div class="check-item">Know their ownership history: <strong>$441K (2017) &rarr; $788K (2021) &rarr; $1,027,000 peak (Jan 2022)</strong></div>
+      <div class="check-item">Know the 2024 terminated listing: <strong>$998,800 &middot; 85 DOM &middot; no sale</strong></div>
+      <div class="check-item">Research active competition — pull any <strong>live townhomes in Sharon Village</strong> before you go</div>
+      <div class="check-item">Pre-listing package sent? If not, <strong>send it now</strong> so they've seen your background before the door opens</div>
+      <div class="check-item">Business cards, listing agreement, feature sheet template ready</div>
+      <div class="check-item"><strong>Arrive 5 min early.</strong> Sit in the car. Take a breath. You have the data — trust it.</div>
+    </div>
+
+    <div class="sh">Key Numbers to Know Cold</div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Their Purchase Price</div>
+        <div class="stat-value red">$1.027M</div>
+        <div class="stat-sub">January 2022 &middot; Market Peak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Prior Listing</div>
+        <div class="stat-value red">$998,800</div>
+        <div class="stat-sub">Terminated &middot; 85 DOM &middot; 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Comp 1 — Carratuck</div>
+        <div class="stat-value">~$870K</div>
+        <div class="stat-sub">Adj. from $965K &middot; Mar 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Comp 2 — Briarfield</div>
+        <div class="stat-value">$871,888</div>
+        <div class="stat-sub">7 DOM &middot; Jan 2026 &middot; Near-identical</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Recommend List</div>
+        <div class="stat-value white">$879,900</div>
+        <div class="stat-sub">Market Middle &middot; Top of range</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Expected Close</div>
+        <div class="stat-value white">$853-879K</div>
+        <div class="stat-sub">97-100% SP/LP &middot; Spring window</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 1 — ARRIVAL ──── -->
+  <div class="tab-panel" id="p1">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 1</div>
+        <div class="phase-title">Arrival &amp; Rapport</div>
+        <div class="phase-timing">First 5-10 minutes &middot; Win it before you open the laptop</div>
+      </div>
+    </div>
+
+    <div class="alert alert-navy">
+      <strong>You win or lose the listing before you open the laptop.</strong> Make them feel seen and heard — not sold to. Walk in warm, observe everything, compliment something specific.
+    </div>
+
+    <div class="sh">Opening Line — When They Answer the Door</div>
+    <div class="script-box">
+      <div class="script-label">Say This</div>
+      <div class="script-text">"Hey, great to meet you — I appreciate you having me over. I've done a lot of work on this property ahead of time, so I want to make sure tonight is actually useful for you, not just a sales pitch."</div>
+      <div class="script-sub">Sets the tone immediately — you're here to work, not perform.</div>
+    </div>
+
+    <div class="sh">Observe Silently As You Walk In</div>
+    <div class="check-card">
+      <div class="check-item">Condition of entryway, flooring, walls — <strong>original builder or upgraded?</strong></div>
+      <div class="check-item">Natural light — how does it feel vs. what a buyer will feel?</div>
+      <div class="check-item">Any obvious repairs needed? Note mentally, bring up gently during the tour</div>
+      <div class="check-item">Are they <strong>nervous? Defensive? Tired?</strong> Read the room before you say anything else</div>
+    </div>
+
+    <div class="sh">Rapport Openers — Pick One, Keep It Genuine</div>
+    <div class="two-col">
+      <div class="script-box">
+        <div class="script-label">Option A — Neighbourhood</div>
+        <div class="script-text">"How long have you been in Sharon Village? Do you know the neighbourhood well — did you see a lot of the other streets when you were buying?"</div>
+      </div>
+      <div class="script-box">
+        <div class="script-label">Option B — The Build</div>
+        <div class="script-text">"Rodeo Fine Homes built this one, right? Were you involved in the build process or did you purchase it finished?"</div>
+      </div>
+    </div>
+    <div class="script-box">
+      <div class="script-label">Option C — Best One &middot; Buys You Time &amp; Gets You a Tour</div>
+      <div class="script-text">"Before we get into everything — can I grab a quick tour of the home first? I like to see it through a buyer's eyes before we sit down and talk numbers."</div>
+      <div class="script-sub">This buys you time, lets you observe, and makes the tour feel natural. <strong>Use this one by default.</strong></div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 2 — HOME TOUR ──── -->
+  <div class="tab-panel" id="p2">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 2</div>
+        <div class="phase-title">Home Tour</div>
+        <div class="phase-timing">10-15 minutes &middot; Walk every room &middot; Don't rush</div>
+      </div>
+    </div>
+
+    <div class="alert alert-navy">
+      Ask questions that get them talking and reveal what they've done (or haven't done). What you learn here changes how you position the property.
+    </div>
+
+    <div class="sh">Main Floor</div>
+
+    <div class="room-label">Kitchen</div>
+    <div class="script-box">
+      <div class="script-label">Ask</div>
+      <div class="script-text">"Are these the original countertops and backsplash from the builder? They look clean — have they been well maintained?"</div>
+    </div>
+    <div class="check-card">
+      <div class="check-item"><strong>Note:</strong> Prior MLS listing confirmed granite countertops, builder-grade. No major kitchen upgrades identified. Confirms base evaluation — no positive condition overlay unless they say otherwise.</div>
+    </div>
+
+    <div class="room-label">Living Area &amp; Fireplace</div>
+    <div class="script-box">
+      <div class="script-label">Ask</div>
+      <div class="script-text">"The gas fireplace is a nice feature — does it get used? Buyers always love seeing that, especially in townhomes."</div>
+    </div>
+    <div class="alert alert-gold">
+      <strong>Differentiator:</strong> The fireplace is a positive vs. 24 Briarfield which didn't have one. This is a <strong>+$5K adjustment</strong> in the comps. Remember this for the pricing conversation.
+    </div>
+
+    <div class="sh">Upper Level</div>
+
+    <div class="room-label">Primary Suite</div>
+    <div class="script-box">
+      <div class="script-label">Ask</div>
+      <div class="script-text">"5-piece ensuite — is this original? Any updates to the bathrooms since you moved in?"</div>
+    </div>
+
+    <div class="room-label">Secondary Bedrooms</div>
+    <div class="script-box">
+      <div class="script-label">Ask</div>
+      <div class="script-text">"Are these being used as bedrooms right now, or has anything been set up differently? Staging-wise, I always like to think about what will feel most natural to a buyer walking through."</div>
+    </div>
+
+    <div class="sh">Basement</div>
+    <div class="script-box">
+      <div class="script-label">Ask</div>
+      <div class="script-text">"So it's unfinished right now — any work started down here, or completely raw? Have you thought about whether to finish it before listing or leave it for the buyer?"</div>
+    </div>
+    <div class="alert alert-red">
+      <strong>Important:</strong> The unfinished basement is baked into the evaluation. 17 Carratuck had a fully finished basement — that alone accounts for a <strong>-$45K downward adjustment</strong>. If they've done any work down here, reassess the overlay.
+    </div>
+
+    <div class="sh">Parking &amp; Exterior</div>
+    <div class="two-col">
+      <div class="script-box">
+        <div class="script-label">Parking</div>
+        <div class="script-text">"3-car parking total with the single garage — that's solid for a townhome in this area. Is the garage fully functional, any shelving or storage built in?"</div>
+      </div>
+      <div class="script-box">
+        <div class="script-label">Exterior &amp; Mechanicals</div>
+        <div class="script-text">"The brick and stone exterior looks like it's held up well. Any maintenance done on the roof, HVAC, or major systems since 2017?"</div>
+        <div class="script-sub">Mechanical updates don't dramatically change market value but give ammunition for the listing description and buyer conversations.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 3 — DISCOVERY ──── -->
+  <div class="tab-panel" id="p3">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 3</div>
+        <div class="phase-title">Sit Down — Discovery</div>
+        <div class="phase-timing">15-20 minutes &middot; Close the laptop &middot; Let them talk</div>
+      </div>
+    </div>
+
+    <div class="alert alert-navy">
+      This phase is all about understanding their <strong>why, timeline, emotional state, and expectations</strong> — before you show them a single number. The more they talk, the better you can frame everything that follows.
+    </div>
+
+    <div class="sh">Why &amp; Motivation</div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Question 1</div>
+      <div class="q-text">"What's driving the decision to sell now? Is this more of a lifestyle change, a financial decision, or are you buying somewhere else?"</div>
+      <div class="q-listen"><strong>Listen for urgency.</strong> If they're buying elsewhere, they have a hard deadline. If it's financial, the loss conversation becomes even more delicate — but more necessary.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Question 2</div>
+      <div class="q-text">"When you think about the ideal outcome here — is it a specific number you need, a specific timeline, or a combination of both?"</div>
+      <div class="q-listen">Separates <strong>price-focused sellers</strong> from <strong>timeline-focused ones</strong>. Changes your entire strategy and how you present the pricing tiers.</div>
+    </div>
+
+    <div class="sh">The 2024 Listing — Address It Directly</div>
+
+    <div class="elephant-box">
+      <div class="eb-title">Don't avoid the elephant in the room</div>
+      <p>They tried to sell in 2024 and it didn't work. <strong>Bring it up yourself — it builds massive trust.</strong> If you pretend it didn't happen, you've lost credibility before you've opened the dashboard.</p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Bring It Up First</div>
+      <div class="q-text">"I noticed from the data that there was a prior listing in 2024 — $998,800 and it came off market after about 85 days. Without getting into what happened with that agent, what was your experience? What did buyers say, or did you get any feedback at all?"</div>
+      <div class="q-listen">You already know the answer — it was overpriced. But let them tell their version. It reveals what they believe and how ready they are for a different approach.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Follow Up</div>
+      <div class="q-text">"And since then, has the market improved in your mind, stayed the same, or do you feel like it's gotten worse? What's your read on where Sharon Village townhomes are trading right now?"</div>
+      <div class="q-listen">Tells you how anchored they are to the <strong>$998,800 or $1,027,000</strong> number in their head. Critical before you deliver pricing.</div>
+    </div>
+
+    <div class="sh">Financial Situation — Handle with Care</div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Financial Question</div>
+      <div class="q-text">"I want to make sure I understand your situation fully — do you have flexibility in the number you walk away with, or are there financial targets that need to be hit for this move to make sense?"</div>
+      <div class="q-listen">You don't need their mortgage balance. But you need to know if they're <strong>handcuffed to a number</strong>. If they owe close to $1,027,000, pricing at $879,900 might not work — have that conversation before you sign anything.</div>
+    </div>
+
+    <div class="sh">Buy / Sell Situation</div>
+
+    <div class="q-block">
+      <div class="q-eyebrow">Buy/Sell Question</div>
+      <div class="q-text">"Are you planning to buy something after this sells, or are you moving to something that's already lined up? And if you're buying — is the purchase conditional on this sale, or do you have flexibility there?"</div>
+    </div>
+
+    <div class="sh">Their Expectations of You</div>
+
+    <div class="q-block" style="border-color: rgba(201,160,74,0.3); background: #fffcf5;">
+      <div class="q-eyebrow">Last Discovery Question — This Is Gold</div>
+      <div class="q-text">"Before I show you everything I've put together — what does working with the right agent look like to you? What did the last experience teach you about what you want differently this time?"</div>
+      <div class="q-listen"><strong>Whatever they say becomes your positioning for the rest of the night.</strong> Listen carefully. Don't interrupt. Let them finish completely before you respond.</div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 4 — MARKETING ──── -->
+  <div class="tab-panel" id="p4">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 4</div>
+        <div class="phase-title">Marketing Presentation</div>
+        <div class="phase-timing">10-12 minutes &middot; Open the laptop now &middot; Tab 1 first</div>
+      </div>
+    </div>
+
+    <div class="alert alert-gold">
+      <strong>Sequence matters.</strong> Show marketing <em>before</em> the price. If you lead with the number, they spend the entire marketing section calculating whether they agree with it. Show what they're getting first — they're far more receptive to the number after.
+    </div>
+
+    <div class="sh">Open Tab 1 — Set Up the Dashboard</div>
+    <div class="script-box">
+      <div class="script-label">Opening Line for the Laptop</div>
+      <div class="script-text">"So this is what I built specifically for 49 Walter Proctor — let me start by walking you through what I found on the property itself, because the data I'm about to show you comes from MPAC, GeoWarehouse, and MLS. It's not opinion — it's public record."</div>
+    </div>
+
+    <div class="sh">Your Marketing — Speak These in Your Own Words</div>
+
+    <div class="mkt-card">
+      <h5>Photography &amp; Video</h5>
+      <p>"The way buyers shop now is online first. The photos are the showing before the showing. I use professional photography, twilight shots where they work, and video walkthroughs — because the first 48 hours a listing is live is when you get the most traffic, and you need to capture that."</p>
+    </div>
+
+    <div class="mkt-card">
+      <h5>Social Media &amp; Paid Ads</h5>
+      <p>"I run paid campaigns on Instagram and Facebook targeting buyers actively searching in East Gwillimbury and surrounding areas. Your property gets exposure beyond just MLS."</p>
+    </div>
+
+    <div class="mkt-card">
+      <h5>Staging Consultation</h5>
+      <p>"I'll walk through with you and give you specific recommendations on what to declutter, what to move, and how to set the space so a buyer sees the potential — not the furniture."</p>
+    </div>
+
+    <div class="mkt-card">
+      <h5>Open Houses</h5>
+      <p>"I do strategic open houses — not just to get neighbours in, but because buyers who show up on a Sunday are usually ones without an agent who are still in early research mode. That's a conversion opportunity."</p>
+    </div>
+
+    <div class="mkt-card">
+      <h5>Agent Network</h5>
+      <p>"I work the agent community directly — I let other buyer agents know what's coming to market before it hits, so on Day 1 we have pre-interested buyers, not just passive searchers."</p>
+    </div>
+  </div>
+
+  <!-- ──── TAB 5 — PRICING ──── -->
+  <div class="tab-panel" id="p5">
+    <div class="phase-header">
+      <div class="phase-num">5</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 5</div>
+        <div class="phase-title">Pricing Conversation</div>
+        <div class="phase-timing">15-20 minutes &middot; The most important phase &middot; Don't soften the data</div>
+      </div>
+    </div>
+
+    <div class="alert alert-red">
+      <strong>Be honest, direct, and compassionate — but do not soften the data to avoid discomfort.</strong> The truth delivered with empathy is more powerful than a comfortable lie.
+    </div>
+
+    <div class="price-bar">
+      <div class="pb-item">
+        <div class="pb-label">They Paid</div>
+        <div class="pb-val red">$1,027,000</div>
+        <div class="pb-sub">Jan 2022 — Market Peak</div>
+      </div>
+      <div class="pb-div"></div>
+      <div class="pb-item">
+        <div class="pb-label">Prior Listing</div>
+        <div class="pb-val red">$998,800</div>
+        <div class="pb-sub">Terminated &middot; 85 DOM</div>
+      </div>
+      <div class="pb-div"></div>
+      <div class="pb-item">
+        <div class="pb-label">Market Middle</div>
+        <div class="pb-val dim">$865K-$884,900</div>
+        <div class="pb-sub">Comp-Derived Fair Value</div>
+      </div>
+      <div class="pb-div"></div>
+      <div class="pb-item">
+        <div class="pb-label">Recommend List</div>
+        <div class="pb-val gold">$879,900</div>
+        <div class="pb-sub">Target — Top of Middle Tier</div>
+      </div>
+    </div>
+
+    <div class="sh">Open Tab 2 — Walk the Comps First</div>
+
+    <div class="comp-block">
+      <div class="comp-header-row">
+        <div>
+          <div class="comp-addr">17 Carratuck St</div>
+          <div class="comp-detail">Sold Mar 26, 2026 &middot; 24 DOM &middot; 97% SP/LP &middot; 1,914 sqft &middot; <strong>Full finished basement &middot; 2-car garage</strong></div>
+        </div>
+        <div>
+          <div class="comp-sold">$965,000</div>
+          <div class="comp-adj">Adjusted &rarr; <strong>~$870,000</strong></div>
+        </div>
+      </div>
+      <div class="comp-adjustment-row"><span class="adj-neg">-$27,000</span> Square footage (+108 sqft @ est. $250/sqft)</div>
+      <div class="comp-adjustment-row"><span class="adj-neg">-$45,000</span> Finished basement (full bsmt + 4th bed + gas FP)</div>
+      <div class="comp-adjustment-row"><span class="adj-neg">-$18,000</span> 2-car garage vs subject's 1-car</div>
+      <div class="comp-adjustment-row"><span class="adj-neg">-$5,000</span> Extra bathroom (4 vs 3)</div>
+      <div class="comp-adjustment-row"><span class="adj-neut">$0</span> Lot size &middot; Fireplace — neutral</div>
+    </div>
+
+    <div class="comp-block">
+      <div class="comp-header-row">
+        <div>
+          <div class="comp-addr">24 Briarfield Ave</div>
+          <div class="comp-detail">Sold Jan 16, 2026 &middot; <strong style="color:#4caf7d;">7 DOM</strong> &middot; 97% SP/LP &middot; 1,800 sqft &middot; Near-identical match</div>
+        </div>
+        <div>
+          <div class="comp-sold">$871,888</div>
+          <div class="comp-adj">Adjusted &rarr; <strong>~$870,000</strong></div>
+        </div>
+      </div>
+      <div class="comp-adjustment-row"><span class="adj-neg">-$7,000</span> Briarfield has walkout basement (subject does not)</div>
+      <div class="comp-adjustment-row"><span class="adj-pos">+$5,000</span> Subject has gas fireplace &middot; Briarfield does not</div>
+      <div class="comp-adjustment-row"><span class="adj-neut">$0</span> Sq ft &middot; Garage &middot; Lot size — neutral</div>
+    </div>
+
+    <div class="converge-note">
+      <div class="cn-icon">&#9889;</div>
+      <div class="cn-text"><strong>Two different comps. Two different adjustment paths. Same answer: ~$870,000.</strong> That's the line to use when anchoring the number. It's not one data point — it's convergence.</div>
+    </div>
+
+    <div class="sh">Open Tab 4 — Walk Through Each Tier</div>
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-name">Conservative</div>
+        <div class="tier-price">$849K-$864,900</div>
+        <div class="tier-desc">Safety-net. Strong showings fast, likely multiple offers. Trade some dollars for certainty and speed.</div>
+      </div>
+      <div class="tier-card rec">
+        <div class="tier-name">Market Middle</div>
+        <div class="tier-price">$879,900</div>
+        <div class="tier-desc">Where the data converges. Both comps adjusted to ~$870K. Expected close $853K-$879K.</div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-name">Optimistic</div>
+        <div class="tier-price">$885K-$909,900</div>
+        <div class="tier-desc">Reachable if inventory is low, buyer is motivated, home presents exceptionally.</div>
+      </div>
+      <div class="tier-card danger">
+        <div class="tier-name">Overpriced</div>
+        <div class="tier-price">$910,000+</div>
+        <div class="tier-desc">Already tested. $998,800 &middot; 85 DOM &middot; no sale. Market down 6.9% YoY since.</div>
+      </div>
+    </div>
+
+    <div class="sh">The Hard Conversation — Say It Yourself</div>
+    <div class="script-box" style="border-left-color: var(--red);">
+      <div class="script-label" style="color: var(--red);">Script — The Purchase Price Conversation</div>
+      <div class="script-text">"I want to address something directly because I think it needs to be said — you bought this property in January 2022 for $1,027,000. That was the peak of the GTA market. We've seen a significant correction since then, and this property, based on what the market is actually doing right now, is worth approximately $870,000. That's not a reflection of the home — the home is in good shape. It's a reflection of what the entire market has done since 2022. I know that's a hard number to hear. But you already experienced what happens when you try to fight the market — 85 days, no sale. My job is to get you the best number the market will give you right now, get the deal done cleanly, and let you move forward. That's what I'm here to do."</div>
+    </div>
+
+    <div class="sh">If They Push Back — Open Tab 3 (Market Trends)</div>
+    <div class="script-box">
+      <div class="script-label">Script — Let the Data Respond</div>
+      <div class="script-text">"If you want to understand why the market is here — let me show you the market data. This isn't my opinion. This is what's happened to freehold townhomes in this area over the last 24 months. The buyers are informed. They're running the same numbers we are."</div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 6 — THE CLOSE ──── -->
+  <div class="tab-panel" id="p6">
+    <div class="phase-header">
+      <div class="phase-num">6</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Phase 6</div>
+        <div class="phase-title">The Close &amp; Objections</div>
+        <div class="phase-timing">10-15 minutes &middot; Ask directly &middot; Don't hover</div>
+      </div>
+    </div>
+
+    <div class="alert alert-navy">
+      You've shown your work, you've been honest, you've built trust. Now ask for the business — directly. Don't oversell it. Just ask.
+    </div>
+
+    <div class="sh">The Ask</div>
+    <div class="script-box" style="border-left-color: var(--green);">
+      <div class="script-label" style="color: var(--green);">Closing Line</div>
+      <div class="script-text">"Based on everything I've shown you tonight and everything you've told me — are you ready to move forward? I'd like to get this on market properly and get you the outcome you deserve. I'm ready to go whenever you are."</div>
+    </div>
+
+    <div class="sh">Objection Handlers</div>
+
+    <div class="obj-block">
+      <div class="obj-q">We need at least $900,000 to make the numbers work</div>
+      <div class="obj-a">"I hear you — and I respect that you need to know the outcome before you commit. Let me ask you this: if we list at $879,900 and we get an offer at $875,000, is that a deal you can do? Because that's what the market supports right now, and I'd rather have that conversation honestly now than have you go through another 85 days at a number buyers won't touch. What does walking away at $875K mean for your situation?"</div>
+    </div>
+
+    <div class="obj-block">
+      <div class="obj-q">We want to wait until the market improves</div>
+      <div class="obj-a">"That's a completely reasonable thought — and if your timeline allows for it, that's a valid strategy. What I'd caution is this: rates haven't given buyers significant relief, inventory is building, and we've already seen the market correct 6.9% year-over-year. I can't promise that waiting 6 months gets you more money — it might, or it might not. What I <em>can</em> control is getting you the best price in today's market with exceptional execution. How much time do you realistically have before you have to make a decision?"</div>
+    </div>
+
+    <div class="obj-block">
+      <div class="obj-q">We're talking to a few other agents</div>
+      <div class="obj-a">"Absolutely — you should. I'd actually encourage it. All I ask is that when you're comparing agents, you compare the data, not the price they tell you they can get you. Any agent can write a higher number on a piece of paper. The question is: which agent is going to give you an honest market read and execute flawlessly when the listing goes live? I think what I put in front of you tonight shows you how I work. I'll let you make the call."</div>
+    </div>
+
+    <div class="obj-block">
+      <div class="obj-q">We think it's worth more because of what we paid</div>
+      <div class="obj-a">"I completely understand — and that number is real, the pain of it is real. But buyers don't care what you paid. They care what the market is doing today. 24 Briarfield sold for $871,888 in 7 days in January. That's the same house, same street, same everything. The buyer who walks into your property is going to pull that comp on their phone. Our job is to be ahead of that conversation, not behind it."</div>
+    </div>
+
+    <div class="sh">If They're Not Ready to Sign Tonight</div>
+    <div class="script-box">
+      <div class="script-label">Always Leave with a Specific Next Step</div>
+      <div class="script-text">"That's completely fine — I don't want you to feel rushed. Here's what I'll do: I'll leave you with everything I showed you tonight. Take a couple of days. But I do want to be honest — if you decide to move forward, I'd like to get the marketing process started within the week so we hit the spring market at the right time. Can we agree to connect again by [specific day]?"</div>
+      <div class="script-sub"><strong>"I'll call you" is not a next step.</strong> Get a specific day before you leave.</div>
+    </div>
+
+    <div class="sh">If They Sign</div>
+    <div class="sign-off">
+      <div class="so-icon">&#10004;</div>
+      <div>
+        <h4>They Signed — Say This</h4>
+        <p>"Perfect — I appreciate your trust and I'm going to take care of you. Here's what happens next: I'll get the listing setup checklist going tonight, we'll book photography within the next few days, and I'll have a launch plan to you by tomorrow. You made the right call."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── TAB 7 — QUICK REF ──── -->
+  <div class="tab-panel" id="p7">
+    <div class="phase-header">
+      <div class="phase-num">&#9733;</div>
+      <div class="phase-info">
+        <div class="phase-eyebrow">Cheat Sheet</div>
+        <div class="phase-title">Quick Reference</div>
+        <div class="phase-timing">Memorize before you leave the car</div>
+      </div>
+    </div>
+
+    <div class="sh">Property Facts</div>
+    <div class="data-table">
+      <div class="dt-row"><div class="dt-key">Builder</div><div class="dt-val"><strong>Rodeo Fine Homes</strong></div></div>
+      <div class="dt-row"><div class="dt-key">Year Built</div><div class="dt-val">2017</div></div>
+      <div class="dt-row"><div class="dt-key">Size (MPAC)</div><div class="dt-val"><strong>1,806 sq ft</strong> above grade</div></div>
+      <div class="dt-row"><div class="dt-key">Beds / Baths</div><div class="dt-val">3 beds &middot; 3 baths (2pc main &middot; 5pc ensuite &middot; 4pc 2nd)</div></div>
+      <div class="dt-row"><div class="dt-key">Garage / Parking</div><div class="dt-val">1-car attached &middot; 3 total</div></div>
+      <div class="dt-row"><div class="dt-key">Basement</div><div class="dt-val">Unfinished</div></div>
+      <div class="dt-row"><div class="dt-key">Fireplace</div><div class="dt-val gold-val">Yes — Gas (differentiator vs. Briarfield)</div></div>
+      <div class="dt-row"><div class="dt-key">Lot</div><div class="dt-val">18.8 x 90.22 ft &middot; Standard &middot; No ravine premium</div></div>
+      <div class="dt-row"><div class="dt-key">2025 Property Tax</div><div class="dt-val">$4,984</div></div>
+    </div>
+
+    <div class="sh">Ownership History</div>
+    <div class="data-table">
+      <div class="dt-row"><div class="dt-key">June 2017</div><div class="dt-val">$441,375 — Original builder sale</div></div>
+      <div class="dt-row"><div class="dt-key">Jan 2021</div><div class="dt-val">$788,888 — Second transfer &middot; +$347K (+79%)</div></div>
+      <div class="dt-row"><div class="dt-key">Jan 2022</div><div class="dt-val red-val"><strong>$1,027,000 — Current owners &middot; Market Peak</strong></div></div>
+      <div class="dt-row"><div class="dt-key">Aug-Oct 2024</div><div class="dt-val red-val"><strong>$998,800 Listed &middot; 85 DOM &middot; TERMINATED &middot; No sale</strong></div></div>
+    </div>
+
+    <div class="sh">The Two Comps</div>
+    <div class="comp-block">
+      <div class="comp-header-row">
+        <div>
+          <div class="comp-addr">17 Carratuck St</div>
+          <div class="comp-detail">Mar 26, 2026 &middot; 24 DOM &middot; 97% SP/LP &middot; Fin. Bsmt &middot; 2-Car Garage &middot; 1,914 sqft</div>
+          <div class="comp-detail" style="margin-top:4px; color: var(--gold);">Adj: -$27K size &middot; -$45K bsmt &middot; -$18K garage &middot; -$5K bath = <strong>-$95,000</strong></div>
+        </div>
+        <div>
+          <div class="comp-sold">$965,000</div>
+          <div class="comp-adj">Adjusted &rarr; <strong>~$870,000</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="comp-block">
+      <div class="comp-header-row">
+        <div>
+          <div class="comp-addr">24 Briarfield Ave</div>
+          <div class="comp-detail">Jan 16, 2026 &middot; <strong style="color:#4caf7d;">7 DOM</strong> &middot; 97% SP/LP &middot; Near-identical &middot; 1,800 sqft</div>
+          <div class="comp-detail" style="margin-top:4px; color: var(--gold);">Adj: -$7K walkout &middot; +$5K fireplace = <strong>-$2,000 net</strong></div>
+        </div>
+        <div>
+          <div class="comp-sold">$871,888</div>
+          <div class="comp-adj">Adjusted &rarr; <strong>~$870,000</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="converge-note">
+      <div class="cn-icon">&#9889;</div>
+      <div class="cn-text"><strong>Two completely different comps. Both land at ~$870,000 after independent adjustments.</strong> Use this when anchoring: "That's not a coincidence — that's the market."</div>
+    </div>
+
+    <div class="sh">Pricing Tiers — Snapshot</div>
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-name">Conservative</div>
+        <div class="tier-price">$849K-$864,900</div>
+        <div class="tier-desc">Speed &amp; certainty. Likely multiple offers.</div>
+      </div>
+      <div class="tier-card rec">
+        <div class="tier-name">Market Middle</div>
+        <div class="tier-price">$879,900</div>
+        <div class="tier-desc">Recommend this. Close $853K-$879K.</div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-name">Optimistic</div>
+        <div class="tier-price">$885K-$909,900</div>
+        <div class="tier-desc">Possible. Needs everything aligned.</div>
+      </div>
+      <div class="tier-card danger">
+        <div class="tier-name">Overpriced</div>
+        <div class="tier-price">$910,000+</div>
+        <div class="tier-desc">Already failed here. Do not go here again.</div>
+      </div>
+    </div>
+
+    <div class="sh">Appointment Flow</div>
+    <div class="check-card">
+      <div class="flow-item"><div class="flow-num">0</div><div><strong>Pre-Arrival:</strong> Everything loaded. Comps memorized. Arrive 5 min early. Sit and breathe.</div></div>
+      <div class="flow-item"><div class="flow-num">1</div><div><strong>Arrival:</strong> Warm, specific opener. Observe everything. Don't open laptop yet.</div></div>
+      <div class="flow-item"><div class="flow-num">2</div><div><strong>Tour:</strong> See it like a buyer. Get them talking. Listen for upgrades and basement status.</div></div>
+      <div class="flow-item"><div class="flow-num">3</div><div><strong>Discovery:</strong> Close the laptop. Let them tell the story. Address the 2024 listing yourself — don't wait.</div></div>
+      <div class="flow-item"><div class="flow-num">4</div><div><strong>Marketing:</strong> Open laptop. Tab 1. Marketing <em>before</em> price — always.</div></div>
+      <div class="flow-item"><div class="flow-num">5</div><div><strong>Pricing:</strong> Tabs 2 &rarr; 4 &rarr; 3 if needed. Comps first. Tiers second. Hard conversation third. Don't soften it.</div></div>
+      <div class="flow-item"><div class="flow-num">6</div><div><strong>Close:</strong> Ask directly. Handle objections. Leave with a specific next step or get the signature.</div></div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ═══════ PAGE NAV — bottom bar ═══════ -->
+<div class="page-nav">
+  <button class="nav-btn prev" id="prevBtn" onclick="prev()">&larr; PREV</button>
+  <span class="nav-label" id="navLabel">PREP</span>
+  <button class="nav-btn next" id="nextBtn" onclick="next()">NEXT &rarr;</button>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="footer" style="margin-bottom:70px;">
+  <div class="footer-brand">SOLDMIKE &middot; RE/MAX PREMIER &middot; THE OP TEAM</div>
+  <div class="footer-note">Agent Reference Only — 49 Walter Proctor Rd &middot; April 2026</div>
+</div>
+
+<script>
+const names = ['PREP','ARRIVAL','HOME TOUR','DISCOVERY','MARKETING','PRICING','THE CLOSE','QUICK REF'];
+let cur = 0;
+
+function go(idx) {
+  cur = idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.getElementById('navLabel').textContent = names[idx];
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === names.length - 1;
+  window.scrollTo({top:0, behavior:'smooth'});
+
+  // scroll active tab into view
+  const btns = document.querySelectorAll('.tab-btn');
+  btns[idx].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+}
+
+function next() { if (cur < names.length - 1) go(cur + 1); }
+function prev() { if (cur > 0) go(cur - 1); }
+
+// swipe support for mobile
+let sx = 0;
+document.querySelector('.content').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, {passive:true});
+document.querySelector('.content').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - sx;
+  if (Math.abs(dx) > 80) { dx > 0 ? prev() : next(); }
+}, {passive:true});
+
+// keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') next();
+  if (e.key === 'ArrowLeft') prev();
+});
+
+go(0);
+</script>
+</body>
+</html>
