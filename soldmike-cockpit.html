@@ -43,11 +43,11 @@
   .header .dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}
 
   /* TOP ROW — priority (left) + at-a-glance (right) */
-  .top-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-light);background:var(--page-bg-soft);align-items:stretch}
+  .top-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-light);background:var(--page-bg-soft);align-items:stretch;min-height:180px}
 
   /* AT-A-GLANCE (today: morning / afternoon / evening) — dark green */
   .at-a-glance{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;border-left:1px solid var(--border-light);align-items:stretch}
-  .aag-block{padding:14px 14px;border-radius:10px;border:1px solid #1e4a37;background:#0f2820;color:var(--text-on-dark);display:flex;flex-direction:column;gap:8px;box-shadow:0 2px 6px rgba(10,20,15,0.12);min-width:0}
+  .aag-block{padding:14px 14px;border-radius:10px;border:1px solid #1e4a37;background:#0f2820;color:var(--text-on-dark);display:flex;flex-direction:column;gap:10px;box-shadow:0 2px 6px rgba(10,20,15,0.12);min-width:0}
   .aag-label{font-size:10px;text-transform:uppercase;letter-spacing:1.4px;color:#5dd39e;font-weight:700;padding-bottom:6px;border-bottom:1px solid rgba(93,211,158,0.18)}
   .aag-events{display:flex;flex-direction:column;gap:6px;flex:1}
   .aag-event{font-size:12px;line-height:1.35;color:var(--text-on-dark);display:flex;flex-direction:column;gap:1px}
@@ -234,7 +234,6 @@
   <!-- LEFT PANEL -->
   <div class="left-panel">
 
-    <div class="panel-title">Sections</div>
     <div class="section-grid">
       <a class="section-card" href="https://broker-svg.github.io/soldmike-tools/soldmike-real-estate.html" target="_blank">
         <div class="sc-icon">&#127969;</div>
