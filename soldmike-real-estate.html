@@ -202,9 +202,9 @@
     <h1><span class="section-icon">&#127969;</span>Real Estate<span class="brand">SOLDMIKE</span></h1>
   </div>
   <div class="stats">
-    <div class="s active"><span class="n">3</span> Active</div>
-    <div class="s queued"><span class="n" style="color:var(--orange)">2</span> Overdue</div>
-    <div class="s done"><span class="n">3</span> Done</div>
+    <div class="s active"><span class="n">4</span> Active</div>
+    <div class="s queued"><span class="n" style="color:var(--orange)">0</span> Overdue</div>
+    <div class="s done"><span class="n">1</span> Done</div>
   </div>
 </div>
 
@@ -228,6 +228,10 @@
     <div class="proj" data-proj="cma">
       <div class="proj-name">CMA Generator <span class="proj-status st-active">Active</span></div>
       <div class="proj-sub">Upload screenshots, auto-generate</div>
+    </div>
+    <div class="proj" data-proj="fub-email">
+      <div class="proj-name">FUB Email Campaign <span class="proj-status st-active">Active</span></div>
+      <div class="proj-sub">58 emails / 7 phases</div>
     </div>
 
     <div class="label">Notion Pages</div>
@@ -273,10 +277,21 @@
           <div class="kanban-col" data-status="new">
             <div class="kanban-col-header">
               <span class="kanban-label">New</span>
-              <span class="kanban-count">0</span>
+              <span class="kanban-count">3</span>
             </div>
             <div class="kanban-col-body">
-              <div class="kanban-empty">No new projects yet &mdash; brainstorm ideas here</div>
+              <div class="kanban-card" data-goto="deliverability">
+                <div class="kc-name">Deliverability Setup</div>
+                <div class="kc-note">SPF / DKIM / DMARC on soldmike.com</div>
+              </div>
+              <div class="kanban-card" data-goto="fub-crm">
+                <div class="kc-name">FUB CRM Build</div>
+                <div class="kc-note">55 custom fields, 7 Smart Lists, 45 tags</div>
+              </div>
+              <div class="kanban-card" data-goto="seller-update">
+                <div class="kc-name">Seller Update System</div>
+                <div class="kc-note">Skills live: seller-update + seller-update-page</div>
+              </div>
             </div>
           </div>
 
@@ -284,7 +299,7 @@
           <div class="kanban-col" data-status="active">
             <div class="kanban-col-header">
               <span class="kanban-label">Active</span>
-              <span class="kanban-count">3</span>
+              <span class="kanban-count">4</span>
             </div>
             <div class="kanban-col-body">
               <div class="kanban-card priority" data-goto="property-web">
@@ -299,6 +314,10 @@
                 <div class="kc-name">CMA Generator</div>
                 <div class="kc-note">Upload MLS screenshots and run cma-generator skill</div>
               </div>
+              <div class="kanban-card" data-goto="fub-email">
+                <div class="kc-name">FUB Email Campaign</div>
+                <div class="kc-note">58 emails across 7 phases</div>
+              </div>
             </div>
           </div>
 
@@ -306,17 +325,10 @@
           <div class="kanban-col" data-status="overdue">
             <div class="kanban-col-header">
               <span class="kanban-label">Overdue</span>
-              <span class="kanban-count">2</span>
+              <span class="kanban-count">0</span>
             </div>
             <div class="kanban-col-body">
-              <div class="kanban-card" data-goto="deliverability">
-                <div class="kc-name">Deliverability Setup</div>
-                <div class="kc-note">SPF / DKIM / DMARC. Blocking all email campaigns on soldmike.com</div>
-              </div>
-              <div class="kanban-card" data-goto="fub-email">
-                <div class="kc-name">FUB Email Campaign</div>
-                <div class="kc-note">58 emails across 7 phases. Stalled on deliverability</div>
-              </div>
+              <div class="kanban-empty">Nothing overdue &mdash; all caught up</div>
             </div>
           </div>
 
@@ -324,17 +336,9 @@
           <div class="kanban-col" data-status="done">
             <div class="kanban-col-header">
               <span class="kanban-label">Done</span>
-              <span class="kanban-count">3</span>
+              <span class="kanban-count">1</span>
             </div>
             <div class="kanban-col-body">
-              <div class="kanban-card" data-goto="fub-crm">
-                <div class="kc-name">FUB CRM Build</div>
-                <div class="kc-note">55 custom fields, 7 Smart Lists, 45 tags all live</div>
-              </div>
-              <div class="kanban-card" data-goto="seller-update">
-                <div class="kc-name">Seller Update System</div>
-                <div class="kc-note">Skills live: seller-update + seller-update-page</div>
-              </div>
               <div class="kanban-card" data-goto="zapier">
                 <div class="kc-name">Zapier Engine</div>
                 <div class="kc-note">FUB stage change triggers Drive folder move. Confirmed working</div>
