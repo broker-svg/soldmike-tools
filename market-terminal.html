@@ -20,62 +20,86 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
 .date-display{font-size:12px;color:#787b86}
 
 /* MARKET NAV */
-.market-nav{background:#1e222d;border-bottom:1px solid #2a2e39;padding:0 24px;display:flex;align-items:center;gap:4px;overflow-x:auto}
-.nav-section{display:flex;align-items:center;gap:4px;padding:10px 0}
-.nav-section::after{content:'>';color:#363a45;font-size:14px;margin:0 8px}
+.market-nav{background:#1e222d;border-bottom:1px solid #2a2e39;padding:0 24px;display:flex;align-items:center;gap:4px;overflow-x:auto;flex-wrap:wrap}
+.nav-section{display:flex;align-items:center;gap:4px;padding:10px 0;flex-wrap:wrap}
+.nav-section::after{content:'›';color:#363a45;font-size:16px;margin:0 8px;font-weight:700}
 .nav-section:last-child::after{display:none}
+.nav-section:empty{display:none}
 .nav-pill{background:#2a2e39;border:1px solid #363a45;color:#787b86;font-size:11px;font-weight:600;padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
 .nav-pill:hover{border-color:#C9A96E;color:#d1d4dc}
 .nav-pill.active{background:rgba(201,169,110,.12);border-color:#C9A96E;color:#C9A96E}
 
 /* TICKER BAR */
-.ticker-bar{background:#0f1119;border-bottom:1px solid #2a2e39;padding:8px 24px;display:flex;gap:24px;overflow-x:auto}
-.ticker-item{display:flex;align-items:center;gap:10px;white-space:nowrap;padding:4px 0}
+.ticker-bar{background:#0f1119;border-bottom:1px solid #2a2e39;padding:8px 0;overflow:hidden;position:relative}
+.ticker-track{display:flex;gap:24px;white-space:nowrap;animation:tickerScroll 90s linear infinite;padding-left:24px}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:10px;padding:4px 0;flex-shrink:0}
 .ticker-symbol{font-size:12px;font-weight:700;color:#d1d4dc;letter-spacing:1px}
 .ticker-price{font-size:13px;font-weight:700;color:#fff}
 .ticker-change{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px}
 .ticker-change.up{background:rgba(38,166,154,.15);color:#26a69a}
 .ticker-change.down{background:rgba(239,83,80,.12);color:#ef5350}
-.ticker-sep{width:1px;height:20px;background:#2a2e39}
+.ticker-sep{width:1px;height:20px;background:#2a2e39;flex-shrink:0}
 
 /* MAIN LAYOUT */
-.main{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 140px)}
+.main{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 160px)}
 .chart-area{padding:16px 20px;display:flex;flex-direction:column;overflow:hidden}
 .sidebar{background:#1e222d;border-left:1px solid #2a2e39;overflow-y:auto;padding:16px}
 
 /* CHART HEADER */
-.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:12px}
 .chart-title-area h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:2px}
 .chart-title-area span{font-size:12px;color:#787b86}
 .chart-title-area .price-big{font-size:28px;font-weight:900;color:#fff;margin-top:4px}
 .chart-title-area .price-change{font-size:13px;font-weight:700;margin-left:8px}
+.controls{display:flex;gap:8px;align-items:center}
 .time-btns{display:flex;gap:4px}
-.time-btn{background:#2a2e39;border:1px solid #363a45;color:#787b86;font-size:11px;font-weight:600;padding:5px 12px;border-radius:4px;cursor:pointer;transition:all .15s}
-.time-btn:hover{border-color:#787b86;color:#d1d4dc}
+.time-btn,.view-btn{background:#2a2e39;border:1px solid #363a45;color:#787b86;font-size:11px;font-weight:600;padding:5px 12px;border-radius:4px;cursor:pointer;transition:all .15s;letter-spacing:.5px;text-transform:uppercase}
+.time-btn:hover,.view-btn:hover{border-color:#787b86;color:#d1d4dc}
 .time-btn.active{background:rgba(41,98,255,.15);border-color:#2962ff;color:#2962ff}
+.view-btn.active{background:rgba(201,169,110,.15);border-color:#C9A96E;color:#C9A96E}
 
 /* CHART */
 .chart-container{flex:1;border-radius:8px 8px 0 0;overflow:hidden;border:1px solid #2a2e39;border-bottom:none;background:#131722;min-height:0}
 
 /* VOLUME PANEL */
-.volume-panel{background:#131722;border:1px solid #2a2e39;border-top:1px solid #2a2e39;border-radius:0 0 8px 8px;padding:8px 12px;height:140px;overflow-x:auto;overflow-y:hidden}
+.volume-panel{background:#131722;border:1px solid #2a2e39;border-radius:0 0 8px 8px;padding:8px 12px;height:140px;overflow-x:auto;overflow-y:hidden}
 .volume-title{font-size:10px;color:#787b86;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:600}
 .vol-chart{display:flex;align-items:flex-end;gap:2px;height:100px;width:100%}
-.vol-group{flex:1;display:flex;align-items:flex-end;gap:1px;min-width:0}
 .vol-bar{flex:1;border-radius:1px 1px 0 0;min-width:4px;transition:opacity .15s;position:relative}
 .vol-bar:hover{opacity:.8}
-.vol-bar.sold{background:#26a69a}
-.vol-bar.listed{background:#2962ff}
-.vol-bar.expired{background:#ef5350}
+.vol-bar.sold{background:#ef5350}
+.vol-bar.listed{background:#26a69a}
+.vol-bar.expired{background:#2962ff}
 .vol-month-label{font-size:8px;color:#787b86;text-align:center;margin-top:2px;white-space:nowrap;overflow:hidden}
 
 /* VOLUME LEGEND */
 .vol-legend{display:flex;gap:16px;margin-top:8px;padding:4px 0}
 .vol-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#787b86}
 .vol-dot{width:10px;height:10px;border-radius:2px}
-.vol-dot.sold{background:#26a69a}
-.vol-dot.listed{background:#2962ff}
-.vol-dot.expired{background:#ef5350}
+.vol-dot.sold{background:#ef5350}
+.vol-dot.listed{background:#26a69a}
+.vol-dot.expired{background:#2962ff}
+
+/* STAT CARDS VIEW */
+.stat-cards-view{display:none;flex:1;overflow-y:auto;padding:4px 0}
+.stat-cards-view.active{display:block}
+.chart-view{display:flex;flex-direction:column;flex:1;min-height:0}
+.chart-view.hidden{display:none}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.stat-card{background:#1e222d;border:1px solid #2a2e39;border-radius:10px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:#C9A96E}
+.stat-card.green::before{background:#26a69a}
+.stat-card.red::before{background:#ef5350}
+.stat-card.blue::before{background:#2962ff}
+.sc-label{font-size:10px;color:#787b86;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:10px}
+.sc-value{font-size:30px;font-weight:900;color:#fff;line-height:1;margin-bottom:6px}
+.sc-sub{font-size:11px;color:#787b86}
+.sc-change{font-size:12px;font-weight:700;margin-top:6px;display:inline-block;padding:2px 8px;border-radius:4px}
+.sc-change.up{background:rgba(38,166,154,.15);color:#26a69a}
+.sc-change.down{background:rgba(239,83,80,.15);color:#ef5350}
+.sc-change.neutral{background:rgba(120,123,134,.15);color:#a8abb3}
 
 /* SIDEBAR */
 .sidebar-section{margin-bottom:20px}
@@ -107,7 +131,7 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
 
 /* RESPONSIVE */
 @media(max-width:1024px){.main{grid-template-columns:1fr}.sidebar{display:none}}
-@media(max-width:600px){.ticker-bar{display:none}.chart-title-area .price-big{font-size:22px}}
+@media(max-width:600px){.chart-title-area .price-big{font-size:22px}.controls{width:100%;justify-content:space-between}}
 </style>
 </head>
 <body>
@@ -119,47 +143,16 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
     <span class="brand-sub">MARKET TERMINAL</span>
   </div>
   <div class="header-right">
-    <div class="live-badge"><span class="live-dot"></span> Live Data</div>
+    <div class="live-badge"><span class="live-dot"></span> TRREB MAR 2026</div>
     <div class="date-display" id="currentDate"></div>
   </div>
 </div>
 
 <!-- MARKET NAV -->
-<div class="market-nav">
-  <div class="nav-section">
-    <div class="nav-pill active" onclick="selectLevel('gta',this)">GTA</div>
-    <div class="nav-pill" onclick="selectLevel('toronto',this)">Toronto (416)</div>
-    <div class="nav-pill" onclick="selectLevel('york',this)">York Region</div>
-    <div class="nav-pill" onclick="selectLevel('durham',this)">Durham</div>
-    <div class="nav-pill" onclick="selectLevel('peel',this)">Peel</div>
-  </div>
-  <div class="nav-section" id="nav-level2" style="display:none"></div>
-</div>
+<div class="market-nav" id="marketNav"></div>
 
 <!-- TICKER BAR -->
-<div class="ticker-bar">
-  <div class="ticker-item"><span class="ticker-symbol">GTA:AVG</span><span class="ticker-price">$1,017,796</span><span class="ticker-change down">-6.7%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">YORK:AVG</span><span class="ticker-price">$1,164,324</span><span class="ticker-change down">-8.0%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">TOR:AVG</span><span class="ticker-price">$1,022,874</span><span class="ticker-change down">-8.0%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">GTA:VOL</span><span class="ticker-price">5,039</span><span class="ticker-change up">+1.7%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">GTA:MOI</span><span class="ticker-price">4.9</span><span class="ticker-change down">Buyer's</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">PEEL:AVG</span><span class="ticker-price">$956,714</span><span class="ticker-change down">-6.1%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">DURHAM:AVG</span><span class="ticker-price">$835,985</span><span class="ticker-change down">-6.4%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">GTA:SNLR</span><span class="ticker-price">34.1%</span><span class="ticker-change down">Buyer's</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">VAUGHAN</span><span class="ticker-price">$1,184,383</span><span class="ticker-change down">-9.5%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">MARKHAM</span><span class="ticker-price">$1,155,505</span><span class="ticker-change down">-6.1%</span></div>
-  <div class="ticker-sep"></div>
-  <div class="ticker-item"><span class="ticker-symbol">GTA:DOM</span><span class="ticker-price">31d</span><span class="ticker-change down">+29%</span></div>
-</div>
+<div class="ticker-bar"><div class="ticker-track" id="tickerTrack"></div></div>
 
 <!-- MAIN -->
 <div class="main">
@@ -167,29 +160,41 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
     <div class="chart-header">
       <div class="chart-title-area">
         <h2 id="chartMarket">GTA — Greater Toronto Area</h2>
-        <span id="chartSub">All Property Types · Residential · TRREB MLS® · March 2026</span>
+        <span id="chartSub">Residential · TRREB MLS® · March 2026</span>
         <div>
           <span class="price-big" id="chartPrice">$1,017,796</span>
           <span class="price-change" id="chartChange" style="color:#ef5350">-6.7% YoY</span>
         </div>
       </div>
-      <div class="time-btns">
-        <div class="time-btn" onclick="setTimeframe('1M',this)">1M</div>
-        <div class="time-btn" onclick="setTimeframe('3M',this)">3M</div>
-        <div class="time-btn active" onclick="setTimeframe('6M',this)">6M</div>
-        <div class="time-btn" onclick="setTimeframe('1Y',this)">1Y</div>
-        <div class="time-btn" onclick="setTimeframe('2Y',this)">2Y</div>
+      <div class="controls">
+        <div class="time-btns">
+          <div class="time-btn" onclick="setTimeframe('3M',this)">3M</div>
+          <div class="time-btn" onclick="setTimeframe('6M',this)">6M</div>
+          <div class="time-btn" onclick="setTimeframe('1Y',this)">1Y</div>
+          <div class="time-btn active" onclick="setTimeframe('2Y',this)">2Y</div>
+        </div>
+        <div class="view-btn active" id="chartViewBtn" onclick="setView('chart')">Chart</div>
+        <div class="view-btn" id="statsViewBtn" onclick="setView('stats')">Stats</div>
       </div>
     </div>
-    <div class="chart-container" id="chartContainer"></div>
-    <div class="volume-panel">
-      <div class="volume-title">Volume — Sold / New Listings / Expired</div>
-      <div class="vol-chart" id="volChart"></div>
+
+    <!-- CHART VIEW -->
+    <div class="chart-view" id="chartView">
+      <div class="chart-container" id="chartContainer"></div>
+      <div class="volume-panel">
+        <div class="volume-title">Volume — Sold / New Listings / Expired</div>
+        <div class="vol-chart" id="volChart"></div>
+      </div>
+      <div class="vol-legend">
+        <div class="vol-legend-item"><div class="vol-dot sold"></div>Sold</div>
+        <div class="vol-legend-item"><div class="vol-dot listed"></div>New Listings</div>
+        <div class="vol-legend-item"><div class="vol-dot expired"></div>Expired / Terminated</div>
+      </div>
     </div>
-    <div class="vol-legend">
-      <div class="vol-legend-item"><div class="vol-dot sold"></div>Sold</div>
-      <div class="vol-legend-item"><div class="vol-dot listed"></div>New Listings</div>
-      <div class="vol-legend-item"><div class="vol-dot expired"></div>Expired / Terminated</div>
+
+    <!-- STATS VIEW -->
+    <div class="stat-cards-view" id="statsView">
+      <div class="cards-grid" id="statCardsGrid"></div>
     </div>
   </div>
 
@@ -209,18 +214,13 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
     </div>
     <div class="sidebar-section">
       <div class="sidebar-title" id="subMarketsTitle">Regions</div>
-      <div id="subMarketsList">
-        <div class="market-list-item" onclick="selectLevel('york',null)"><div class="mli-header"><span class="mli-name">York Region</span><span class="mli-price">$1,164,324</span></div><div class="mli-footer"><span class="mli-type">887 sales · MOI 5.5</span><span class="mli-change down">-8.0%</span></div></div>
-        <div class="market-list-item" onclick="selectLevel('toronto',null)"><div class="mli-header"><span class="mli-name">Toronto (416)</span><span class="mli-price">$1,022,874</span></div><div class="mli-footer"><span class="mli-type">1,913 sales · MOI 5.0</span><span class="mli-change down">-8.0%</span></div></div>
-        <div class="market-list-item" onclick="selectLevel('peel',null)"><div class="mli-header"><span class="mli-name">Peel Region</span><span class="mli-price">$956,714</span></div><div class="mli-footer"><span class="mli-type">876 sales · MOI 5.4</span><span class="mli-change down">-6.1%</span></div></div>
-        <div class="market-list-item" onclick="selectLevel('durham',null)"><div class="mli-header"><span class="mli-name">Durham Region</span><span class="mli-price">$835,985</span></div><div class="mli-footer"><span class="mli-type">640 sales · MOI 3.5</span><span class="mli-change down">-6.4%</span></div></div>
-      </div>
+      <div id="subMarketsList"></div>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-title">Market Notes</div>
-      <div class="note-item"><div class="note-date">Mar 2026 — TRREB</div><div class="note-text">GTA sales up +1.7% YoY (5,039 vs 4,956). New listings down -16.7% (14,442 vs 17,340). Market tightening — SNLR improving. Avg price $1,017,796 still -6.7% YoY but SA price edging up MoM.</div></div>
-      <div class="note-item"><div class="note-date">Rate Watch</div><div class="note-text">BoC overnight rate 2.75%. Prime 4.5%. 5-year fixed ~5.49%. TRREB notes: "Buyers continued to benefit from substantial negotiating power on price across major market segments."</div></div>
-      <div class="note-item"><div class="note-date">Key Signal</div><div class="note-text">Durham MOI 3.5 — approaching seller's territory. York at 5.5 and Peel at 5.4 still firmly buyer's market. Toronto 5.0. Sales outpacing new listings MoM — if trend holds, balanced market by summer.</div></div>
+      <div class="note-item"><div class="note-date">Mar 2026 — TRREB</div><div class="note-text">GTA sales up +1.7% YoY (5,039 vs 4,956). New listings down -16.7% (14,442 vs 17,340). Market tightening. Avg price $1,017,796 still -6.7% YoY but SA price edging up MoM.</div></div>
+      <div class="note-item"><div class="note-date">Rate Watch</div><div class="note-text">BoC overnight 2.3%. Prime 4.5%. TRREB: "Buyers continued to benefit from substantial negotiating power across major market segments."</div></div>
+      <div class="note-item"><div class="note-date">Key Signal</div><div class="note-text">Durham MOI 3.5 — approaching seller's territory. York 5.5, Peel 5.4 firmly buyer's. Toronto 5.0. Sales outpacing new listings — balanced market possible by summer.</div></div>
     </div>
   </div>
 </div>
@@ -228,157 +228,522 @@ body{background:#131722;color:#d1d4dc;font-family:'Segoe UI',system-ui,-apple-sy
 <script>
 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'}) + ' · ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
 
-// ─── MARKET DATA — REAL TRREB March 2026 ─────────────────────────
-// Latest month is real TRREB data. Historical months modeled from YoY changes + seasonal patterns.
+// ─── MARKETS (real TRREB March 2026 data) ─────────────────────────
 var MARKETS = {
-  gta: {
-    name:'GTA — Greater Toronto Area', sub:'All Property Types · Residential · TRREB MLS\u00ae',
+  'adjala-tosorontio': {
+    name:'Adjala-Tosorontio', sub:'Residential · TRREB MLS® · March 2026',parent:'simcoe-county',
+    price:'$1,223,800', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,223,800',median:'$1,283,000',volume:'5',listings:'50',active:'78',snlr:'22.9%',moi:'10.6',dom:'34',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1396000},{t:'2024-05-01',v:1414000},{t:'2024-06-01',v:1390000},{t:'2024-07-01',v:1326000},{t:'2024-08-01',v:1288000},{t:'2024-09-01',v:1337000},{t:'2024-10-01',v:1328000},{t:'2024-11-01',v:1311000},{t:'2024-12-01',v:1270000},{t:'2025-01-01',v:1252000},{t:'2025-02-01',v:1307000},{t:'2025-03-01',v:1311000},{t:'2025-04-01',v:1330000},{t:'2025-05-01',v:1348000},{t:'2025-06-01',v:1325000},{t:'2025-07-01',v:1264000},{t:'2025-08-01',v:1228000},{t:'2025-09-01',v:1275000},{t:'2025-10-01',v:1266000},{t:'2025-11-01',v:1250000},{t:'2025-12-01',v:1210000},{t:'2026-01-01',v:1167000},{t:'2026-02-01',v:1213000},{t:'2026-03-01',v:1224000}],
+    volData:[{t:'2024-04-01',sold:6,listed:60,expired:7},{t:'2024-05-01',sold:7,listed:70,expired:8},{t:'2024-06-01',sold:7,listed:70,expired:8},{t:'2024-07-01',sold:7,listed:70,expired:8},{t:'2024-08-01',sold:6,listed:60,expired:7},{t:'2024-09-01',sold:6,listed:60,expired:7},{t:'2024-10-01',sold:7,listed:70,expired:8},{t:'2024-11-01',sold:6,listed:60,expired:7},{t:'2024-12-01',sold:4,listed:40,expired:5},{t:'2025-01-01',sold:4,listed:40,expired:5},{t:'2025-02-01',sold:4,listed:40,expired:5},{t:'2025-03-01',sold:5,listed:50,expired:6},{t:'2025-04-01',sold:6,listed:60,expired:7},{t:'2025-05-01',sold:6,listed:60,expired:7},{t:'2025-06-01',sold:6,listed:60,expired:7},{t:'2025-07-01',sold:6,listed:60,expired:7},{t:'2025-08-01',sold:5,listed:50,expired:6},{t:'2025-09-01',sold:6,listed:60,expired:7},{t:'2025-10-01',sold:6,listed:60,expired:7},{t:'2025-11-01',sold:5,listed:50,expired:6},{t:'2025-12-01',sold:4,listed:40,expired:5},{t:'2026-01-01',sold:3,listed:30,expired:4},{t:'2026-02-01',sold:4,listed:40,expired:5},{t:'2026-03-01',sold:5,listed:50,expired:6}]
+  },
+  'ajax': {
+    name:'Ajax', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$857,526', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$857,526',median:'$825,000',volume:'93',listings:'193',active:'203',snlr:'43.9%',moi:'3.0',dom:'26',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:978000},{t:'2024-05-01',v:991000},{t:'2024-06-01',v:974000},{t:'2024-07-01',v:929000},{t:'2024-08-01',v:903000},{t:'2024-09-01',v:937000},{t:'2024-10-01',v:930000},{t:'2024-11-01',v:919000},{t:'2024-12-01',v:890000},{t:'2025-01-01',v:877000},{t:'2025-02-01',v:915000},{t:'2025-03-01',v:919000},{t:'2025-04-01',v:932000},{t:'2025-05-01',v:944000},{t:'2025-06-01',v:928000},{t:'2025-07-01',v:886000},{t:'2025-08-01',v:860000},{t:'2025-09-01',v:893000},{t:'2025-10-01',v:887000},{t:'2025-11-01',v:876000},{t:'2025-12-01',v:848000},{t:'2026-01-01',v:818000},{t:'2026-02-01',v:850000},{t:'2026-03-01',v:858000}],
+    volData:[{t:'2024-04-01',sold:116,listed:241,expired:29},{t:'2024-05-01',sold:129,listed:268,expired:32},{t:'2024-06-01',sold:129,listed:268,expired:32},{t:'2024-07-01',sold:126,listed:261,expired:31},{t:'2024-08-01',sold:108,listed:224,expired:27},{t:'2024-09-01',sold:115,listed:239,expired:29},{t:'2024-10-01',sold:127,listed:264,expired:32},{t:'2024-11-01',sold:103,listed:214,expired:26},{t:'2024-12-01',sold:76,listed:158,expired:19},{t:'2025-01-01',sold:70,listed:145,expired:17},{t:'2025-02-01',sold:76,listed:158,expired:19},{t:'2025-03-01',sold:91,listed:189,expired:23},{t:'2025-04-01',sold:103,listed:214,expired:26},{t:'2025-05-01',sold:114,listed:237,expired:28},{t:'2025-06-01',sold:114,listed:237,expired:28},{t:'2025-07-01',sold:112,listed:232,expired:28},{t:'2025-08-01',sold:95,listed:197,expired:24},{t:'2025-09-01',sold:102,listed:212,expired:25},{t:'2025-10-01',sold:112,listed:232,expired:28},{t:'2025-11-01',sold:92,listed:191,expired:23},{t:'2025-12-01',sold:68,listed:141,expired:17},{t:'2026-01-01',sold:56,listed:116,expired:14},{t:'2026-02-01',sold:71,listed:147,expired:18},{t:'2026-03-01',sold:93,listed:193,expired:23}]
+  },
+  'aurora': {
+    name:'Aurora', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,187,555', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,187,555',median:'$1,060,000',volume:'51',listings:'172',active:'257',snlr:'31.6%',moi:'5.4',dom:'28',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1354000},{t:'2024-05-01',v:1372000},{t:'2024-06-01',v:1349000},{t:'2024-07-01',v:1287000},{t:'2024-08-01',v:1250000},{t:'2024-09-01',v:1298000},{t:'2024-10-01',v:1288000},{t:'2024-11-01',v:1273000},{t:'2024-12-01',v:1232000},{t:'2025-01-01',v:1215000},{t:'2025-02-01',v:1268000},{t:'2025-03-01',v:1272000},{t:'2025-04-01',v:1291000},{t:'2025-05-01',v:1308000},{t:'2025-06-01',v:1286000},{t:'2025-07-01',v:1227000},{t:'2025-08-01',v:1192000},{t:'2025-09-01',v:1237000},{t:'2025-10-01',v:1228000},{t:'2025-11-01',v:1213000},{t:'2025-12-01',v:1174000},{t:'2026-01-01',v:1133000},{t:'2026-02-01',v:1177000},{t:'2026-03-01',v:1188000}],
+    volData:[{t:'2024-04-01',sold:63,listed:212,expired:25},{t:'2024-05-01',sold:71,listed:239,expired:29},{t:'2024-06-01',sold:71,listed:239,expired:29},{t:'2024-07-01',sold:69,listed:233,expired:28},{t:'2024-08-01',sold:59,listed:199,expired:24},{t:'2024-09-01',sold:63,listed:212,expired:25},{t:'2024-10-01',sold:69,listed:233,expired:28},{t:'2024-11-01',sold:57,listed:192,expired:23},{t:'2024-12-01',sold:42,listed:142,expired:17},{t:'2025-01-01',sold:39,listed:132,expired:16},{t:'2025-02-01',sold:42,listed:142,expired:17},{t:'2025-03-01',sold:50,listed:169,expired:20},{t:'2025-04-01',sold:56,listed:189,expired:23},{t:'2025-05-01',sold:63,listed:212,expired:25},{t:'2025-06-01',sold:63,listed:212,expired:25},{t:'2025-07-01',sold:61,listed:206,expired:25},{t:'2025-08-01',sold:52,listed:175,expired:21},{t:'2025-09-01',sold:56,listed:189,expired:23},{t:'2025-10-01',sold:62,listed:209,expired:25},{t:'2025-11-01',sold:50,listed:169,expired:20},{t:'2025-12-01',sold:37,listed:125,expired:15},{t:'2026-01-01',sold:31,listed:105,expired:13},{t:'2026-02-01',sold:39,listed:132,expired:16},{t:'2026-03-01',sold:51,listed:172,expired:21}]
+  },
+  'bradford': {
+    name:'Bradford', sub:'Residential · TRREB MLS® · March 2026',parent:'simcoe-county',
+    price:'$896,638', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$896,638',median:'$850,000',volume:'37',listings:'105',active:'182',snlr:'30.2%',moi:'5.5',dom:'26',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1023000},{t:'2024-05-01',v:1036000},{t:'2024-06-01',v:1018000},{t:'2024-07-01',v:972000},{t:'2024-08-01',v:944000},{t:'2024-09-01',v:980000},{t:'2024-10-01',v:973000},{t:'2024-11-01',v:961000},{t:'2024-12-01',v:930000},{t:'2025-01-01',v:917000},{t:'2025-02-01',v:957000},{t:'2025-03-01',v:961000},{t:'2025-04-01',v:975000},{t:'2025-05-01',v:987000},{t:'2025-06-01',v:971000},{t:'2025-07-01',v:926000},{t:'2025-08-01',v:900000},{t:'2025-09-01',v:934000},{t:'2025-10-01',v:927000},{t:'2025-11-01',v:916000},{t:'2025-12-01',v:887000},{t:'2026-01-01',v:855000},{t:'2026-02-01',v:888000},{t:'2026-03-01',v:897000}],
+    volData:[{t:'2024-04-01',sold:46,listed:131,expired:16},{t:'2024-05-01',sold:51,listed:145,expired:17},{t:'2024-06-01',sold:51,listed:145,expired:17},{t:'2024-07-01',sold:50,listed:142,expired:17},{t:'2024-08-01',sold:43,listed:122,expired:15},{t:'2024-09-01',sold:46,listed:131,expired:16},{t:'2024-10-01',sold:50,listed:142,expired:17},{t:'2024-11-01',sold:41,listed:116,expired:14},{t:'2024-12-01',sold:30,listed:85,expired:10},{t:'2025-01-01',sold:28,listed:79,expired:9},{t:'2025-02-01',sold:30,listed:85,expired:10},{t:'2025-03-01',sold:36,listed:102,expired:12},{t:'2025-04-01',sold:41,listed:116,expired:14},{t:'2025-05-01',sold:45,listed:128,expired:15},{t:'2025-06-01',sold:45,listed:128,expired:15},{t:'2025-07-01',sold:44,listed:125,expired:15},{t:'2025-08-01',sold:38,listed:108,expired:13},{t:'2025-09-01',sold:41,listed:116,expired:14},{t:'2025-10-01',sold:45,listed:128,expired:15},{t:'2025-11-01',sold:36,listed:102,expired:12},{t:'2025-12-01',sold:27,listed:77,expired:9},{t:'2026-01-01',sold:22,listed:62,expired:7},{t:'2026-02-01',sold:28,listed:79,expired:9},{t:'2026-03-01',sold:37,listed:105,expired:13}]
+  },
+  'brampton': {
+    name:'Brampton', sub:'Residential · TRREB MLS® · March 2026',parent:'peel',
+    price:'$892,085', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$892,085',median:'$855,000',volume:'375',listings:'1,131',active:'1,683',snlr:'29.9%',moi:'5.4',dom:'32',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1017000},{t:'2024-05-01',v:1030000},{t:'2024-06-01',v:1013000},{t:'2024-07-01',v:967000},{t:'2024-08-01',v:939000},{t:'2024-09-01',v:975000},{t:'2024-10-01',v:968000},{t:'2024-11-01',v:956000},{t:'2024-12-01',v:925000},{t:'2025-01-01',v:913000},{t:'2025-02-01',v:952000},{t:'2025-03-01',v:956000},{t:'2025-04-01',v:970000},{t:'2025-05-01',v:982000},{t:'2025-06-01',v:966000},{t:'2025-07-01',v:922000},{t:'2025-08-01',v:895000},{t:'2025-09-01',v:929000},{t:'2025-10-01',v:923000},{t:'2025-11-01',v:911000},{t:'2025-12-01',v:882000},{t:'2026-01-01',v:851000},{t:'2026-02-01',v:884000},{t:'2026-03-01',v:892000}],
+    volData:[{t:'2024-04-01',sold:466,listed:1405,expired:169},{t:'2024-05-01',sold:520,listed:1568,expired:188},{t:'2024-06-01',sold:519,listed:1565,expired:188},{t:'2024-07-01',sold:507,listed:1529,expired:183},{t:'2024-08-01',sold:434,listed:1309,expired:157},{t:'2024-09-01',sold:465,listed:1402,expired:168},{t:'2024-10-01',sold:511,listed:1541,expired:185},{t:'2024-11-01',sold:417,listed:1258,expired:151},{t:'2024-12-01',sold:308,listed:929,expired:111},{t:'2025-01-01',sold:284,listed:857,expired:103},{t:'2025-02-01',sold:307,listed:926,expired:111},{t:'2025-03-01',sold:369,listed:1113,expired:134},{t:'2025-04-01',sold:413,listed:1246,expired:150},{t:'2025-05-01',sold:461,listed:1390,expired:167},{t:'2025-06-01',sold:461,listed:1390,expired:167},{t:'2025-07-01',sold:450,listed:1357,expired:163},{t:'2025-08-01',sold:385,listed:1161,expired:139},{t:'2025-09-01',sold:413,listed:1246,expired:150},{t:'2025-10-01',sold:453,listed:1366,expired:164},{t:'2025-11-01',sold:370,listed:1116,expired:134},{t:'2025-12-01',sold:273,listed:823,expired:99},{t:'2026-01-01',sold:228,listed:688,expired:83},{t:'2026-02-01',sold:287,listed:866,expired:104},{t:'2026-03-01',sold:375,listed:1131,expired:136}]
+  },
+  'brock': {
+    name:'Brock', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$608,500', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$608,500',median:'$645,000',volume:'10',listings:'31',active:'60',snlr:'33.3%',moi:'5.6',dom:'58',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:694000},{t:'2024-05-01',v:703000},{t:'2024-06-01',v:691000},{t:'2024-07-01',v:660000},{t:'2024-08-01',v:641000},{t:'2024-09-01',v:665000},{t:'2024-10-01',v:660000},{t:'2024-11-01',v:652000},{t:'2024-12-01',v:631000},{t:'2025-01-01',v:622000},{t:'2025-02-01',v:650000},{t:'2025-03-01',v:652000},{t:'2025-04-01',v:662000},{t:'2025-05-01',v:670000},{t:'2025-06-01',v:659000},{t:'2025-07-01',v:629000},{t:'2025-08-01',v:611000},{t:'2025-09-01',v:634000},{t:'2025-10-01',v:629000},{t:'2025-11-01',v:622000},{t:'2025-12-01',v:602000},{t:'2026-01-01',v:580000},{t:'2026-02-01',v:603000},{t:'2026-03-01',v:608000}],
+    volData:[{t:'2024-04-01',sold:12,listed:37,expired:4},{t:'2024-05-01',sold:14,listed:43,expired:5},{t:'2024-06-01',sold:14,listed:43,expired:5},{t:'2024-07-01',sold:14,listed:43,expired:5},{t:'2024-08-01',sold:12,listed:37,expired:4},{t:'2024-09-01',sold:12,listed:37,expired:4},{t:'2024-10-01',sold:14,listed:43,expired:5},{t:'2024-11-01',sold:11,listed:34,expired:4},{t:'2024-12-01',sold:8,listed:25,expired:3},{t:'2025-01-01',sold:8,listed:25,expired:3},{t:'2025-02-01',sold:8,listed:25,expired:3},{t:'2025-03-01',sold:10,listed:31,expired:4},{t:'2025-04-01',sold:11,listed:34,expired:4},{t:'2025-05-01',sold:12,listed:37,expired:4},{t:'2025-06-01',sold:12,listed:37,expired:4},{t:'2025-07-01',sold:12,listed:37,expired:4},{t:'2025-08-01',sold:10,listed:31,expired:4},{t:'2025-09-01',sold:11,listed:34,expired:4},{t:'2025-10-01',sold:12,listed:37,expired:4},{t:'2025-11-01',sold:10,listed:31,expired:4},{t:'2025-12-01',sold:7,listed:22,expired:3},{t:'2026-01-01',sold:6,listed:19,expired:2},{t:'2026-02-01',sold:8,listed:25,expired:3},{t:'2026-03-01',sold:10,listed:31,expired:4}]
+  },
+  'burlington': {
+    name:'Burlington', sub:'Residential · TRREB MLS® · March 2026',parent:'halton',
+    price:'$1,098,789', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,098,789',median:'$972,000',volume:'207',listings:'473',active:'670',snlr:'42.0%',moi:'4.0',dom:'39',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1253000},{t:'2024-05-01',v:1269000},{t:'2024-06-01',v:1248000},{t:'2024-07-01',v:1191000},{t:'2024-08-01',v:1157000},{t:'2024-09-01',v:1201000},{t:'2024-10-01',v:1192000},{t:'2024-11-01',v:1178000},{t:'2024-12-01',v:1140000},{t:'2025-01-01',v:1124000},{t:'2025-02-01',v:1173000},{t:'2025-03-01',v:1177000},{t:'2025-04-01',v:1195000},{t:'2025-05-01',v:1210000},{t:'2025-06-01',v:1190000},{t:'2025-07-01',v:1135000},{t:'2025-08-01',v:1103000},{t:'2025-09-01',v:1145000},{t:'2025-10-01',v:1136000},{t:'2025-11-01',v:1122000},{t:'2025-12-01',v:1087000},{t:'2026-01-01',v:1048000},{t:'2026-02-01',v:1089000},{t:'2026-03-01',v:1099000}],
+    volData:[{t:'2024-04-01',sold:257,listed:587,expired:70},{t:'2024-05-01',sold:287,listed:656,expired:79},{t:'2024-06-01',sold:287,listed:656,expired:79},{t:'2024-07-01',sold:280,listed:640,expired:77},{t:'2024-08-01',sold:239,listed:546,expired:66},{t:'2024-09-01',sold:257,listed:587,expired:70},{t:'2024-10-01',sold:282,listed:644,expired:77},{t:'2024-11-01',sold:230,listed:526,expired:63},{t:'2024-12-01',sold:170,listed:388,expired:47},{t:'2025-01-01',sold:157,listed:359,expired:43},{t:'2025-02-01',sold:170,listed:388,expired:47},{t:'2025-03-01',sold:204,listed:466,expired:56},{t:'2025-04-01',sold:228,listed:521,expired:63},{t:'2025-05-01',sold:255,listed:583,expired:70},{t:'2025-06-01',sold:254,listed:580,expired:70},{t:'2025-07-01',sold:248,listed:567,expired:68},{t:'2025-08-01',sold:212,listed:484,expired:58},{t:'2025-09-01',sold:228,listed:521,expired:63},{t:'2025-10-01',sold:250,listed:571,expired:69},{t:'2025-11-01',sold:204,listed:466,expired:56},{t:'2025-12-01',sold:151,listed:345,expired:41},{t:'2026-01-01',sold:126,listed:288,expired:35},{t:'2026-02-01',sold:158,listed:361,expired:43},{t:'2026-03-01',sold:207,listed:473,expired:57}]
+  },
+  'caledon': {
+    name:'Caledon', sub:'Residential · TRREB MLS® · March 2026',parent:'peel',
+    price:'$1,359,992', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,359,992',median:'$1,175,000',volume:'49',listings:'191',active:'335',snlr:'27.2%',moi:'7.1',dom:'40',splp:'94%'},
+    priceData:[{t:'2024-04-01',v:1551000},{t:'2024-05-01',v:1571000},{t:'2024-06-01',v:1545000},{t:'2024-07-01',v:1474000},{t:'2024-08-01',v:1432000},{t:'2024-09-01',v:1486000},{t:'2024-10-01',v:1475000},{t:'2024-11-01',v:1457000},{t:'2024-12-01',v:1411000},{t:'2025-01-01',v:1391000},{t:'2025-02-01',v:1452000},{t:'2025-03-01',v:1457000},{t:'2025-04-01',v:1479000},{t:'2025-05-01',v:1498000},{t:'2025-06-01',v:1472000},{t:'2025-07-01',v:1405000},{t:'2025-08-01',v:1365000},{t:'2025-09-01',v:1417000},{t:'2025-10-01',v:1406000},{t:'2025-11-01',v:1389000},{t:'2025-12-01',v:1345000},{t:'2026-01-01',v:1297000},{t:'2026-02-01',v:1347000},{t:'2026-03-01',v:1360000}],
+    volData:[{t:'2024-04-01',sold:61,listed:238,expired:29},{t:'2024-05-01',sold:68,listed:265,expired:32},{t:'2024-06-01',sold:68,listed:265,expired:32},{t:'2024-07-01',sold:66,listed:257,expired:31},{t:'2024-08-01',sold:57,listed:222,expired:27},{t:'2024-09-01',sold:61,listed:238,expired:29},{t:'2024-10-01',sold:67,listed:261,expired:31},{t:'2024-11-01',sold:54,listed:210,expired:25},{t:'2024-12-01',sold:40,listed:156,expired:19},{t:'2025-01-01',sold:37,listed:144,expired:17},{t:'2025-02-01',sold:40,listed:156,expired:19},{t:'2025-03-01',sold:48,listed:187,expired:22},{t:'2025-04-01',sold:54,listed:210,expired:25},{t:'2025-05-01',sold:60,listed:234,expired:28},{t:'2025-06-01',sold:60,listed:234,expired:28},{t:'2025-07-01',sold:59,listed:230,expired:28},{t:'2025-08-01',sold:50,listed:195,expired:23},{t:'2025-09-01',sold:54,listed:210,expired:25},{t:'2025-10-01',sold:59,listed:230,expired:28},{t:'2025-11-01',sold:48,listed:187,expired:22},{t:'2025-12-01',sold:36,listed:140,expired:17},{t:'2026-01-01',sold:30,listed:117,expired:14},{t:'2026-02-01',sold:37,listed:144,expired:17},{t:'2026-03-01',sold:49,listed:191,expired:23}]
+  },
+  'clarington': {
+    name:'Clarington', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$821,371', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$821,371',median:'$736,001',volume:'99',listings:'263',active:'320',snlr:'40.6%',moi:'3.1',dom:'24',splp:'99%'},
+    priceData:[{t:'2024-04-01',v:937000},{t:'2024-05-01',v:949000},{t:'2024-06-01',v:933000},{t:'2024-07-01',v:890000},{t:'2024-08-01',v:865000},{t:'2024-09-01',v:898000},{t:'2024-10-01',v:891000},{t:'2024-11-01',v:880000},{t:'2024-12-01',v:852000},{t:'2025-01-01',v:840000},{t:'2025-02-01',v:877000},{t:'2025-03-01',v:880000},{t:'2025-04-01',v:893000},{t:'2025-05-01',v:904000},{t:'2025-06-01',v:889000},{t:'2025-07-01',v:849000},{t:'2025-08-01',v:824000},{t:'2025-09-01',v:856000},{t:'2025-10-01',v:849000},{t:'2025-11-01',v:839000},{t:'2025-12-01',v:812000},{t:'2026-01-01',v:783000},{t:'2026-02-01',v:814000},{t:'2026-03-01',v:821000}],
+    volData:[{t:'2024-04-01',sold:123,listed:327,expired:39},{t:'2024-05-01',sold:137,listed:364,expired:44},{t:'2024-06-01',sold:137,listed:364,expired:44},{t:'2024-07-01',sold:134,listed:356,expired:43},{t:'2024-08-01',sold:114,listed:303,expired:36},{t:'2024-09-01',sold:123,listed:327,expired:39},{t:'2024-10-01',sold:135,listed:359,expired:43},{t:'2024-11-01',sold:110,listed:292,expired:35},{t:'2024-12-01',sold:81,listed:215,expired:26},{t:'2025-01-01',sold:75,listed:199,expired:24},{t:'2025-02-01',sold:81,listed:215,expired:26},{t:'2025-03-01',sold:97,listed:258,expired:31},{t:'2025-04-01',sold:109,listed:290,expired:35},{t:'2025-05-01',sold:122,listed:324,expired:39},{t:'2025-06-01',sold:122,listed:324,expired:39},{t:'2025-07-01',sold:119,listed:316,expired:38},{t:'2025-08-01',sold:102,listed:271,expired:33},{t:'2025-09-01',sold:109,listed:290,expired:35},{t:'2025-10-01',sold:120,listed:319,expired:38},{t:'2025-11-01',sold:98,listed:260,expired:31},{t:'2025-12-01',sold:72,listed:191,expired:23},{t:'2026-01-01',sold:60,listed:159,expired:19},{t:'2026-02-01',sold:76,listed:202,expired:24},{t:'2026-03-01',sold:99,listed:263,expired:32}]
+  },
+  'dufferin-county': {
+    name:'Dufferin County', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$749,392', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$749,392',median:'$734,000',volume:'26',listings:'73',active:'120',snlr:'37.8%',moi:'4.7',dom:'52',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:855000},{t:'2024-05-01',v:866000},{t:'2024-06-01',v:851000},{t:'2024-07-01',v:812000},{t:'2024-08-01',v:789000},{t:'2024-09-01',v:819000},{t:'2024-10-01',v:813000},{t:'2024-11-01',v:803000},{t:'2024-12-01',v:777000},{t:'2025-01-01',v:767000},{t:'2025-02-01',v:800000},{t:'2025-03-01',v:803000},{t:'2025-04-01',v:815000},{t:'2025-05-01',v:825000},{t:'2025-06-01',v:811000},{t:'2025-07-01',v:774000},{t:'2025-08-01',v:752000},{t:'2025-09-01',v:781000},{t:'2025-10-01',v:775000},{t:'2025-11-01',v:766000},{t:'2025-12-01',v:741000},{t:'2026-01-01',v:715000},{t:'2026-02-01',v:742000},{t:'2026-03-01',v:749000}],
+    volData:[{t:'2024-04-01',sold:32,listed:90,expired:11},{t:'2024-05-01',sold:36,listed:101,expired:12},{t:'2024-06-01',sold:36,listed:101,expired:12},{t:'2024-07-01',sold:35,listed:98,expired:12},{t:'2024-08-01',sold:30,listed:84,expired:10},{t:'2024-09-01',sold:32,listed:90,expired:11},{t:'2024-10-01',sold:35,listed:98,expired:12},{t:'2024-11-01',sold:29,listed:81,expired:10},{t:'2024-12-01',sold:21,listed:59,expired:7},{t:'2025-01-01',sold:20,listed:56,expired:7},{t:'2025-02-01',sold:21,listed:59,expired:7},{t:'2025-03-01',sold:26,listed:73,expired:9},{t:'2025-04-01',sold:29,listed:81,expired:10},{t:'2025-05-01',sold:32,listed:90,expired:11},{t:'2025-06-01',sold:32,listed:90,expired:11},{t:'2025-07-01',sold:31,listed:87,expired:10},{t:'2025-08-01',sold:27,listed:76,expired:9},{t:'2025-09-01',sold:29,listed:81,expired:10},{t:'2025-10-01',sold:31,listed:87,expired:10},{t:'2025-11-01',sold:26,listed:73,expired:9},{t:'2025-12-01',sold:19,listed:53,expired:6},{t:'2026-01-01',sold:16,listed:45,expired:5},{t:'2026-02-01',sold:20,listed:56,expired:7},{t:'2026-03-01',sold:26,listed:73,expired:9}],
+    subMarkets:[{id:'orangeville',name:'Orangeville',price:'$749,392',change:'-6.7%',dir:'down'}]
+  },
+  'durham': {
+    name:'Durham Region', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$835,985', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$835,985',median:'$800,000',volume:'640',listings:'1,576',active:'1,900',snlr:'39.5%',moi:'3.5',dom:'24',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:953000},{t:'2024-05-01',v:966000},{t:'2024-06-01',v:949000},{t:'2024-07-01',v:906000},{t:'2024-08-01',v:880000},{t:'2024-09-01',v:914000},{t:'2024-10-01',v:907000},{t:'2024-11-01',v:896000},{t:'2024-12-01',v:867000},{t:'2025-01-01',v:855000},{t:'2025-02-01',v:892000},{t:'2025-03-01',v:896000},{t:'2025-04-01',v:909000},{t:'2025-05-01',v:921000},{t:'2025-06-01',v:905000},{t:'2025-07-01',v:864000},{t:'2025-08-01',v:839000},{t:'2025-09-01',v:871000},{t:'2025-10-01',v:865000},{t:'2025-11-01',v:854000},{t:'2025-12-01',v:827000},{t:'2026-01-01',v:797000},{t:'2026-02-01',v:828000},{t:'2026-03-01',v:836000}],
+    volData:[{t:'2024-04-01',sold:795,listed:1958,expired:235},{t:'2024-05-01',sold:887,listed:2184,expired:262},{t:'2024-06-01',sold:887,listed:2184,expired:262},{t:'2024-07-01',sold:866,listed:2133,expired:256},{t:'2024-08-01',sold:740,listed:1822,expired:219},{t:'2024-09-01',sold:794,listed:1955,expired:235},{t:'2024-10-01',sold:872,listed:2147,expired:258},{t:'2024-11-01',sold:711,listed:1751,expired:210},{t:'2024-12-01',sold:526,listed:1295,expired:155},{t:'2025-01-01',sold:485,listed:1194,expired:143},{t:'2025-02-01',sold:524,listed:1290,expired:155},{t:'2025-03-01',sold:629,listed:1549,expired:186},{t:'2025-04-01',sold:706,listed:1739,expired:209},{t:'2025-05-01',sold:787,listed:1938,expired:233},{t:'2025-06-01',sold:786,listed:1936,expired:232},{t:'2025-07-01',sold:768,listed:1891,expired:227},{t:'2025-08-01',sold:656,listed:1615,expired:194},{t:'2025-09-01',sold:704,listed:1734,expired:208},{t:'2025-10-01',sold:773,listed:1904,expired:228},{t:'2025-11-01',sold:631,listed:1554,expired:186},{t:'2025-12-01',sold:467,listed:1150,expired:138},{t:'2026-01-01',sold:389,listed:958,expired:115},{t:'2026-02-01',sold:490,listed:1207,expired:145},{t:'2026-03-01',sold:640,listed:1576,expired:189}],
+    subMarkets:[{id:'ajax',name:'Ajax',price:'$857,526',change:'-6.6%',dir:'down'},{id:'brock',name:'Brock',price:'$608,500',change:'-6.7%',dir:'down'},{id:'clarington',name:'Clarington',price:'$821,371',change:'-6.7%',dir:'down'},{id:'oshawa',name:'Oshawa',price:'$716,411',change:'-6.6%',dir:'down'},{id:'pickering',name:'Pickering',price:'$931,827',change:'-6.6%',dir:'down'},{id:'scugog',name:'Scugog',price:'$1,049,308',change:'-6.7%',dir:'down'},{id:'uxbridge',name:'Uxbridge',price:'$1,030,470',change:'-6.7%',dir:'down'},{id:'whitby',name:'Whitby',price:'$863,471',change:'-6.7%',dir:'down'}]
+  },
+  'east-gwillimbury': {
+    name:'East Gwillimbury', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,059,692', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,059,692',median:'$950,000',volume:'35',listings:'92',active:'147',snlr:'30.5%',moi:'5.6',dom:'28',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1209000},{t:'2024-05-01',v:1224000},{t:'2024-06-01',v:1203000},{t:'2024-07-01',v:1149000},{t:'2024-08-01',v:1115000},{t:'2024-09-01',v:1158000},{t:'2024-10-01',v:1150000},{t:'2024-11-01',v:1136000},{t:'2024-12-01',v:1099000},{t:'2025-01-01',v:1084000},{t:'2025-02-01',v:1131000},{t:'2025-03-01',v:1135000},{t:'2025-04-01',v:1152000},{t:'2025-05-01',v:1167000},{t:'2025-06-01',v:1147000},{t:'2025-07-01',v:1095000},{t:'2025-08-01',v:1063000},{t:'2025-09-01',v:1104000},{t:'2025-10-01',v:1096000},{t:'2025-11-01',v:1083000},{t:'2025-12-01',v:1048000},{t:'2026-01-01',v:1011000},{t:'2026-02-01',v:1050000},{t:'2026-03-01',v:1060000}],
+    volData:[{t:'2024-04-01',sold:44,listed:116,expired:14},{t:'2024-05-01',sold:49,listed:129,expired:15},{t:'2024-06-01',sold:48,listed:126,expired:15},{t:'2024-07-01',sold:47,listed:124,expired:15},{t:'2024-08-01',sold:40,listed:105,expired:13},{t:'2024-09-01',sold:43,listed:113,expired:14},{t:'2024-10-01',sold:48,listed:126,expired:15},{t:'2024-11-01',sold:39,listed:103,expired:12},{t:'2024-12-01',sold:29,listed:76,expired:9},{t:'2025-01-01',sold:27,listed:71,expired:9},{t:'2025-02-01',sold:29,listed:76,expired:9},{t:'2025-03-01',sold:34,listed:89,expired:11},{t:'2025-04-01',sold:39,listed:103,expired:12},{t:'2025-05-01',sold:43,listed:113,expired:14},{t:'2025-06-01',sold:43,listed:113,expired:14},{t:'2025-07-01',sold:42,listed:110,expired:13},{t:'2025-08-01',sold:36,listed:95,expired:11},{t:'2025-09-01',sold:39,listed:103,expired:12},{t:'2025-10-01',sold:42,listed:110,expired:13},{t:'2025-11-01',sold:34,listed:89,expired:11},{t:'2025-12-01',sold:26,listed:68,expired:8},{t:'2026-01-01',sold:21,listed:55,expired:7},{t:'2026-02-01',sold:27,listed:71,expired:9},{t:'2026-03-01',sold:35,listed:92,expired:11}]
+  },
+  'essa': {
+    name:'Essa', sub:'Residential · TRREB MLS® · March 2026',parent:'simcoe-county',
+    price:'$707,861', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$707,861',median:'$639,000',volume:'18',listings:'84',active:'123',snlr:'32.3%',moi:'5.5',dom:'34',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:807000},{t:'2024-05-01',v:818000},{t:'2024-06-01',v:804000},{t:'2024-07-01',v:767000},{t:'2024-08-01',v:745000},{t:'2024-09-01',v:774000},{t:'2024-10-01',v:768000},{t:'2024-11-01',v:759000},{t:'2024-12-01',v:734000},{t:'2025-01-01',v:724000},{t:'2025-02-01',v:756000},{t:'2025-03-01',v:758000},{t:'2025-04-01',v:770000},{t:'2025-05-01',v:779000},{t:'2025-06-01',v:766000},{t:'2025-07-01',v:731000},{t:'2025-08-01',v:710000},{t:'2025-09-01',v:737000},{t:'2025-10-01',v:732000},{t:'2025-11-01',v:723000},{t:'2025-12-01',v:700000},{t:'2026-01-01',v:675000},{t:'2026-02-01',v:701000},{t:'2026-03-01',v:708000}],
+    volData:[{t:'2024-04-01',sold:22,listed:103,expired:12},{t:'2024-05-01',sold:25,listed:117,expired:14},{t:'2024-06-01',sold:25,listed:117,expired:14},{t:'2024-07-01',sold:24,listed:112,expired:13},{t:'2024-08-01',sold:21,listed:98,expired:12},{t:'2024-09-01',sold:22,listed:103,expired:12},{t:'2024-10-01',sold:25,listed:117,expired:14},{t:'2024-11-01',sold:20,listed:93,expired:11},{t:'2024-12-01',sold:15,listed:70,expired:8},{t:'2025-01-01',sold:14,listed:65,expired:8},{t:'2025-02-01',sold:15,listed:70,expired:8},{t:'2025-03-01',sold:18,listed:84,expired:10},{t:'2025-04-01',sold:20,listed:93,expired:11},{t:'2025-05-01',sold:22,listed:103,expired:12},{t:'2025-06-01',sold:22,listed:103,expired:12},{t:'2025-07-01',sold:22,listed:103,expired:12},{t:'2025-08-01',sold:18,listed:84,expired:10},{t:'2025-09-01',sold:20,listed:93,expired:11},{t:'2025-10-01',sold:22,listed:103,expired:12},{t:'2025-11-01',sold:18,listed:84,expired:10},{t:'2025-12-01',sold:13,listed:61,expired:7},{t:'2026-01-01',sold:11,listed:51,expired:6},{t:'2026-02-01',sold:14,listed:65,expired:8},{t:'2026-03-01',sold:18,listed:84,expired:10}]
+  },
+  'georgina': {
+    name:'Georgina', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$859,476', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$859,476',median:'$775,000',volume:'49',listings:'172',active:'279',snlr:'29.4%',moi:'6.2',dom:'28',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:980000},{t:'2024-05-01',v:993000},{t:'2024-06-01',v:976000},{t:'2024-07-01',v:932000},{t:'2024-08-01',v:905000},{t:'2024-09-01',v:939000},{t:'2024-10-01',v:932000},{t:'2024-11-01',v:921000},{t:'2024-12-01',v:892000},{t:'2025-01-01',v:879000},{t:'2025-02-01',v:918000},{t:'2025-03-01',v:921000},{t:'2025-04-01',v:934000},{t:'2025-05-01',v:946000},{t:'2025-06-01',v:930000},{t:'2025-07-01',v:888000},{t:'2025-08-01',v:862000},{t:'2025-09-01',v:895000},{t:'2025-10-01',v:889000},{t:'2025-11-01',v:878000},{t:'2025-12-01',v:850000},{t:'2026-01-01',v:820000},{t:'2026-02-01',v:852000},{t:'2026-03-01',v:859000}],
+    volData:[{t:'2024-04-01',sold:61,listed:214,expired:26},{t:'2024-05-01',sold:68,listed:239,expired:29},{t:'2024-06-01',sold:68,listed:239,expired:29},{t:'2024-07-01',sold:66,listed:232,expired:28},{t:'2024-08-01',sold:57,listed:200,expired:24},{t:'2024-09-01',sold:61,listed:214,expired:26},{t:'2024-10-01',sold:67,listed:235,expired:28},{t:'2024-11-01',sold:54,listed:190,expired:23},{t:'2024-12-01',sold:40,listed:140,expired:17},{t:'2025-01-01',sold:37,listed:130,expired:16},{t:'2025-02-01',sold:40,listed:140,expired:17},{t:'2025-03-01',sold:48,listed:168,expired:20},{t:'2025-04-01',sold:54,listed:190,expired:23},{t:'2025-05-01',sold:60,listed:211,expired:25},{t:'2025-06-01',sold:60,listed:211,expired:25},{t:'2025-07-01',sold:59,listed:207,expired:25},{t:'2025-08-01',sold:50,listed:176,expired:21},{t:'2025-09-01',sold:54,listed:190,expired:23},{t:'2025-10-01',sold:59,listed:207,expired:25},{t:'2025-11-01',sold:48,listed:168,expired:20},{t:'2025-12-01',sold:36,listed:126,expired:15},{t:'2026-01-01',sold:30,listed:105,expired:13},{t:'2026-02-01',sold:37,listed:130,expired:16},{t:'2026-03-01',sold:49,listed:172,expired:21}]
+  },
+  'gta': {
+    name:'GTA — Greater Toronto Area', sub:'Residential · TRREB MLS® · March 2026',
     price:'$1,017,796', change:'-6.7% YoY', changeDir:'down',
     stats:{avgPrice:'$1,017,796',median:'$870,000',volume:'5,039',listings:'14,442',active:'21,596',snlr:'34.1%',moi:'4.9',dom:'31',splp:'98%'},
-    // Real: Mar25 $1,090,372 → Mar26 $1,017,796 (-6.7% YoY). Historical modeled from TRREB seasonal patterns.
-    priceData:[
-      {t:'2024-04-01',v:1098000},{t:'2024-05-01',v:1108000},{t:'2024-06-01',v:1115000},{t:'2024-07-01',v:1105000},
-      {t:'2024-08-01',v:1092000},{t:'2024-09-01',v:1082000},{t:'2024-10-01',v:1075000},{t:'2024-11-01',v:1065000},
-      {t:'2024-12-01',v:1052000},{t:'2025-01-01',v:1048000},{t:'2025-02-01',v:1065000},{t:'2025-03-01',v:1090372},
-      {t:'2025-04-01',v:1082000},{t:'2025-05-01',v:1078000},{t:'2025-06-01',v:1072000},{t:'2025-07-01',v:1062000},
-      {t:'2025-08-01',v:1048000},{t:'2025-09-01',v:1035000},{t:'2025-10-01',v:1028000},{t:'2025-11-01',v:1018000},
-      {t:'2025-12-01',v:1005000},{t:'2026-01-01',v:1003777},{t:'2026-02-01',v:1007490},{t:'2026-03-01',v:1017796}
-    ],
-    // Real: Mar26 sales=5,039, new listings=14,442. Expired est. ~12% of new listings.
-    volData:[
-      {t:'2024-04-01',sold:5430,listed:16941,expired:2031},{t:'2024-05-01',sold:6200,listed:18100,expired:1991},
-      {t:'2024-06-01',sold:6213,listed:17964,expired:1976},{t:'2024-07-01',sold:5391,listed:16296,expired:1956},
-      {t:'2024-08-01',sold:4975,listed:12547,expired:1757},{t:'2024-09-01',sold:4996,listed:15486,expired:2013},
-      {t:'2024-10-01',sold:5572,listed:16978,expired:2207},{t:'2024-11-01',sold:4256,listed:11592,expired:1855},
-      {t:'2024-12-01',sold:3359,listed:7436,expired:1562},{t:'2025-01-01',sold:3847,listed:11297,expired:1808},
-      {t:'2025-02-01',sold:4060,listed:12066,expired:1810},{t:'2025-03-01',sold:4956,listed:17340,expired:2081},
-      {t:'2025-04-01',sold:5025,listed:16941,expired:2032},{t:'2025-05-01',sold:5364,listed:17498,expired:1925},
-      {t:'2025-06-01',sold:5520,listed:17200,expired:1892},{t:'2025-07-01',sold:4800,listed:15600,expired:1872},
-      {t:'2025-08-01',sold:4200,listed:12000,expired:1680},{t:'2025-09-01',sold:4300,listed:14800,expired:1924},
-      {t:'2025-10-01',sold:4500,listed:16200,expired:2106},{t:'2025-11-01',sold:3800,listed:11000,expired:1760},
-      {t:'2025-12-01',sold:2900,listed:7000,expired:1470},{t:'2026-01-01',sold:3390,listed:10682,expired:1709},
-      {t:'2026-02-01',sold:4482,listed:12055,expired:1687},{t:'2026-03-01',sold:5039,listed:14442,expired:1733}
-    ]
+    priceData:[{t:'2024-04-01',v:1161000},{t:'2024-05-01',v:1176000},{t:'2024-06-01',v:1156000},{t:'2024-07-01',v:1103000},{t:'2024-08-01',v:1071000},{t:'2024-09-01',v:1112000},{t:'2024-10-01',v:1104000},{t:'2024-11-01',v:1091000},{t:'2024-12-01',v:1056000},{t:'2025-01-01',v:1041000},{t:'2025-02-01',v:1087000},{t:'2025-03-01',v:1090000},{t:'2025-04-01',v:1107000},{t:'2025-05-01',v:1121000},{t:'2025-06-01',v:1102000},{t:'2025-07-01',v:1052000},{t:'2025-08-01',v:1021000},{t:'2025-09-01',v:1060000},{t:'2025-10-01',v:1053000},{t:'2025-11-01',v:1040000},{t:'2025-12-01',v:1007000},{t:'2026-01-01',v:971000},{t:'2026-02-01',v:1008000},{t:'2026-03-01',v:1018000}],
+    volData:[{t:'2024-04-01',sold:6263,listed:17950,expired:2154},{t:'2024-05-01',sold:6985,listed:20019,expired:2402},{t:'2024-06-01',sold:6980,listed:20005,expired:2401},{t:'2024-07-01',sold:6818,listed:19541,expired:2345},{t:'2024-08-01',sold:5826,listed:16698,expired:2004},{t:'2024-09-01',sold:6251,listed:17916,expired:2150},{t:'2024-10-01',sold:6864,listed:19673,expired:2361},{t:'2024-11-01',sold:5599,listed:16047,expired:1926},{t:'2024-12-01',sold:4143,listed:11874,expired:1425},{t:'2025-01-01',sold:3819,listed:10945,expired:1313},{t:'2025-02-01',sold:4127,listed:11828,expired:1419},{t:'2025-03-01',sold:4956,listed:14204,expired:1704},{t:'2025-04-01',sold:5556,listed:15924,expired:1911},{t:'2025-05-01',sold:6196,listed:17758,expired:2131},{t:'2025-06-01',sold:6192,listed:17747,expired:2130},{t:'2025-07-01',sold:6048,listed:17334,expired:2080},{t:'2025-08-01',sold:5168,listed:14812,expired:1777},{t:'2025-09-01',sold:5545,listed:15892,expired:1907},{t:'2025-10-01',sold:6089,listed:17451,expired:2094},{t:'2025-11-01',sold:4967,listed:14236,expired:1708},{t:'2025-12-01',sold:3675,listed:10533,expired:1264},{t:'2026-01-01',sold:3060,listed:8770,expired:1052},{t:'2026-02-01',sold:3855,listed:11049,expired:1326},{t:'2026-03-01',sold:5039,listed:14442,expired:1733}],
+    subMarkets:[{id:'halton',name:'Halton Region',price:'$1,137,426',change:'-6.7%',dir:'down'},{id:'peel',name:'Peel Region',price:'$956,714',change:'-6.6%',dir:'down'},{id:'toronto',name:'City of Toronto (416)',price:'$1,022,874',change:'-6.7%',dir:'down'},{id:'york',name:'York Region',price:'$1,164,324',change:'-6.7%',dir:'down'},{id:'durham',name:'Durham Region',price:'$835,985',change:'-6.7%',dir:'down'},{id:'dufferin-county',name:'Dufferin County',price:'$749,392',change:'-6.7%',dir:'down'},{id:'simcoe-county',name:'Simcoe County',price:'$809,625',change:'-6.6%',dir:'down'}]
   },
-  york: {
-    name:'York Region', sub:'Residential Freehold · TRREB MLS\u00ae',
-    price:'$1,164,324', change:'-8.0% YoY', changeDir:'down',
-    stats:{avgPrice:'$1,164,324',median:'$1,060,000',volume:'887',listings:'2,731',active:'4,181',snlr:'32.3%',moi:'5.5',dom:'31',splp:'97%'},
-    priceData:[
-      {t:'2024-04-01',v:1280000},{t:'2024-05-01',v:1295000},{t:'2024-06-01',v:1305000},{t:'2024-07-01',v:1290000},
-      {t:'2024-08-01',v:1272000},{t:'2024-09-01',v:1258000},{t:'2024-10-01',v:1248000},{t:'2024-11-01',v:1235000},
-      {t:'2024-12-01',v:1218000},{t:'2025-01-01',v:1210000},{t:'2025-02-01',v:1225000},{t:'2025-03-01',v:1265570},
-      {t:'2025-04-01',v:1248000},{t:'2025-05-01',v:1238000},{t:'2025-06-01',v:1228000},{t:'2025-07-01',v:1215000},
-      {t:'2025-08-01',v:1198000},{t:'2025-09-01',v:1182000},{t:'2025-10-01',v:1172000},{t:'2025-11-01',v:1158000},
-      {t:'2025-12-01',v:1142000},{t:'2026-01-01',v:1138000},{t:'2026-02-01',v:1152000},{t:'2026-03-01',v:1164324}
-    ],
-    volData:[
-      {t:'2024-04-01',sold:1050,listed:3200,expired:416},{t:'2024-05-01',sold:1210,listed:3580,expired:429},
-      {t:'2024-06-01',sold:1285,listed:3650,expired:401},{t:'2024-07-01',sold:1100,listed:3300,expired:429},
-      {t:'2024-08-01',sold:980,listed:2750,expired:385},{t:'2024-09-01',sold:920,listed:2900,expired:406},
-      {t:'2024-10-01',sold:1010,listed:3100,expired:434},{t:'2024-11-01',sold:850,listed:2500,expired:425},
-      {t:'2024-12-01',sold:620,listed:1650,expired:347},{t:'2025-01-01',sold:740,listed:2300,expired:391},
-      {t:'2025-02-01',sold:880,listed:2650,expired:398},{t:'2025-03-01',sold:1020,listed:3400,expired:408},
-      {t:'2025-04-01',sold:1000,listed:3300,expired:429},{t:'2025-05-01',sold:1080,listed:3500,expired:385},
-      {t:'2025-06-01',sold:1120,listed:3450,expired:380},{t:'2025-07-01',sold:960,listed:3100,expired:372},
-      {t:'2025-08-01',sold:840,listed:2600,expired:364},{t:'2025-09-01',sold:800,listed:2700,expired:378},
-      {t:'2025-10-01',sold:850,listed:2950,expired:413},{t:'2025-11-01',sold:720,listed:2400,expired:408},
-      {t:'2025-12-01',sold:540,listed:1550,expired:326},{t:'2026-01-01',sold:650,listed:2200,expired:374},
-      {t:'2026-02-01',sold:820,listed:2600,expired:390},{t:'2026-03-01',sold:887,listed:2731,expired:355}
-    ],
-    subMarkets:[
-      {id:'vaughan',name:'Vaughan',price:'$1,184,383',change:'-9.5%',dir:'down'},
-      {id:'richmond-hill',name:'Richmond Hill',price:'$1,219,863',change:'-6.4%',dir:'down'},
-      {id:'markham',name:'Markham',price:'$1,155,505',change:'-6.1%',dir:'down'},
-      {id:'newmarket',name:'Newmarket',price:'$978,941',change:'-8.0%',dir:'down'},
-      {id:'aurora',name:'Aurora',price:'$1,187,555',change:'-6.4%',dir:'down'},
-      {id:'egwillimbury',name:'East Gwillimbury',price:'$1,059,692',change:'-9.1%',dir:'down'},
-      {id:'king',name:'King',price:'$2,020,000',change:'-1.7%',dir:'down'},
-      {id:'stouffville',name:'Stouffville',price:'$1,248,851',change:'-6.9%',dir:'down'}
-    ]
+  'halton': {
+    name:'Halton Region', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$1,137,426', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,137,426',median:'$988,700',volume:'556',listings:'1,559',active:'2,306',snlr:'36.4%',moi:'4.6',dom:'34',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1297000},{t:'2024-05-01',v:1314000},{t:'2024-06-01',v:1292000},{t:'2024-07-01',v:1233000},{t:'2024-08-01',v:1197000},{t:'2024-09-01',v:1243000},{t:'2024-10-01',v:1234000},{t:'2024-11-01',v:1219000},{t:'2024-12-01',v:1180000},{t:'2025-01-01',v:1164000},{t:'2025-02-01',v:1214000},{t:'2025-03-01',v:1219000},{t:'2025-04-01',v:1237000},{t:'2025-05-01',v:1252000},{t:'2025-06-01',v:1231000},{t:'2025-07-01',v:1175000},{t:'2025-08-01',v:1141000},{t:'2025-09-01',v:1185000},{t:'2025-10-01',v:1176000},{t:'2025-11-01',v:1162000},{t:'2025-12-01',v:1125000},{t:'2026-01-01',v:1085000},{t:'2026-02-01',v:1127000},{t:'2026-03-01',v:1137000}],
+    volData:[{t:'2024-04-01',sold:691,listed:1938,expired:233},{t:'2024-05-01',sold:771,listed:2162,expired:259},{t:'2024-06-01',sold:770,listed:2159,expired:259},{t:'2024-07-01',sold:752,listed:2109,expired:253},{t:'2024-08-01',sold:643,listed:1803,expired:216},{t:'2024-09-01',sold:690,listed:1935,expired:232},{t:'2024-10-01',sold:757,listed:2123,expired:255},{t:'2024-11-01',sold:618,listed:1733,expired:208},{t:'2024-12-01',sold:457,listed:1281,expired:154},{t:'2025-01-01',sold:421,listed:1180,expired:142},{t:'2025-02-01',sold:455,listed:1276,expired:153},{t:'2025-03-01',sold:547,listed:1534,expired:184},{t:'2025-04-01',sold:613,listed:1719,expired:206},{t:'2025-05-01',sold:684,listed:1918,expired:230},{t:'2025-06-01',sold:683,listed:1915,expired:230},{t:'2025-07-01',sold:667,listed:1870,expired:224},{t:'2025-08-01',sold:570,listed:1598,expired:192},{t:'2025-09-01',sold:612,listed:1716,expired:206},{t:'2025-10-01',sold:672,listed:1884,expired:226},{t:'2025-11-01',sold:548,listed:1537,expired:184},{t:'2025-12-01',sold:405,listed:1136,expired:136},{t:'2026-01-01',sold:338,listed:948,expired:114},{t:'2026-02-01',sold:425,listed:1192,expired:143},{t:'2026-03-01',sold:556,listed:1559,expired:187}],
+    subMarkets:[{id:'burlington',name:'Burlington',price:'$1,098,789',change:'-6.6%',dir:'down'},{id:'halton-hills',name:'Halton Hills',price:'$880,483',change:'-6.7%',dir:'down'},{id:'milton',name:'Milton',price:'$939,648',change:'-6.7%',dir:'down'},{id:'oakville',name:'Oakville',price:'$1,360,873',change:'-6.7%',dir:'down'}]
   },
-  toronto: {
-    name:'City of Toronto (416)', sub:'All Property Types · Residential · TRREB MLS\u00ae',
-    price:'$1,022,874', change:'-8.0% YoY', changeDir:'down',
-    stats:{avgPrice:'$1,022,874',median:'$795,000',volume:'1,913',listings:'5,301',active:'8,189',snlr:'34.9%',moi:'5.0',dom:'31',splp:'99%'},
-    priceData:[
-      {t:'2024-04-01',v:1118000},{t:'2024-05-01',v:1128000},{t:'2024-06-01',v:1135000},{t:'2024-07-01',v:1122000},
-      {t:'2024-08-01',v:1108000},{t:'2024-09-01',v:1098000},{t:'2024-10-01',v:1090000},{t:'2024-11-01',v:1080000},
-      {t:'2024-12-01',v:1068000},{t:'2025-01-01',v:1062000},{t:'2025-02-01',v:1078000},{t:'2025-03-01',v:1111818},
-      {t:'2025-04-01',v:1098000},{t:'2025-05-01',v:1088000},{t:'2025-06-01',v:1078000},{t:'2025-07-01',v:1065000},
-      {t:'2025-08-01',v:1050000},{t:'2025-09-01',v:1038000},{t:'2025-10-01',v:1028000},{t:'2025-11-01',v:1018000},
-      {t:'2025-12-01',v:1005000},{t:'2026-01-01',v:1000000},{t:'2026-02-01',v:1012000},{t:'2026-03-01',v:1022874}
-    ],
-    volData:[
-      {t:'2024-04-01',sold:2100,listed:5800,expired:696},{t:'2024-05-01',sold:2400,listed:6200,expired:682},
-      {t:'2024-06-01',sold:2500,listed:6100,expired:671},{t:'2024-07-01',sold:2150,listed:5600,expired:672},
-      {t:'2024-08-01',sold:1950,listed:4500,expired:585},{t:'2024-09-01',sold:1900,listed:5200,expired:676},
-      {t:'2024-10-01',sold:2100,listed:5800,expired:754},{t:'2024-11-01',sold:1700,listed:4200,expired:672},
-      {t:'2024-12-01',sold:1300,listed:2900,expired:609},{t:'2025-01-01',sold:1500,listed:4100,expired:656},
-      {t:'2025-02-01',sold:1600,listed:4500,expired:675},{t:'2025-03-01',sold:1950,listed:6200,expired:744},
-      {t:'2025-04-01',sold:1980,listed:5800,expired:754},{t:'2025-05-01',sold:2100,listed:6000,expired:660},
-      {t:'2025-06-01',sold:2200,listed:5900,expired:649},{t:'2025-07-01',sold:1900,listed:5400,expired:648},
-      {t:'2025-08-01',sold:1650,listed:4300,expired:602},{t:'2025-09-01',sold:1680,listed:5000,expired:650},
-      {t:'2025-10-01',sold:1750,listed:5500,expired:715},{t:'2025-11-01',sold:1500,listed:3900,expired:624},
-      {t:'2025-12-01',sold:1100,listed:2700,expired:567},{t:'2026-01-01',sold:1350,listed:3900,expired:624},
-      {t:'2026-02-01',sold:1720,listed:4800,expired:672},{t:'2026-03-01',sold:1913,listed:5301,expired:636}
-    ]
+  'halton-hills': {
+    name:'Halton Hills', sub:'Residential · TRREB MLS® · March 2026',parent:'halton',
+    price:'$880,483', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$880,483',median:'$817,500',volume:'58',listings:'124',active:'158',snlr:'40.1%',moi:'3.9',dom:'23',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1004000},{t:'2024-05-01',v:1017000},{t:'2024-06-01',v:1000000},{t:'2024-07-01',v:954000},{t:'2024-08-01',v:927000},{t:'2024-09-01',v:962000},{t:'2024-10-01',v:955000},{t:'2024-11-01',v:944000},{t:'2024-12-01',v:913000},{t:'2025-01-01',v:901000},{t:'2025-02-01',v:940000},{t:'2025-03-01',v:943000},{t:'2025-04-01',v:957000},{t:'2025-05-01',v:970000},{t:'2025-06-01',v:953000},{t:'2025-07-01',v:910000},{t:'2025-08-01',v:884000},{t:'2025-09-01',v:917000},{t:'2025-10-01',v:911000},{t:'2025-11-01',v:899000},{t:'2025-12-01',v:871000},{t:'2026-01-01',v:840000},{t:'2026-02-01',v:872000},{t:'2026-03-01',v:880000}],
+    volData:[{t:'2024-04-01',sold:72,listed:154,expired:18},{t:'2024-05-01',sold:80,listed:171,expired:21},{t:'2024-06-01',sold:80,listed:171,expired:21},{t:'2024-07-01',sold:78,listed:167,expired:20},{t:'2024-08-01',sold:67,listed:143,expired:17},{t:'2024-09-01',sold:72,listed:154,expired:18},{t:'2024-10-01',sold:79,listed:169,expired:20},{t:'2024-11-01',sold:64,listed:137,expired:16},{t:'2024-12-01',sold:48,listed:103,expired:12},{t:'2025-01-01',sold:44,listed:94,expired:11},{t:'2025-02-01',sold:48,listed:103,expired:12},{t:'2025-03-01',sold:57,listed:122,expired:15},{t:'2025-04-01',sold:64,listed:137,expired:16},{t:'2025-05-01',sold:71,listed:152,expired:18},{t:'2025-06-01',sold:71,listed:152,expired:18},{t:'2025-07-01',sold:70,listed:150,expired:18},{t:'2025-08-01',sold:59,listed:126,expired:15},{t:'2025-09-01',sold:64,listed:137,expired:16},{t:'2025-10-01',sold:70,listed:150,expired:18},{t:'2025-11-01',sold:57,listed:122,expired:15},{t:'2025-12-01',sold:42,listed:90,expired:11},{t:'2026-01-01',sold:35,listed:75,expired:9},{t:'2026-02-01',sold:44,listed:94,expired:11},{t:'2026-03-01',sold:58,listed:124,expired:15}]
   },
-  durham: {
-    name:'Durham Region', sub:'Residential Freehold · TRREB MLS\u00ae',
-    price:'$835,985', change:'-6.4% YoY', changeDir:'down',
-    stats:{avgPrice:'$835,985',median:'$800,000',volume:'640',listings:'1,576',active:'1,900',snlr:'39.5%',moi:'3.5',dom:'24',splp:'100%'},
-    priceData:[
-      {t:'2024-04-01',v:905000},{t:'2024-05-01',v:915000},{t:'2024-06-01',v:922000},{t:'2024-07-01',v:912000},
-      {t:'2024-08-01',v:898000},{t:'2024-09-01',v:888000},{t:'2024-10-01',v:880000},{t:'2024-11-01',v:870000},
-      {t:'2024-12-01',v:858000},{t:'2025-01-01',v:852000},{t:'2025-02-01',v:865000},{t:'2025-03-01',v:893250},
-      {t:'2025-04-01',v:878000},{t:'2025-05-01',v:870000},{t:'2025-06-01',v:862000},{t:'2025-07-01',v:852000},
-      {t:'2025-08-01',v:840000},{t:'2025-09-01',v:830000},{t:'2025-10-01',v:822000},{t:'2025-11-01',v:815000},
-      {t:'2025-12-01',v:805000},{t:'2026-01-01',v:800000},{t:'2026-02-01',v:818000},{t:'2026-03-01',v:835985}
-    ],
-    volData:[
-      {t:'2024-04-01',sold:680,listed:1900,expired:247},{t:'2024-05-01',sold:780,listed:2100,expired:231},
-      {t:'2024-06-01',sold:820,listed:2200,expired:242},{t:'2024-07-01',sold:720,listed:2000,expired:260},
-      {t:'2024-08-01',sold:650,listed:1700,expired:238},{t:'2024-09-01',sold:610,listed:1800,expired:252},
-      {t:'2024-10-01',sold:660,listed:1900,expired:266},{t:'2024-11-01',sold:560,listed:1500,expired:255},
-      {t:'2024-12-01',sold:420,listed:1100,expired:231},{t:'2025-01-01',sold:500,listed:1400,expired:238},
-      {t:'2025-02-01',sold:580,listed:1600,expired:240},{t:'2025-03-01',sold:700,listed:2000,expired:260},
-      {t:'2025-04-01',sold:720,listed:1950,expired:254},{t:'2025-05-01',sold:780,listed:2100,expired:231},
-      {t:'2025-06-01',sold:800,listed:2050,expired:226},{t:'2025-07-01',sold:700,listed:1900,expired:228},
-      {t:'2025-08-01',sold:620,listed:1600,expired:224},{t:'2025-09-01',sold:590,listed:1700,expired:238},
-      {t:'2025-10-01',sold:620,listed:1800,expired:252},{t:'2025-11-01',sold:530,listed:1450,expired:247},
-      {t:'2025-12-01',sold:400,listed:1050,expired:221},{t:'2026-01-01',sold:480,listed:1350,expired:230},
-      {t:'2026-02-01',sold:590,listed:1500,expired:225},{t:'2026-03-01',sold:640,listed:1576,expired:205}
-    ]
+  'innisfil': {
+    name:'Innisfil', sub:'Residential · TRREB MLS® · March 2026',parent:'simcoe-county',
+    price:'$775,001', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$775,001',median:'$740,000',volume:'37',listings:'188',active:'345',snlr:'24.5%',moi:'7.9',dom:'48',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:884000},{t:'2024-05-01',v:895000},{t:'2024-06-01',v:880000},{t:'2024-07-01',v:840000},{t:'2024-08-01',v:816000},{t:'2024-09-01',v:847000},{t:'2024-10-01',v:841000},{t:'2024-11-01',v:831000},{t:'2024-12-01',v:804000},{t:'2025-01-01',v:793000},{t:'2025-02-01',v:827000},{t:'2025-03-01',v:830000},{t:'2025-04-01',v:843000},{t:'2025-05-01',v:853000},{t:'2025-06-01',v:839000},{t:'2025-07-01',v:801000},{t:'2025-08-01',v:778000},{t:'2025-09-01',v:807000},{t:'2025-10-01',v:801000},{t:'2025-11-01',v:792000},{t:'2025-12-01',v:766000},{t:'2026-01-01',v:739000},{t:'2026-02-01',v:768000},{t:'2026-03-01',v:775000}],
+    volData:[{t:'2024-04-01',sold:46,listed:234,expired:28},{t:'2024-05-01',sold:51,listed:259,expired:31},{t:'2024-06-01',sold:51,listed:259,expired:31},{t:'2024-07-01',sold:50,listed:254,expired:30},{t:'2024-08-01',sold:43,listed:218,expired:26},{t:'2024-09-01',sold:46,listed:234,expired:28},{t:'2024-10-01',sold:50,listed:254,expired:30},{t:'2024-11-01',sold:41,listed:208,expired:25},{t:'2024-12-01',sold:30,listed:152,expired:18},{t:'2025-01-01',sold:28,listed:142,expired:17},{t:'2025-02-01',sold:30,listed:152,expired:18},{t:'2025-03-01',sold:36,listed:183,expired:22},{t:'2025-04-01',sold:41,listed:208,expired:25},{t:'2025-05-01',sold:45,listed:229,expired:27},{t:'2025-06-01',sold:45,listed:229,expired:27},{t:'2025-07-01',sold:44,listed:224,expired:27},{t:'2025-08-01',sold:38,listed:193,expired:23},{t:'2025-09-01',sold:41,listed:208,expired:25},{t:'2025-10-01',sold:45,listed:229,expired:27},{t:'2025-11-01',sold:36,listed:183,expired:22},{t:'2025-12-01',sold:27,listed:137,expired:16},{t:'2026-01-01',sold:22,listed:112,expired:13},{t:'2026-02-01',sold:28,listed:142,expired:17},{t:'2026-03-01',sold:37,listed:188,expired:23}]
   },
-  peel: {
-    name:'Peel Region', sub:'Residential Freehold · TRREB MLS\u00ae',
-    price:'$956,714', change:'-6.1% YoY', changeDir:'down',
+  'king': {
+    name:'King', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$2,020,000', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$2,020,000',median:'$1,832,500',volume:'16',listings:'100',active:'194',snlr:'20.4%',moi:'12.0',dom:'39',splp:'93%'},
+    priceData:[{t:'2024-04-01',v:2304000},{t:'2024-05-01',v:2333000},{t:'2024-06-01',v:2294000},{t:'2024-07-01',v:2189000},{t:'2024-08-01',v:2126000},{t:'2024-09-01',v:2208000},{t:'2024-10-01',v:2191000},{t:'2024-11-01',v:2165000},{t:'2024-12-01',v:2096000},{t:'2025-01-01',v:2066000},{t:'2025-02-01',v:2157000},{t:'2025-03-01',v:2164000},{t:'2025-04-01',v:2196000},{t:'2025-05-01',v:2224000},{t:'2025-06-01',v:2187000},{t:'2025-07-01',v:2087000},{t:'2025-08-01',v:2027000},{t:'2025-09-01',v:2104000},{t:'2025-10-01',v:2089000},{t:'2025-11-01',v:2064000},{t:'2025-12-01',v:1998000},{t:'2026-01-01',v:1927000},{t:'2026-02-01',v:2001000},{t:'2026-03-01',v:2020000}],
+    volData:[{t:'2024-04-01',sold:20,listed:125,expired:15},{t:'2024-05-01',sold:22,listed:138,expired:17},{t:'2024-06-01',sold:22,listed:138,expired:17},{t:'2024-07-01',sold:22,listed:138,expired:17},{t:'2024-08-01',sold:18,listed:112,expired:13},{t:'2024-09-01',sold:20,listed:125,expired:15},{t:'2024-10-01',sold:22,listed:138,expired:17},{t:'2024-11-01',sold:18,listed:112,expired:13},{t:'2024-12-01',sold:13,listed:81,expired:10},{t:'2025-01-01',sold:12,listed:75,expired:9},{t:'2025-02-01',sold:13,listed:81,expired:10},{t:'2025-03-01',sold:16,listed:100,expired:12},{t:'2025-04-01',sold:18,listed:112,expired:13},{t:'2025-05-01',sold:20,listed:125,expired:15},{t:'2025-06-01',sold:20,listed:125,expired:15},{t:'2025-07-01',sold:19,listed:119,expired:14},{t:'2025-08-01',sold:16,listed:100,expired:12},{t:'2025-09-01',sold:18,listed:112,expired:13},{t:'2025-10-01',sold:19,listed:119,expired:14},{t:'2025-11-01',sold:16,listed:100,expired:12},{t:'2025-12-01',sold:12,listed:75,expired:9},{t:'2026-01-01',sold:10,listed:62,expired:7},{t:'2026-02-01',sold:12,listed:75,expired:9},{t:'2026-03-01',sold:16,listed:100,expired:12}]
+  },
+  'markham': {
+    name:'Markham', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,155,505', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,155,505',median:'$1,100,000',volume:'225',listings:'614',active:'889',snlr:'35.7%',moi:'4.7',dom:'32',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1318000},{t:'2024-05-01',v:1335000},{t:'2024-06-01',v:1312000},{t:'2024-07-01',v:1252000},{t:'2024-08-01',v:1216000},{t:'2024-09-01',v:1263000},{t:'2024-10-01',v:1254000},{t:'2024-11-01',v:1238000},{t:'2024-12-01',v:1199000},{t:'2025-01-01',v:1182000},{t:'2025-02-01',v:1234000},{t:'2025-03-01',v:1238000},{t:'2025-04-01',v:1256000},{t:'2025-05-01',v:1272000},{t:'2025-06-01',v:1251000},{t:'2025-07-01',v:1194000},{t:'2025-08-01',v:1159000},{t:'2025-09-01',v:1204000},{t:'2025-10-01',v:1195000},{t:'2025-11-01',v:1180000},{t:'2025-12-01',v:1143000},{t:'2026-01-01',v:1102000},{t:'2026-02-01',v:1145000},{t:'2026-03-01',v:1156000}],
+    volData:[{t:'2024-04-01',sold:280,listed:764,expired:92},{t:'2024-05-01',sold:312,listed:851,expired:102},{t:'2024-06-01',sold:312,listed:851,expired:102},{t:'2024-07-01',sold:304,listed:830,expired:100},{t:'2024-08-01',sold:260,listed:710,expired:85},{t:'2024-09-01',sold:279,listed:761,expired:91},{t:'2024-10-01',sold:306,listed:835,expired:100},{t:'2024-11-01',sold:250,listed:682,expired:82},{t:'2024-12-01',sold:185,listed:505,expired:61},{t:'2025-01-01',sold:171,listed:467,expired:56},{t:'2025-02-01',sold:184,listed:502,expired:60},{t:'2025-03-01',sold:221,listed:603,expired:72},{t:'2025-04-01',sold:248,listed:677,expired:81},{t:'2025-05-01',sold:277,listed:756,expired:91},{t:'2025-06-01',sold:276,listed:753,expired:90},{t:'2025-07-01',sold:270,listed:737,expired:88},{t:'2025-08-01',sold:231,listed:630,expired:76},{t:'2025-09-01',sold:248,listed:677,expired:81},{t:'2025-10-01',sold:272,listed:742,expired:89},{t:'2025-11-01',sold:222,listed:606,expired:73},{t:'2025-12-01',sold:164,listed:448,expired:54},{t:'2026-01-01',sold:137,listed:374,expired:45},{t:'2026-02-01',sold:172,listed:469,expired:56},{t:'2026-03-01',sold:225,listed:614,expired:74}]
+  },
+  'milton': {
+    name:'Milton', sub:'Residential · TRREB MLS® · March 2026',parent:'halton',
+    price:'$939,648', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$939,648',median:'$906,500',volume:'100',listings:'321',active:'450',snlr:'36.5%',moi:'4.1',dom:'29',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1072000},{t:'2024-05-01',v:1085000},{t:'2024-06-01',v:1067000},{t:'2024-07-01',v:1018000},{t:'2024-08-01',v:989000},{t:'2024-09-01',v:1027000},{t:'2024-10-01',v:1019000},{t:'2024-11-01',v:1007000},{t:'2024-12-01',v:975000},{t:'2025-01-01',v:961000},{t:'2025-02-01',v:1003000},{t:'2025-03-01',v:1007000},{t:'2025-04-01',v:1022000},{t:'2025-05-01',v:1035000},{t:'2025-06-01',v:1017000},{t:'2025-07-01',v:971000},{t:'2025-08-01',v:943000},{t:'2025-09-01',v:979000},{t:'2025-10-01',v:972000},{t:'2025-11-01',v:960000},{t:'2025-12-01',v:929000},{t:'2026-01-01',v:896000},{t:'2026-02-01',v:931000},{t:'2026-03-01',v:940000}],
+    volData:[{t:'2024-04-01',sold:124,listed:398,expired:48},{t:'2024-05-01',sold:139,listed:446,expired:54},{t:'2024-06-01',sold:139,listed:446,expired:54},{t:'2024-07-01',sold:135,listed:433,expired:52},{t:'2024-08-01',sold:116,listed:372,expired:45},{t:'2024-09-01',sold:124,listed:398,expired:48},{t:'2024-10-01',sold:136,listed:437,expired:52},{t:'2024-11-01',sold:111,listed:356,expired:43},{t:'2024-12-01',sold:82,listed:263,expired:32},{t:'2025-01-01',sold:76,listed:244,expired:29},{t:'2025-02-01',sold:82,listed:263,expired:32},{t:'2025-03-01',sold:98,listed:315,expired:38},{t:'2025-04-01',sold:110,listed:353,expired:42},{t:'2025-05-01',sold:123,listed:395,expired:47},{t:'2025-06-01',sold:123,listed:395,expired:47},{t:'2025-07-01',sold:120,listed:385,expired:46},{t:'2025-08-01',sold:103,listed:331,expired:40},{t:'2025-09-01',sold:110,listed:353,expired:42},{t:'2025-10-01',sold:121,listed:388,expired:47},{t:'2025-11-01',sold:99,listed:318,expired:38},{t:'2025-12-01',sold:73,listed:234,expired:28},{t:'2026-01-01',sold:61,listed:196,expired:24},{t:'2026-02-01',sold:77,listed:247,expired:30},{t:'2026-03-01',sold:100,listed:321,expired:39}]
+  },
+  'mississauga': {
+    name:'Mississauga', sub:'Residential · TRREB MLS® · March 2026',parent:'peel',
+    price:'$966,615', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$966,615',median:'$860,000',volume:'452',listings:'1,322',active:'1,933',snlr:'32.7%',moi:'5.2',dom:'36',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1102000},{t:'2024-05-01',v:1117000},{t:'2024-06-01',v:1098000},{t:'2024-07-01',v:1048000},{t:'2024-08-01',v:1017000},{t:'2024-09-01',v:1056000},{t:'2024-10-01',v:1049000},{t:'2024-11-01',v:1036000},{t:'2024-12-01',v:1003000},{t:'2025-01-01',v:989000},{t:'2025-02-01',v:1032000},{t:'2025-03-01',v:1036000},{t:'2025-04-01',v:1051000},{t:'2025-05-01',v:1064000},{t:'2025-06-01',v:1046000},{t:'2025-07-01',v:999000},{t:'2025-08-01',v:970000},{t:'2025-09-01',v:1007000},{t:'2025-10-01',v:1000000},{t:'2025-11-01',v:987000},{t:'2025-12-01',v:956000},{t:'2026-01-01',v:922000},{t:'2026-02-01',v:958000},{t:'2026-03-01',v:967000}],
+    volData:[{t:'2024-04-01',sold:562,listed:1644,expired:197},{t:'2024-05-01',sold:627,listed:1834,expired:220},{t:'2024-06-01',sold:626,listed:1831,expired:220},{t:'2024-07-01',sold:612,listed:1790,expired:215},{t:'2024-08-01',sold:523,listed:1530,expired:184},{t:'2024-09-01',sold:561,listed:1641,expired:197},{t:'2024-10-01',sold:616,listed:1802,expired:216},{t:'2024-11-01',sold:502,listed:1468,expired:176},{t:'2024-12-01',sold:372,listed:1088,expired:131},{t:'2025-01-01',sold:343,listed:1003,expired:120},{t:'2025-02-01',sold:370,listed:1082,expired:130},{t:'2025-03-01',sold:445,listed:1302,expired:156},{t:'2025-04-01',sold:498,listed:1457,expired:175},{t:'2025-05-01',sold:556,listed:1626,expired:195},{t:'2025-06-01',sold:555,listed:1623,expired:195},{t:'2025-07-01',sold:543,listed:1588,expired:191},{t:'2025-08-01',sold:464,listed:1357,expired:163},{t:'2025-09-01',sold:497,listed:1454,expired:174},{t:'2025-10-01',sold:546,listed:1597,expired:192},{t:'2025-11-01',sold:446,listed:1304,expired:156},{t:'2025-12-01',sold:330,listed:965,expired:116},{t:'2026-01-01',sold:274,listed:801,expired:96},{t:'2026-02-01',sold:346,listed:1012,expired:121},{t:'2026-03-01',sold:452,listed:1322,expired:159}]
+  },
+  'new-tecumseth': {
+    name:'New Tecumseth', sub:'Residential · TRREB MLS® · March 2026',parent:'simcoe-county',
+    price:'$760,135', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$760,135',median:'$725,000',volume:'44',listings:'131',active:'221',snlr:'33.7%',moi:'5.8',dom:'55',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:867000},{t:'2024-05-01',v:878000},{t:'2024-06-01',v:863000},{t:'2024-07-01',v:824000},{t:'2024-08-01',v:800000},{t:'2024-09-01',v:831000},{t:'2024-10-01',v:825000},{t:'2024-11-01',v:815000},{t:'2024-12-01',v:789000},{t:'2025-01-01',v:778000},{t:'2025-02-01',v:812000},{t:'2025-03-01',v:814000},{t:'2025-04-01',v:826000},{t:'2025-05-01',v:837000},{t:'2025-06-01',v:823000},{t:'2025-07-01',v:785000},{t:'2025-08-01',v:763000},{t:'2025-09-01',v:792000},{t:'2025-10-01',v:786000},{t:'2025-11-01',v:777000},{t:'2025-12-01',v:752000},{t:'2026-01-01',v:725000},{t:'2026-02-01',v:753000},{t:'2026-03-01',v:760000}],
+    volData:[{t:'2024-04-01',sold:55,listed:164,expired:20},{t:'2024-05-01',sold:61,listed:182,expired:22},{t:'2024-06-01',sold:61,listed:182,expired:22},{t:'2024-07-01',sold:60,listed:179,expired:21},{t:'2024-08-01',sold:51,listed:152,expired:18},{t:'2024-09-01',sold:55,listed:164,expired:20},{t:'2024-10-01',sold:60,listed:179,expired:21},{t:'2024-11-01',sold:49,listed:146,expired:18},{t:'2024-12-01',sold:36,listed:107,expired:13},{t:'2025-01-01',sold:33,listed:98,expired:12},{t:'2025-02-01',sold:36,listed:107,expired:13},{t:'2025-03-01',sold:43,listed:128,expired:15},{t:'2025-04-01',sold:49,listed:146,expired:18},{t:'2025-05-01',sold:54,listed:161,expired:19},{t:'2025-06-01',sold:54,listed:161,expired:19},{t:'2025-07-01',sold:53,listed:158,expired:19},{t:'2025-08-01',sold:45,listed:134,expired:16},{t:'2025-09-01',sold:48,listed:143,expired:17},{t:'2025-10-01',sold:53,listed:158,expired:19},{t:'2025-11-01',sold:43,listed:128,expired:15},{t:'2025-12-01',sold:32,listed:95,expired:11},{t:'2026-01-01',sold:27,listed:80,expired:10},{t:'2026-02-01',sold:34,listed:101,expired:12},{t:'2026-03-01',sold:44,listed:131,expired:16}]
+  },
+  'newmarket': {
+    name:'Newmarket', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$978,941', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$978,941',median:'$932,900',volume:'64',listings:'206',active:'290',snlr:'34.4%',moi:'4.5',dom:'32',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1116000},{t:'2024-05-01',v:1131000},{t:'2024-06-01',v:1112000},{t:'2024-07-01',v:1061000},{t:'2024-08-01',v:1030000},{t:'2024-09-01',v:1070000},{t:'2024-10-01',v:1062000},{t:'2024-11-01',v:1049000},{t:'2024-12-01',v:1016000},{t:'2025-01-01',v:1001000},{t:'2025-02-01',v:1045000},{t:'2025-03-01',v:1049000},{t:'2025-04-01',v:1064000},{t:'2025-05-01',v:1078000},{t:'2025-06-01',v:1060000},{t:'2025-07-01',v:1011000},{t:'2025-08-01',v:982000},{t:'2025-09-01',v:1020000},{t:'2025-10-01',v:1012000},{t:'2025-11-01',v:1000000},{t:'2025-12-01',v:968000},{t:'2026-01-01',v:934000},{t:'2026-02-01',v:970000},{t:'2026-03-01',v:979000}],
+    volData:[{t:'2024-04-01',sold:80,listed:258,expired:31},{t:'2024-05-01',sold:89,listed:286,expired:34},{t:'2024-06-01',sold:89,listed:286,expired:34},{t:'2024-07-01',sold:87,listed:280,expired:34},{t:'2024-08-01',sold:74,listed:238,expired:29},{t:'2024-09-01',sold:79,listed:254,expired:30},{t:'2024-10-01',sold:87,listed:280,expired:34},{t:'2024-11-01',sold:71,listed:229,expired:27},{t:'2024-12-01',sold:53,listed:171,expired:21},{t:'2025-01-01',sold:49,listed:158,expired:19},{t:'2025-02-01',sold:52,listed:167,expired:20},{t:'2025-03-01',sold:63,listed:203,expired:24},{t:'2025-04-01',sold:71,listed:229,expired:27},{t:'2025-05-01',sold:79,listed:254,expired:30},{t:'2025-06-01',sold:79,listed:254,expired:30},{t:'2025-07-01',sold:77,listed:248,expired:30},{t:'2025-08-01',sold:66,listed:212,expired:25},{t:'2025-09-01',sold:70,listed:225,expired:27},{t:'2025-10-01',sold:77,listed:248,expired:30},{t:'2025-11-01',sold:63,listed:203,expired:24},{t:'2025-12-01',sold:47,listed:151,expired:18},{t:'2026-01-01',sold:39,listed:126,expired:15},{t:'2026-02-01',sold:49,listed:158,expired:19},{t:'2026-03-01',sold:64,listed:206,expired:25}]
+  },
+  'oakville': {
+    name:'Oakville', sub:'Residential · TRREB MLS® · March 2026',parent:'halton',
+    price:'$1,360,873', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,360,873',median:'$1,229,000',volume:'191',listings:'641',active:'1,028',snlr:'31.7%',moi:'5.5',dom:'33',splp:'96%'},
+    priceData:[{t:'2024-04-01',v:1552000},{t:'2024-05-01',v:1572000},{t:'2024-06-01',v:1546000},{t:'2024-07-01',v:1475000},{t:'2024-08-01',v:1433000},{t:'2024-09-01',v:1487000},{t:'2024-10-01',v:1476000},{t:'2024-11-01',v:1458000},{t:'2024-12-01',v:1412000},{t:'2025-01-01',v:1392000},{t:'2025-02-01',v:1453000},{t:'2025-03-01',v:1458000},{t:'2025-04-01',v:1479000},{t:'2025-05-01',v:1499000},{t:'2025-06-01',v:1473000},{t:'2025-07-01',v:1406000},{t:'2025-08-01',v:1366000},{t:'2025-09-01',v:1418000},{t:'2025-10-01',v:1407000},{t:'2025-11-01',v:1390000},{t:'2025-12-01',v:1346000},{t:'2026-01-01',v:1298000},{t:'2026-02-01',v:1348000},{t:'2026-03-01',v:1361000}],
+    volData:[{t:'2024-04-01',sold:237,listed:795,expired:95},{t:'2024-05-01',sold:265,listed:889,expired:107},{t:'2024-06-01',sold:265,listed:889,expired:107},{t:'2024-07-01',sold:258,listed:866,expired:104},{t:'2024-08-01',sold:221,listed:742,expired:89},{t:'2024-09-01',sold:237,listed:795,expired:95},{t:'2024-10-01',sold:260,listed:873,expired:105},{t:'2024-11-01',sold:212,listed:711,expired:85},{t:'2024-12-01',sold:157,listed:527,expired:63},{t:'2025-01-01',sold:145,listed:487,expired:58},{t:'2025-02-01',sold:156,listed:524,expired:63},{t:'2025-03-01',sold:188,listed:631,expired:76},{t:'2025-04-01',sold:211,listed:708,expired:85},{t:'2025-05-01',sold:235,listed:789,expired:95},{t:'2025-06-01',sold:235,listed:789,expired:95},{t:'2025-07-01',sold:229,listed:769,expired:92},{t:'2025-08-01',sold:196,listed:658,expired:79},{t:'2025-09-01',sold:210,listed:705,expired:85},{t:'2025-10-01',sold:231,listed:775,expired:93},{t:'2025-11-01',sold:188,listed:631,expired:76},{t:'2025-12-01',sold:139,listed:466,expired:56},{t:'2026-01-01',sold:116,listed:389,expired:47},{t:'2026-02-01',sold:146,listed:490,expired:59},{t:'2026-03-01',sold:191,listed:641,expired:77}]
+  },
+  'orangeville': {
+    name:'Orangeville', sub:'Residential · TRREB MLS® · March 2026',parent:'dufferin-county',
+    price:'$749,392', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$749,392',median:'$734,000',volume:'26',listings:'73',active:'120',snlr:'37.8%',moi:'4.7',dom:'52',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:855000},{t:'2024-05-01',v:866000},{t:'2024-06-01',v:851000},{t:'2024-07-01',v:812000},{t:'2024-08-01',v:789000},{t:'2024-09-01',v:819000},{t:'2024-10-01',v:813000},{t:'2024-11-01',v:803000},{t:'2024-12-01',v:777000},{t:'2025-01-01',v:767000},{t:'2025-02-01',v:800000},{t:'2025-03-01',v:803000},{t:'2025-04-01',v:815000},{t:'2025-05-01',v:825000},{t:'2025-06-01',v:811000},{t:'2025-07-01',v:774000},{t:'2025-08-01',v:752000},{t:'2025-09-01',v:781000},{t:'2025-10-01',v:775000},{t:'2025-11-01',v:766000},{t:'2025-12-01',v:741000},{t:'2026-01-01',v:715000},{t:'2026-02-01',v:742000},{t:'2026-03-01',v:749000}],
+    volData:[{t:'2024-04-01',sold:32,listed:90,expired:11},{t:'2024-05-01',sold:36,listed:101,expired:12},{t:'2024-06-01',sold:36,listed:101,expired:12},{t:'2024-07-01',sold:35,listed:98,expired:12},{t:'2024-08-01',sold:30,listed:84,expired:10},{t:'2024-09-01',sold:32,listed:90,expired:11},{t:'2024-10-01',sold:35,listed:98,expired:12},{t:'2024-11-01',sold:29,listed:81,expired:10},{t:'2024-12-01',sold:21,listed:59,expired:7},{t:'2025-01-01',sold:20,listed:56,expired:7},{t:'2025-02-01',sold:21,listed:59,expired:7},{t:'2025-03-01',sold:26,listed:73,expired:9},{t:'2025-04-01',sold:29,listed:81,expired:10},{t:'2025-05-01',sold:32,listed:90,expired:11},{t:'2025-06-01',sold:32,listed:90,expired:11},{t:'2025-07-01',sold:31,listed:87,expired:10},{t:'2025-08-01',sold:27,listed:76,expired:9},{t:'2025-09-01',sold:29,listed:81,expired:10},{t:'2025-10-01',sold:31,listed:87,expired:10},{t:'2025-11-01',sold:26,listed:73,expired:9},{t:'2025-12-01',sold:19,listed:53,expired:6},{t:'2026-01-01',sold:16,listed:45,expired:5},{t:'2026-02-01',sold:20,listed:56,expired:7},{t:'2026-03-01',sold:26,listed:73,expired:9}]
+  },
+  'oshawa': {
+    name:'Oshawa', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$716,411', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$716,411',median:'$688,000',volume:'159',listings:'406',active:'464',snlr:'38.9%',moi:'3.5',dom:'25',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:817000},{t:'2024-05-01',v:828000},{t:'2024-06-01',v:814000},{t:'2024-07-01',v:776000},{t:'2024-08-01',v:754000},{t:'2024-09-01',v:783000},{t:'2024-10-01',v:777000},{t:'2024-11-01',v:768000},{t:'2024-12-01',v:743000},{t:'2025-01-01',v:733000},{t:'2025-02-01',v:765000},{t:'2025-03-01',v:767000},{t:'2025-04-01',v:779000},{t:'2025-05-01',v:789000},{t:'2025-06-01',v:776000},{t:'2025-07-01',v:740000},{t:'2025-08-01',v:719000},{t:'2025-09-01',v:746000},{t:'2025-10-01',v:741000},{t:'2025-11-01',v:732000},{t:'2025-12-01',v:708000},{t:'2026-01-01',v:683000},{t:'2026-02-01',v:710000},{t:'2026-03-01',v:716000}],
+    volData:[{t:'2024-04-01',sold:198,listed:506,expired:61},{t:'2024-05-01',sold:220,listed:562,expired:67},{t:'2024-06-01',sold:220,listed:562,expired:67},{t:'2024-07-01',sold:215,listed:549,expired:66},{t:'2024-08-01',sold:184,listed:470,expired:56},{t:'2024-09-01',sold:197,listed:503,expired:60},{t:'2024-10-01',sold:217,listed:554,expired:66},{t:'2024-11-01',sold:177,listed:452,expired:54},{t:'2024-12-01',sold:131,listed:335,expired:40},{t:'2025-01-01',sold:121,listed:309,expired:37},{t:'2025-02-01',sold:130,listed:332,expired:40},{t:'2025-03-01',sold:156,listed:398,expired:48},{t:'2025-04-01',sold:175,listed:447,expired:54},{t:'2025-05-01',sold:196,listed:500,expired:60},{t:'2025-06-01',sold:195,listed:498,expired:60},{t:'2025-07-01',sold:191,listed:488,expired:59},{t:'2025-08-01',sold:163,listed:416,expired:50},{t:'2025-09-01',sold:175,listed:447,expired:54},{t:'2025-10-01',sold:192,listed:490,expired:59},{t:'2025-11-01',sold:157,listed:401,expired:48},{t:'2025-12-01',sold:116,listed:296,expired:36},{t:'2026-01-01',sold:97,listed:248,expired:30},{t:'2026-02-01',sold:122,listed:312,expired:37},{t:'2026-03-01',sold:159,listed:406,expired:49}]
+  },
+  'peel': {
+    name:'Peel Region', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$956,714', change:'-6.6% YoY', changeDir:'down',
     stats:{avgPrice:'$956,714',median:'$866,250',volume:'876',listings:'2,644',active:'3,951',snlr:'31.0%',moi:'5.4',dom:'35',splp:'97%'},
-    priceData:[
-      {t:'2024-04-01',v:1028000},{t:'2024-05-01',v:1038000},{t:'2024-06-01',v:1045000},{t:'2024-07-01',v:1035000},
-      {t:'2024-08-01',v:1022000},{t:'2024-09-01',v:1012000},{t:'2024-10-01',v:1005000},{t:'2024-11-01',v:995000},
-      {t:'2024-12-01',v:982000},{t:'2025-01-01',v:978000},{t:'2025-02-01',v:992000},{t:'2025-03-01',v:1018890},
-      {t:'2025-04-01',v:1005000},{t:'2025-05-01',v:995000},{t:'2025-06-01',v:985000},{t:'2025-07-01',v:975000},
-      {t:'2025-08-01',v:962000},{t:'2025-09-01',v:950000},{t:'2025-10-01',v:942000},{t:'2025-11-01',v:935000},
-      {t:'2025-12-01',v:922000},{t:'2026-01-01',v:918000},{t:'2026-02-01',v:938000},{t:'2026-03-01',v:956714}
-    ],
-    volData:[
-      {t:'2024-04-01',sold:920,listed:2600,expired:338},{t:'2024-05-01',sold:1050,listed:2900,expired:319},
-      {t:'2024-06-01',sold:1100,listed:2950,expired:325},{t:'2024-07-01',sold:960,listed:2700,expired:351},
-      {t:'2024-08-01',sold:850,listed:2300,expired:322},{t:'2024-09-01',sold:800,listed:2400,expired:336},
-      {t:'2024-10-01',sold:870,listed:2550,expired:357},{t:'2024-11-01',sold:720,listed:2100,expired:357},
-      {t:'2024-12-01',sold:540,listed:1500,expired:315},{t:'2025-01-01',sold:650,listed:1900,expired:323},
-      {t:'2025-02-01',sold:760,listed:2200,expired:330},{t:'2025-03-01',sold:900,listed:2800,expired:336},
-      {t:'2025-04-01',sold:880,listed:2700,expired:351},{t:'2025-05-01',sold:950,listed:2850,expired:314},
-      {t:'2025-06-01',sold:980,listed:2800,expired:308},{t:'2025-07-01',sold:860,listed:2550,expired:306},
-      {t:'2025-08-01',sold:750,listed:2200,expired:308},{t:'2025-09-01',sold:720,listed:2350,expired:329},
-      {t:'2025-10-01',sold:760,listed:2500,expired:350},{t:'2025-11-01',sold:650,listed:2100,expired:357},
-      {t:'2025-12-01',sold:490,listed:1400,expired:294},{t:'2026-01-01',sold:600,listed:1800,expired:306},
-      {t:'2026-02-01',sold:780,listed:2400,expired:336},{t:'2026-03-01',sold:876,listed:2644,expired:317}
-    ]
-  }
+    priceData:[{t:'2024-04-01',v:1091000},{t:'2024-05-01',v:1105000},{t:'2024-06-01',v:1087000},{t:'2024-07-01',v:1037000},{t:'2024-08-01',v:1007000},{t:'2024-09-01',v:1046000},{t:'2024-10-01',v:1038000},{t:'2024-11-01',v:1025000},{t:'2024-12-01',v:993000},{t:'2025-01-01',v:979000},{t:'2025-02-01',v:1021000},{t:'2025-03-01',v:1025000},{t:'2025-04-01',v:1040000},{t:'2025-05-01',v:1053000},{t:'2025-06-01',v:1036000},{t:'2025-07-01',v:988000},{t:'2025-08-01',v:960000},{t:'2025-09-01',v:997000},{t:'2025-10-01',v:989000},{t:'2025-11-01',v:977000},{t:'2025-12-01',v:946000},{t:'2026-01-01',v:912000},{t:'2026-02-01',v:948000},{t:'2026-03-01',v:957000}],
+    volData:[{t:'2024-04-01',sold:1089,listed:3287,expired:394},{t:'2024-05-01',sold:1214,listed:3664,expired:440},{t:'2024-06-01',sold:1213,listed:3661,expired:439},{t:'2024-07-01',sold:1185,listed:3577,expired:429},{t:'2024-08-01',sold:1013,listed:3058,expired:367},{t:'2024-09-01',sold:1087,listed:3281,expired:394},{t:'2024-10-01',sold:1193,listed:3601,expired:432},{t:'2024-11-01',sold:973,listed:2937,expired:352},{t:'2024-12-01',sold:720,listed:2173,expired:261},{t:'2025-01-01',sold:664,listed:2004,expired:240},{t:'2025-02-01',sold:717,listed:2164,expired:260},{t:'2025-03-01',sold:862,listed:2602,expired:312},{t:'2025-04-01',sold:966,listed:2916,expired:350},{t:'2025-05-01',sold:1077,listed:3251,expired:390},{t:'2025-06-01',sold:1076,listed:3248,expired:390},{t:'2025-07-01',sold:1051,listed:3172,expired:381},{t:'2025-08-01',sold:898,listed:2710,expired:325},{t:'2025-09-01',sold:964,listed:2910,expired:349},{t:'2025-10-01',sold:1059,listed:3196,expired:384},{t:'2025-11-01',sold:863,listed:2605,expired:313},{t:'2025-12-01',sold:639,listed:1929,expired:231},{t:'2026-01-01',sold:532,listed:1606,expired:193},{t:'2026-02-01',sold:670,listed:2022,expired:243},{t:'2026-03-01',sold:876,listed:2644,expired:317}],
+    subMarkets:[{id:'brampton',name:'Brampton',price:'$892,085',change:'-6.7%',dir:'down'},{id:'caledon',name:'Caledon',price:'$1,359,992',change:'-6.7%',dir:'down'},{id:'mississauga',name:'Mississauga',price:'$966,615',change:'-6.7%',dir:'down'}]
+  },
+  'pickering': {
+    name:'Pickering', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$931,827', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$931,827',median:'$875,000',volume:'102',listings:'298',active:'377',snlr:'37.3%',moi:'4.0',dom:'25',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:1063000},{t:'2024-05-01',v:1076000},{t:'2024-06-01',v:1058000},{t:'2024-07-01',v:1010000},{t:'2024-08-01',v:981000},{t:'2024-09-01',v:1018000},{t:'2024-10-01',v:1011000},{t:'2024-11-01',v:999000},{t:'2024-12-01',v:967000},{t:'2025-01-01',v:953000},{t:'2025-02-01',v:995000},{t:'2025-03-01',v:998000},{t:'2025-04-01',v:1013000},{t:'2025-05-01',v:1026000},{t:'2025-06-01',v:1009000},{t:'2025-07-01',v:963000},{t:'2025-08-01',v:935000},{t:'2025-09-01',v:971000},{t:'2025-10-01',v:964000},{t:'2025-11-01',v:952000},{t:'2025-12-01',v:922000},{t:'2026-01-01',v:889000},{t:'2026-02-01',v:923000},{t:'2026-03-01',v:932000}],
+    volData:[{t:'2024-04-01',sold:127,listed:371,expired:45},{t:'2024-05-01',sold:141,listed:412,expired:49},{t:'2024-06-01',sold:141,listed:412,expired:49},{t:'2024-07-01',sold:138,listed:403,expired:48},{t:'2024-08-01',sold:118,listed:345,expired:41},{t:'2024-09-01',sold:127,listed:371,expired:45},{t:'2024-10-01',sold:139,listed:406,expired:49},{t:'2024-11-01',sold:113,listed:330,expired:40},{t:'2024-12-01',sold:84,listed:245,expired:29},{t:'2025-01-01',sold:77,listed:225,expired:27},{t:'2025-02-01',sold:84,listed:245,expired:29},{t:'2025-03-01',sold:100,listed:292,expired:35},{t:'2025-04-01',sold:112,listed:327,expired:39},{t:'2025-05-01',sold:125,listed:365,expired:44},{t:'2025-06-01',sold:125,listed:365,expired:44},{t:'2025-07-01',sold:122,listed:356,expired:43},{t:'2025-08-01',sold:105,listed:307,expired:37},{t:'2025-09-01',sold:112,listed:327,expired:39},{t:'2025-10-01',sold:123,listed:359,expired:43},{t:'2025-11-01',sold:101,listed:295,expired:35},{t:'2025-12-01',sold:74,listed:216,expired:26},{t:'2026-01-01',sold:62,listed:181,expired:22},{t:'2026-02-01',sold:78,listed:228,expired:27},{t:'2026-03-01',sold:102,listed:298,expired:36}]
+  },
+  'richmond-hill': {
+    name:'Richmond Hill', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,219,863', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,219,863',median:'$1,120,000',volume:'159',listings:'533',active:'848',snlr:'29.3%',moi:'6.3',dom:'30',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1391000},{t:'2024-05-01',v:1409000},{t:'2024-06-01',v:1385000},{t:'2024-07-01',v:1322000},{t:'2024-08-01',v:1284000},{t:'2024-09-01',v:1333000},{t:'2024-10-01',v:1323000},{t:'2024-11-01',v:1307000},{t:'2024-12-01',v:1266000},{t:'2025-01-01',v:1248000},{t:'2025-02-01',v:1302000},{t:'2025-03-01',v:1307000},{t:'2025-04-01',v:1326000},{t:'2025-05-01',v:1343000},{t:'2025-06-01',v:1321000},{t:'2025-07-01',v:1260000},{t:'2025-08-01',v:1224000},{t:'2025-09-01',v:1271000},{t:'2025-10-01',v:1262000},{t:'2025-11-01',v:1246000},{t:'2025-12-01',v:1206000},{t:'2026-01-01',v:1163000},{t:'2026-02-01',v:1209000},{t:'2026-03-01',v:1220000}],
+    volData:[{t:'2024-04-01',sold:198,listed:664,expired:80},{t:'2024-05-01',sold:220,listed:737,expired:88},{t:'2024-06-01',sold:220,listed:737,expired:88},{t:'2024-07-01',sold:215,listed:721,expired:87},{t:'2024-08-01',sold:184,listed:617,expired:74},{t:'2024-09-01',sold:197,listed:660,expired:79},{t:'2024-10-01',sold:217,listed:727,expired:87},{t:'2024-11-01',sold:177,listed:593,expired:71},{t:'2024-12-01',sold:131,listed:439,expired:53},{t:'2025-01-01',sold:121,listed:406,expired:49},{t:'2025-02-01',sold:130,listed:436,expired:52},{t:'2025-03-01',sold:156,listed:523,expired:63},{t:'2025-04-01',sold:175,listed:587,expired:70},{t:'2025-05-01',sold:196,listed:657,expired:79},{t:'2025-06-01',sold:195,listed:654,expired:78},{t:'2025-07-01',sold:191,listed:640,expired:77},{t:'2025-08-01',sold:163,listed:546,expired:66},{t:'2025-09-01',sold:175,listed:587,expired:70},{t:'2025-10-01',sold:192,listed:644,expired:77},{t:'2025-11-01',sold:157,listed:526,expired:63},{t:'2025-12-01',sold:116,listed:389,expired:47},{t:'2026-01-01',sold:97,listed:325,expired:39},{t:'2026-02-01',sold:122,listed:409,expired:49},{t:'2026-03-01',sold:159,listed:533,expired:64}]
+  },
+  'scugog': {
+    name:'Scugog', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$1,049,308', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,049,308',median:'$854,000',volume:'13',listings:'51',active:'92',snlr:'36.3%',moi:'4.9',dom:'32',splp:'95%'},
+    priceData:[{t:'2024-04-01',v:1197000},{t:'2024-05-01',v:1212000},{t:'2024-06-01',v:1192000},{t:'2024-07-01',v:1137000},{t:'2024-08-01',v:1105000},{t:'2024-09-01',v:1147000},{t:'2024-10-01',v:1138000},{t:'2024-11-01',v:1124000},{t:'2024-12-01',v:1089000},{t:'2025-01-01',v:1073000},{t:'2025-02-01',v:1120000},{t:'2025-03-01',v:1124000},{t:'2025-04-01',v:1141000},{t:'2025-05-01',v:1155000},{t:'2025-06-01',v:1136000},{t:'2025-07-01',v:1084000},{t:'2025-08-01',v:1053000},{t:'2025-09-01',v:1093000},{t:'2025-10-01',v:1085000},{t:'2025-11-01',v:1072000},{t:'2025-12-01',v:1038000},{t:'2026-01-01',v:1001000},{t:'2026-02-01',v:1040000},{t:'2026-03-01',v:1049000}],
+    volData:[{t:'2024-04-01',sold:16,listed:63,expired:8},{t:'2024-05-01',sold:18,listed:71,expired:9},{t:'2024-06-01',sold:18,listed:71,expired:9},{t:'2024-07-01',sold:18,listed:71,expired:9},{t:'2024-08-01',sold:15,listed:59,expired:7},{t:'2024-09-01',sold:16,listed:63,expired:8},{t:'2024-10-01',sold:18,listed:71,expired:9},{t:'2024-11-01',sold:14,listed:55,expired:7},{t:'2024-12-01',sold:11,listed:43,expired:5},{t:'2025-01-01',sold:10,listed:39,expired:5},{t:'2025-02-01',sold:11,listed:43,expired:5},{t:'2025-03-01',sold:13,listed:51,expired:6},{t:'2025-04-01',sold:14,listed:55,expired:7},{t:'2025-05-01',sold:16,listed:63,expired:8},{t:'2025-06-01',sold:16,listed:63,expired:8},{t:'2025-07-01',sold:16,listed:63,expired:8},{t:'2025-08-01',sold:13,listed:51,expired:6},{t:'2025-09-01',sold:14,listed:55,expired:7},{t:'2025-10-01',sold:16,listed:63,expired:8},{t:'2025-11-01',sold:13,listed:51,expired:6},{t:'2025-12-01',sold:9,listed:35,expired:4},{t:'2026-01-01',sold:8,listed:31,expired:4},{t:'2026-02-01',sold:10,listed:39,expired:5},{t:'2026-03-01',sold:13,listed:51,expired:6}]
+  },
+  'simcoe-county': {
+    name:'Simcoe County', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$809,625', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$809,625',median:'$780,000',volume:'141',listings:'558',active:'949',snlr:'28.6%',moi:'6.7',dom:'42',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:923000},{t:'2024-05-01',v:935000},{t:'2024-06-01',v:919000},{t:'2024-07-01',v:878000},{t:'2024-08-01',v:852000},{t:'2024-09-01',v:885000},{t:'2024-10-01',v:878000},{t:'2024-11-01',v:868000},{t:'2024-12-01',v:840000},{t:'2025-01-01',v:828000},{t:'2025-02-01',v:864000},{t:'2025-03-01',v:867000},{t:'2025-04-01',v:880000},{t:'2025-05-01',v:892000},{t:'2025-06-01',v:877000},{t:'2025-07-01',v:837000},{t:'2025-08-01',v:812000},{t:'2025-09-01',v:843000},{t:'2025-10-01',v:837000},{t:'2025-11-01',v:827000},{t:'2025-12-01',v:801000},{t:'2026-01-01',v:772000},{t:'2026-02-01',v:802000},{t:'2026-03-01',v:810000}],
+    volData:[{t:'2024-04-01',sold:175,listed:693,expired:83},{t:'2024-05-01',sold:195,listed:772,expired:93},{t:'2024-06-01',sold:195,listed:772,expired:93},{t:'2024-07-01',sold:191,listed:756,expired:91},{t:'2024-08-01',sold:163,listed:645,expired:77},{t:'2024-09-01',sold:175,listed:693,expired:83},{t:'2024-10-01',sold:192,listed:760,expired:91},{t:'2024-11-01',sold:157,listed:621,expired:75},{t:'2024-12-01',sold:116,listed:459,expired:55},{t:'2025-01-01',sold:107,listed:423,expired:51},{t:'2025-02-01',sold:115,listed:455,expired:55},{t:'2025-03-01',sold:139,listed:550,expired:66},{t:'2025-04-01',sold:155,listed:613,expired:74},{t:'2025-05-01',sold:173,listed:685,expired:82},{t:'2025-06-01',sold:173,listed:685,expired:82},{t:'2025-07-01',sold:169,listed:669,expired:80},{t:'2025-08-01',sold:145,listed:574,expired:69},{t:'2025-09-01',sold:155,listed:613,expired:74},{t:'2025-10-01',sold:170,listed:673,expired:81},{t:'2025-11-01',sold:139,listed:550,expired:66},{t:'2025-12-01',sold:103,listed:408,expired:49},{t:'2026-01-01',sold:86,listed:340,expired:41},{t:'2026-02-01',sold:108,listed:427,expired:51},{t:'2026-03-01',sold:141,listed:558,expired:67}],
+    subMarkets:[{id:'adjala-tosorontio',name:'Adjala-Tosorontio',price:'$1,223,800',change:'-6.6%',dir:'down'},{id:'bradford',name:'Bradford',price:'$896,638',change:'-6.7%',dir:'down'},{id:'essa',name:'Essa',price:'$707,861',change:'-6.6%',dir:'down'},{id:'innisfil',name:'Innisfil',price:'$775,001',change:'-6.6%',dir:'down'},{id:'new-tecumseth',name:'New Tecumseth',price:'$760,135',change:'-6.6%',dir:'down'}]
+  },
+  'stouffville': {
+    name:'Stouffville', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,248,851', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,248,851',median:'$1,107,240',volume:'46',listings:'119',active:'194',snlr:'35.1%',moi:'5.2',dom:'27',splp:'96%'},
+    priceData:[{t:'2024-04-01',v:1424000},{t:'2024-05-01',v:1443000},{t:'2024-06-01',v:1418000},{t:'2024-07-01',v:1354000},{t:'2024-08-01',v:1315000},{t:'2024-09-01',v:1365000},{t:'2024-10-01',v:1355000},{t:'2024-11-01',v:1338000},{t:'2024-12-01',v:1296000},{t:'2025-01-01',v:1278000},{t:'2025-02-01',v:1333000},{t:'2025-03-01',v:1338000},{t:'2025-04-01',v:1358000},{t:'2025-05-01',v:1375000},{t:'2025-06-01',v:1352000},{t:'2025-07-01',v:1290000},{t:'2025-08-01',v:1253000},{t:'2025-09-01',v:1301000},{t:'2025-10-01',v:1292000},{t:'2025-11-01',v:1276000},{t:'2025-12-01',v:1235000},{t:'2026-01-01',v:1191000},{t:'2026-02-01',v:1237000},{t:'2026-03-01',v:1249000}],
+    volData:[{t:'2024-04-01',sold:57,listed:147,expired:18},{t:'2024-05-01',sold:64,listed:166,expired:20},{t:'2024-06-01',sold:64,listed:166,expired:20},{t:'2024-07-01',sold:62,listed:160,expired:19},{t:'2024-08-01',sold:53,listed:137,expired:16},{t:'2024-09-01',sold:57,listed:147,expired:18},{t:'2024-10-01',sold:63,listed:163,expired:20},{t:'2024-11-01',sold:51,listed:132,expired:16},{t:'2024-12-01',sold:38,listed:98,expired:12},{t:'2025-01-01',sold:35,listed:91,expired:11},{t:'2025-02-01',sold:38,listed:98,expired:12},{t:'2025-03-01',sold:45,listed:116,expired:14},{t:'2025-04-01',sold:51,listed:132,expired:16},{t:'2025-05-01',sold:57,listed:147,expired:18},{t:'2025-06-01',sold:57,listed:147,expired:18},{t:'2025-07-01',sold:55,listed:142,expired:17},{t:'2025-08-01',sold:47,listed:122,expired:15},{t:'2025-09-01',sold:51,listed:132,expired:16},{t:'2025-10-01',sold:56,listed:145,expired:17},{t:'2025-11-01',sold:45,listed:116,expired:14},{t:'2025-12-01',sold:34,listed:88,expired:11},{t:'2026-01-01',sold:28,listed:72,expired:9},{t:'2026-02-01',sold:35,listed:91,expired:11},{t:'2026-03-01',sold:46,listed:119,expired:14}]
+  },
+  'toronto': {
+    name:'City of Toronto (416)', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$1,022,874', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,022,874',median:'$795,000',volume:'1,913',listings:'5,301',active:'8,189',snlr:'34.9%',moi:'5.0',dom:'31',splp:'99%'},
+    priceData:[{t:'2024-04-01',v:1167000},{t:'2024-05-01',v:1182000},{t:'2024-06-01',v:1162000},{t:'2024-07-01',v:1109000},{t:'2024-08-01',v:1077000},{t:'2024-09-01',v:1118000},{t:'2024-10-01',v:1110000},{t:'2024-11-01',v:1096000},{t:'2024-12-01',v:1061000},{t:'2025-01-01',v:1046000},{t:'2025-02-01',v:1092000},{t:'2025-03-01',v:1096000},{t:'2025-04-01',v:1112000},{t:'2025-05-01',v:1126000},{t:'2025-06-01',v:1107000},{t:'2025-07-01',v:1057000},{t:'2025-08-01',v:1026000},{t:'2025-09-01',v:1066000},{t:'2025-10-01',v:1058000},{t:'2025-11-01',v:1045000},{t:'2025-12-01',v:1012000},{t:'2026-01-01',v:976000},{t:'2026-02-01',v:1013000},{t:'2026-03-01',v:1023000}],
+    volData:[{t:'2024-04-01',sold:2378,listed:6590,expired:791},{t:'2024-05-01',sold:2652,listed:7349,expired:882},{t:'2024-06-01',sold:2650,listed:7343,expired:881},{t:'2024-07-01',sold:2588,listed:7171,expired:861},{t:'2024-08-01',sold:2212,listed:6130,expired:736},{t:'2024-09-01',sold:2373,listed:6576,expired:789},{t:'2024-10-01',sold:2606,listed:7221,expired:867},{t:'2024-11-01',sold:2126,listed:5891,expired:707},{t:'2024-12-01',sold:1573,listed:4359,expired:523},{t:'2025-01-01',sold:1450,listed:4018,expired:482},{t:'2025-02-01',sold:1567,listed:4342,expired:521},{t:'2025-03-01',sold:1881,listed:5212,expired:625},{t:'2025-04-01',sold:2109,listed:5844,expired:701},{t:'2025-05-01',sold:2352,listed:6517,expired:782},{t:'2025-06-01',sold:2351,listed:6515,expired:782},{t:'2025-07-01',sold:2296,listed:6362,expired:763},{t:'2025-08-01',sold:1962,listed:5437,expired:652},{t:'2025-09-01',sold:2105,listed:5833,expired:700},{t:'2025-10-01',sold:2312,listed:6407,expired:769},{t:'2025-11-01',sold:1886,listed:5226,expired:627},{t:'2025-12-01',sold:1395,listed:3866,expired:464},{t:'2026-01-01',sold:1162,listed:3220,expired:386},{t:'2026-02-01',sold:1464,listed:4057,expired:487},{t:'2026-03-01',sold:1913,listed:5301,expired:636}],
+    subMarkets:[{id:'toronto-west',name:'Toronto West (W)',price:'$1,061,204',change:'-6.7%',dir:'down'},{id:'toronto-central',name:'Toronto Central (C)',price:'$1,045,503',change:'-6.6%',dir:'down'},{id:'toronto-east',name:'Toronto East (E)',price:'$934,946',change:'-6.7%',dir:'down'}]
+  },
+  'toronto-c01': {
+    name:'C01 Downtown West/Liberty', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$811,594', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$811,594',median:'$666,000',volume:'266',listings:'800',active:'1,245',snlr:'32.6%',moi:'5.8',dom:'34',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:926000},{t:'2024-05-01',v:938000},{t:'2024-06-01',v:922000},{t:'2024-07-01',v:880000},{t:'2024-08-01',v:854000},{t:'2024-09-01',v:887000},{t:'2024-10-01',v:880000},{t:'2024-11-01',v:870000},{t:'2024-12-01',v:842000},{t:'2025-01-01',v:830000},{t:'2025-02-01',v:866000},{t:'2025-03-01',v:869000},{t:'2025-04-01',v:882000},{t:'2025-05-01',v:894000},{t:'2025-06-01',v:879000},{t:'2025-07-01',v:839000},{t:'2025-08-01',v:814000},{t:'2025-09-01',v:846000},{t:'2025-10-01',v:839000},{t:'2025-11-01',v:829000},{t:'2025-12-01',v:803000},{t:'2026-01-01',v:774000},{t:'2026-02-01',v:804000},{t:'2026-03-01',v:812000}],
+    volData:[{t:'2024-04-01',sold:331,listed:995,expired:119},{t:'2024-05-01',sold:369,listed:1110,expired:133},{t:'2024-06-01',sold:368,listed:1107,expired:133},{t:'2024-07-01',sold:360,listed:1083,expired:130},{t:'2024-08-01',sold:308,listed:926,expired:111},{t:'2024-09-01',sold:330,listed:992,expired:119},{t:'2024-10-01',sold:362,listed:1089,expired:131},{t:'2024-11-01',sold:296,listed:890,expired:107},{t:'2024-12-01',sold:219,listed:659,expired:79},{t:'2025-01-01',sold:202,listed:608,expired:73},{t:'2025-02-01',sold:218,listed:656,expired:79},{t:'2025-03-01',sold:262,listed:788,expired:95},{t:'2025-04-01',sold:293,listed:881,expired:106},{t:'2025-05-01',sold:327,listed:983,expired:118},{t:'2025-06-01',sold:327,listed:983,expired:118},{t:'2025-07-01',sold:319,listed:959,expired:115},{t:'2025-08-01',sold:273,listed:821,expired:99},{t:'2025-09-01',sold:293,listed:881,expired:106},{t:'2025-10-01',sold:321,listed:965,expired:116},{t:'2025-11-01',sold:262,listed:788,expired:95},{t:'2025-12-01',sold:194,listed:583,expired:70},{t:'2026-01-01',sold:162,listed:487,expired:58},{t:'2026-02-01',sold:203,listed:611,expired:73},{t:'2026-03-01',sold:266,listed:800,expired:96}]
+  },
+  'toronto-c02': {
+    name:'C02 Yorkville/Annex', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$1,420,908', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,420,908',median:'$1,227,500',volume:'64',listings:'178',active:'316',snlr:'30.6%',moi:'6.4',dom:'36',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1620000},{t:'2024-05-01',v:1641000},{t:'2024-06-01',v:1614000},{t:'2024-07-01',v:1540000},{t:'2024-08-01',v:1496000},{t:'2024-09-01',v:1553000},{t:'2024-10-01',v:1541000},{t:'2024-11-01',v:1523000},{t:'2024-12-01',v:1474000},{t:'2025-01-01',v:1454000},{t:'2025-02-01',v:1517000},{t:'2025-03-01',v:1522000},{t:'2025-04-01',v:1545000},{t:'2025-05-01',v:1565000},{t:'2025-06-01',v:1538000},{t:'2025-07-01',v:1468000},{t:'2025-08-01',v:1426000},{t:'2025-09-01',v:1480000},{t:'2025-10-01',v:1469000},{t:'2025-11-01',v:1452000},{t:'2025-12-01',v:1405000},{t:'2026-01-01',v:1355000},{t:'2026-02-01',v:1408000},{t:'2026-03-01',v:1421000}],
+    volData:[{t:'2024-04-01',sold:80,listed:222,expired:27},{t:'2024-05-01',sold:89,listed:248,expired:30},{t:'2024-06-01',sold:89,listed:248,expired:30},{t:'2024-07-01',sold:87,listed:242,expired:29},{t:'2024-08-01',sold:74,listed:206,expired:25},{t:'2024-09-01',sold:79,listed:220,expired:26},{t:'2024-10-01',sold:87,listed:242,expired:29},{t:'2024-11-01',sold:71,listed:197,expired:24},{t:'2024-12-01',sold:53,listed:147,expired:18},{t:'2025-01-01',sold:49,listed:136,expired:16},{t:'2025-02-01',sold:52,listed:145,expired:17},{t:'2025-03-01',sold:63,listed:175,expired:21},{t:'2025-04-01',sold:71,listed:197,expired:24},{t:'2025-05-01',sold:79,listed:220,expired:26},{t:'2025-06-01',sold:79,listed:220,expired:26},{t:'2025-07-01',sold:77,listed:214,expired:26},{t:'2025-08-01',sold:66,listed:184,expired:22},{t:'2025-09-01',sold:70,listed:195,expired:23},{t:'2025-10-01',sold:77,listed:214,expired:26},{t:'2025-11-01',sold:63,listed:175,expired:21},{t:'2025-12-01',sold:47,listed:131,expired:16},{t:'2026-01-01',sold:39,listed:108,expired:13},{t:'2026-02-01',sold:49,listed:136,expired:16},{t:'2026-03-01',sold:64,listed:178,expired:21}]
+  },
+  'toronto-c03': {
+    name:'C03 Forest Hill/Deer Park', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$1,506,387', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,506,387',median:'$1,405,000',volume:'37',listings:'106',active:'153',snlr:'36.2%',moi:'4.5',dom:'30',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1718000},{t:'2024-05-01',v:1740000},{t:'2024-06-01',v:1711000},{t:'2024-07-01',v:1633000},{t:'2024-08-01',v:1586000},{t:'2024-09-01',v:1646000},{t:'2024-10-01',v:1634000},{t:'2024-11-01',v:1614000},{t:'2024-12-01',v:1563000},{t:'2025-01-01',v:1541000},{t:'2025-02-01',v:1608000},{t:'2025-03-01',v:1614000},{t:'2025-04-01',v:1638000},{t:'2025-05-01',v:1659000},{t:'2025-06-01',v:1631000},{t:'2025-07-01',v:1556000},{t:'2025-08-01',v:1512000},{t:'2025-09-01',v:1569000},{t:'2025-10-01',v:1558000},{t:'2025-11-01',v:1539000},{t:'2025-12-01',v:1490000},{t:'2026-01-01',v:1437000},{t:'2026-02-01',v:1492000},{t:'2026-03-01',v:1506000}],
+    volData:[{t:'2024-04-01',sold:46,listed:132,expired:16},{t:'2024-05-01',sold:51,listed:146,expired:18},{t:'2024-06-01',sold:51,listed:146,expired:18},{t:'2024-07-01',sold:50,listed:143,expired:17},{t:'2024-08-01',sold:43,listed:123,expired:15},{t:'2024-09-01',sold:46,listed:132,expired:16},{t:'2024-10-01',sold:50,listed:143,expired:17},{t:'2024-11-01',sold:41,listed:117,expired:14},{t:'2024-12-01',sold:30,listed:86,expired:10},{t:'2025-01-01',sold:28,listed:80,expired:10},{t:'2025-02-01',sold:30,listed:86,expired:10},{t:'2025-03-01',sold:36,listed:103,expired:12},{t:'2025-04-01',sold:41,listed:117,expired:14},{t:'2025-05-01',sold:45,listed:129,expired:15},{t:'2025-06-01',sold:45,listed:129,expired:15},{t:'2025-07-01',sold:44,listed:126,expired:15},{t:'2025-08-01',sold:38,listed:109,expired:13},{t:'2025-09-01',sold:41,listed:117,expired:14},{t:'2025-10-01',sold:45,listed:129,expired:15},{t:'2025-11-01',sold:36,listed:103,expired:12},{t:'2025-12-01',sold:27,listed:77,expired:9},{t:'2026-01-01',sold:22,listed:63,expired:8},{t:'2026-02-01',sold:28,listed:80,expired:10},{t:'2026-03-01',sold:37,listed:106,expired:13}]
+  },
+  'toronto-c06': {
+    name:'C06 Bathurst Manor', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$763,268', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$763,268',median:'$590,000',volume:'25',listings:'58',active:'116',snlr:'32.6%',moi:'5.5',dom:'40',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:870000},{t:'2024-05-01',v:882000},{t:'2024-06-01',v:867000},{t:'2024-07-01',v:827000},{t:'2024-08-01',v:803000},{t:'2024-09-01',v:834000},{t:'2024-10-01',v:828000},{t:'2024-11-01',v:818000},{t:'2024-12-01',v:792000},{t:'2025-01-01',v:781000},{t:'2025-02-01',v:815000},{t:'2025-03-01',v:818000},{t:'2025-04-01',v:830000},{t:'2025-05-01',v:840000},{t:'2025-06-01',v:826000},{t:'2025-07-01',v:789000},{t:'2025-08-01',v:766000},{t:'2025-09-01',v:795000},{t:'2025-10-01',v:789000},{t:'2025-11-01',v:780000},{t:'2025-12-01',v:755000},{t:'2026-01-01',v:728000},{t:'2026-02-01',v:756000},{t:'2026-03-01',v:763000}],
+    volData:[{t:'2024-04-01',sold:31,listed:72,expired:9},{t:'2024-05-01',sold:35,listed:81,expired:10},{t:'2024-06-01',sold:35,listed:81,expired:10},{t:'2024-07-01',sold:34,listed:79,expired:9},{t:'2024-08-01',sold:29,listed:67,expired:8},{t:'2024-09-01',sold:31,listed:72,expired:9},{t:'2024-10-01',sold:34,listed:79,expired:9},{t:'2024-11-01',sold:28,listed:65,expired:8},{t:'2024-12-01',sold:21,listed:49,expired:6},{t:'2025-01-01',sold:19,listed:44,expired:5},{t:'2025-02-01',sold:20,listed:46,expired:6},{t:'2025-03-01',sold:25,listed:58,expired:7},{t:'2025-04-01',sold:28,listed:65,expired:8},{t:'2025-05-01',sold:31,listed:72,expired:9},{t:'2025-06-01',sold:31,listed:72,expired:9},{t:'2025-07-01',sold:30,listed:70,expired:8},{t:'2025-08-01',sold:26,listed:60,expired:7},{t:'2025-09-01',sold:28,listed:65,expired:8},{t:'2025-10-01',sold:30,listed:70,expired:8},{t:'2025-11-01',sold:25,listed:58,expired:7},{t:'2025-12-01',sold:18,listed:42,expired:5},{t:'2026-01-01',sold:15,listed:35,expired:4},{t:'2026-02-01',sold:19,listed:44,expired:5},{t:'2026-03-01',sold:25,listed:58,expired:7}]
+  },
+  'toronto-c07': {
+    name:'C07 Willowdale West', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$863,224', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$863,224',median:'$709,830',volume:'56',listings:'174',active:'296',snlr:'29.9%',moi:'6.6',dom:'34',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:984000},{t:'2024-05-01',v:997000},{t:'2024-06-01',v:980000},{t:'2024-07-01',v:936000},{t:'2024-08-01',v:909000},{t:'2024-09-01',v:943000},{t:'2024-10-01',v:936000},{t:'2024-11-01',v:925000},{t:'2024-12-01',v:896000},{t:'2025-01-01',v:883000},{t:'2025-02-01',v:922000},{t:'2025-03-01',v:925000},{t:'2025-04-01',v:938000},{t:'2025-05-01',v:951000},{t:'2025-06-01',v:935000},{t:'2025-07-01',v:892000},{t:'2025-08-01',v:866000},{t:'2025-09-01',v:899000},{t:'2025-10-01',v:893000},{t:'2025-11-01',v:882000},{t:'2025-12-01',v:854000},{t:'2026-01-01',v:823000},{t:'2026-02-01',v:855000},{t:'2026-03-01',v:863000}],
+    volData:[{t:'2024-04-01',sold:70,listed:218,expired:26},{t:'2024-05-01',sold:78,listed:242,expired:29},{t:'2024-06-01',sold:78,listed:242,expired:29},{t:'2024-07-01',sold:76,listed:236,expired:28},{t:'2024-08-01',sold:65,listed:202,expired:24},{t:'2024-09-01',sold:69,listed:214,expired:26},{t:'2024-10-01',sold:76,listed:236,expired:28},{t:'2024-11-01',sold:62,listed:193,expired:23},{t:'2024-12-01',sold:46,listed:143,expired:17},{t:'2025-01-01',sold:42,listed:130,expired:16},{t:'2025-02-01',sold:46,listed:143,expired:17},{t:'2025-03-01',sold:55,listed:171,expired:21},{t:'2025-04-01',sold:62,listed:193,expired:23},{t:'2025-05-01',sold:69,listed:214,expired:26},{t:'2025-06-01',sold:69,listed:214,expired:26},{t:'2025-07-01',sold:67,listed:208,expired:25},{t:'2025-08-01',sold:57,listed:177,expired:21},{t:'2025-09-01',sold:62,listed:193,expired:23},{t:'2025-10-01',sold:68,listed:211,expired:25},{t:'2025-11-01',sold:55,listed:171,expired:21},{t:'2025-12-01',sold:41,listed:127,expired:15},{t:'2026-01-01',sold:34,listed:106,expired:13},{t:'2026-02-01',sold:43,listed:134,expired:16},{t:'2026-03-01',sold:56,listed:174,expired:21}]
+  },
+  'toronto-c08': {
+    name:'C08 St. Lawrence/Moss Park', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$639,106', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$639,106',median:'$575,000',volume:'141',listings:'453',active:'787',snlr:'27.9%',moi:'7.0',dom:'35',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:729000},{t:'2024-05-01',v:738000},{t:'2024-06-01',v:726000},{t:'2024-07-01',v:693000},{t:'2024-08-01',v:673000},{t:'2024-09-01',v:698000},{t:'2024-10-01',v:693000},{t:'2024-11-01',v:685000},{t:'2024-12-01',v:663000},{t:'2025-01-01',v:654000},{t:'2025-02-01',v:682000},{t:'2025-03-01',v:685000},{t:'2025-04-01',v:695000},{t:'2025-05-01',v:704000},{t:'2025-06-01',v:692000},{t:'2025-07-01',v:660000},{t:'2025-08-01',v:641000},{t:'2025-09-01',v:666000},{t:'2025-10-01',v:661000},{t:'2025-11-01',v:653000},{t:'2025-12-01',v:632000},{t:'2026-01-01',v:610000},{t:'2026-02-01',v:633000},{t:'2026-03-01',v:639000}],
+    volData:[{t:'2024-04-01',sold:175,listed:562,expired:67},{t:'2024-05-01',sold:195,listed:626,expired:75},{t:'2024-06-01',sold:195,listed:626,expired:75},{t:'2024-07-01',sold:191,listed:614,expired:74},{t:'2024-08-01',sold:163,listed:524,expired:63},{t:'2024-09-01',sold:175,listed:562,expired:67},{t:'2024-10-01',sold:192,listed:617,expired:74},{t:'2024-11-01',sold:157,listed:504,expired:60},{t:'2024-12-01',sold:116,listed:373,expired:45},{t:'2025-01-01',sold:107,listed:344,expired:41},{t:'2025-02-01',sold:115,listed:369,expired:44},{t:'2025-03-01',sold:139,listed:447,expired:54},{t:'2025-04-01',sold:155,listed:498,expired:60},{t:'2025-05-01',sold:173,listed:556,expired:67},{t:'2025-06-01',sold:173,listed:556,expired:67},{t:'2025-07-01',sold:169,listed:543,expired:65},{t:'2025-08-01',sold:145,listed:466,expired:56},{t:'2025-09-01',sold:155,listed:498,expired:60},{t:'2025-10-01',sold:170,listed:546,expired:66},{t:'2025-11-01',sold:139,listed:447,expired:54},{t:'2025-12-01',sold:103,listed:331,expired:40},{t:'2026-01-01',sold:86,listed:276,expired:33},{t:'2026-02-01',sold:108,listed:347,expired:42},{t:'2026-03-01',sold:141,listed:453,expired:54}]
+  },
+  'toronto-c10': {
+    name:'C10 Mt Pleasant East', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$993,370', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$993,370',median:'$732,500',volume:'50',listings:'141',active:'196',snlr:'36.0%',moi:'4.2',dom:'24',splp:'101%'},
+    priceData:[{t:'2024-04-01',v:1133000},{t:'2024-05-01',v:1147000},{t:'2024-06-01',v:1128000},{t:'2024-07-01',v:1077000},{t:'2024-08-01',v:1046000},{t:'2024-09-01',v:1086000},{t:'2024-10-01',v:1078000},{t:'2024-11-01',v:1065000},{t:'2024-12-01',v:1031000},{t:'2025-01-01',v:1016000},{t:'2025-02-01',v:1061000},{t:'2025-03-01',v:1064000},{t:'2025-04-01',v:1080000},{t:'2025-05-01',v:1094000},{t:'2025-06-01',v:1075000},{t:'2025-07-01',v:1026000},{t:'2025-08-01',v:997000},{t:'2025-09-01',v:1035000},{t:'2025-10-01',v:1027000},{t:'2025-11-01',v:1015000},{t:'2025-12-01',v:982000},{t:'2026-01-01',v:947000},{t:'2026-02-01',v:984000},{t:'2026-03-01',v:993000}],
+    volData:[{t:'2024-04-01',sold:62,listed:175,expired:21},{t:'2024-05-01',sold:69,listed:195,expired:23},{t:'2024-06-01',sold:69,listed:195,expired:23},{t:'2024-07-01',sold:68,listed:192,expired:23},{t:'2024-08-01',sold:58,listed:164,expired:20},{t:'2024-09-01',sold:62,listed:175,expired:21},{t:'2024-10-01',sold:68,listed:192,expired:23},{t:'2024-11-01',sold:56,listed:158,expired:19},{t:'2024-12-01',sold:41,listed:116,expired:14},{t:'2025-01-01',sold:38,listed:107,expired:13},{t:'2025-02-01',sold:41,listed:116,expired:14},{t:'2025-03-01',sold:49,listed:138,expired:17},{t:'2025-04-01',sold:55,listed:155,expired:19},{t:'2025-05-01',sold:61,listed:172,expired:21},{t:'2025-06-01',sold:61,listed:172,expired:21},{t:'2025-07-01',sold:60,listed:169,expired:20},{t:'2025-08-01',sold:51,listed:144,expired:17},{t:'2025-09-01',sold:55,listed:155,expired:19},{t:'2025-10-01',sold:60,listed:169,expired:20},{t:'2025-11-01',sold:49,listed:138,expired:17},{t:'2025-12-01',sold:36,listed:102,expired:12},{t:'2026-01-01',sold:30,listed:85,expired:10},{t:'2026-02-01',sold:38,listed:107,expired:13},{t:'2026-03-01',sold:50,listed:141,expired:17}]
+  },
+  'toronto-c11': {
+    name:'C11 Leaside/Thorncliffe', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$1,016,029', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,016,029',median:'$536,250',volume:'28',listings:'61',active:'81',snlr:'35.4%',moi:'4.9',dom:'34',splp:'99%'},
+    priceData:[{t:'2024-04-01',v:1159000},{t:'2024-05-01',v:1174000},{t:'2024-06-01',v:1154000},{t:'2024-07-01',v:1101000},{t:'2024-08-01',v:1070000},{t:'2024-09-01',v:1110000},{t:'2024-10-01',v:1102000},{t:'2024-11-01',v:1089000},{t:'2024-12-01',v:1054000},{t:'2025-01-01',v:1039000},{t:'2025-02-01',v:1085000},{t:'2025-03-01',v:1088000},{t:'2025-04-01',v:1105000},{t:'2025-05-01',v:1119000},{t:'2025-06-01',v:1100000},{t:'2025-07-01',v:1050000},{t:'2025-08-01',v:1020000},{t:'2025-09-01',v:1059000},{t:'2025-10-01',v:1051000},{t:'2025-11-01',v:1038000},{t:'2025-12-01',v:1005000},{t:'2026-01-01',v:969000},{t:'2026-02-01',v:1007000},{t:'2026-03-01',v:1016000}],
+    volData:[{t:'2024-04-01',sold:35,listed:76,expired:9},{t:'2024-05-01',sold:39,listed:85,expired:10},{t:'2024-06-01',sold:39,listed:85,expired:10},{t:'2024-07-01',sold:38,listed:83,expired:10},{t:'2024-08-01',sold:32,listed:70,expired:8},{t:'2024-09-01',sold:35,listed:76,expired:9},{t:'2024-10-01',sold:38,listed:83,expired:10},{t:'2024-11-01',sold:31,listed:68,expired:8},{t:'2024-12-01',sold:23,listed:50,expired:6},{t:'2025-01-01',sold:21,listed:46,expired:6},{t:'2025-02-01',sold:23,listed:50,expired:6},{t:'2025-03-01',sold:28,listed:61,expired:7},{t:'2025-04-01',sold:31,listed:68,expired:8},{t:'2025-05-01',sold:34,listed:74,expired:9},{t:'2025-06-01',sold:34,listed:74,expired:9},{t:'2025-07-01',sold:34,listed:74,expired:9},{t:'2025-08-01',sold:29,listed:63,expired:8},{t:'2025-09-01',sold:31,listed:68,expired:8},{t:'2025-10-01',sold:34,listed:74,expired:9},{t:'2025-11-01',sold:28,listed:61,expired:7},{t:'2025-12-01',sold:20,listed:44,expired:5},{t:'2026-01-01',sold:17,listed:37,expired:4},{t:'2026-02-01',sold:21,listed:46,expired:6},{t:'2026-03-01',sold:28,listed:61,expired:7}]
+  },
+  'toronto-c12': {
+    name:'C12 Bridle Path/York Mills', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$3,337,750', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$3,337,750',median:'$2,234,000',volume:'16',listings:'66',active:'163',snlr:'24.2%',moi:'10.3',dom:'34',splp:'93%'},
+    priceData:[{t:'2024-04-01',v:3807000},{t:'2024-05-01',v:3856000},{t:'2024-06-01',v:3791000},{t:'2024-07-01',v:3618000},{t:'2024-08-01',v:3513000},{t:'2024-09-01',v:3648000},{t:'2024-10-01',v:3621000},{t:'2024-11-01',v:3577000},{t:'2024-12-01',v:3463000},{t:'2025-01-01',v:3414000},{t:'2025-02-01',v:3563000},{t:'2025-03-01',v:3576000},{t:'2025-04-01',v:3629000},{t:'2025-05-01',v:3675000},{t:'2025-06-01',v:3613000},{t:'2025-07-01',v:3449000},{t:'2025-08-01',v:3349000},{t:'2025-09-01',v:3477000},{t:'2025-10-01',v:3452000},{t:'2025-11-01',v:3410000},{t:'2025-12-01',v:3301000},{t:'2026-01-01',v:3183000},{t:'2026-02-01',v:3307000},{t:'2026-03-01',v:3338000}],
+    volData:[{t:'2024-04-01',sold:20,listed:82,expired:10},{t:'2024-05-01',sold:22,listed:91,expired:11},{t:'2024-06-01',sold:22,listed:91,expired:11},{t:'2024-07-01',sold:22,listed:91,expired:11},{t:'2024-08-01',sold:18,listed:74,expired:9},{t:'2024-09-01',sold:20,listed:82,expired:10},{t:'2024-10-01',sold:22,listed:91,expired:11},{t:'2024-11-01',sold:18,listed:74,expired:9},{t:'2024-12-01',sold:13,listed:54,expired:6},{t:'2025-01-01',sold:12,listed:50,expired:6},{t:'2025-02-01',sold:13,listed:54,expired:6},{t:'2025-03-01',sold:16,listed:66,expired:8},{t:'2025-04-01',sold:18,listed:74,expired:9},{t:'2025-05-01',sold:20,listed:82,expired:10},{t:'2025-06-01',sold:20,listed:82,expired:10},{t:'2025-07-01',sold:19,listed:78,expired:9},{t:'2025-08-01',sold:16,listed:66,expired:8},{t:'2025-09-01',sold:18,listed:74,expired:9},{t:'2025-10-01',sold:19,listed:78,expired:9},{t:'2025-11-01',sold:16,listed:66,expired:8},{t:'2025-12-01',sold:12,listed:50,expired:6},{t:'2026-01-01',sold:10,listed:41,expired:5},{t:'2026-02-01',sold:12,listed:50,expired:6},{t:'2026-03-01',sold:16,listed:66,expired:8}]
+  },
+  'toronto-c14': {
+    name:'C14 Willowdale East', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$1,046,940', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,046,940',median:'$708,000',volume:'72',listings:'220',active:'383',snlr:'29.1%',moi:'6.7',dom:'29',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1194000},{t:'2024-05-01',v:1209000},{t:'2024-06-01',v:1189000},{t:'2024-07-01',v:1135000},{t:'2024-08-01',v:1102000},{t:'2024-09-01',v:1144000},{t:'2024-10-01',v:1136000},{t:'2024-11-01',v:1122000},{t:'2024-12-01',v:1086000},{t:'2025-01-01',v:1071000},{t:'2025-02-01',v:1118000},{t:'2025-03-01',v:1122000},{t:'2025-04-01',v:1138000},{t:'2025-05-01',v:1153000},{t:'2025-06-01',v:1133000},{t:'2025-07-01',v:1082000},{t:'2025-08-01',v:1051000},{t:'2025-09-01',v:1091000},{t:'2025-10-01',v:1083000},{t:'2025-11-01',v:1070000},{t:'2025-12-01',v:1035000},{t:'2026-01-01',v:999000},{t:'2026-02-01',v:1037000},{t:'2026-03-01',v:1047000}],
+    volData:[{t:'2024-04-01',sold:89,listed:272,expired:33},{t:'2024-05-01',sold:100,listed:306,expired:37},{t:'2024-06-01',sold:100,listed:306,expired:37},{t:'2024-07-01',sold:97,listed:296,expired:36},{t:'2024-08-01',sold:83,listed:254,expired:30},{t:'2024-09-01',sold:89,listed:272,expired:33},{t:'2024-10-01',sold:98,listed:299,expired:36},{t:'2024-11-01',sold:80,listed:244,expired:29},{t:'2024-12-01',sold:59,listed:180,expired:22},{t:'2025-01-01',sold:55,listed:168,expired:20},{t:'2025-02-01',sold:59,listed:180,expired:22},{t:'2025-03-01',sold:71,listed:217,expired:26},{t:'2025-04-01',sold:79,listed:241,expired:29},{t:'2025-05-01',sold:89,listed:272,expired:33},{t:'2025-06-01',sold:88,listed:269,expired:32},{t:'2025-07-01',sold:86,listed:263,expired:32},{t:'2025-08-01',sold:74,listed:226,expired:27},{t:'2025-09-01',sold:79,listed:241,expired:29},{t:'2025-10-01',sold:87,listed:266,expired:32},{t:'2025-11-01',sold:71,listed:217,expired:26},{t:'2025-12-01',sold:53,listed:162,expired:19},{t:'2026-01-01',sold:44,listed:134,expired:16},{t:'2026-02-01',sold:55,listed:168,expired:20},{t:'2026-03-01',sold:72,listed:220,expired:26}]
+  },
+  'toronto-c15': {
+    name:'C15 Bayview Village', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-central',
+    price:'$875,566', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$875,566',median:'$709,400',volume:'95',listings:'268',active:'402',snlr:'32.6%',moi:'5.6',dom:'37',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:999000},{t:'2024-05-01',v:1011000},{t:'2024-06-01',v:994000},{t:'2024-07-01',v:949000},{t:'2024-08-01',v:922000},{t:'2024-09-01',v:957000},{t:'2024-10-01',v:950000},{t:'2024-11-01',v:938000},{t:'2024-12-01',v:908000},{t:'2025-01-01',v:896000},{t:'2025-02-01',v:935000},{t:'2025-03-01',v:938000},{t:'2025-04-01',v:952000},{t:'2025-05-01',v:964000},{t:'2025-06-01',v:948000},{t:'2025-07-01',v:905000},{t:'2025-08-01',v:879000},{t:'2025-09-01',v:912000},{t:'2025-10-01',v:905000},{t:'2025-11-01',v:894000},{t:'2025-12-01',v:866000},{t:'2026-01-01',v:835000},{t:'2026-02-01',v:867000},{t:'2026-03-01',v:876000}],
+    volData:[{t:'2024-04-01',sold:118,listed:333,expired:40},{t:'2024-05-01',sold:132,listed:372,expired:45},{t:'2024-06-01',sold:132,listed:372,expired:45},{t:'2024-07-01',sold:129,listed:364,expired:44},{t:'2024-08-01',sold:110,listed:310,expired:37},{t:'2024-09-01',sold:118,listed:333,expired:40},{t:'2024-10-01',sold:129,listed:364,expired:44},{t:'2024-11-01',sold:106,listed:299,expired:36},{t:'2024-12-01',sold:78,listed:220,expired:26},{t:'2025-01-01',sold:72,listed:203,expired:24},{t:'2025-02-01',sold:78,listed:220,expired:26},{t:'2025-03-01',sold:93,listed:262,expired:31},{t:'2025-04-01',sold:105,listed:296,expired:36},{t:'2025-05-01',sold:117,listed:330,expired:40},{t:'2025-06-01',sold:117,listed:330,expired:40},{t:'2025-07-01',sold:114,listed:322,expired:39},{t:'2025-08-01',sold:97,listed:274,expired:33},{t:'2025-09-01',sold:105,listed:296,expired:36},{t:'2025-10-01',sold:115,listed:324,expired:39},{t:'2025-11-01',sold:94,listed:265,expired:32},{t:'2025-12-01',sold:69,listed:195,expired:23},{t:'2026-01-01',sold:58,listed:164,expired:20},{t:'2026-02-01',sold:73,listed:206,expired:25},{t:'2026-03-01',sold:95,listed:268,expired:32}]
+  },
+  'toronto-central': {
+    name:'Toronto Central (C)', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto',
+    price:'$1,045,503', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,045,503',median:'$720,000',volume:'963',listings:'2,848',active:'4,666',snlr:'31.8%',moi:'5.9',dom:'33',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1192000},{t:'2024-05-01',v:1208000},{t:'2024-06-01',v:1187000},{t:'2024-07-01',v:1133000},{t:'2024-08-01',v:1101000},{t:'2024-09-01',v:1143000},{t:'2024-10-01',v:1134000},{t:'2024-11-01',v:1120000},{t:'2024-12-01',v:1085000},{t:'2025-01-01',v:1070000},{t:'2025-02-01',v:1116000},{t:'2025-03-01',v:1120000},{t:'2025-04-01',v:1137000},{t:'2025-05-01',v:1151000},{t:'2025-06-01',v:1132000},{t:'2025-07-01',v:1080000},{t:'2025-08-01',v:1049000},{t:'2025-09-01',v:1089000},{t:'2025-10-01',v:1081000},{t:'2025-11-01',v:1068000},{t:'2025-12-01',v:1034000},{t:'2026-01-01',v:997000},{t:'2026-02-01',v:1036000},{t:'2026-03-01',v:1046000}],
+    volData:[{t:'2024-04-01',sold:1197,listed:3540,expired:425},{t:'2024-05-01',sold:1335,listed:3948,expired:474},{t:'2024-06-01',sold:1334,listed:3945,expired:473},{t:'2024-07-01',sold:1303,listed:3854,expired:462},{t:'2024-08-01',sold:1113,listed:3292,expired:395},{t:'2024-09-01',sold:1195,listed:3534,expired:424},{t:'2024-10-01',sold:1312,listed:3880,expired:466},{t:'2024-11-01',sold:1070,listed:3164,expired:380},{t:'2024-12-01',sold:792,listed:2342,expired:281},{t:'2025-01-01',sold:730,listed:2159,expired:259},{t:'2025-02-01',sold:789,listed:2333,expired:280},{t:'2025-03-01',sold:947,listed:2801,expired:336},{t:'2025-04-01',sold:1062,listed:3141,expired:377},{t:'2025-05-01',sold:1184,listed:3502,expired:420},{t:'2025-06-01',sold:1183,listed:3499,expired:420},{t:'2025-07-01',sold:1156,listed:3419,expired:410},{t:'2025-08-01',sold:988,listed:2922,expired:351},{t:'2025-09-01',sold:1060,listed:3135,expired:376},{t:'2025-10-01',sold:1164,listed:3442,expired:413},{t:'2025-11-01',sold:949,listed:2807,expired:337},{t:'2025-12-01',sold:702,listed:2076,expired:249},{t:'2026-01-01',sold:585,listed:1730,expired:208},{t:'2026-02-01',sold:737,listed:2180,expired:262},{t:'2026-03-01',sold:963,listed:2848,expired:342}],
+    subMarkets:[{id:'toronto-c01',name:'C01 Downtown West/Liberty',price:'$811,594',change:'-6.6%',dir:'down'},{id:'toronto-c02',name:'C02 Yorkville/Annex',price:'$1,420,908',change:'-6.6%',dir:'down'},{id:'toronto-c03',name:'C03 Forest Hill/Deer Park',price:'$1,506,387',change:'-6.7%',dir:'down'},{id:'toronto-c06',name:'C06 Bathurst Manor',price:'$763,268',change:'-6.7%',dir:'down'},{id:'toronto-c07',name:'C07 Willowdale West',price:'$863,224',change:'-6.7%',dir:'down'},{id:'toronto-c08',name:'C08 St. Lawrence/Moss Park',price:'$639,106',change:'-6.7%',dir:'down'},{id:'toronto-c10',name:'C10 Mt Pleasant East',price:'$993,370',change:'-6.7%',dir:'down'},{id:'toronto-c11',name:'C11 Leaside/Thorncliffe',price:'$1,016,029',change:'-6.6%',dir:'down'},{id:'toronto-c12',name:'C12 Bridle Path/York Mills',price:'$3,337,750',change:'-6.7%',dir:'down'},{id:'toronto-c14',name:'C14 Willowdale East',price:'$1,046,940',change:'-6.7%',dir:'down'},{id:'toronto-c15',name:'C15 Bayview Village',price:'$875,566',change:'-6.6%',dir:'down'}]
+  },
+  'toronto-e02': {
+    name:'E02 The Beaches', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$1,227,061', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,227,061',median:'$1,100,000',volume:'51',listings:'98',active:'84',snlr:'45.6%',moi:'2.3',dom:'17',splp:'105%'},
+    priceData:[{t:'2024-04-01',v:1399000},{t:'2024-05-01',v:1417000},{t:'2024-06-01',v:1394000},{t:'2024-07-01',v:1330000},{t:'2024-08-01',v:1292000},{t:'2024-09-01',v:1341000},{t:'2024-10-01',v:1331000},{t:'2024-11-01',v:1315000},{t:'2024-12-01',v:1273000},{t:'2025-01-01',v:1255000},{t:'2025-02-01',v:1310000},{t:'2025-03-01',v:1315000},{t:'2025-04-01',v:1334000},{t:'2025-05-01',v:1351000},{t:'2025-06-01',v:1328000},{t:'2025-07-01',v:1268000},{t:'2025-08-01',v:1231000},{t:'2025-09-01',v:1278000},{t:'2025-10-01',v:1269000},{t:'2025-11-01',v:1254000},{t:'2025-12-01',v:1214000},{t:'2026-01-01',v:1170000},{t:'2026-02-01',v:1216000},{t:'2026-03-01',v:1227000}],
+    volData:[{t:'2024-04-01',sold:63,listed:121,expired:15},{t:'2024-05-01',sold:71,listed:136,expired:16},{t:'2024-06-01',sold:71,listed:136,expired:16},{t:'2024-07-01',sold:69,listed:133,expired:16},{t:'2024-08-01',sold:59,listed:113,expired:14},{t:'2024-09-01',sold:63,listed:121,expired:15},{t:'2024-10-01',sold:69,listed:133,expired:16},{t:'2024-11-01',sold:57,listed:110,expired:13},{t:'2024-12-01',sold:42,listed:81,expired:10},{t:'2025-01-01',sold:39,listed:75,expired:9},{t:'2025-02-01',sold:42,listed:81,expired:10},{t:'2025-03-01',sold:50,listed:96,expired:12},{t:'2025-04-01',sold:56,listed:108,expired:13},{t:'2025-05-01',sold:63,listed:121,expired:15},{t:'2025-06-01',sold:63,listed:121,expired:15},{t:'2025-07-01',sold:61,listed:117,expired:14},{t:'2025-08-01',sold:52,listed:100,expired:12},{t:'2025-09-01',sold:56,listed:108,expired:13},{t:'2025-10-01',sold:62,listed:119,expired:14},{t:'2025-11-01',sold:50,listed:96,expired:12},{t:'2025-12-01',sold:37,listed:71,expired:9},{t:'2026-01-01',sold:31,listed:60,expired:7},{t:'2026-02-01',sold:39,listed:75,expired:9},{t:'2026-03-01',sold:51,listed:98,expired:12}]
+  },
+  'toronto-e03': {
+    name:'E03 Danforth/East York', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$1,167,517', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,167,517',median:'$1,100,000',volume:'59',listings:'126',active:'145',snlr:'43.1%',moi:'2.8',dom:'25',splp:'103%'},
+    priceData:[{t:'2024-04-01',v:1332000},{t:'2024-05-01',v:1349000},{t:'2024-06-01',v:1326000},{t:'2024-07-01',v:1265000},{t:'2024-08-01',v:1229000},{t:'2024-09-01',v:1276000},{t:'2024-10-01',v:1267000},{t:'2024-11-01',v:1251000},{t:'2024-12-01',v:1211000},{t:'2025-01-01',v:1194000},{t:'2025-02-01',v:1246000},{t:'2025-03-01',v:1251000},{t:'2025-04-01',v:1269000},{t:'2025-05-01',v:1286000},{t:'2025-06-01',v:1264000},{t:'2025-07-01',v:1206000},{t:'2025-08-01',v:1172000},{t:'2025-09-01',v:1216000},{t:'2025-10-01',v:1207000},{t:'2025-11-01',v:1193000},{t:'2025-12-01',v:1155000},{t:'2026-01-01',v:1114000},{t:'2026-02-01',v:1157000},{t:'2026-03-01',v:1168000}],
+    volData:[{t:'2024-04-01',sold:73,listed:156,expired:19},{t:'2024-05-01',sold:82,listed:175,expired:21},{t:'2024-06-01',sold:82,listed:175,expired:21},{t:'2024-07-01',sold:80,listed:171,expired:21},{t:'2024-08-01',sold:68,listed:145,expired:17},{t:'2024-09-01',sold:73,listed:156,expired:19},{t:'2024-10-01',sold:80,listed:171,expired:21},{t:'2024-11-01',sold:66,listed:141,expired:17},{t:'2024-12-01',sold:49,listed:105,expired:13},{t:'2025-01-01',sold:45,listed:96,expired:12},{t:'2025-02-01',sold:48,listed:103,expired:12},{t:'2025-03-01',sold:58,listed:124,expired:15},{t:'2025-04-01',sold:65,listed:139,expired:17},{t:'2025-05-01',sold:73,listed:156,expired:19},{t:'2025-06-01',sold:73,listed:156,expired:19},{t:'2025-07-01',sold:71,listed:152,expired:18},{t:'2025-08-01',sold:61,listed:130,expired:16},{t:'2025-09-01',sold:65,listed:139,expired:17},{t:'2025-10-01',sold:71,listed:152,expired:18},{t:'2025-11-01',sold:58,listed:124,expired:15},{t:'2025-12-01',sold:43,listed:92,expired:11},{t:'2026-01-01',sold:36,listed:77,expired:9},{t:'2026-02-01',sold:45,listed:96,expired:12},{t:'2026-03-01',sold:59,listed:126,expired:15}]
+  },
+  'toronto-e04': {
+    name:'E04 Wexford/Maryvale', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$843,696', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$843,696',median:'$836,100',volume:'51',listings:'152',active:'181',snlr:'37.9%',moi:'4.0',dom:'28',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:962000},{t:'2024-05-01',v:975000},{t:'2024-06-01',v:958000},{t:'2024-07-01',v:914000},{t:'2024-08-01',v:888000},{t:'2024-09-01',v:922000},{t:'2024-10-01',v:915000},{t:'2024-11-01',v:904000},{t:'2024-12-01',v:875000},{t:'2025-01-01',v:863000},{t:'2025-02-01',v:901000},{t:'2025-03-01',v:904000},{t:'2025-04-01',v:917000},{t:'2025-05-01',v:929000},{t:'2025-06-01',v:913000},{t:'2025-07-01',v:872000},{t:'2025-08-01',v:847000},{t:'2025-09-01',v:879000},{t:'2025-10-01',v:873000},{t:'2025-11-01',v:862000},{t:'2025-12-01',v:834000},{t:'2026-01-01',v:805000},{t:'2026-02-01',v:836000},{t:'2026-03-01',v:844000}],
+    volData:[{t:'2024-04-01',sold:63,listed:188,expired:23},{t:'2024-05-01',sold:71,listed:212,expired:25},{t:'2024-06-01',sold:71,listed:212,expired:25},{t:'2024-07-01',sold:69,listed:206,expired:25},{t:'2024-08-01',sold:59,listed:176,expired:21},{t:'2024-09-01',sold:63,listed:188,expired:23},{t:'2024-10-01',sold:69,listed:206,expired:25},{t:'2024-11-01',sold:57,listed:170,expired:20},{t:'2024-12-01',sold:42,listed:125,expired:15},{t:'2025-01-01',sold:39,listed:116,expired:14},{t:'2025-02-01',sold:42,listed:125,expired:15},{t:'2025-03-01',sold:50,listed:149,expired:18},{t:'2025-04-01',sold:56,listed:167,expired:20},{t:'2025-05-01',sold:63,listed:188,expired:23},{t:'2025-06-01',sold:63,listed:188,expired:23},{t:'2025-07-01',sold:61,listed:182,expired:22},{t:'2025-08-01',sold:52,listed:155,expired:19},{t:'2025-09-01',sold:56,listed:167,expired:20},{t:'2025-10-01',sold:62,listed:185,expired:22},{t:'2025-11-01',sold:50,listed:149,expired:18},{t:'2025-12-01',sold:37,listed:110,expired:13},{t:'2026-01-01',sold:31,listed:92,expired:11},{t:'2026-02-01',sold:39,listed:116,expired:14},{t:'2026-03-01',sold:51,listed:152,expired:18}]
+  },
+  'toronto-e06': {
+    name:'E06 Birch Cliff', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$940,346', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$940,346',median:'$894,200',volume:'24',listings:'63',active:'86',snlr:'38.3%',moi:'3.6',dom:'23',splp:'102%'},
+    priceData:[{t:'2024-04-01',v:1072000},{t:'2024-05-01',v:1086000},{t:'2024-06-01',v:1068000},{t:'2024-07-01',v:1019000},{t:'2024-08-01',v:990000},{t:'2024-09-01',v:1028000},{t:'2024-10-01',v:1020000},{t:'2024-11-01',v:1008000},{t:'2024-12-01',v:976000},{t:'2025-01-01',v:962000},{t:'2025-02-01',v:1004000},{t:'2025-03-01',v:1007000},{t:'2025-04-01',v:1022000},{t:'2025-05-01',v:1035000},{t:'2025-06-01',v:1018000},{t:'2025-07-01',v:972000},{t:'2025-08-01',v:944000},{t:'2025-09-01',v:980000},{t:'2025-10-01',v:972000},{t:'2025-11-01',v:961000},{t:'2025-12-01',v:930000},{t:'2026-01-01',v:897000},{t:'2026-02-01',v:932000},{t:'2026-03-01',v:940000}],
+    volData:[{t:'2024-04-01',sold:30,listed:79,expired:9},{t:'2024-05-01',sold:33,listed:87,expired:10},{t:'2024-06-01',sold:33,listed:87,expired:10},{t:'2024-07-01',sold:32,listed:84,expired:10},{t:'2024-08-01',sold:28,listed:74,expired:9},{t:'2024-09-01',sold:30,listed:79,expired:9},{t:'2024-10-01',sold:33,listed:87,expired:10},{t:'2024-11-01',sold:27,listed:71,expired:9},{t:'2024-12-01',sold:20,listed:52,expired:6},{t:'2025-01-01',sold:18,listed:47,expired:6},{t:'2025-02-01',sold:20,listed:52,expired:6},{t:'2025-03-01',sold:24,listed:63,expired:8},{t:'2025-04-01',sold:26,listed:68,expired:8},{t:'2025-05-01',sold:30,listed:79,expired:9},{t:'2025-06-01',sold:29,listed:76,expired:9},{t:'2025-07-01',sold:29,listed:76,expired:9},{t:'2025-08-01',sold:25,listed:66,expired:8},{t:'2025-09-01',sold:26,listed:68,expired:8},{t:'2025-10-01',sold:29,listed:76,expired:9},{t:'2025-11-01',sold:24,listed:63,expired:8},{t:'2025-12-01',sold:18,listed:47,expired:6},{t:'2026-01-01',sold:15,listed:39,expired:5},{t:'2026-02-01',sold:18,listed:47,expired:6},{t:'2026-03-01',sold:24,listed:63,expired:8}]
+  },
+  'toronto-e07': {
+    name:'E07 Milliken/Agincourt', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$690,423', change:'-6.8% YoY', changeDir:'down',
+    stats:{avgPrice:'$690,423',median:'$595,900',volume:'46',listings:'92',active:'139',snlr:'38.4%',moi:'4.4',dom:'30',splp:'101%'},
+    priceData:[{t:'2024-04-01',v:787000},{t:'2024-05-01',v:798000},{t:'2024-06-01',v:784000},{t:'2024-07-01',v:748000},{t:'2024-08-01',v:727000},{t:'2024-09-01',v:755000},{t:'2024-10-01',v:749000},{t:'2024-11-01',v:740000},{t:'2024-12-01',v:716000},{t:'2025-01-01',v:706000},{t:'2025-02-01',v:737000},{t:'2025-03-01',v:740000},{t:'2025-04-01',v:751000},{t:'2025-05-01',v:760000},{t:'2025-06-01',v:747000},{t:'2025-07-01',v:713000},{t:'2025-08-01',v:693000},{t:'2025-09-01',v:719000},{t:'2025-10-01',v:714000},{t:'2025-11-01',v:705000},{t:'2025-12-01',v:683000},{t:'2026-01-01',v:658000},{t:'2026-02-01',v:684000},{t:'2026-03-01',v:690000}],
+    volData:[{t:'2024-04-01',sold:57,listed:114,expired:14},{t:'2024-05-01',sold:64,listed:128,expired:15},{t:'2024-06-01',sold:64,listed:128,expired:15},{t:'2024-07-01',sold:62,listed:124,expired:15},{t:'2024-08-01',sold:53,listed:106,expired:13},{t:'2024-09-01',sold:57,listed:114,expired:14},{t:'2024-10-01',sold:63,listed:126,expired:15},{t:'2024-11-01',sold:51,listed:102,expired:12},{t:'2024-12-01',sold:38,listed:76,expired:9},{t:'2025-01-01',sold:35,listed:70,expired:8},{t:'2025-02-01',sold:38,listed:76,expired:9},{t:'2025-03-01',sold:45,listed:90,expired:11},{t:'2025-04-01',sold:51,listed:102,expired:12},{t:'2025-05-01',sold:57,listed:114,expired:14},{t:'2025-06-01',sold:57,listed:114,expired:14},{t:'2025-07-01',sold:55,listed:110,expired:13},{t:'2025-08-01',sold:47,listed:94,expired:11},{t:'2025-09-01',sold:51,listed:102,expired:12},{t:'2025-10-01',sold:56,listed:112,expired:13},{t:'2025-11-01',sold:45,listed:90,expired:11},{t:'2025-12-01',sold:34,listed:68,expired:8},{t:'2026-01-01',sold:28,listed:56,expired:7},{t:'2026-02-01',sold:35,listed:70,expired:8},{t:'2026-03-01',sold:46,listed:92,expired:11}]
+  },
+  'toronto-e08': {
+    name:'E08 Cliffside/Scarborough Village', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$724,214', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$724,214',median:'$735,600',volume:'22',listings:'89',active:'135',snlr:'32.9%',moi:'5.2',dom:'26',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:826000},{t:'2024-05-01',v:837000},{t:'2024-06-01',v:822000},{t:'2024-07-01',v:785000},{t:'2024-08-01',v:762000},{t:'2024-09-01',v:791000},{t:'2024-10-01',v:786000},{t:'2024-11-01',v:776000},{t:'2024-12-01',v:751000},{t:'2025-01-01',v:741000},{t:'2025-02-01',v:773000},{t:'2025-03-01',v:776000},{t:'2025-04-01',v:787000},{t:'2025-05-01',v:797000},{t:'2025-06-01',v:784000},{t:'2025-07-01',v:748000},{t:'2025-08-01',v:727000},{t:'2025-09-01',v:754000},{t:'2025-10-01',v:749000},{t:'2025-11-01',v:740000},{t:'2025-12-01',v:716000},{t:'2026-01-01',v:691000},{t:'2026-02-01',v:718000},{t:'2026-03-01',v:724000}],
+    volData:[{t:'2024-04-01',sold:27,listed:109,expired:13},{t:'2024-05-01',sold:30,listed:121,expired:15},{t:'2024-06-01',sold:30,listed:121,expired:15},{t:'2024-07-01',sold:30,listed:121,expired:15},{t:'2024-08-01',sold:25,listed:101,expired:12},{t:'2024-09-01',sold:27,listed:109,expired:13},{t:'2024-10-01',sold:30,listed:121,expired:15},{t:'2024-11-01',sold:24,listed:97,expired:12},{t:'2024-12-01',sold:18,listed:73,expired:9},{t:'2025-01-01',sold:17,listed:69,expired:8},{t:'2025-02-01',sold:18,listed:73,expired:9},{t:'2025-03-01',sold:22,listed:89,expired:11},{t:'2025-04-01',sold:24,listed:97,expired:12},{t:'2025-05-01',sold:27,listed:109,expired:13},{t:'2025-06-01',sold:27,listed:109,expired:13},{t:'2025-07-01',sold:26,listed:105,expired:13},{t:'2025-08-01',sold:23,listed:93,expired:11},{t:'2025-09-01',sold:24,listed:97,expired:12},{t:'2025-10-01',sold:27,listed:109,expired:13},{t:'2025-11-01',sold:22,listed:89,expired:11},{t:'2025-12-01',sold:16,listed:65,expired:8},{t:'2026-01-01',sold:13,listed:53,expired:6},{t:'2026-02-01',sold:17,listed:69,expired:8},{t:'2026-03-01',sold:22,listed:89,expired:11}]
+  },
+  'toronto-e10': {
+    name:'E10 Rouge/Highland Creek', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$889,109', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$889,109',median:'$882,500',volume:'33',listings:'77',active:'119',snlr:'42.1%',moi:'3.7',dom:'27',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:1014000},{t:'2024-05-01',v:1027000},{t:'2024-06-01',v:1010000},{t:'2024-07-01',v:964000},{t:'2024-08-01',v:936000},{t:'2024-09-01',v:972000},{t:'2024-10-01',v:965000},{t:'2024-11-01',v:953000},{t:'2024-12-01',v:922000},{t:'2025-01-01',v:910000},{t:'2025-02-01',v:949000},{t:'2025-03-01',v:953000},{t:'2025-04-01',v:967000},{t:'2025-05-01',v:979000},{t:'2025-06-01',v:963000},{t:'2025-07-01',v:919000},{t:'2025-08-01',v:892000},{t:'2025-09-01',v:926000},{t:'2025-10-01',v:919000},{t:'2025-11-01',v:908000},{t:'2025-12-01',v:879000},{t:'2026-01-01',v:848000},{t:'2026-02-01',v:881000},{t:'2026-03-01',v:889000}],
+    volData:[{t:'2024-04-01',sold:41,listed:96,expired:12},{t:'2024-05-01',sold:46,listed:107,expired:13},{t:'2024-06-01',sold:46,listed:107,expired:13},{t:'2024-07-01',sold:45,listed:105,expired:13},{t:'2024-08-01',sold:38,listed:89,expired:11},{t:'2024-09-01',sold:41,listed:96,expired:12},{t:'2024-10-01',sold:45,listed:105,expired:13},{t:'2024-11-01',sold:37,listed:86,expired:10},{t:'2024-12-01',sold:27,listed:63,expired:8},{t:'2025-01-01',sold:25,listed:58,expired:7},{t:'2025-02-01',sold:27,listed:63,expired:8},{t:'2025-03-01',sold:32,listed:75,expired:9},{t:'2025-04-01',sold:36,listed:84,expired:10},{t:'2025-05-01',sold:41,listed:96,expired:12},{t:'2025-06-01',sold:41,listed:96,expired:12},{t:'2025-07-01',sold:40,listed:93,expired:11},{t:'2025-08-01',sold:34,listed:79,expired:9},{t:'2025-09-01',sold:36,listed:84,expired:10},{t:'2025-10-01',sold:40,listed:93,expired:11},{t:'2025-11-01',sold:33,listed:77,expired:9},{t:'2025-12-01',sold:24,listed:56,expired:7},{t:'2026-01-01',sold:20,listed:47,expired:6},{t:'2026-02-01',sold:25,listed:58,expired:7},{t:'2026-03-01',sold:33,listed:77,expired:9}]
+  },
+  'toronto-e11': {
+    name:'E11 Malvern/Morningside', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-east',
+    price:'$766,469', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$766,469',median:'$715,000',volume:'26',listings:'92',active:'139',snlr:'34.3%',moi:'4.9',dom:'30',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:874000},{t:'2024-05-01',v:885000},{t:'2024-06-01',v:870000},{t:'2024-07-01',v:831000},{t:'2024-08-01',v:807000},{t:'2024-09-01',v:838000},{t:'2024-10-01',v:832000},{t:'2024-11-01',v:821000},{t:'2024-12-01',v:795000},{t:'2025-01-01',v:784000},{t:'2025-02-01',v:818000},{t:'2025-03-01',v:821000},{t:'2025-04-01',v:833000},{t:'2025-05-01',v:844000},{t:'2025-06-01',v:830000},{t:'2025-07-01',v:792000},{t:'2025-08-01',v:769000},{t:'2025-09-01',v:799000},{t:'2025-10-01',v:793000},{t:'2025-11-01',v:783000},{t:'2025-12-01',v:758000},{t:'2026-01-01',v:731000},{t:'2026-02-01',v:759000},{t:'2026-03-01',v:766000}],
+    volData:[{t:'2024-04-01',sold:32,listed:113,expired:14},{t:'2024-05-01',sold:36,listed:127,expired:15},{t:'2024-06-01',sold:36,listed:127,expired:15},{t:'2024-07-01',sold:35,listed:124,expired:15},{t:'2024-08-01',sold:30,listed:106,expired:13},{t:'2024-09-01',sold:32,listed:113,expired:14},{t:'2024-10-01',sold:35,listed:124,expired:15},{t:'2024-11-01',sold:29,listed:103,expired:12},{t:'2024-12-01',sold:21,listed:74,expired:9},{t:'2025-01-01',sold:20,listed:71,expired:9},{t:'2025-02-01',sold:21,listed:74,expired:9},{t:'2025-03-01',sold:26,listed:92,expired:11},{t:'2025-04-01',sold:29,listed:103,expired:12},{t:'2025-05-01',sold:32,listed:113,expired:14},{t:'2025-06-01',sold:32,listed:113,expired:14},{t:'2025-07-01',sold:31,listed:110,expired:13},{t:'2025-08-01',sold:27,listed:96,expired:12},{t:'2025-09-01',sold:29,listed:103,expired:12},{t:'2025-10-01',sold:31,listed:110,expired:13},{t:'2025-11-01',sold:26,listed:92,expired:11},{t:'2025-12-01',sold:19,listed:67,expired:8},{t:'2026-01-01',sold:16,listed:57,expired:7},{t:'2026-02-01',sold:20,listed:71,expired:9},{t:'2026-03-01',sold:26,listed:92,expired:11}]
+  },
+  'toronto-east': {
+    name:'Toronto East (E)', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto',
+    price:'$934,946', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$934,946',median:'$865,000',volume:'461',listings:'1,134',active:'1,517',snlr:'39.3%',moi:'3.7',dom:'27',splp:'102%'},
+    priceData:[{t:'2024-04-01',v:1066000},{t:'2024-05-01',v:1080000},{t:'2024-06-01',v:1062000},{t:'2024-07-01',v:1013000},{t:'2024-08-01',v:984000},{t:'2024-09-01',v:1022000},{t:'2024-10-01',v:1014000},{t:'2024-11-01',v:1002000},{t:'2024-12-01',v:970000},{t:'2025-01-01',v:956000},{t:'2025-02-01',v:998000},{t:'2025-03-01',v:1002000},{t:'2025-04-01',v:1016000},{t:'2025-05-01',v:1030000},{t:'2025-06-01',v:1012000},{t:'2025-07-01',v:966000},{t:'2025-08-01',v:938000},{t:'2025-09-01',v:974000},{t:'2025-10-01',v:967000},{t:'2025-11-01',v:955000},{t:'2025-12-01',v:925000},{t:'2026-01-01',v:892000},{t:'2026-02-01',v:926000},{t:'2026-03-01',v:935000}],
+    volData:[{t:'2024-04-01',sold:573,listed:1410,expired:169},{t:'2024-05-01',sold:639,listed:1572,expired:189},{t:'2024-06-01',sold:639,listed:1572,expired:189},{t:'2024-07-01',sold:624,listed:1535,expired:184},{t:'2024-08-01',sold:533,listed:1311,expired:157},{t:'2024-09-01',sold:572,listed:1407,expired:169},{t:'2024-10-01',sold:628,listed:1545,expired:185},{t:'2024-11-01',sold:512,listed:1259,expired:151},{t:'2024-12-01',sold:379,listed:932,expired:112},{t:'2025-01-01',sold:349,listed:858,expired:103},{t:'2025-02-01',sold:378,listed:930,expired:112},{t:'2025-03-01',sold:453,listed:1114,expired:134},{t:'2025-04-01',sold:508,listed:1250,expired:150},{t:'2025-05-01',sold:567,listed:1395,expired:167},{t:'2025-06-01',sold:566,listed:1392,expired:167},{t:'2025-07-01',sold:553,listed:1360,expired:163},{t:'2025-08-01',sold:473,listed:1164,expired:140},{t:'2025-09-01',sold:507,listed:1247,expired:150},{t:'2025-10-01',sold:557,listed:1370,expired:164},{t:'2025-11-01',sold:454,listed:1117,expired:134},{t:'2025-12-01',sold:336,listed:827,expired:99},{t:'2026-01-01',sold:280,listed:689,expired:83},{t:'2026-02-01',sold:353,listed:868,expired:104},{t:'2026-03-01',sold:461,listed:1134,expired:136}],
+    subMarkets:[{id:'toronto-e02',name:'E02 The Beaches',price:'$1,227,061',change:'-6.7%',dir:'down'},{id:'toronto-e03',name:'E03 Danforth/East York',price:'$1,167,517',change:'-6.6%',dir:'down'},{id:'toronto-e04',name:'E04 Wexford/Maryvale',price:'$843,696',change:'-6.6%',dir:'down'},{id:'toronto-e06',name:'E06 Birch Cliff',price:'$940,346',change:'-6.7%',dir:'down'},{id:'toronto-e07',name:'E07 Milliken/Agincourt',price:'$690,423',change:'-6.8%',dir:'down'},{id:'toronto-e08',name:'E08 Cliffside/Scarborough Village',price:'$724,214',change:'-6.7%',dir:'down'},{id:'toronto-e10',name:'E10 Rouge/Highland Creek',price:'$889,109',change:'-6.7%',dir:'down'},{id:'toronto-e11',name:'E11 Malvern/Morningside',price:'$766,469',change:'-6.7%',dir:'down'}]
+  },
+  'toronto-w01': {
+    name:'W01 Parkdale/Roncesvalles', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$1,280,945', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,280,945',median:'$847,500',volume:'42',listings:'89',active:'135',snlr:'39.7%',moi:'4.0',dom:'33',splp:'103%'},
+    priceData:[{t:'2024-04-01',v:1461000},{t:'2024-05-01',v:1480000},{t:'2024-06-01',v:1455000},{t:'2024-07-01',v:1388000},{t:'2024-08-01',v:1348000},{t:'2024-09-01',v:1400000},{t:'2024-10-01',v:1390000},{t:'2024-11-01',v:1373000},{t:'2024-12-01',v:1329000},{t:'2025-01-01',v:1310000},{t:'2025-02-01',v:1368000},{t:'2025-03-01',v:1372000},{t:'2025-04-01',v:1393000},{t:'2025-05-01',v:1411000},{t:'2025-06-01',v:1387000},{t:'2025-07-01',v:1323000},{t:'2025-08-01',v:1285000},{t:'2025-09-01',v:1334000},{t:'2025-10-01',v:1325000},{t:'2025-11-01',v:1309000},{t:'2025-12-01',v:1267000},{t:'2026-01-01',v:1222000},{t:'2026-02-01',v:1269000},{t:'2026-03-01',v:1281000}],
+    volData:[{t:'2024-04-01',sold:52,listed:110,expired:13},{t:'2024-05-01',sold:58,listed:123,expired:15},{t:'2024-06-01',sold:58,listed:123,expired:15},{t:'2024-07-01',sold:57,listed:121,expired:15},{t:'2024-08-01',sold:49,listed:104,expired:12},{t:'2024-09-01',sold:52,listed:110,expired:13},{t:'2024-10-01',sold:57,listed:121,expired:15},{t:'2024-11-01',sold:47,listed:100,expired:12},{t:'2024-12-01',sold:35,listed:74,expired:9},{t:'2025-01-01',sold:32,listed:68,expired:8},{t:'2025-02-01',sold:34,listed:72,expired:9},{t:'2025-03-01',sold:41,listed:87,expired:10},{t:'2025-04-01',sold:46,listed:97,expired:12},{t:'2025-05-01',sold:52,listed:110,expired:13},{t:'2025-06-01',sold:52,listed:110,expired:13},{t:'2025-07-01',sold:50,listed:106,expired:13},{t:'2025-08-01',sold:43,listed:91,expired:11},{t:'2025-09-01',sold:46,listed:97,expired:12},{t:'2025-10-01',sold:51,listed:108,expired:13},{t:'2025-11-01',sold:41,listed:87,expired:10},{t:'2025-12-01',sold:31,listed:66,expired:8},{t:'2026-01-01',sold:26,listed:55,expired:7},{t:'2026-02-01',sold:32,listed:68,expired:8},{t:'2026-03-01',sold:42,listed:89,expired:11}]
+  },
+  'toronto-w02': {
+    name:'W02 Junction/High Park', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$1,253,833', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,253,833',median:'$1,210,000',volume:'66',listings:'116',active:'136',snlr:'43.2%',moi:'2.9',dom:'15',splp:'106%'},
+    priceData:[{t:'2024-04-01',v:1430000},{t:'2024-05-01',v:1448000},{t:'2024-06-01',v:1424000},{t:'2024-07-01',v:1359000},{t:'2024-08-01',v:1320000},{t:'2024-09-01',v:1370000},{t:'2024-10-01',v:1360000},{t:'2024-11-01',v:1344000},{t:'2024-12-01',v:1301000},{t:'2025-01-01',v:1283000},{t:'2025-02-01',v:1339000},{t:'2025-03-01',v:1343000},{t:'2025-04-01',v:1363000},{t:'2025-05-01',v:1381000},{t:'2025-06-01',v:1357000},{t:'2025-07-01',v:1295000},{t:'2025-08-01',v:1258000},{t:'2025-09-01',v:1306000},{t:'2025-10-01',v:1297000},{t:'2025-11-01',v:1281000},{t:'2025-12-01',v:1240000},{t:'2026-01-01',v:1196000},{t:'2026-02-01',v:1242000},{t:'2026-03-01',v:1254000}],
+    volData:[{t:'2024-04-01',sold:82,listed:144,expired:17},{t:'2024-05-01',sold:91,listed:160,expired:19},{t:'2024-06-01',sold:91,listed:160,expired:19},{t:'2024-07-01',sold:89,listed:156,expired:19},{t:'2024-08-01',sold:76,listed:134,expired:16},{t:'2024-09-01',sold:82,listed:144,expired:17},{t:'2024-10-01',sold:90,listed:158,expired:19},{t:'2024-11-01',sold:73,listed:128,expired:15},{t:'2024-12-01',sold:54,listed:95,expired:11},{t:'2025-01-01',sold:50,listed:88,expired:11},{t:'2025-02-01',sold:54,listed:95,expired:11},{t:'2025-03-01',sold:65,listed:114,expired:14},{t:'2025-04-01',sold:73,listed:128,expired:15},{t:'2025-05-01',sold:81,listed:142,expired:17},{t:'2025-06-01',sold:81,listed:142,expired:17},{t:'2025-07-01',sold:79,listed:139,expired:17},{t:'2025-08-01',sold:68,listed:120,expired:14},{t:'2025-09-01',sold:73,listed:128,expired:15},{t:'2025-10-01',sold:80,listed:141,expired:17},{t:'2025-11-01',sold:65,listed:114,expired:14},{t:'2025-12-01',sold:48,listed:84,expired:10},{t:'2026-01-01',sold:40,listed:70,expired:8},{t:'2026-02-01',sold:50,listed:88,expired:11},{t:'2026-03-01',sold:66,listed:116,expired:14}]
+  },
+  'toronto-w04': {
+    name:'W04 Weston/Mount Dennis', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$803,016', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$803,016',median:'$699,990',volume:'31',listings:'145',active:'258',snlr:'32.7%',moi:'5.8',dom:'36',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:916000},{t:'2024-05-01',v:928000},{t:'2024-06-01',v:912000},{t:'2024-07-01',v:870000},{t:'2024-08-01',v:845000},{t:'2024-09-01',v:878000},{t:'2024-10-01',v:871000},{t:'2024-11-01',v:861000},{t:'2024-12-01',v:833000},{t:'2025-01-01',v:821000},{t:'2025-02-01',v:857000},{t:'2025-03-01',v:860000},{t:'2025-04-01',v:873000},{t:'2025-05-01',v:884000},{t:'2025-06-01',v:869000},{t:'2025-07-01',v:830000},{t:'2025-08-01',v:806000},{t:'2025-09-01',v:837000},{t:'2025-10-01',v:830000},{t:'2025-11-01',v:820000},{t:'2025-12-01',v:794000},{t:'2026-01-01',v:766000},{t:'2026-02-01',v:796000},{t:'2026-03-01',v:803000}],
+    volData:[{t:'2024-04-01',sold:39,listed:182,expired:22},{t:'2024-05-01',sold:43,listed:201,expired:24},{t:'2024-06-01',sold:43,listed:201,expired:24},{t:'2024-07-01',sold:42,listed:196,expired:24},{t:'2024-08-01',sold:36,listed:168,expired:20},{t:'2024-09-01',sold:38,listed:178,expired:21},{t:'2024-10-01',sold:42,listed:196,expired:24},{t:'2024-11-01',sold:34,listed:159,expired:19},{t:'2024-12-01',sold:25,listed:117,expired:14},{t:'2025-01-01',sold:23,listed:108,expired:13},{t:'2025-02-01',sold:25,listed:117,expired:14},{t:'2025-03-01',sold:30,listed:140,expired:17},{t:'2025-04-01',sold:34,listed:159,expired:19},{t:'2025-05-01',sold:38,listed:178,expired:21},{t:'2025-06-01',sold:38,listed:178,expired:21},{t:'2025-07-01',sold:37,listed:173,expired:21},{t:'2025-08-01',sold:32,listed:150,expired:18},{t:'2025-09-01',sold:34,listed:159,expired:19},{t:'2025-10-01',sold:37,listed:173,expired:21},{t:'2025-11-01',sold:31,listed:145,expired:17},{t:'2025-12-01',sold:23,listed:108,expired:13},{t:'2026-01-01',sold:19,listed:89,expired:11},{t:'2026-02-01',sold:24,listed:112,expired:13},{t:'2026-03-01',sold:31,listed:145,expired:17}]
+  },
+  'toronto-w05': {
+    name:'W05 Jane/Finch', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$721,865', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$721,865',median:'$800,500',volume:'38',listings:'180',active:'333',snlr:'37.2%',moi:'5.3',dom:'28',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:823000},{t:'2024-05-01',v:834000},{t:'2024-06-01',v:820000},{t:'2024-07-01',v:782000},{t:'2024-08-01',v:760000},{t:'2024-09-01',v:789000},{t:'2024-10-01',v:783000},{t:'2024-11-01',v:774000},{t:'2024-12-01',v:749000},{t:'2025-01-01',v:738000},{t:'2025-02-01',v:771000},{t:'2025-03-01',v:773000},{t:'2025-04-01',v:785000},{t:'2025-05-01',v:795000},{t:'2025-06-01',v:781000},{t:'2025-07-01',v:746000},{t:'2025-08-01',v:724000},{t:'2025-09-01',v:752000},{t:'2025-10-01',v:747000},{t:'2025-11-01',v:737000},{t:'2025-12-01',v:714000},{t:'2026-01-01',v:688000},{t:'2026-02-01',v:715000},{t:'2026-03-01',v:722000}],
+    volData:[{t:'2024-04-01',sold:47,listed:223,expired:27},{t:'2024-05-01',sold:53,listed:251,expired:30},{t:'2024-06-01',sold:53,listed:251,expired:30},{t:'2024-07-01',sold:51,listed:242,expired:29},{t:'2024-08-01',sold:44,listed:208,expired:25},{t:'2024-09-01',sold:47,listed:223,expired:27},{t:'2024-10-01',sold:52,listed:246,expired:30},{t:'2024-11-01',sold:42,listed:199,expired:24},{t:'2024-12-01',sold:31,listed:147,expired:18},{t:'2025-01-01',sold:29,listed:137,expired:16},{t:'2025-02-01',sold:31,listed:147,expired:18},{t:'2025-03-01',sold:37,listed:175,expired:21},{t:'2025-04-01',sold:42,listed:199,expired:24},{t:'2025-05-01',sold:47,listed:223,expired:27},{t:'2025-06-01',sold:47,listed:223,expired:27},{t:'2025-07-01',sold:46,listed:218,expired:26},{t:'2025-08-01',sold:39,listed:185,expired:22},{t:'2025-09-01',sold:42,listed:199,expired:24},{t:'2025-10-01',sold:46,listed:218,expired:26},{t:'2025-11-01',sold:37,listed:175,expired:21},{t:'2025-12-01',sold:28,listed:133,expired:16},{t:'2026-01-01',sold:23,listed:109,expired:13},{t:'2026-02-01',sold:29,listed:137,expired:16},{t:'2026-03-01',sold:38,listed:180,expired:22}]
+  },
+  'toronto-w06': {
+    name:'W06 Mimico/New Toronto', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$872,201', change:'-6.6% YoY', changeDir:'down',
+    stats:{avgPrice:'$872,201',median:'$772,363',volume:'87',listings:'213',active:'324',snlr:'34.5%',moi:'5.1',dom:'31',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:995000},{t:'2024-05-01',v:1008000},{t:'2024-06-01',v:991000},{t:'2024-07-01',v:945000},{t:'2024-08-01',v:918000},{t:'2024-09-01',v:953000},{t:'2024-10-01',v:946000},{t:'2024-11-01',v:935000},{t:'2024-12-01',v:905000},{t:'2025-01-01',v:892000},{t:'2025-02-01',v:931000},{t:'2025-03-01',v:934000},{t:'2025-04-01',v:948000},{t:'2025-05-01',v:960000},{t:'2025-06-01',v:944000},{t:'2025-07-01',v:901000},{t:'2025-08-01',v:875000},{t:'2025-09-01',v:909000},{t:'2025-10-01',v:902000},{t:'2025-11-01',v:891000},{t:'2025-12-01',v:863000},{t:'2026-01-01',v:832000},{t:'2026-02-01',v:864000},{t:'2026-03-01',v:872000}],
+    volData:[{t:'2024-04-01',sold:108,listed:264,expired:32},{t:'2024-05-01',sold:121,listed:296,expired:36},{t:'2024-06-01',sold:121,listed:296,expired:36},{t:'2024-07-01',sold:118,listed:289,expired:35},{t:'2024-08-01',sold:101,listed:247,expired:30},{t:'2024-09-01',sold:108,listed:264,expired:32},{t:'2024-10-01',sold:119,listed:291,expired:35},{t:'2024-11-01',sold:97,listed:237,expired:28},{t:'2024-12-01',sold:72,listed:176,expired:21},{t:'2025-01-01',sold:66,listed:162,expired:19},{t:'2025-02-01',sold:71,listed:174,expired:21},{t:'2025-03-01',sold:86,listed:211,expired:25},{t:'2025-04-01',sold:96,listed:235,expired:28},{t:'2025-05-01',sold:107,listed:262,expired:31},{t:'2025-06-01',sold:107,listed:262,expired:31},{t:'2025-07-01',sold:104,listed:255,expired:31},{t:'2025-08-01',sold:89,listed:218,expired:26},{t:'2025-09-01',sold:96,listed:235,expired:28},{t:'2025-10-01',sold:105,listed:257,expired:31},{t:'2025-11-01',sold:86,listed:211,expired:25},{t:'2025-12-01',sold:63,listed:154,expired:18},{t:'2026-01-01',sold:53,listed:130,expired:16},{t:'2026-02-01',sold:67,listed:164,expired:20},{t:'2026-03-01',sold:87,listed:213,expired:26}]
+  },
+  'toronto-w08': {
+    name:'W08 Etobicoke/Kingsway', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$1,220,720', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,220,720',median:'$820,000',volume:'105',listings:'267',active:'391',snlr:'37.9%',moi:'4.4',dom:'29',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1392000},{t:'2024-05-01',v:1410000},{t:'2024-06-01',v:1386000},{t:'2024-07-01',v:1323000},{t:'2024-08-01',v:1285000},{t:'2024-09-01',v:1334000},{t:'2024-10-01',v:1324000},{t:'2024-11-01',v:1308000},{t:'2024-12-01',v:1266000},{t:'2025-01-01',v:1249000},{t:'2025-02-01',v:1303000},{t:'2025-03-01',v:1308000},{t:'2025-04-01',v:1327000},{t:'2025-05-01',v:1344000},{t:'2025-06-01',v:1322000},{t:'2025-07-01',v:1261000},{t:'2025-08-01',v:1225000},{t:'2025-09-01',v:1272000},{t:'2025-10-01',v:1262000},{t:'2025-11-01',v:1247000},{t:'2025-12-01',v:1207000},{t:'2026-01-01',v:1164000},{t:'2026-02-01',v:1209000},{t:'2026-03-01',v:1221000}],
+    volData:[{t:'2024-04-01',sold:131,listed:333,expired:40},{t:'2024-05-01',sold:146,listed:371,expired:45},{t:'2024-06-01',sold:145,listed:369,expired:44},{t:'2024-07-01',sold:142,listed:361,expired:43},{t:'2024-08-01',sold:121,listed:308,expired:37},{t:'2024-09-01',sold:130,listed:331,expired:40},{t:'2024-10-01',sold:143,listed:364,expired:44},{t:'2024-11-01',sold:117,listed:298,expired:36},{t:'2024-12-01',sold:86,listed:219,expired:26},{t:'2025-01-01',sold:80,listed:203,expired:24},{t:'2025-02-01',sold:86,listed:219,expired:26},{t:'2025-03-01',sold:103,listed:262,expired:31},{t:'2025-04-01',sold:116,listed:295,expired:35},{t:'2025-05-01',sold:129,listed:328,expired:39},{t:'2025-06-01',sold:129,listed:328,expired:39},{t:'2025-07-01',sold:126,listed:320,expired:38},{t:'2025-08-01',sold:108,listed:275,expired:33},{t:'2025-09-01',sold:116,listed:295,expired:35},{t:'2025-10-01',sold:127,listed:323,expired:39},{t:'2025-11-01',sold:103,listed:262,expired:31},{t:'2025-12-01',sold:77,listed:196,expired:24},{t:'2026-01-01',sold:64,listed:163,expired:20},{t:'2026-02-01',sold:80,listed:203,expired:24},{t:'2026-03-01',sold:105,listed:267,expired:32}]
+  },
+  'toronto-w09': {
+    name:'W09 Richview/Humber Heights', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$1,104,211', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,104,211',median:'$1,039,000',volume:'30',listings:'75',active:'96',snlr:'39.7%',moi:'4.1',dom:'32',splp:'98%'},
+    priceData:[{t:'2024-04-01',v:1259000},{t:'2024-05-01',v:1276000},{t:'2024-06-01',v:1254000},{t:'2024-07-01',v:1197000},{t:'2024-08-01',v:1162000},{t:'2024-09-01',v:1207000},{t:'2024-10-01',v:1198000},{t:'2024-11-01',v:1183000},{t:'2024-12-01',v:1146000},{t:'2025-01-01',v:1130000},{t:'2025-02-01',v:1179000},{t:'2025-03-01',v:1183000},{t:'2025-04-01',v:1200000},{t:'2025-05-01',v:1216000},{t:'2025-06-01',v:1195000},{t:'2025-07-01',v:1141000},{t:'2025-08-01',v:1108000},{t:'2025-09-01',v:1150000},{t:'2025-10-01',v:1142000},{t:'2025-11-01',v:1128000},{t:'2025-12-01',v:1092000},{t:'2026-01-01',v:1053000},{t:'2026-02-01',v:1094000},{t:'2026-03-01',v:1104000}],
+    volData:[{t:'2024-04-01',sold:37,listed:92,expired:11},{t:'2024-05-01',sold:42,listed:105,expired:13},{t:'2024-06-01',sold:42,listed:105,expired:13},{t:'2024-07-01',sold:41,listed:102,expired:12},{t:'2024-08-01',sold:35,listed:88,expired:11},{t:'2024-09-01',sold:37,listed:92,expired:11},{t:'2024-10-01',sold:41,listed:102,expired:12},{t:'2024-11-01',sold:33,listed:82,expired:10},{t:'2024-12-01',sold:25,listed:62,expired:7},{t:'2025-01-01',sold:23,listed:58,expired:7},{t:'2025-02-01',sold:25,listed:62,expired:7},{t:'2025-03-01',sold:30,listed:75,expired:9},{t:'2025-04-01',sold:33,listed:82,expired:10},{t:'2025-05-01',sold:37,listed:92,expired:11},{t:'2025-06-01',sold:37,listed:92,expired:11},{t:'2025-07-01',sold:36,listed:90,expired:11},{t:'2025-08-01',sold:31,listed:78,expired:9},{t:'2025-09-01',sold:33,listed:82,expired:10},{t:'2025-10-01',sold:36,listed:90,expired:11},{t:'2025-11-01',sold:30,listed:75,expired:9},{t:'2025-12-01',sold:22,listed:55,expired:7},{t:'2026-01-01',sold:18,listed:45,expired:5},{t:'2026-02-01',sold:23,listed:58,expired:7},{t:'2026-03-01',sold:30,listed:75,expired:9}]
+  },
+  'toronto-w10': {
+    name:'W10 Rexdale', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto-west',
+    price:'$754,000', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$754,000',median:'$818,000',volume:'29',listings:'99',active:'163',snlr:'32.6%',moi:'5.7',dom:'41',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:860000},{t:'2024-05-01',v:871000},{t:'2024-06-01',v:856000},{t:'2024-07-01',v:817000},{t:'2024-08-01',v:794000},{t:'2024-09-01',v:824000},{t:'2024-10-01',v:818000},{t:'2024-11-01',v:808000},{t:'2024-12-01',v:782000},{t:'2025-01-01',v:771000},{t:'2025-02-01',v:805000},{t:'2025-03-01',v:808000},{t:'2025-04-01',v:820000},{t:'2025-05-01',v:830000},{t:'2025-06-01',v:816000},{t:'2025-07-01',v:779000},{t:'2025-08-01',v:757000},{t:'2025-09-01',v:786000},{t:'2025-10-01',v:780000},{t:'2025-11-01',v:770000},{t:'2025-12-01',v:746000},{t:'2026-01-01',v:719000},{t:'2026-02-01',v:747000},{t:'2026-03-01',v:754000}],
+    volData:[{t:'2024-04-01',sold:36,listed:123,expired:15},{t:'2024-05-01',sold:40,listed:137,expired:16},{t:'2024-06-01',sold:40,listed:137,expired:16},{t:'2024-07-01',sold:39,listed:133,expired:16},{t:'2024-08-01',sold:34,listed:116,expired:14},{t:'2024-09-01',sold:36,listed:123,expired:15},{t:'2024-10-01',sold:40,listed:137,expired:16},{t:'2024-11-01',sold:32,listed:109,expired:13},{t:'2024-12-01',sold:24,listed:82,expired:10},{t:'2025-01-01',sold:22,listed:75,expired:9},{t:'2025-02-01',sold:24,listed:82,expired:10},{t:'2025-03-01',sold:29,listed:99,expired:12},{t:'2025-04-01',sold:32,listed:109,expired:13},{t:'2025-05-01',sold:36,listed:123,expired:15},{t:'2025-06-01',sold:36,listed:123,expired:15},{t:'2025-07-01',sold:35,listed:119,expired:14},{t:'2025-08-01',sold:30,listed:102,expired:12},{t:'2025-09-01',sold:32,listed:109,expired:13},{t:'2025-10-01',sold:35,listed:119,expired:14},{t:'2025-11-01',sold:29,listed:99,expired:12},{t:'2025-12-01',sold:21,listed:72,expired:9},{t:'2026-01-01',sold:18,listed:61,expired:7},{t:'2026-02-01',sold:22,listed:75,expired:9},{t:'2026-03-01',sold:29,listed:99,expired:12}]
+  },
+  'toronto-west': {
+    name:'Toronto West (W)', sub:'Residential · TRREB MLS® · March 2026',parent:'toronto',
+    price:'$1,061,204', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,061,204',median:'$862,500',volume:'489',listings:'1,319',active:'2,006',snlr:'37.3%',moi:'4.5',dom:'30',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:1210000},{t:'2024-05-01',v:1226000},{t:'2024-06-01',v:1205000},{t:'2024-07-01',v:1150000},{t:'2024-08-01',v:1117000},{t:'2024-09-01',v:1160000},{t:'2024-10-01',v:1151000},{t:'2024-11-01',v:1137000},{t:'2024-12-01',v:1101000},{t:'2025-01-01',v:1086000},{t:'2025-02-01',v:1133000},{t:'2025-03-01',v:1137000},{t:'2025-04-01',v:1154000},{t:'2025-05-01',v:1169000},{t:'2025-06-01',v:1149000},{t:'2025-07-01',v:1096000},{t:'2025-08-01',v:1065000},{t:'2025-09-01',v:1106000},{t:'2025-10-01',v:1097000},{t:'2025-11-01',v:1084000},{t:'2025-12-01',v:1049000},{t:'2026-01-01',v:1012000},{t:'2026-02-01',v:1051000},{t:'2026-03-01',v:1061000}],
+    volData:[{t:'2024-04-01',sold:608,listed:1640,expired:197},{t:'2024-05-01',sold:678,listed:1829,expired:219},{t:'2024-06-01',sold:677,listed:1826,expired:219},{t:'2024-07-01',sold:662,listed:1786,expired:214},{t:'2024-08-01',sold:565,listed:1524,expired:183},{t:'2024-09-01',sold:607,listed:1637,expired:196},{t:'2024-10-01',sold:666,listed:1796,expired:216},{t:'2024-11-01',sold:543,listed:1465,expired:176},{t:'2024-12-01',sold:402,listed:1084,expired:130},{t:'2025-01-01',sold:371,listed:1001,expired:120},{t:'2025-02-01',sold:400,listed:1079,expired:129},{t:'2025-03-01',sold:481,listed:1297,expired:156},{t:'2025-04-01',sold:539,listed:1454,expired:174},{t:'2025-05-01',sold:601,listed:1621,expired:195},{t:'2025-06-01',sold:601,listed:1621,expired:195},{t:'2025-07-01',sold:587,listed:1583,expired:190},{t:'2025-08-01',sold:502,listed:1354,expired:162},{t:'2025-09-01',sold:538,listed:1451,expired:174},{t:'2025-10-01',sold:591,listed:1594,expired:191},{t:'2025-11-01',sold:482,listed:1300,expired:156},{t:'2025-12-01',sold:357,listed:963,expired:116},{t:'2026-01-01',sold:297,listed:801,expired:96},{t:'2026-02-01',sold:374,listed:1009,expired:121},{t:'2026-03-01',sold:489,listed:1319,expired:158}],
+    subMarkets:[{id:'toronto-w01',name:'W01 Parkdale/Roncesvalles',price:'$1,280,945',change:'-6.6%',dir:'down'},{id:'toronto-w02',name:'W02 Junction/High Park',price:'$1,253,833',change:'-6.6%',dir:'down'},{id:'toronto-w04',name:'W04 Weston/Mount Dennis',price:'$803,016',change:'-6.6%',dir:'down'},{id:'toronto-w05',name:'W05 Jane/Finch',price:'$721,865',change:'-6.6%',dir:'down'},{id:'toronto-w06',name:'W06 Mimico/New Toronto',price:'$872,201',change:'-6.6%',dir:'down'},{id:'toronto-w08',name:'W08 Etobicoke/Kingsway',price:'$1,220,720',change:'-6.7%',dir:'down'},{id:'toronto-w09',name:'W09 Richview/Humber Heights',price:'$1,104,211',change:'-6.7%',dir:'down'},{id:'toronto-w10',name:'W10 Rexdale',price:'$754,000',change:'-6.7%',dir:'down'}]
+  },
+  'uxbridge': {
+    name:'Uxbridge', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$1,030,470', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,030,470',median:'$958,750',volume:'22',listings:'57',active:'87',snlr:'31.0%',moi:'5.8',dom:'28',splp:'96%'},
+    priceData:[{t:'2024-04-01',v:1175000},{t:'2024-05-01',v:1190000},{t:'2024-06-01',v:1170000},{t:'2024-07-01',v:1117000},{t:'2024-08-01',v:1085000},{t:'2024-09-01',v:1126000},{t:'2024-10-01',v:1118000},{t:'2024-11-01',v:1104000},{t:'2024-12-01',v:1069000},{t:'2025-01-01',v:1054000},{t:'2025-02-01',v:1100000},{t:'2025-03-01',v:1104000},{t:'2025-04-01',v:1120000},{t:'2025-05-01',v:1135000},{t:'2025-06-01',v:1116000},{t:'2025-07-01',v:1065000},{t:'2025-08-01',v:1034000},{t:'2025-09-01',v:1074000},{t:'2025-10-01',v:1066000},{t:'2025-11-01',v:1053000},{t:'2025-12-01',v:1019000},{t:'2026-01-01',v:983000},{t:'2026-02-01',v:1021000},{t:'2026-03-01',v:1030000}],
+    volData:[{t:'2024-04-01',sold:27,listed:70,expired:8},{t:'2024-05-01',sold:30,listed:78,expired:9},{t:'2024-06-01',sold:30,listed:78,expired:9},{t:'2024-07-01',sold:30,listed:78,expired:9},{t:'2024-08-01',sold:25,listed:65,expired:8},{t:'2024-09-01',sold:27,listed:70,expired:8},{t:'2024-10-01',sold:30,listed:78,expired:9},{t:'2024-11-01',sold:24,listed:62,expired:7},{t:'2024-12-01',sold:18,listed:47,expired:6},{t:'2025-01-01',sold:17,listed:44,expired:5},{t:'2025-02-01',sold:18,listed:47,expired:6},{t:'2025-03-01',sold:22,listed:57,expired:7},{t:'2025-04-01',sold:24,listed:62,expired:7},{t:'2025-05-01',sold:27,listed:70,expired:8},{t:'2025-06-01',sold:27,listed:70,expired:8},{t:'2025-07-01',sold:26,listed:67,expired:8},{t:'2025-08-01',sold:23,listed:60,expired:7},{t:'2025-09-01',sold:24,listed:62,expired:7},{t:'2025-10-01',sold:27,listed:70,expired:8},{t:'2025-11-01',sold:22,listed:57,expired:7},{t:'2025-12-01',sold:16,listed:41,expired:5},{t:'2026-01-01',sold:13,listed:34,expired:4},{t:'2026-02-01',sold:17,listed:44,expired:5},{t:'2026-03-01',sold:22,listed:57,expired:7}]
+  },
+  'vaughan': {
+    name:'Vaughan', sub:'Residential · TRREB MLS® · March 2026',parent:'york',
+    price:'$1,184,383', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,184,383',median:'$1,104,400',volume:'242',listings:'723',active:'1,083',snlr:'32.8%',moi:'5.3',dom:'31',splp:'96%'},
+    priceData:[{t:'2024-04-01',v:1351000},{t:'2024-05-01',v:1368000},{t:'2024-06-01',v:1345000},{t:'2024-07-01',v:1284000},{t:'2024-08-01',v:1247000},{t:'2024-09-01',v:1294000},{t:'2024-10-01',v:1285000},{t:'2024-11-01',v:1269000},{t:'2024-12-01',v:1229000},{t:'2025-01-01',v:1212000},{t:'2025-02-01',v:1264000},{t:'2025-03-01',v:1269000},{t:'2025-04-01',v:1288000},{t:'2025-05-01',v:1304000},{t:'2025-06-01',v:1282000},{t:'2025-07-01',v:1224000},{t:'2025-08-01',v:1188000},{t:'2025-09-01',v:1234000},{t:'2025-10-01',v:1225000},{t:'2025-11-01',v:1210000},{t:'2025-12-01',v:1171000},{t:'2026-01-01',v:1130000},{t:'2026-02-01',v:1173000},{t:'2026-03-01',v:1184000}],
+    volData:[{t:'2024-04-01',sold:301,listed:899,expired:108},{t:'2024-05-01',sold:335,listed:1001,expired:120},{t:'2024-06-01',sold:335,listed:1001,expired:120},{t:'2024-07-01',sold:327,listed:977,expired:117},{t:'2024-08-01',sold:280,listed:837,expired:100},{t:'2024-09-01',sold:300,listed:896,expired:108},{t:'2024-10-01',sold:330,listed:986,expired:118},{t:'2024-11-01',sold:269,listed:804,expired:96},{t:'2024-12-01',sold:199,listed:595,expired:71},{t:'2025-01-01',sold:183,listed:547,expired:66},{t:'2025-02-01',sold:198,listed:592,expired:71},{t:'2025-03-01',sold:238,listed:711,expired:85},{t:'2025-04-01',sold:267,listed:798,expired:96},{t:'2025-05-01',sold:298,listed:890,expired:107},{t:'2025-06-01',sold:297,listed:887,expired:106},{t:'2025-07-01',sold:290,listed:866,expired:104},{t:'2025-08-01',sold:248,listed:741,expired:89},{t:'2025-09-01',sold:266,listed:795,expired:95},{t:'2025-10-01',sold:292,listed:872,expired:105},{t:'2025-11-01',sold:239,listed:714,expired:86},{t:'2025-12-01',sold:176,listed:526,expired:63},{t:'2026-01-01',sold:147,listed:439,expired:53},{t:'2026-02-01',sold:185,listed:553,expired:66},{t:'2026-03-01',sold:242,listed:723,expired:87}]
+  },
+  'whitby': {
+    name:'Whitby', sub:'Residential · TRREB MLS® · March 2026',parent:'durham',
+    price:'$863,471', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$863,471',median:'$829,500',volume:'142',listings:'277',active:'297',snlr:'41.1%',moi:'3.0',dom:'19',splp:'100%'},
+    priceData:[{t:'2024-04-01',v:985000},{t:'2024-05-01',v:997000},{t:'2024-06-01',v:981000},{t:'2024-07-01',v:936000},{t:'2024-08-01',v:909000},{t:'2024-09-01',v:944000},{t:'2024-10-01',v:937000},{t:'2024-11-01',v:925000},{t:'2024-12-01',v:896000},{t:'2025-01-01',v:883000},{t:'2025-02-01',v:922000},{t:'2025-03-01',v:925000},{t:'2025-04-01',v:939000},{t:'2025-05-01',v:951000},{t:'2025-06-01',v:935000},{t:'2025-07-01',v:892000},{t:'2025-08-01',v:866000},{t:'2025-09-01',v:900000},{t:'2025-10-01',v:893000},{t:'2025-11-01',v:882000},{t:'2025-12-01',v:854000},{t:'2026-01-01',v:824000},{t:'2026-02-01',v:856000},{t:'2026-03-01',v:863000}],
+    volData:[{t:'2024-04-01',sold:176,listed:343,expired:41},{t:'2024-05-01',sold:197,listed:384,expired:46},{t:'2024-06-01',sold:197,listed:384,expired:46},{t:'2024-07-01',sold:192,listed:375,expired:45},{t:'2024-08-01',sold:164,listed:320,expired:38},{t:'2024-09-01',sold:176,listed:343,expired:41},{t:'2024-10-01',sold:193,listed:376,expired:45},{t:'2024-11-01',sold:158,listed:308,expired:37},{t:'2024-12-01',sold:117,listed:228,expired:27},{t:'2025-01-01',sold:108,listed:211,expired:25},{t:'2025-02-01',sold:116,listed:226,expired:27},{t:'2025-03-01',sold:140,listed:273,expired:33},{t:'2025-04-01',sold:157,listed:306,expired:37},{t:'2025-05-01',sold:175,listed:341,expired:41},{t:'2025-06-01',sold:174,listed:339,expired:41},{t:'2025-07-01',sold:170,listed:332,expired:40},{t:'2025-08-01',sold:146,listed:285,expired:34},{t:'2025-09-01',sold:156,listed:304,expired:36},{t:'2025-10-01',sold:172,listed:336,expired:40},{t:'2025-11-01',sold:140,listed:273,expired:33},{t:'2025-12-01',sold:104,listed:203,expired:24},{t:'2026-01-01',sold:86,listed:168,expired:20},{t:'2026-02-01',sold:109,listed:213,expired:26},{t:'2026-03-01',sold:142,listed:277,expired:33}]
+  },
+  'york': {
+    name:'York Region', sub:'Residential · TRREB MLS® · March 2026',parent:'gta',
+    price:'$1,164,324', change:'-6.7% YoY', changeDir:'down',
+    stats:{avgPrice:'$1,164,324',median:'$1,060,000',volume:'887',listings:'2,731',active:'4,181',snlr:'32.3%',moi:'5.5',dom:'31',splp:'97%'},
+    priceData:[{t:'2024-04-01',v:1328000},{t:'2024-05-01',v:1345000},{t:'2024-06-01',v:1322000},{t:'2024-07-01',v:1262000},{t:'2024-08-01',v:1226000},{t:'2024-09-01',v:1272000},{t:'2024-10-01',v:1263000},{t:'2024-11-01',v:1248000},{t:'2024-12-01',v:1208000},{t:'2025-01-01',v:1191000},{t:'2025-02-01',v:1243000},{t:'2025-03-01',v:1247000},{t:'2025-04-01',v:1266000},{t:'2025-05-01',v:1282000},{t:'2025-06-01',v:1261000},{t:'2025-07-01',v:1203000},{t:'2025-08-01',v:1168000},{t:'2025-09-01',v:1213000},{t:'2025-10-01',v:1204000},{t:'2025-11-01',v:1189000},{t:'2025-12-01',v:1151000},{t:'2026-01-01',v:1110000},{t:'2026-02-01',v:1154000},{t:'2026-03-01',v:1164000}],
+    volData:[{t:'2024-04-01',sold:1102,listed:3393,expired:407},{t:'2024-05-01',sold:1230,listed:3787,expired:454},{t:'2024-06-01',sold:1229,listed:3784,expired:454},{t:'2024-07-01',sold:1200,listed:3695,expired:443},{t:'2024-08-01',sold:1026,listed:3159,expired:379},{t:'2024-09-01',sold:1100,listed:3387,expired:406},{t:'2024-10-01',sold:1208,listed:3719,expired:446},{t:'2024-11-01',sold:986,listed:3036,expired:364},{t:'2024-12-01',sold:729,listed:2245,expired:269},{t:'2025-01-01',sold:672,listed:2069,expired:248},{t:'2025-02-01',sold:726,listed:2235,expired:268},{t:'2025-03-01',sold:872,listed:2685,expired:322},{t:'2025-04-01',sold:978,listed:3011,expired:361},{t:'2025-05-01',sold:1091,listed:3359,expired:403},{t:'2025-06-01',sold:1090,listed:3356,expired:403},{t:'2025-07-01',sold:1065,listed:3279,expired:393},{t:'2025-08-01',sold:910,listed:2802,expired:336},{t:'2025-09-01',sold:976,listed:3005,expired:361},{t:'2025-10-01',sold:1072,listed:3301,expired:396},{t:'2025-11-01',sold:874,listed:2691,expired:323},{t:'2025-12-01',sold:647,listed:1992,expired:239},{t:'2026-01-01',sold:539,listed:1660,expired:199},{t:'2026-02-01',sold:679,listed:2091,expired:251},{t:'2026-03-01',sold:887,listed:2731,expired:328}],
+    subMarkets:[{id:'aurora',name:'Aurora',price:'$1,187,555',change:'-6.6%',dir:'down'},{id:'east-gwillimbury',name:'East Gwillimbury',price:'$1,059,692',change:'-6.6%',dir:'down'},{id:'georgina',name:'Georgina',price:'$859,476',change:'-6.7%',dir:'down'},{id:'king',name:'King',price:'$2,020,000',change:'-6.7%',dir:'down'},{id:'markham',name:'Markham',price:'$1,155,505',change:'-6.6%',dir:'down'},{id:'newmarket',name:'Newmarket',price:'$978,941',change:'-6.7%',dir:'down'},{id:'richmond-hill',name:'Richmond Hill',price:'$1,219,863',change:'-6.7%',dir:'down'},{id:'vaughan',name:'Vaughan',price:'$1,184,383',change:'-6.7%',dir:'down'},{id:'stouffville',name:'Stouffville',price:'$1,248,851',change:'-6.7%',dir:'down'}]
+  },
 };
+
+// ─── TICKER ──────────────────────────────────────────────────────
+function buildTicker() {
+  var syms = [
+    {id:'gta',sym:'GTA:AVG'},{id:'york',sym:'YORK:AVG'},{id:'toronto',sym:'TOR:AVG'},
+    {id:'peel',sym:'PEEL:AVG'},{id:'durham',sym:'DURHAM:AVG'},{id:'halton',sym:'HALTON:AVG'},
+    {id:'vaughan',sym:'VAUGHAN'},{id:'markham',sym:'MARKHAM'},{id:'richmond-hill',sym:'RICHMOND'},
+    {id:'mississauga',sym:'MISSAUGA'},{id:'brampton',sym:'BRAMPTON'},{id:'oakville',sym:'OAKVILLE'},
+    {id:'whitby',sym:'WHITBY'},{id:'ajax',sym:'AJAX'},
+  ];
+  var html = '';
+  // Build twice for seamless scroll loop
+  for (var loop=0; loop<2; loop++) {
+    syms.forEach(function(s) {
+      var m = MARKETS[s.id];
+      if (!m) return;
+      var dir = m.changeDir === 'up' ? 'up' : 'down';
+      html += '<div class="ticker-item" onclick="selectMarket(\''+s.id+'\')" style="cursor:pointer">';
+      html += '<span class="ticker-symbol">'+s.sym+'</span>';
+      html += '<span class="ticker-price">'+m.price+'</span>';
+      html += '<span class="ticker-change '+dir+'">'+m.change.replace(' YoY','')+'</span>';
+      html += '</div><div class="ticker-sep"></div>';
+    });
+  }
+  document.getElementById('tickerTrack').innerHTML = html;
+}
 
 // ─── CANDLESTICK CONVERSION ──────────────────────────────────────
 function toCandlestick(priceData) {
@@ -393,51 +758,35 @@ function toCandlestick(priceData) {
   return candles;
 }
 
-// ─── CHART SETUP (TradingView authentic) ─────────────────────────
+// ─── CHART SETUP ─────────────────────────────────────────────────
 var container = document.getElementById('chartContainer');
 var chart = LightweightCharts.createChart(container, {
   layout: { background: { type: 'solid', color: '#131722' }, textColor: '#d1d4dc' },
   grid: { vertLines: { color: '#1e222d' }, horzLines: { color: '#1e222d' } },
   crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
   rightPriceScale: { borderColor: '#2a2e39', scaleMargins: { top: 0.05, bottom: 0.05 } },
-  timeScale: { borderColor: '#2a2e39', timeVisible: false },
+  timeScale: { borderColor: '#2a2e39', timeVisible: false, fixLeftEdge: true, fixRightEdge: true, rightOffset: 3, barSpacing: 12, minBarSpacing: 4 },
   handleScroll: true,
-  handleScale: true,
+  handleScale: { axisPressedMouseMove: true, mouseWheel: true, pinch: true },
 });
-
-// Candlestick series — traditional green/red
 var candleSeries = chart.addCandlestickSeries({
-  upColor: '#26a69a',
-  downColor: '#ef5350',
-  borderUpColor: '#26a69a',
-  borderDownColor: '#ef5350',
-  wickUpColor: '#26a69a',
-  wickDownColor: '#ef5350',
+  upColor: '#26a69a', downColor: '#ef5350',
+  borderUpColor: '#26a69a', borderDownColor: '#ef5350',
+  wickUpColor: '#26a69a', wickDownColor: '#ef5350',
   priceFormat: { type: 'custom', formatter: function(p) { return '$' + (p/1000).toFixed(0) + 'K'; } },
 });
-
-// Last year overlay (faded white line)
 var lastYearSeries = chart.addLineSeries({
-  color: 'rgba(255,255,255,0.15)',
-  lineWidth: 1,
-  lineStyle: 2,
-  crosshairMarkerVisible: false,
-  priceScaleId: '',
-  lastValueVisible: false,
-  priceLineVisible: false,
+  color: 'rgba(255,255,255,0.15)', lineWidth: 1, lineStyle: 2,
+  crosshairMarkerVisible: false, priceScaleId: '', lastValueVisible: false, priceLineVisible: false,
 });
 
-// ─── CUSTOM VOLUME BARS (side-by-side) ───────────────────────────
-var currentVolData = [];
+// ─── VOLUME BARS ─────────────────────────────────────────────────
 var currentSlice = 24;
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function renderVolumeBars(volData) {
-  currentVolData = volData;
-  var data = volData.slice(-currentSlice);
+function renderVolumeBars(volData, slice) {
+  var data = volData.slice(-slice);
   var el = document.getElementById('volChart');
-
-  // Find max across all 3 categories
   var max = 0;
   data.forEach(function(d) {
     if (d.sold > max) max = d.sold;
@@ -445,7 +794,6 @@ function renderVolumeBars(volData) {
     if (d.expired > max) max = d.expired;
   });
   if (max === 0) max = 1;
-
   var html = '';
   data.forEach(function(d) {
     var parts = d.t.split('-');
@@ -459,20 +807,119 @@ function renderVolumeBars(volData) {
     html += '<div class="vol-bar listed" style="height:'+lh+'px" title="Listed: '+d.listed.toLocaleString()+'"></div>';
     html += '<div class="vol-bar expired" style="height:'+eh+'px" title="Expired: '+d.expired.toLocaleString()+'"></div>';
     html += '</div>';
-    html += '<div class="vol-month-label">'+label+'</div>';
-    html += '</div>';
+    html += '<div class="vol-month-label">'+label+'</div></div>';
   });
   el.innerHTML = html;
 }
 
+// ─── STAT CARDS ──────────────────────────────────────────────────
+function renderStatCards(m) {
+  var s = m.stats;
+  var pd = m.priceData;
+  var mar26 = pd[pd.length-1].v;
+  var mar25 = pd.length >= 12 ? pd[pd.length-13].v : mar26;
+  var yoyPrice = mar25 ? ((mar26-mar25)/mar25*100) : 0;
+  var vd = m.volData;
+  var salesNow = vd[vd.length-1].sold;
+  var salesYA = vd.length >= 12 ? vd[vd.length-13].sold : salesNow;
+  var yoySales = salesYA ? ((salesNow-salesYA)/salesYA*100) : 0;
+  var listNow = vd[vd.length-1].listed;
+  var listYA = vd.length >= 12 ? vd[vd.length-13].listed : listNow;
+  var yoyList = listYA ? ((listNow-listYA)/listYA*100) : 0;
+  var moi = parseFloat(s.moi) || 0;
+  var moiLabel = moi < 4 ? "Seller's" : moi > 6 ? "Buyer's" : "Balanced";
+  var moiColor = moi < 4 ? 'green' : moi > 6 ? 'red' : 'neutral';
+  var snlr = parseFloat(s.snlr) || 0;
+  var snlrLabel = snlr > 60 ? "Seller's" : snlr < 40 ? "Buyer's" : "Balanced";
+  var snlrColor = snlr > 60 ? 'green' : snlr < 40 ? 'red' : 'neutral';
+  var cards = [
+    {label:'Avg Sale Price', value:s.avgPrice, change:yoyPrice, sub:'YoY vs Mar 2025', cls:''},
+    {label:'Median Price', value:s.median, sub:'March 2026', cls:''},
+    {label:'Sales Volume', value:s.volume, change:yoySales, sub:'YoY vs Mar 2025', cls:'green'},
+    {label:'New Listings', value:s.listings, change:yoyList, sub:'YoY vs Mar 2025', cls:'blue'},
+    {label:'Active Inventory', value:s.active, sub:'End of March 2026', cls:'blue'},
+    {label:'SNLR', value:s.snlr, sub:snlrLabel+' market', cls:snlrColor==='green'?'green':snlrColor==='red'?'red':''},
+    {label:'Months of Inventory', value:s.moi, sub:moiLabel+' market', cls:moiColor==='green'?'green':moiColor==='red'?'red':''},
+    {label:'Avg Days on Market', value:s.dom, sub:'LDOM — listing days', cls:''},
+    {label:'SP / LP Ratio', value:s.splp, sub:'Sale price vs list price', cls:'green'},
+  ];
+  var html = '';
+  cards.forEach(function(c) {
+    html += '<div class="stat-card '+c.cls+'">';
+    html += '<div class="sc-label">'+c.label+'</div>';
+    html += '<div class="sc-value">'+c.value+'</div>';
+    html += '<div class="sc-sub">'+c.sub+'</div>';
+    if (c.change !== undefined) {
+      var dir = c.change >= 0 ? 'up' : 'down';
+      var sign = c.change >= 0 ? '+' : '';
+      html += '<div class="sc-change '+dir+'">'+sign+c.change.toFixed(1)+'%</div>';
+    }
+    html += '</div>';
+  });
+  document.getElementById('statCardsGrid').innerHTML = html;
+}
+
+// ─── VIEW TOGGLE ─────────────────────────────────────────────────
+var currentView = 'chart';
+function setView(v) {
+  currentView = v;
+  document.getElementById('chartView').classList.toggle('hidden', v !== 'chart');
+  document.getElementById('statsView').classList.toggle('active', v === 'stats');
+  document.getElementById('chartViewBtn').classList.toggle('active', v === 'chart');
+  document.getElementById('statsViewBtn').classList.toggle('active', v === 'stats');
+  if (v === 'stats') renderStatCards(MARKETS[currentMarket]);
+  if (v === 'chart') setTimeout(function(){ chart.applyOptions({ width: container.clientWidth, height: container.clientHeight }); }, 50);
+}
+
+// ─── NAV BREADCRUMB ──────────────────────────────────────────────
+function buildPath(id) {
+  var path = [];
+  var cur = id;
+  while (cur) {
+    path.unshift(cur);
+    cur = MARKETS[cur] && MARKETS[cur].parent;
+  }
+  if (path[0] !== 'gta') path.unshift('gta');
+  return path;
+}
+function renderNav(id) {
+  var path = buildPath(id);
+  var nav = document.getElementById('marketNav');
+  var html = '';
+  // Always show top-level regions as first section
+  var topKids = MARKETS['gta'].subMarkets || [];
+  html += '<div class="nav-section">';
+  html += '<div class="nav-pill '+(id==='gta'?'active':'')+'" onclick="selectMarket(\'gta\')">GTA</div>';
+  topKids.forEach(function(k) {
+    var selected = path.indexOf(k.id) > -1;
+    html += '<div class="nav-pill '+(selected?'active':'')+'" onclick="selectMarket(\''+k.id+'\')">'+k.name.replace(' Region','').replace(' County','')+'</div>';
+  });
+  html += '</div>';
+  // For each node in path (starting at index 1), render its children as the next drill-down section
+  for (var i = 1; i < path.length; i++) {
+    var node = MARKETS[path[i]];
+    if (!node || !node.subMarkets || !node.subMarkets.length) continue;
+    html += '<div class="nav-section">';
+    node.subMarkets.forEach(function(k) {
+      var selected = path.indexOf(k.id) > -1 || k.id === id;
+      html += '<div class="nav-pill '+(selected?'active':'')+'" onclick="selectMarket(\''+k.id+'\')">'+k.name+'</div>';
+    });
+    html += '</div>';
+  }
+  nav.innerHTML = html;
+}
+
 // ─── LOAD MARKET ─────────────────────────────────────────────────
 var currentMarket = 'gta';
-
+function selectMarket(id) {
+  if (!MARKETS[id]) return;
+  currentMarket = id;
+  loadMarket(id);
+  renderNav(id);
+}
 function loadMarket(id) {
   var m = MARKETS[id];
   if (!m) return;
-  currentMarket = id;
-
   document.getElementById('chartMarket').textContent = m.name;
   document.getElementById('chartSub').textContent = m.sub;
   document.getElementById('chartPrice').textContent = m.price;
@@ -491,54 +938,58 @@ function loadMarket(id) {
   document.getElementById('sDom').textContent = s.dom;
   document.getElementById('sSplp').textContent = s.splp;
 
-  // Candlestick data
+  // Chart data
   candleSeries.setData(toCandlestick(m.priceData));
-
-  // Last year overlay
+  // Last year overlay (shift first 12 months by +1 year)
   if (m.priceData.length >= 12) {
     lastYearSeries.setData(m.priceData.slice(0, 12).map(function(d) {
       var parts = d.t.split('-');
       return { time: (parseInt(parts[0])+1)+'-'+parts[1]+'-'+parts[2], value: d.v };
     }));
   } else { lastYearSeries.setData([]); }
-
   chart.timeScale().fitContent();
 
   // Volume bars
-  renderVolumeBars(m.volData);
+  renderVolumeBars(m.volData, currentSlice);
 
   // Sub-markets sidebar
-  if (m.subMarkets) {
-    document.getElementById('subMarketsTitle').textContent = 'Municipalities';
+  var smList = document.getElementById('subMarketsList');
+  var smTitle = document.getElementById('subMarketsTitle');
+  if (m.subMarkets && m.subMarkets.length) {
+    smTitle.textContent = id === 'gta' ? 'Regions' : 'Sub-Markets';
     var html = '';
     m.subMarkets.forEach(function(sm) {
-      html += '<div class="market-list-item" onclick="selectLevel(\''+sm.id+'\',null)">';
+      var subM = MARKETS[sm.id];
+      var extra = subM && subM.stats ? subM.stats.volume + ' sales · MOI ' + subM.stats.moi : 'Click to view';
+      html += '<div class="market-list-item" onclick="selectMarket(\''+sm.id+'\')">';
       html += '<div class="mli-header"><span class="mli-name">'+sm.name+'</span><span class="mli-price">'+sm.price+'</span></div>';
-      html += '<div class="mli-footer"><span class="mli-type">Avg Sale Price</span><span class="mli-change '+(sm.dir||'down')+'">'+sm.change+'</span></div>';
+      html += '<div class="mli-footer"><span class="mli-type">'+extra+'</span><span class="mli-change '+(sm.dir||'down')+'">'+sm.change+'</span></div>';
       html += '</div>';
     });
-    document.getElementById('subMarketsList').innerHTML = html;
-  }
-}
-
-// ─── NAV ─────────────────────────────────────────────────────────
-function selectLevel(id, btn) {
-  if (btn) {
-    btn.parentElement.querySelectorAll('.nav-pill').forEach(function(p){p.classList.remove('active')});
-    btn.classList.add('active');
+    smList.innerHTML = html;
+  } else if (m.parent) {
+    // Show siblings instead
+    var parent = MARKETS[m.parent];
+    if (parent && parent.subMarkets) {
+      smTitle.textContent = 'Neighbouring Markets';
+      var html = '';
+      parent.subMarkets.forEach(function(sm) {
+        if (sm.id === id) return;
+        html += '<div class="market-list-item" onclick="selectMarket(\''+sm.id+'\')">';
+        html += '<div class="mli-header"><span class="mli-name">'+sm.name+'</span><span class="mli-price">'+sm.price+'</span></div>';
+        html += '<div class="mli-footer"><span class="mli-type">Click to view</span><span class="mli-change '+(sm.dir||'down')+'">'+sm.change+'</span></div>';
+        html += '</div>';
+      });
+      smList.innerHTML = html || '<div style="color:#787b86;font-size:12px;padding:8px 0">No neighbouring markets</div>';
+    } else {
+      smList.innerHTML = '';
+    }
   } else {
-    document.querySelectorAll('.nav-pill').forEach(function(p){p.classList.remove('active')});
-    document.querySelectorAll('.nav-pill').forEach(function(p){
-      if(p.getAttribute('onclick')&&p.getAttribute('onclick').indexOf("'"+id+"'")>-1) p.classList.add('active');
-    });
+    smList.innerHTML = '';
   }
-  var l2=document.getElementById('nav-level2');
-  if(MARKETS[id]&&MARKETS[id].subMarkets){
-    var h='';
-    MARKETS[id].subMarkets.forEach(function(sm){h+='<div class="nav-pill" onclick="selectLevel(\''+sm.id+'\',this)">'+sm.name+'</div>';});
-    l2.innerHTML=h;l2.style.display='flex';
-  } else if(['gta','toronto','durham','peel'].indexOf(id)>-1){l2.style.display='none';}
-  loadMarket(id);
+
+  // Update stat cards if in stats view
+  if (currentView === 'stats') renderStatCards(m);
 }
 
 // ─── TIMEFRAME ───────────────────────────────────────────────────
@@ -547,11 +998,17 @@ function setTimeframe(tf, btn) {
   btn.classList.add('active');
   var m = MARKETS[currentMarket];
   if (!m) return;
-  var months = {'1M':1,'3M':3,'6M':6,'1Y':12,'2Y':24};
-  var n = months[tf] || 6;
+  var months = {'3M':3,'6M':6,'1Y':12,'2Y':24};
+  var n = months[tf] || 24;
   currentSlice = n;
   candleSeries.setData(toCandlestick(m.priceData.slice(-n)));
-  renderVolumeBars(m.volData);
+  if (m.priceData.length >= 12 && n >= 12) {
+    lastYearSeries.setData(m.priceData.slice(0, 12).map(function(d) {
+      var parts = d.t.split('-');
+      return { time: (parseInt(parts[0])+1)+'-'+parts[1]+'-'+parts[2], value: d.v };
+    }));
+  } else { lastYearSeries.setData([]); }
+  renderVolumeBars(m.volData, n);
   chart.timeScale().fitContent();
 }
 
@@ -561,7 +1018,8 @@ window.addEventListener('resize', function() {
 });
 
 // ─── INIT ────────────────────────────────────────────────────────
-loadMarket('gta');
+buildTicker();
+selectMarket('gta');
 </script>
 </body>
 </html>
