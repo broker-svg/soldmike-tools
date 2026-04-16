@@ -57,35 +57,38 @@
   /* MAIN GRID */
   .main{display:grid;grid-template-columns:1fr 1fr;gap:0;height:calc(100vh - 130px)}
 
-  /* LEFT PANEL — WHITE background */
-  .left-panel{padding:18px 22px;overflow-y:auto;border-right:1px solid var(--border-light);background:var(--page-bg)}
+  /* LEFT PANEL — WHITE background, no scroll target */
+  .left-panel{padding:16px 20px;overflow-y:auto;border-right:1px solid var(--border-light);background:var(--page-bg)}
   .left-panel::-webkit-scrollbar{width:4px}
   .left-panel::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:2px}
 
-  .panel-title{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:var(--gold-dim);margin-bottom:12px;font-weight:700}
+  .panel-title{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--gold-dim);margin-bottom:10px;font-weight:700}
 
   /* SECTION CARDS — dark on white */
-  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
-  .section-card{padding:14px;border-radius:10px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-on-dark);display:block;box-shadow:0 2px 6px rgba(10,10,20,0.08)}
+  .section-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+  .section-card{padding:12px 14px;border-radius:10px;border:1px solid var(--card-border);background:var(--card-bg);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-on-dark);display:block;box-shadow:0 2px 6px rgba(10,10,20,0.08)}
   .section-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 6px 16px rgba(10,10,20,0.18)}
-  .section-card .sc-icon{font-size:22px;margin-bottom:6px}
-  .section-card .sc-name{font-size:14px;font-weight:600;margin-bottom:4px;color:var(--text-on-dark)}
+  .section-card .sc-icon{font-size:20px;margin-bottom:4px}
+  .section-card .sc-name{font-size:13px;font-weight:600;margin-bottom:3px;color:var(--text-on-dark)}
   .section-card .sc-stats{font-size:11px;color:var(--text-on-dark-dim)}
   .section-card .sc-stats .active{color:var(--green)}
   .section-card .sc-stats .queued{color:var(--yellow)}
 
   /* QUICK LINKS — dark pills on white */
-  .quick-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
-  .ql{padding:6px 14px;border-radius:20px;border:1px solid var(--card-border);background:var(--card-bg-alt);font-size:12px;color:var(--text-on-dark-dim);text-decoration:none;transition:all .15s;white-space:nowrap;box-shadow:0 1px 3px rgba(10,10,20,0.06)}
+  .quick-links{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .ql{padding:5px 12px;border-radius:20px;border:1px solid var(--card-border);background:var(--card-bg-alt);font-size:12px;color:var(--text-on-dark-dim);text-decoration:none;transition:all .15s;white-space:nowrap;box-shadow:0 1px 3px rgba(10,10,20,0.06)}
   .ql:hover{border-color:var(--gold);color:var(--gold)}
+  .ql.more{border-color:var(--gold-dim);color:var(--gold)}
+  .ql.more:hover{background:var(--card-bg);color:var(--gold)}
 
-  /* KNOWLEDGE BASE — dark cards on white */
-  .kb-list{display:flex;flex-direction:column;gap:6px}
-  .kb-item{padding:10px 12px;border-radius:8px;background:var(--card-bg);border:1px solid var(--card-border);text-decoration:none;color:var(--text-on-dark);transition:all .2s;display:flex;justify-content:space-between;align-items:center;gap:12px;box-shadow:0 2px 6px rgba(10,10,20,0.08)}
-  .kb-item:hover{border-color:var(--gold);transform:translateX(2px)}
-  .kb-item .kb-title{font-size:13px;font-weight:500;color:var(--text-on-dark)}
-  .kb-item .kb-date{font-size:11px;color:var(--text-on-dark-dim);margin-top:2px}
-  .kb-item .kb-section{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--card-bg-alt);color:var(--text-on-dark-dim);flex-shrink:0}
+  /* KNOWLEDGE BASE — compact 2-column grid */
+  .kb-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .kb-item{padding:10px 12px;border-radius:8px;background:var(--card-bg);border:1px solid var(--card-border);text-decoration:none;color:var(--text-on-dark);transition:all .2s;display:flex;flex-direction:column;gap:4px;box-shadow:0 2px 6px rgba(10,10,20,0.08)}
+  .kb-item:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .kb-item .kb-title{font-size:12px;font-weight:600;color:var(--text-on-dark);line-height:1.3}
+  .kb-item .kb-meta{display:flex;justify-content:space-between;align-items:center;gap:6px}
+  .kb-item .kb-date{font-size:10px;color:var(--text-on-dark-dim)}
+  .kb-item .kb-section{font-size:9px;padding:2px 7px;border-radius:10px;background:var(--card-bg-alt);color:var(--text-on-dark-dim);letter-spacing:0.5px;text-transform:uppercase;flex-shrink:0}
 
   /* RIGHT PANEL — stays dark (unchanged) */
   .right-panel{display:flex;flex-direction:column;overflow:hidden;background:var(--card-bg)}
@@ -211,37 +214,29 @@
     <div class="panel-title">Quick Links</div>
     <div class="quick-links">
       <a class="ql" href="https://www.notion.so/33b8b7ae80a18110980ed065cb3e7792" target="_blank">&#127942; Command Centre</a>
-      <a class="ql" href="https://www.notion.so/33b8b7ae80a181b18b34f111a95c88bd" target="_blank">&#128506; Master Dashboard</a>
       <a class="ql" href="https://www.notion.so/8bec02bc41bd4d1fabe79c18abb6b453" target="_blank">&#127919; Priority Actions</a>
-      <a class="ql" href="https://www.notion.so/c04ba21158e04aedb2bac989142667a6" target="_blank">&#129504; Knowledge Base</a>
       <a class="ql" href="https://www.notion.so/3338b7ae80a18152b056e0f0eb109250" target="_blank">&#128272; API Keys</a>
       <a class="ql" href="https://www.notion.so/32f8b7ae80a181149a9be79397a9fe8c" target="_blank">&#128736; Tools & Skills</a>
-      <a class="ql" href="https://www.notion.so/23b48957629b469e867731164cfed7a6" target="_blank">&#128199; Contacts</a>
-      <a class="ql" href="https://broker-svg.github.io/soldmike-tools/" target="_blank">&#127760; GitHub Pages</a>
+      <a class="ql more" href="https://www.notion.so/33b8b7ae80a18110980ed065cb3e7792" target="_blank">&#8230; More</a>
     </div>
 
     <div class="panel-title">Recent Knowledge Base</div>
     <div class="kb-list">
       <a class="kb-item" href="https://www.notion.so/33c8b7ae80a18116bf9bc6b3e6b19166" target="_blank">
-        <div>
-          <div class="kb-title">Command Centre + Project Trees System Build</div>
-          <div class="kb-date">Apr 7, 2026</div>
-        </div>
-        <div class="kb-section">Full System</div>
+        <div class="kb-title">Command Centre + Project Trees</div>
+        <div class="kb-meta"><span class="kb-date">Apr 7</span><span class="kb-section">Full System</span></div>
       </a>
       <a class="kb-item" href="https://www.notion.so/3358b7ae80a181759576c2e1020825c8" target="_blank">
-        <div>
-          <div class="kb-title">Make.com Automation Pivot</div>
-          <div class="kb-date">Apr 1, 2026</div>
-        </div>
-        <div class="kb-section">Business</div>
+        <div class="kb-title">Make.com Automation Pivot</div>
+        <div class="kb-meta"><span class="kb-date">Apr 1</span><span class="kb-section">Business</span></div>
       </a>
       <a class="kb-item" href="https://www.notion.so/3328b7ae80a181b88ed2f769956113e6" target="_blank">
-        <div>
-          <div class="kb-title">Session Knowledge — March 28</div>
-          <div class="kb-date">Mar 28, 2026</div>
-        </div>
-        <div class="kb-section">Multi</div>
+        <div class="kb-title">Session Knowledge — Mar 28</div>
+        <div class="kb-meta"><span class="kb-date">Mar 28</span><span class="kb-section">Multi</span></div>
+      </a>
+      <a class="kb-item" href="https://www.notion.so/c04ba21158e04aedb2bac989142667a6" target="_blank">
+        <div class="kb-title">All Knowledge Base &rarr;</div>
+        <div class="kb-meta"><span class="kb-date">Browse</span><span class="kb-section">Index</span></div>
       </a>
     </div>
   </div>
