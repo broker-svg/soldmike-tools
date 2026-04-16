@@ -68,6 +68,8 @@
   .st-queued{background:rgba(251,191,36,.18);color:var(--yellow)}
   .st-done{background:rgba(136,136,160,.15);color:var(--text-on-dark-dim)}
   .st-parked{background:rgba(167,139,250,.18);color:var(--purple)}
+  .st-new{background:rgba(96,165,250,.18);color:var(--blue)}
+  .st-overdue{background:rgba(248,113,113,.18);color:var(--red)}
   .proj-sub{font-size:11px;color:var(--text-on-dark-dim);line-height:1.3}
 
   /* QUICK LINKS — compact dim on white */
@@ -101,6 +103,34 @@
   .tree-node .tn-title{font-size:14px;font-weight:700;color:var(--text-on-dark)}
   .tree-node .tn-sub{font-size:11px;color:var(--text-on-dark-dim)}
   .tree-connector{width:2px;height:20px;background:var(--border-light);margin:0 auto}
+
+  /* KANBAN BOARD (New / Active / Overdue / Done) */
+  .kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:4px}
+  .kanban-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .kanban-col-header{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 10px;border-bottom:2px solid var(--border-light)}
+  .kanban-col[data-status="new"] .kanban-col-header{border-bottom-color:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-col-header{border-bottom-color:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-col-header{border-bottom-color:var(--red)}
+  .kanban-col[data-status="done"] .kanban-col-header{border-bottom-color:var(--text-on-light-dim)}
+  .kanban-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+  .kanban-col[data-status="new"] .kanban-label{color:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-label{color:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-label{color:var(--red)}
+  .kanban-col[data-status="done"] .kanban-label{color:var(--text-on-light-dim)}
+  .kanban-count{font-size:11px;color:var(--text-on-light-dim);background:var(--page-bg-soft);border:1px solid var(--border-light);border-radius:10px;padding:1px 8px;font-weight:700;min-width:22px;text-align:center}
+  .kanban-col-body{display:flex;flex-direction:column;gap:8px}
+  .kanban-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:11px 13px 11px 14px;cursor:pointer;transition:all .2s;color:var(--text-on-dark);box-shadow:0 2px 6px rgba(10,10,20,0.08);position:relative;overflow:hidden}
+  .kanban-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 6px 16px rgba(10,10,20,0.18)}
+  .kanban-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .kanban-col[data-status="new"] .kanban-card::before{background:var(--blue)}
+  .kanban-col[data-status="active"] .kanban-card::before{background:var(--green)}
+  .kanban-col[data-status="overdue"] .kanban-card::before{background:var(--red)}
+  .kanban-col[data-status="done"] .kanban-card::before{background:var(--text-on-dark-dim)}
+  .kanban-card .kc-name{font-size:13px;font-weight:600;margin-bottom:4px;line-height:1.3;color:var(--text-on-dark)}
+  .kanban-card .kc-note{font-size:11px;color:var(--text-on-dark-dim);line-height:1.35}
+  .kanban-empty{font-size:12px;color:var(--text-on-light-dim);font-style:italic;text-align:center;padding:20px 10px;border:2px dashed var(--border-light);border-radius:8px;background:var(--page-bg-soft)}
+  @media(max-width:1100px){.kanban{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:700px){.kanban{grid-template-columns:1fr}}
 
   /* BRANCH GRID — dark cards on white */
   .branch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
@@ -165,7 +195,7 @@
   </div>
   <div class="stats">
     <div class="s active"><span class="n">3</span> Active</div>
-    <div class="s queued"><span class="n">2</span> Queued</div>
+    <div class="s queued"><span class="n" style="color:var(--red)">2</span> Overdue</div>
     <div class="s done"><span class="n">3</span> Done</div>
   </div>
 </div>
@@ -184,7 +214,7 @@
       <div class="proj-sub">55 fields, 7 Smart Lists, 45 tags</div>
     </div>
     <div class="proj" data-proj="fub-email">
-      <div class="proj-name">FUB Email Campaign <span class="proj-status st-queued">Queued</span></div>
+      <div class="proj-name">FUB Email Campaign <span class="proj-status st-overdue">Overdue</span></div>
       <div class="proj-sub">58 emails / 7 phases</div>
     </div>
     <div class="proj" data-proj="property-web">
@@ -204,7 +234,7 @@
       <div class="proj-sub">Email + HTML page skills</div>
     </div>
     <div class="proj" data-proj="deliverability">
-      <div class="proj-name">Deliverability Setup <span class="proj-status st-queued">Queued</span></div>
+      <div class="proj-name">Deliverability Setup <span class="proj-status st-overdue">Overdue</span></div>
       <div class="proj-sub">SPF / DKIM / DMARC</div>
     </div>
     <div class="proj" data-proj="zapier">
@@ -247,65 +277,83 @@
 
     <div class="tree-content">
 
-      <!-- OVERVIEW -->
+      <!-- OVERVIEW — Kanban Board -->
       <div class="tree-view active" id="view-overview">
-        <div class="tree-root">
-          <div class="tree-node root">
-            <div class="tn-icon">&#127969;</div>
-            <div class="tn-title">Real Estate</div>
-            <div class="tn-sub">8 projects &middot; 3 active &middot; 2 queued &middot; 3 done</div>
+        <div class="kanban">
+
+          <!-- NEW -->
+          <div class="kanban-col" data-status="new">
+            <div class="kanban-col-header">
+              <span class="kanban-label">New</span>
+              <span class="kanban-count">0</span>
+            </div>
+            <div class="kanban-col-body">
+              <div class="kanban-empty">No new projects yet &mdash; brainstorm ideas here</div>
+            </div>
           </div>
-          <div class="tree-connector"></div>
-        </div>
-        <div class="branch-grid">
-          <div class="branch-card" data-goto="fub-crm">
-            <div class="bc-accent green"></div>
-            <div class="bc-name">FUB CRM Build</div>
-            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
-            <div class="bc-next">55 custom fields, 7 Smart Lists, 45 tags all live in Follow Up Boss</div>
+
+          <!-- ACTIVE -->
+          <div class="kanban-col" data-status="active">
+            <div class="kanban-col-header">
+              <span class="kanban-label">Active</span>
+              <span class="kanban-count">3</span>
+            </div>
+            <div class="kanban-col-body">
+              <div class="kanban-card" data-goto="property-web">
+                <div class="kc-name">Property Websites</div>
+                <div class="kc-note">Build site for 16 Saint Keller Pl using property-website skill</div>
+              </div>
+              <div class="kanban-card" data-goto="form290">
+                <div class="kc-name">Form 290 HTML Build</div>
+                <div class="kc-note">Complete Page 2+ one at a time, compare against PDF</div>
+              </div>
+              <div class="kanban-card" data-goto="cma">
+                <div class="kc-name">CMA Generator</div>
+                <div class="kc-note">Upload MLS screenshots and run cma-generator skill</div>
+              </div>
+            </div>
           </div>
-          <div class="branch-card" data-goto="fub-email">
-            <div class="bc-accent yellow"></div>
-            <div class="bc-name">FUB Email Campaign</div>
-            <div class="bc-status"><span class="proj-status st-queued">Queued</span></div>
-            <div class="bc-next">58 emails across 7 phases. Blocked on deliverability (SPF/DKIM/DMARC)</div>
+
+          <!-- OVERDUE -->
+          <div class="kanban-col" data-status="overdue">
+            <div class="kanban-col-header">
+              <span class="kanban-label">Overdue</span>
+              <span class="kanban-count">2</span>
+            </div>
+            <div class="kanban-col-body">
+              <div class="kanban-card" data-goto="deliverability">
+                <div class="kc-name">Deliverability Setup</div>
+                <div class="kc-note">SPF / DKIM / DMARC. Blocking all email campaigns on soldmike.com</div>
+              </div>
+              <div class="kanban-card" data-goto="fub-email">
+                <div class="kc-name">FUB Email Campaign</div>
+                <div class="kc-note">58 emails across 7 phases. Stalled on deliverability</div>
+              </div>
+            </div>
           </div>
-          <div class="branch-card" data-goto="property-web">
-            <div class="bc-accent green"></div>
-            <div class="bc-name">Property Websites</div>
-            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
-            <div class="bc-next">Build site for 16 Saint Keller Pl using property-website skill</div>
+
+          <!-- DONE -->
+          <div class="kanban-col" data-status="done">
+            <div class="kanban-col-header">
+              <span class="kanban-label">Done</span>
+              <span class="kanban-count">3</span>
+            </div>
+            <div class="kanban-col-body">
+              <div class="kanban-card" data-goto="fub-crm">
+                <div class="kc-name">FUB CRM Build</div>
+                <div class="kc-note">55 custom fields, 7 Smart Lists, 45 tags all live</div>
+              </div>
+              <div class="kanban-card" data-goto="seller-update">
+                <div class="kc-name">Seller Update System</div>
+                <div class="kc-note">Skills live: seller-update + seller-update-page</div>
+              </div>
+              <div class="kanban-card" data-goto="zapier">
+                <div class="kc-name">Zapier Engine</div>
+                <div class="kc-note">FUB stage change triggers Drive folder move. Confirmed working</div>
+              </div>
+            </div>
           </div>
-          <div class="branch-card" data-goto="form290">
-            <div class="bc-accent green"></div>
-            <div class="bc-name">Form 290 HTML Build</div>
-            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
-            <div class="bc-next">Complete Page 2+ one at a time, compare against PDF</div>
-          </div>
-          <div class="branch-card" data-goto="cma">
-            <div class="bc-accent green"></div>
-            <div class="bc-name">CMA Generator</div>
-            <div class="bc-status"><span class="proj-status st-active">Active</span></div>
-            <div class="bc-next">Upload MLS screenshots and run cma-generator skill</div>
-          </div>
-          <div class="branch-card" data-goto="seller-update">
-            <div class="bc-accent gray"></div>
-            <div class="bc-name">Seller Update System</div>
-            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
-            <div class="bc-next">Skills live: seller-update + seller-update-page. Trigger with natural language</div>
-          </div>
-          <div class="branch-card" data-goto="deliverability">
-            <div class="bc-accent yellow"></div>
-            <div class="bc-name">Deliverability Setup</div>
-            <div class="bc-status"><span class="proj-status st-queued">Queued</span></div>
-            <div class="bc-next">Must be done before ANY email campaign goes live on soldmike.com</div>
-          </div>
-          <div class="branch-card" data-goto="zapier">
-            <div class="bc-accent gray"></div>
-            <div class="bc-name">Zapier Engine</div>
-            <div class="bc-status"><span class="proj-status st-done">Done</span></div>
-            <div class="bc-next">FUB stage change triggers Drive folder move. Confirmed working</div>
-          </div>
+
         </div>
       </div>
 
@@ -459,7 +507,7 @@
   document.querySelectorAll('.proj').forEach(proj => {
     proj.addEventListener('click', () => showView(proj.dataset.proj));
   });
-  document.querySelectorAll('.branch-card').forEach(card => {
+  document.querySelectorAll('.branch-card, .kanban-card').forEach(card => {
     card.addEventListener('click', () => showView(card.dataset.goto));
   });
 </script>
