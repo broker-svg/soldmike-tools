@@ -618,7 +618,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           firstName, lastName, email, phone, message,
-          property: 'The Valley Woodbridge — Platinum VIP Sales'
+          property: 'The Valley Woodbridge — Platinum VIP Sales',
+          source: 'The Valley Woodbridge VIP',
+          system: 'The Valley Woodbridge Landing Page'
         })
       });
       const result = await res.json();
