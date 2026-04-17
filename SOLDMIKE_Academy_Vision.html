@@ -549,6 +549,238 @@
     margin-bottom: 0.5rem;
   }
   footer .meta { margin-top: 1rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* --- Clickable track cards --- */
+  .track-card.clickable { cursor: pointer; position: relative; }
+  .track-card.clickable:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow-lg);
+  }
+  .track-card.featured {
+    border: 2px solid var(--gold);
+    background: linear-gradient(180deg, #fff 0%, #fdf8ec 100%);
+  }
+  .track-card.featured::before {
+    content: 'EXAMPLE DEEP-DIVE';
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--gold);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+  }
+  .click-hint {
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .track-card.clickable:hover .click-hint { opacity: 1; }
+
+  .drill-note {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: white;
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    box-shadow: var(--card-shadow);
+  }
+  .drill-note strong { color: var(--navy); }
+  .drill-note .pill {
+    display: inline-block;
+    background: var(--gold);
+    color: white;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    margin: 0 3px;
+  }
+
+  /* --- Overlay drill-down --- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 15, 40, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    overflow-y: auto;
+  }
+  .overlay.active { display: flex; }
+  .overlay-panel {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    border-radius: 20px;
+    padding: 3rem 2.5rem 2.5rem;
+    position: relative;
+    display: none;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease;
+  }
+  .overlay-panel.active { display: block; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .overlay-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    font-size: 1.5rem;
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .overlay-close:hover { background: var(--gold); color: white; border-color: var(--gold); }
+  .overlay-breadcrumb {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .bc-link { cursor: pointer; color: var(--grey); transition: color 0.2s; }
+  .bc-link:hover { color: var(--gold); text-decoration: underline; }
+  .bc-sep { color: var(--grey-light); margin: 0 8px; }
+  .overlay-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+  }
+  .overlay-sub {
+    font-size: 1rem;
+    color: var(--grey);
+    margin-bottom: 2rem;
+  }
+
+  /* Course grid inside overlay */
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .course-item {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .course-item:hover {
+    background: white;
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow);
+  }
+  .course-item.interactive::after {
+    content: '→';
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    color: var(--gold);
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .course-item.interactive:hover::after { opacity: 1; }
+  .course-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .course-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .course-count {
+    font-size: 0.75rem;
+    color: var(--grey);
+    letter-spacing: 0.05em;
+  }
+  .course-item.interactive .course-count { color: var(--gold-dark); font-weight: 600; }
+
+  /* Lesson list */
+  .lessons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .lesson-row {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--cream);
+    border-radius: 10px;
+    border-left: 3px solid var(--gold);
+    align-items: center;
+  }
+  .lesson-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+  }
+  .lesson-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--navy);
+  }
+  .lesson-placeholder {
+    font-size: 0.9rem;
+    color: var(--grey);
+    font-style: italic;
+  }
+  .overlay-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--grey);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .overlay { padding: 1rem; }
+    .overlay-panel { padding: 2.5rem 1.5rem 1.5rem; }
+    .overlay-title { font-size: 1.75rem; }
+  }
 </style>
 </head>
 <body>
@@ -702,56 +934,96 @@
   </div>
 
   <div class="tracks-grid">
-    <div class="track-card">
+    <div class="track-card clickable featured" onclick="openTrack('realEstate')">
       <div class="track-icon">01</div>
       <h4>Real Estate</h4>
       <p>The foundational track. Listing systems, buyer representation, negotiation playbooks, CRM buildout, deal management.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Listing Presentation Mastery · Offer Review · Buyer Consultation · Follow Up Boss Setup</div>
+      <div class="click-hint">Click to see all 10 courses →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('finance')">
       <div class="track-icon">02</div>
       <h4>Finance</h4>
       <p>Everything agents need to know about mortgages, lending, and financial advising — without crossing regulatory lines.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Mortgage Fundamentals · Pre-Qualification · Advising First-Time Buyers · Understanding Rates</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('investing')">
       <div class="track-icon">03</div>
       <h4>Investing</h4>
       <p>How to evaluate, buy, and profit from investment properties — for agents and their clients.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Rental Analysis · Flip Calculations · BRRRR Strategy · Commercial Basics</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('marketing')">
       <div class="track-icon">04</div>
       <h4>Marketing</h4>
       <p>Modern brand-building and lead generation — the marketing playbook that actually produces deals.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Brand Identity · Social Strategy · Paid Ads · Lead Nurture Systems</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('video')">
       <div class="track-icon">05</div>
       <h4>Video Production</h4>
       <p>Powered by Toronto Property Media. Real equipment, real shoots, real editing workflows. Our unfair advantage.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Gear for Agents · Gimbal Fundamentals · Final Cut Pro · Colour Grading</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('content')">
       <div class="track-icon">06</div>
       <h4>Content &amp; Brand</h4>
       <p>Personal brand, YouTube, content perception. How to show up as an authority and stay in front of your market.</p>
       <div class="track-modules"><strong>Sample modules:</strong> YouTube for Agents · Content Pillars · Scripting · Showing Up on Camera</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('team')">
       <div class="track-icon">07</div>
       <h4>Teambuilding</h4>
       <p>The track that separates good agents from great team leaders. How to recruit, retain, train, and scale a team that performs — and stays.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Recruiting &amp; Hiring · Building Culture · Compensation Models · Leadership Fundamentals · Scaling Past 10 Agents</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
-    <div class="track-card">
+    <div class="track-card clickable" onclick="openTrack('mentorship')">
       <div class="track-icon">08</div>
       <h4>Consulting &amp; Mentorship</h4>
       <p>Built-in access to 1:1 consulting and mentorship. Members don't just learn — they get guidance. Our highest-value track, and the thing no webinar can replicate.</p>
       <div class="track-modules"><strong>Sample modules:</strong> Business Coaching · Career Strategy · Deal Reviews · Systems Audits · Goal Setting &amp; Accountability</div>
+      <div class="click-hint">Preview structure →</div>
     </div>
   </div>
+
+  <div class="drill-note">
+    <strong>Example deep-dive:</strong> Click <span class="pill">Real Estate</span> to see the 10 courses inside that track — then click <span class="pill">Negotiations</span> to see the lesson plan for that course. This is the depth we're building for every track.
+  </div>
 </section>
+
+<!-- DRILL-DOWN OVERLAYS -->
+<div class="overlay" id="overlay" onclick="closeAll(event)">
+  <!-- Level 1: Courses in a track -->
+  <div class="overlay-panel" id="coursesPanel">
+    <button class="overlay-close" onclick="closeAll()" aria-label="Close">×</button>
+    <div class="overlay-breadcrumb"><span id="bc-track">Real Estate</span></div>
+    <h2 class="overlay-title" id="coursesTitle">Real Estate</h2>
+    <p class="overlay-sub" id="coursesSub">10 courses inside this track. Each course contains 8–12 lessons.</p>
+    <div class="courses-grid" id="coursesGrid"></div>
+  </div>
+
+  <!-- Level 2: Lessons in a course -->
+  <div class="overlay-panel" id="lessonsPanel">
+    <button class="overlay-close" onclick="closeAll()" aria-label="Close">×</button>
+    <div class="overlay-breadcrumb">
+      <span class="bc-link" onclick="backToCourses()" id="bc-back">Real Estate</span>
+      <span class="bc-sep">›</span>
+      <span id="bc-course">Negotiations</span>
+    </div>
+    <h2 class="overlay-title" id="lessonsTitle">Negotiations</h2>
+    <p class="overlay-sub" id="lessonsSub">10 lessons. Concept outline — final curriculum will be developed in Phase 1.</p>
+    <div class="lessons-list" id="lessonsList"></div>
+    <div class="overlay-footer">
+      This is a sample structure showing how every course will be built out. Lesson titles and order will be finalized during content production.
+    </div>
+  </div>
+</div>
 
 <!-- BUSINESS MODEL -->
 <div class="business-section">
@@ -987,6 +1259,241 @@
   <div>647-278-2237 · Mike@TheOPTeam.ca · soldmike.ca</div>
   <div class="meta">Vision document · Internal use · April 2026</div>
 </footer>
+
+<script>
+// ============ COURSE DATA ============
+// Each track has 10 courses. Real Estate has deeper lesson data for the demo.
+const TRACK_DATA = {
+  realEstate: {
+    name: "Real Estate",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Real Estate for Beginners", lessonCount: 10, key: "beginners" },
+      { name: "Writing Contracts & APS", lessonCount: 10, key: "contracts" },
+      { name: "Real Estate Administration", lessonCount: 9, key: "admin" },
+      { name: "Negotiations", lessonCount: 10, key: "negotiations", interactive: true },
+      { name: "Technology & CRM Setup", lessonCount: 10, key: "tech" },
+      { name: "Mindset & Mental Game", lessonCount: 8, key: "mindset" },
+      { name: "Scheduling & Time Blocking", lessonCount: 8, key: "scheduling" },
+      { name: "Listing Presentations", lessonCount: 10, key: "listings" },
+      { name: "Buyer Representation", lessonCount: 10, key: "buyers" },
+      { name: "Deal Management & Closing", lessonCount: 10, key: "closing" }
+    ]
+  },
+  finance: {
+    name: "Finance",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Mortgage Fundamentals", lessonCount: 10 },
+      { name: "Understanding Interest Rates", lessonCount: 8 },
+      { name: "Pre-Qualification Process", lessonCount: 9 },
+      { name: "Advising First-Time Buyers", lessonCount: 10 },
+      { name: "Debt Service Ratios", lessonCount: 8 },
+      { name: "Alternative Lenders & B-Lending", lessonCount: 9 },
+      { name: "Self-Employed Borrowers", lessonCount: 8 },
+      { name: "Credit Repair Basics", lessonCount: 8 },
+      { name: "Refinancing Strategies", lessonCount: 9 },
+      { name: "Working with Mortgage Brokers", lessonCount: 8 }
+    ]
+  },
+  investing: {
+    name: "Investing",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Investment Property Fundamentals", lessonCount: 10 },
+      { name: "Rental Income Analysis", lessonCount: 10 },
+      { name: "Flipping: Start to Finish", lessonCount: 12 },
+      { name: "BRRRR Strategy", lessonCount: 10 },
+      { name: "Cap Rates & ROI", lessonCount: 8 },
+      { name: "Commercial Basics", lessonCount: 10 },
+      { name: "Multi-Family Investing", lessonCount: 10 },
+      { name: "Short-Term Rentals", lessonCount: 9 },
+      { name: "Tax Strategy for Investors", lessonCount: 9 },
+      { name: "Building an Investor Client Base", lessonCount: 10 }
+    ]
+  },
+  marketing: {
+    name: "Marketing",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Brand Identity & Positioning", lessonCount: 10 },
+      { name: "Social Media Strategy", lessonCount: 12 },
+      { name: "Paid Ads: Facebook & Google", lessonCount: 10 },
+      { name: "Lead Generation Systems", lessonCount: 10 },
+      { name: "Email Marketing & Nurture", lessonCount: 9 },
+      { name: "Landing Pages That Convert", lessonCount: 8 },
+      { name: "Database Marketing", lessonCount: 9 },
+      { name: "Referral Systems", lessonCount: 8 },
+      { name: "Market Reports as Marketing", lessonCount: 8 },
+      { name: "Events & Community Marketing", lessonCount: 8 }
+    ]
+  },
+  video: {
+    name: "Video Production",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Gear for Real Estate Agents", lessonCount: 8 },
+      { name: "Camera Fundamentals", lessonCount: 10 },
+      { name: "Gimbal Technique", lessonCount: 8 },
+      { name: "Drone for Real Estate", lessonCount: 10 },
+      { name: "Lighting for Interiors", lessonCount: 9 },
+      { name: "Audio & Sound Design", lessonCount: 8 },
+      { name: "Final Cut Pro Workflow", lessonCount: 12 },
+      { name: "Colour Grading with LUTs", lessonCount: 9 },
+      { name: "Listing Video Playbook", lessonCount: 10 },
+      { name: "Agent Branding Videos", lessonCount: 9 }
+    ]
+  },
+  content: {
+    name: "Content & Brand",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Personal Brand Foundations", lessonCount: 10 },
+      { name: "Content Pillars & Strategy", lessonCount: 9 },
+      { name: "YouTube for Agents", lessonCount: 12 },
+      { name: "Showing Up on Camera", lessonCount: 10 },
+      { name: "Scriptwriting for Short Form", lessonCount: 9 },
+      { name: "Instagram & TikTok Playbook", lessonCount: 10 },
+      { name: "Podcasting Fundamentals", lessonCount: 9 },
+      { name: "Thought Leadership Content", lessonCount: 8 },
+      { name: "Perception & Authority", lessonCount: 8 },
+      { name: "Content Repurposing Systems", lessonCount: 9 }
+    ]
+  },
+  team: {
+    name: "Teambuilding",
+    sub: "10 courses inside this track. Each course contains 8–12 lessons.",
+    courses: [
+      { name: "Leadership Fundamentals", lessonCount: 10 },
+      { name: "Recruiting Top Talent", lessonCount: 10 },
+      { name: "Interviewing & Hiring", lessonCount: 9 },
+      { name: "Building Team Culture", lessonCount: 10 },
+      { name: "Compensation Models", lessonCount: 8 },
+      { name: "Onboarding New Agents", lessonCount: 9 },
+      { name: "Training & Development Systems", lessonCount: 10 },
+      { name: "Retention & Growth", lessonCount: 9 },
+      { name: "Team Meetings That Work", lessonCount: 8 },
+      { name: "Scaling Past 10 Agents", lessonCount: 10 }
+    ]
+  },
+  mentorship: {
+    name: "Consulting & Mentorship",
+    sub: "10 courses inside this track, plus ongoing 1:1 access.",
+    courses: [
+      { name: "Business Coaching Foundations", lessonCount: 10 },
+      { name: "Career Strategy & Planning", lessonCount: 9 },
+      { name: "Goal Setting & Accountability", lessonCount: 8 },
+      { name: "Deal Review Framework", lessonCount: 9 },
+      { name: "Systems & Workflow Audits", lessonCount: 10 },
+      { name: "Financial Planning for Agents", lessonCount: 9 },
+      { name: "Work-Life Integration", lessonCount: 8 },
+      { name: "Breaking Through Plateaus", lessonCount: 8 },
+      { name: "Building a Signature Offer", lessonCount: 9 },
+      { name: "Exit & Succession Planning", lessonCount: 8 }
+    ]
+  }
+};
+
+// Lesson-level detail — only Negotiations is fully built out as the demo
+const LESSON_DATA = {
+  negotiations: {
+    courseName: "Negotiations",
+    trackKey: "realEstate",
+    sub: "10 lessons · Concept outline — final curriculum will be developed in Phase 1.",
+    lessons: [
+      "The mindset of a professional negotiator",
+      "Reading the other side: buyer vs seller psychology",
+      "Opening positions & anchoring",
+      "Handling lowball offers without losing the deal",
+      "Multiple offer scenarios",
+      "Conditional vs firm offers",
+      "Price negotiation tactics",
+      "Term negotiation beyond price",
+      "Counter-offer strategy & timing",
+      "Closing the deal & locking in the commitment"
+    ]
+  }
+};
+
+// ============ RENDER + HANDLERS ============
+const overlay = document.getElementById('overlay');
+const coursesPanel = document.getElementById('coursesPanel');
+const lessonsPanel = document.getElementById('lessonsPanel');
+
+function openTrack(trackKey) {
+  const track = TRACK_DATA[trackKey];
+  if (!track) return;
+
+  document.getElementById('bc-track').textContent = track.name;
+  document.getElementById('coursesTitle').textContent = track.name;
+  document.getElementById('coursesSub').textContent = track.sub;
+
+  const grid = document.getElementById('coursesGrid');
+  grid.innerHTML = '';
+  track.courses.forEach((course, i) => {
+    const item = document.createElement('div');
+    item.className = 'course-item' + (course.interactive ? ' interactive' : '');
+    const num = String(i + 1).padStart(2, '0');
+    item.innerHTML = `
+      <div class="course-num">${num}</div>
+      <div class="course-name">${course.name}</div>
+      <div class="course-count">${course.lessonCount} lessons${course.interactive ? ' · Click to preview →' : ''}</div>
+    `;
+    if (course.interactive && course.key) {
+      item.onclick = () => openLessons(course.key, track.name);
+    }
+    grid.appendChild(item);
+  });
+
+  overlay.classList.add('active');
+  coursesPanel.classList.add('active');
+  lessonsPanel.classList.remove('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function openLessons(courseKey, trackName) {
+  const data = LESSON_DATA[courseKey];
+  if (!data) return;
+
+  document.getElementById('bc-back').textContent = trackName;
+  document.getElementById('bc-course').textContent = data.courseName;
+  document.getElementById('lessonsTitle').textContent = data.courseName;
+  document.getElementById('lessonsSub').textContent = data.sub;
+
+  const list = document.getElementById('lessonsList');
+  list.innerHTML = '';
+  data.lessons.forEach((lesson, i) => {
+    const row = document.createElement('div');
+    row.className = 'lesson-row';
+    const num = String(i + 1).padStart(2, '0');
+    row.innerHTML = `
+      <div class="lesson-num">${num}</div>
+      <div class="lesson-title">${lesson}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  coursesPanel.classList.remove('active');
+  lessonsPanel.classList.add('active');
+}
+
+function backToCourses() {
+  lessonsPanel.classList.remove('active');
+  coursesPanel.classList.add('active');
+}
+
+function closeAll(event) {
+  if (event && event.target !== overlay) return;
+  overlay.classList.remove('active');
+  coursesPanel.classList.remove('active');
+  lessonsPanel.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && overlay.classList.contains('active')) closeAll();
+});
+</script>
 
 </body>
 </html>
