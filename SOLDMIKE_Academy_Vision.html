@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOLDMIKE Academy — The Vision</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #28388F;
+    --navy-dark: #1a2560;
+    --navy-light: #3a4ba8;
+    --gold: #C9A04A;
+    --gold-light: #d9b76b;
+    --gold-dark: #a88434;
+    --cream: #faf8f3;
+    --ink: #1a1a1a;
+    --ink-soft: #3a3a3a;
+    --grey: #6a6a6a;
+    --grey-light: #9a9a9a;
+    --border: rgba(0,0,0,0.08);
+    --card-shadow: 0 4px 24px rgba(40, 56, 143, 0.08);
+    --card-shadow-lg: 0 12px 48px rgba(40, 56, 143, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .serif { font-family: 'Cormorant Garamond', serif; font-weight: 500; }
+
+  /* --- Hero --- */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+    color: white;
+    padding: 6rem 2rem 7rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(201, 160, 74, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(201, 160, 74, 0.1) 0%, transparent 50%);
+  }
+  .hero-content { position: relative; max-width: 900px; margin: 0 auto; }
+  .hero-brand {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid rgba(201, 160, 74, 0.4);
+    border-radius: 100px;
+    margin-bottom: 2rem;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 .gold { color: var(--gold); font-style: italic; }
+  .hero-sub {
+    font-size: 1.25rem;
+    font-weight: 300;
+    max-width: 680px;
+    margin: 0 auto;
+    opacity: 0.85;
+  }
+  .hero-meta {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    flex-wrap: wrap;
+  }
+
+  /* --- Sections --- */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.2;
+    color: var(--navy);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .section-title .gold { color: var(--gold); font-style: italic; }
+  .section-intro {
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin-bottom: 3rem;
+    line-height: 1.7;
+  }
+
+  /* --- The Shift --- */
+  .shift-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 3rem;
+  }
+  .shift-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: var(--card-shadow);
+  }
+  .shift-card.weak { border: 1px solid var(--border); opacity: 0.75; }
+  .shift-card.strong {
+    border: 2px solid var(--gold);
+    position: relative;
+    transform: translateY(-8px);
+  }
+  .shift-card.strong::before {
+    content: 'OUR PLAY';
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: var(--gold);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+  }
+  .shift-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.75rem;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+  .shift-card .tagline {
+    font-size: 0.85rem;
+    color: var(--grey);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+  }
+  .shift-card ul { list-style: none; }
+  .shift-card li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .shift-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .shift-card.weak li::before { background: var(--grey-light); }
+  .shift-card.strong li::before { background: var(--gold); }
+  .shift-arrow {
+    font-size: 2rem;
+    color: var(--gold);
+    font-weight: 300;
+  }
+  @media (max-width: 860px) {
+    .shift-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .shift-arrow { transform: rotate(90deg); text-align: center; }
+  }
+
+  /* --- Curriculum Tree --- */
+  .curriculum-section {
+    background: white;
+    margin: 4rem auto;
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    box-shadow: var(--card-shadow-lg);
+    max-width: 1200px;
+  }
+  .tree-container {
+    margin-top: 3rem;
+    overflow-x: auto;
+    padding: 1rem;
+  }
+  .tree-svg { width: 100%; height: auto; display: block; margin: 0 auto; }
+
+  .tracks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .track-card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.2s ease;
+  }
+  .track-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+    box-shadow: var(--card-shadow);
+  }
+  .track-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--navy);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+  }
+  .track-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+  }
+  .track-card p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin-bottom: 1rem;
+  }
+  .track-modules {
+    font-size: 0.8rem;
+    color: var(--grey);
+    letter-spacing: 0.05em;
+  }
+  .track-modules strong { color: var(--gold-dark); }
+
+  /* --- Business Model --- */
+  .business-section {
+    background: var(--navy);
+    color: white;
+    padding: 6rem 2rem;
+    margin-top: 4rem;
+    position: relative;
+  }
+  .business-inner { max-width: 1200px; margin: 0 auto; }
+  .business-section .section-label { color: var(--gold); }
+  .business-section .section-title { color: white; }
+  .business-section .section-title .gold { color: var(--gold); }
+  .business-section .section-intro { color: rgba(255,255,255,0.8); }
+
+  .model-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .model-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+  }
+  .model-card.winner {
+    background: rgba(201, 160, 74, 0.15);
+    border: 2px solid var(--gold);
+  }
+  .model-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+  .model-card .tagline {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 2rem;
+  }
+  .model-card.winner .tagline { color: var(--gold); }
+  .model-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: white;
+    line-height: 1;
+    margin-bottom: 0.35rem;
+  }
+  .model-card.winner .stat-num { color: var(--gold); }
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .model-card ul { list-style: none; }
+  .model-card li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+    font-size: 0.95rem;
+  }
+  .model-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+  }
+  .model-card.winner li::before { background: var(--gold); }
+  .model-card li.con { color: rgba(255,255,255,0.55); }
+  .model-card li.con::before { background: rgba(255,255,255,0.2); }
+
+  .math-row {
+    margin-top: 3rem;
+    background: rgba(0,0,0,0.2);
+    padding: 2rem;
+    border-radius: 16px;
+    border-left: 4px solid var(--gold);
+  }
+  .math-row h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .math-row p { color: rgba(255,255,255,0.85); line-height: 1.7; }
+  .math-row strong { color: var(--gold); }
+
+  @media (max-width: 780px) {
+    .model-grid { grid-template-columns: 1fr; }
+  }
+
+  /* --- Advantage Grid --- */
+  .advantage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .advantage-item {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border-top: 3px solid var(--gold);
+  }
+  .advantage-item h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .advantage-item p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .advantage-check {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--gold-dark);
+    background: rgba(201, 160, 74, 0.15);
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* --- Roadmap --- */
+  .roadmap-section { background: var(--cream); padding: 6rem 2rem; }
+  .roadmap-inner { max-width: 1200px; margin: 0 auto; }
+  .phases {
+    margin-top: 3rem;
+    position: relative;
+  }
+  .phases::before {
+    content: '';
+    position: absolute;
+    left: 24px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold) 0%, var(--gold-light) 50%, transparent 100%);
+  }
+  .phase {
+    position: relative;
+    padding: 0 0 3rem 4rem;
+  }
+  .phase:last-child { padding-bottom: 0; }
+  .phase-dot {
+    position: absolute;
+    left: 12px;
+    top: 4px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 4px solid var(--cream);
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+  .phase h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--navy);
+    margin-bottom: 0.25rem;
+  }
+  .phase-timeline {
+    font-size: 0.8rem;
+    color: var(--gold-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 1rem;
+  }
+  .phase-body {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+  }
+  .phase-body ul { list-style: none; margin-top: 0.75rem; }
+  .phase-body li {
+    padding: 0.35rem 0 0.35rem 1.25rem;
+    position: relative;
+    font-size: 0.9rem;
+  }
+  .phase-body li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* --- Decisions --- */
+  .decisions {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: var(--card-shadow-lg);
+    margin-top: 3rem;
+  }
+  .decision-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+  .decision-item:last-child { border-bottom: none; }
+  .decision-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .decision-text h5 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 0.35rem;
+  }
+  .decision-text p {
+    font-size: 0.9rem;
+    color: var(--grey);
+  }
+
+  /* --- Footer --- */
+  footer {
+    background: var(--navy-dark);
+    color: rgba(255,255,255,0.6);
+    padding: 3rem 2rem;
+    text-align: center;
+    font-size: 0.85rem;
+  }
+  footer .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  footer .meta { margin-top: 1rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-brand">SOLDMIKE Academy</div>
+    <h1>We're not building<br>another <span class="gold">agent course</span>.</h1>
+    <p class="hero-sub">We're building the first multi-disciplinary education platform for modern real estate professionals — covering everything they actually need to succeed today.</p>
+    <div class="hero-meta">
+      <span>The Vision</span>
+      <span>•</span>
+      <span>Prepared for Internal Alignment</span>
+      <span>•</span>
+      <span>April 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- THE SHIFT -->
+<section>
+  <div class="section-label">The Shift</div>
+  <h2 class="section-title">Why webinars don't work anymore — and what <span class="gold">does</span>.</h2>
+  <p class="section-intro">The market is saturated with one-off webinars and drip-fed courses. People don't pay for content they can google. But they will pay for a structured path, a community, and tools that actually change their business. That's what a university does — and nobody in real estate has built one right.</p>
+
+  <div class="shift-grid">
+    <div class="shift-card weak">
+      <h3>The Old Model</h3>
+      <div class="tagline">Webinars &amp; Courses</div>
+      <ul>
+        <li>One-off paid events</li>
+        <li>Information people can find free</li>
+        <li>No community, no accountability</li>
+        <li>Buy once, watch once, forget</li>
+        <li>Race to the bottom on price</li>
+      </ul>
+    </div>
+    <div class="shift-arrow">→</div>
+    <div class="shift-card strong">
+      <h3>The New Model</h3>
+      <div class="tagline">Education Platform</div>
+      <ul>
+        <li>Structured multi-track curriculum</li>
+        <li>Systems, templates, tools — not just content</li>
+        <li>Community &amp; mentorship built in</li>
+        <li>Continuous updates, always fresh</li>
+        <li>Premium positioning, premium pricing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CURRICULUM TREE -->
+<section class="curriculum-section">
+  <div class="section-label">The Scope</div>
+  <h2 class="section-title">Six tracks. One <span class="gold">platform</span>. Everything a modern agent needs.</h2>
+  <p class="section-intro">This isn't just sales training. Today's top agents are content creators, investors, and business operators. SOLDMIKE Academy teaches all of it — under one roof, on one subscription.</p>
+
+  <div class="tree-container">
+    <svg class="tree-svg" viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg">
+      <!-- Center trunk -->
+      <defs>
+        <linearGradient id="trunk" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C9A04A"/>
+          <stop offset="100%" stop-color="#28388F"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Connecting lines from center -->
+      <g stroke="#C9A04A" stroke-width="1.5" fill="none" opacity="0.5">
+        <path d="M 500 220 Q 500 150 170 130"/>
+        <path d="M 500 220 Q 500 150 500 130"/>
+        <path d="M 500 220 Q 500 150 830 130"/>
+        <path d="M 500 280 Q 500 350 170 380"/>
+        <path d="M 500 280 Q 500 350 500 380"/>
+        <path d="M 500 280 Q 500 350 830 380"/>
+      </g>
+
+      <!-- Central hub -->
+      <circle cx="500" cy="250" r="80" fill="#28388F"/>
+      <circle cx="500" cy="250" r="74" fill="none" stroke="#C9A04A" stroke-width="1.5"/>
+      <text x="500" y="244" text-anchor="middle" fill="#C9A04A" font-family="Cormorant Garamond, serif" font-size="22" font-weight="600">SOLDMIKE</text>
+      <text x="500" y="266" text-anchor="middle" fill="white" font-family="Inter, sans-serif" font-size="10" letter-spacing="2">ACADEMY</text>
+
+      <!-- Track nodes -->
+      <!-- Top-left: Real Estate -->
+      <g>
+        <rect x="50" y="80" width="240" height="100" rx="12" fill="white" stroke="#C9A04A" stroke-width="2"/>
+        <text x="170" y="112" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Real Estate</text>
+        <text x="170" y="135" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Sales systems</text>
+        <text x="170" y="151" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Listings, buyers, deals</text>
+        <text x="170" y="167" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">CRM &amp; automation</text>
+      </g>
+
+      <!-- Top-center: Finance -->
+      <g>
+        <rect x="380" y="80" width="240" height="100" rx="12" fill="white" stroke="#C9A04A" stroke-width="2"/>
+        <text x="500" y="112" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Finance</text>
+        <text x="500" y="135" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Mortgages &amp; lending</text>
+        <text x="500" y="151" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Pre-qualification</text>
+        <text x="500" y="167" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Advising clients</text>
+      </g>
+
+      <!-- Top-right: Investing -->
+      <g>
+        <rect x="710" y="80" width="240" height="100" rx="12" fill="white" stroke="#C9A04A" stroke-width="2"/>
+        <text x="830" y="112" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Investing</text>
+        <text x="830" y="135" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Rental income</text>
+        <text x="830" y="151" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Flipping &amp; BRRRR</text>
+        <text x="830" y="167" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Commercial deals</text>
+      </g>
+
+      <!-- Bottom-left: Marketing -->
+      <g>
+        <rect x="50" y="330" width="240" height="100" rx="12" fill="white" stroke="#28388F" stroke-width="2"/>
+        <text x="170" y="362" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Marketing</text>
+        <text x="170" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Brand &amp; positioning</text>
+        <text x="170" y="401" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Social media strategy</text>
+        <text x="170" y="417" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Lead generation</text>
+      </g>
+
+      <!-- Bottom-center: Video Production -->
+      <g>
+        <rect x="380" y="330" width="240" height="100" rx="12" fill="white" stroke="#28388F" stroke-width="2"/>
+        <text x="500" y="362" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Video Production</text>
+        <text x="500" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Gear &amp; fundamentals</text>
+        <text x="500" y="401" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Listing videos</text>
+        <text x="500" y="417" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Editing &amp; colour</text>
+      </g>
+
+      <!-- Bottom-right: Content Creation -->
+      <g>
+        <rect x="710" y="330" width="240" height="100" rx="12" fill="white" stroke="#28388F" stroke-width="2"/>
+        <text x="830" y="362" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" font-weight="600" fill="#28388F">Content &amp; Brand</text>
+        <text x="830" y="385" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Personal brand</text>
+        <text x="830" y="401" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">YouTube strategy</text>
+        <text x="830" y="417" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6a6a6a">Perception &amp; presence</text>
+      </g>
+
+      <!-- Foundation band -->
+      <text x="500" y="480" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" letter-spacing="3" fill="#6a6a6a">EVERY TRACK INCLUDES: TEMPLATES • SYSTEMS • LIVE SESSIONS • COMMUNITY</text>
+    </svg>
+  </div>
+
+  <div class="tracks-grid">
+    <div class="track-card">
+      <div class="track-icon">01</div>
+      <h4>Real Estate</h4>
+      <p>The foundational track. Listing systems, buyer representation, negotiation playbooks, CRM buildout, deal management.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> Listing Presentation Mastery · Offer Review · Buyer Consultation · Follow Up Boss Setup</div>
+    </div>
+    <div class="track-card">
+      <div class="track-icon">02</div>
+      <h4>Finance</h4>
+      <p>Everything agents need to know about mortgages, lending, and financial advising — without crossing regulatory lines.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> Mortgage Fundamentals · Pre-Qualification · Advising First-Time Buyers · Understanding Rates</div>
+    </div>
+    <div class="track-card">
+      <div class="track-icon">03</div>
+      <h4>Investing</h4>
+      <p>How to evaluate, buy, and profit from investment properties — for agents and their clients.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> Rental Analysis · Flip Calculations · BRRRR Strategy · Commercial Basics</div>
+    </div>
+    <div class="track-card">
+      <div class="track-icon">04</div>
+      <h4>Marketing</h4>
+      <p>Modern brand-building and lead generation — the marketing playbook that actually produces deals.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> Brand Identity · Social Strategy · Paid Ads · Lead Nurture Systems</div>
+    </div>
+    <div class="track-card">
+      <div class="track-icon">05</div>
+      <h4>Video Production</h4>
+      <p>Powered by Toronto Property Media. Real equipment, real shoots, real editing workflows. Our unfair advantage.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> Gear for Agents · Gimbal Fundamentals · Final Cut Pro · Colour Grading</div>
+    </div>
+    <div class="track-card">
+      <div class="track-icon">06</div>
+      <h4>Content &amp; Brand</h4>
+      <p>Personal brand, YouTube, content perception. How to show up as an authority and stay in front of your market.</p>
+      <div class="track-modules"><strong>Sample modules:</strong> YouTube for Agents · Content Pillars · Scripting · Showing Up on Camera</div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS MODEL -->
+<div class="business-section">
+  <div class="business-inner">
+    <div class="section-label">The Business Model</div>
+    <h2 class="section-title">Why <span class="gold">yearly subscription</span> wins.</h2>
+    <p class="section-intro">Pay-as-you-go sounds flexible, but it turns the Academy into a transaction instead of a relationship. Yearly subscription is what builds a real business — predictable revenue, compounding value, and genuine commitment from members.</p>
+
+    <div class="model-grid">
+      <div class="model-card">
+        <h3>Pay-As-You-Go</h3>
+        <div class="tagline">Transaction-based</div>
+        <div class="model-stats">
+          <div class="stat">
+            <div class="stat-num">~$99</div>
+            <div class="stat-label">Per course</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">Low</div>
+            <div class="stat-label">Commitment</div>
+          </div>
+        </div>
+        <ul>
+          <li class="con">Unpredictable revenue</li>
+          <li class="con">No community buy-in</li>
+          <li class="con">Members leave after one purchase</li>
+          <li class="con">Constantly chasing new buyers</li>
+          <li class="con">Race to the bottom on pricing</li>
+        </ul>
+      </div>
+
+      <div class="model-card winner">
+        <h3>Yearly Subscription</h3>
+        <div class="tagline">Relationship-based · Our pick</div>
+        <div class="model-stats">
+          <div class="stat">
+            <div class="stat-num">$1,997</div>
+            <div class="stat-label">Per year</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">High</div>
+            <div class="stat-label">Commitment</div>
+          </div>
+        </div>
+        <ul>
+          <li>Predictable, recurring revenue</li>
+          <li>Members treat it like tuition</li>
+          <li>Built-in community &amp; accountability</li>
+          <li>All tracks included — more perceived value</li>
+          <li>Continuous updates keep it fresh</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="math-row">
+      <h4>The math at 100 members</h4>
+      <p>At <strong>$1,997/year</strong>, 100 members = <strong>$199,700/year in recurring revenue</strong>. That's a real business with a real moat. Pay-as-you-go at $99/course would require <strong>2,000+ individual purchases</strong> to hit the same number — with zero guarantee anyone comes back. And if we hit 500 members at year three? <strong>~$1M/year recurring.</strong> That's the difference between a side project and a platform.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITIVE ADVANTAGE -->
+<section>
+  <div class="section-label">Our Edge</div>
+  <h2 class="section-title">We're already <span class="gold">50% built</span>.</h2>
+  <p class="section-intro">This is the part most people don't realize. Between SOLDMIKE, The OP Team, and Toronto Property Media, we already have the infrastructure, expertise, and systems that would cost any competitor 12–18 months and six figures to replicate. We're not starting from zero — we're packaging what we already do.</p>
+
+  <div class="advantage-grid">
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Video Production Arm</h4>
+      <p>Toronto Property Media gives us a full pro-grade production capability — Sony A1, Final Cut Pro, gimbal rigs. Most competitors don't have this.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Systems &amp; Automation</h4>
+      <p>Follow Up Boss, Notion HQ, GitHub Pages, Make.com, Cloudflare, Zapier. Every system an agent needs — already wired and documented.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Real Deal Experience</h4>
+      <p>We're not armchair instructors. Active listings, closed deals, real dollar amounts — our content is grounded in what we actually do every week.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Brand Authority</h4>
+      <p>SOLDMIKE is already a recognized name in the Vaughan/King market. The brand carries weight — we're just extending it into education.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Skill Library</h4>
+      <p>Dozens of AI-powered skills already built: listing consultation, offer review, buyer nurture, seller updates, pricing dashboards. These become course assets.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="advantage-check">BUILT</div>
+      <h4>Investor &amp; Finance Network</h4>
+      <p>Connections to lawyers, mortgage brokers, lenders, investors. Guest instructors on tap — credibility built in from day one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<div class="roadmap-section">
+  <div class="roadmap-inner">
+    <div class="section-label">The Path</div>
+    <h2 class="section-title">How we <span class="gold">build and launch</span>.</h2>
+    <p class="section-intro">We don't need 12 months to go live. If we focus, we can have a minimum viable Academy running within 90 days and a full platform within 6. Here's how it sequences.</p>
+
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-dot">1</div>
+        <h4>Foundation</h4>
+        <div class="phase-timeline">Days 0–90 · Build the core</div>
+        <div class="phase-body">
+          Lock the positioning, price, and audience. Build the platform backbone and launch Track 1 (Real Estate) as the flagship.
+          <ul>
+            <li>Define member persona and promise</li>
+            <li>Select platform (Kajabi, Circle, Skool, or custom)</li>
+            <li>Build Real Estate track (10–12 core modules)</li>
+            <li>Set up community space and onboarding flow</li>
+            <li>Record flagship content with our existing gear</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-dot">2</div>
+        <h4>Soft Launch</h4>
+        <div class="phase-timeline">Days 90–180 · Founding members</div>
+        <div class="phase-body">
+          Invite a closed group of 25–50 founding members at a discount. Build in public, ship improvements weekly, collect real testimonials.
+          <ul>
+            <li>Founding member pricing ($997 year one)</li>
+            <li>Launch Marketing + Video Production tracks</li>
+            <li>Weekly live sessions to build community</li>
+            <li>Capture wins, testimonials, case studies</li>
+            <li>Iterate content based on member feedback</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-dot">3</div>
+        <h4>Full Launch</h4>
+        <div class="phase-timeline">Days 180–365 · Scale</div>
+        <div class="phase-body">
+          Public launch at full pricing. All 6 tracks live. Ongoing content production. Marketing engine turned on across channels.
+          <ul>
+            <li>Launch Finance, Investing, Content tracks</li>
+            <li>Pricing moves to $1,997/year</li>
+            <li>Paid ads, partnerships, affiliate program</li>
+            <li>Monthly masterclasses with guest experts</li>
+            <li>Target 100 active members by year one</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="phase">
+        <div class="phase-dot">4</div>
+        <h4>Scale</h4>
+        <div class="phase-timeline">Year 2+ · Expand the moat</div>
+        <div class="phase-body">
+          Add premium tier, brokerage partnerships, and a certification program. Become the industry-standard education platform.
+          <ul>
+            <li>Premium tier ($4,997/year) with 1:1 coaching</li>
+            <li>Brokerage partnerships (bulk licences)</li>
+            <li>SOLDMIKE Certified program</li>
+            <li>Live events and retreats</li>
+            <li>Target 500+ members year three</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DECISIONS -->
+<section>
+  <div class="section-label">What We Align On</div>
+  <h2 class="section-title">The decisions <span class="gold">we make together</span>.</h2>
+  <p class="section-intro">This isn't a finished plan — it's a starting framework. Here's what we need to decide together before we start building.</p>
+
+  <div class="decisions">
+    <div class="decision-item">
+      <div class="decision-num">1</div>
+      <div class="decision-text">
+        <h5>Business model confirmation</h5>
+        <p>Yearly subscription vs pay-as-you-go vs tiered hybrid. My strong recommendation is yearly — but let's align on the reasoning.</p>
+      </div>
+    </div>
+    <div class="decision-item">
+      <div class="decision-num">2</div>
+      <div class="decision-text">
+        <h5>Scope at launch</h5>
+        <p>Do we launch with all 6 tracks or stage them? I'd suggest starting with Real Estate + Marketing + Video, then expanding.</p>
+      </div>
+    </div>
+    <div class="decision-item">
+      <div class="decision-num">3</div>
+      <div class="decision-text">
+        <h5>Platform decision</h5>
+        <p>Kajabi, Circle, Skool, or custom build. Each has tradeoffs — we'll weigh them together.</p>
+      </div>
+    </div>
+    <div class="decision-item">
+      <div class="decision-num">4</div>
+      <div class="decision-text">
+        <h5>Roles and responsibilities</h5>
+        <p>Who does what. Content production, community management, marketing, sales. Clear lanes from day one.</p>
+      </div>
+    </div>
+    <div class="decision-item">
+      <div class="decision-num">5</div>
+      <div class="decision-text">
+        <h5>Brand positioning</h5>
+        <p>Is it SOLDMIKE Academy? OP Team Academy? A new brand entirely? This shapes everything downstream.</p>
+      </div>
+    </div>
+    <div class="decision-item">
+      <div class="decision-num">6</div>
+      <div class="decision-text">
+        <h5>Founding member target</h5>
+        <p>25? 50? 100? Founding numbers set the tone for the community and early revenue. Let's pick a realistic stretch goal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand">SOLDMIKE</div>
+  <div>Michael Barillari, Broker · The OP Team · RE/MAX Premier</div>
+  <div>647-278-2237 · Mike@TheOPTeam.ca · soldmike.ca</div>
+  <div class="meta">Vision document · Internal use · April 2026</div>
+</footer>
+
+</body>
+</html>
