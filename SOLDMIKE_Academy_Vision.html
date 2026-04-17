@@ -993,7 +993,7 @@
   </div>
 
   <div class="drill-note">
-    <strong>Example deep-dive:</strong> Click <span class="pill">Real Estate</span> to see the 10 courses inside that track — then click <span class="pill">Negotiations</span> to see the lesson plan for that course. This is the depth we're building for every track.
+    <strong>Example deep-dive:</strong> Click <span class="pill">Real Estate</span> to see the 10 courses inside that track. Two courses are fully built out as previews — <span class="pill">Real Estate for Beginners</span> and <span class="pill">Negotiations</span> — each with a 10-lesson outline. This is the depth we're building for every track.
   </div>
 </section>
 
@@ -1268,7 +1268,7 @@ const TRACK_DATA = {
     name: "Real Estate",
     sub: "10 courses inside this track. Each course contains 8–12 lessons.",
     courses: [
-      { name: "Real Estate for Beginners", lessonCount: 10, key: "beginners" },
+      { name: "Real Estate for Beginners", lessonCount: 10, key: "beginners", interactive: true },
       { name: "Writing Contracts & APS", lessonCount: 10, key: "contracts" },
       { name: "Real Estate Administration", lessonCount: 9, key: "admin" },
       { name: "Negotiations", lessonCount: 10, key: "negotiations", interactive: true },
@@ -1396,6 +1396,23 @@ const TRACK_DATA = {
 
 // Lesson-level detail — only Negotiations is fully built out as the demo
 const LESSON_DATA = {
+  beginners: {
+    courseName: "Real Estate for Beginners",
+    trackKey: "realEstate",
+    sub: "10 lessons · Concept outline — final curriculum will be developed in Phase 1.",
+    lessons: [
+      "Welcome: what real estate actually is (and isn't)",
+      "The licensing journey & what to expect year one",
+      "Understanding the industry: boards, brokerages, associations",
+      "How agents actually get paid: commissions, splits, fees",
+      "Your first 90 days: setup, tools, and daily habits",
+      "Finding your first clients: sphere of influence basics",
+      "Walking through a deal from start to finish",
+      "Working with your broker and team",
+      "Common rookie mistakes and how to avoid them",
+      "Setting your first-year goals and business plan"
+    ]
+  },
   negotiations: {
     courseName: "Negotiations",
     trackKey: "realEstate",
