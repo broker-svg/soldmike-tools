@@ -217,15 +217,17 @@
   .canvas-area {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
     gap: 0;
     padding: 0;
     min-height: 0;
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 900px) {
     .canvas-area {
       grid-template-columns: 1fr;
+      grid-template-rows: auto;
       grid-auto-rows: minmax(220px, auto);
     }
   }
@@ -233,11 +235,45 @@
   .view-panel {
     position: relative;
     border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
+    min-height: 0;
   }
 
-  .view-panel:last-child { border-right: none; }
+  .view-panel:nth-child(2n) { border-right: none; }
+  .view-panel:nth-last-child(-n+2) { border-bottom: none; }
+
+  .video-canvas {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .video-canvas video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .video-fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 20px;
+  }
 
   .view-label {
     font-family: 'DM Mono', monospace;
@@ -524,8 +560,12 @@
         <div class="view-canvas" id="sideCanvas"></div>
       </div>
       <div class="view-panel">
-        <div class="view-label">OPERATOR VIEW — PERSON + GIMBAL</div>
-        <div class="view-canvas" id="personCanvas"></div>
+        <div class="view-label" id="operatorLabel">OPERATOR VIEW — PERSON + GIMBAL</div>
+        <div class="view-canvas video-canvas" id="operatorCanvas"></div>
+      </div>
+      <div class="view-panel">
+        <div class="view-label">RESULT VIEW — CAMERA OUTPUT</div>
+        <div class="view-canvas video-canvas" id="resultCanvas"></div>
       </div>
     </div>
 
@@ -558,6 +598,8 @@ const shots = [
     topAnim: drawStraightPushTop,
     sideAnim: drawStraightPushSide,
     personAnim: drawStraightPushPerson,
+    operatorVideo: 'clips/01_straight_push_operator.mp4',
+    resultVideo: 'clips/01_straight_push_result.mp4',
   },
   {
     name: "STRAIGHT PUSH CURVE",
@@ -569,6 +611,8 @@ const shots = [
     topAnim: drawCurveTop,
     sideAnim: drawCurveSide,
     personAnim: drawCurvePerson,
+    operatorVideo: 'clips/02_push_curve_operator.mp4',
+    resultVideo: 'clips/02_push_curve_result.mp4',
   },
   {
     name: "ORBITING CLIP",
@@ -580,6 +624,8 @@ const shots = [
     topAnim: drawOrbitTop,
     sideAnim: drawOrbitSide,
     personAnim: drawOrbitPerson,
+    operatorVideo: 'clips/03_orbit_operator.mp4',
+    resultVideo: 'clips/03_orbit_result.mp4',
   },
   {
     name: "YEE-HAW DROP",
@@ -591,6 +637,8 @@ const shots = [
     topAnim: drawYeeHawTop,
     sideAnim: drawYeeHawSide,
     personAnim: drawYeeHawPerson,
+    operatorVideo: 'clips/04_yeehaw_drop_operator.mp4',
+    resultVideo: 'clips/04_yeehaw_drop_result.mp4',
   },
   {
     name: "FPV — FIRST PERSON VIEW",
@@ -602,6 +650,8 @@ const shots = [
     topAnim: drawFPVTop,
     sideAnim: drawFPVSide,
     personAnim: drawFPVPerson,
+    // No operator video — FPV intentionally uses the stick-figure diagram
+    resultVideo: 'clips/05_fpv_result.mp4',
   },
   {
     name: "PTF RISE AND DROP",
@@ -613,6 +663,8 @@ const shots = [
     topAnim: drawPTFRiseTop,
     sideAnim: drawPTFRiseSide,
     personAnim: drawPTFRiseDropPerson,
+    operatorVideo: 'clips/06_ptf_rise_drop_operator.mp4',
+    resultVideo: 'clips/06_ptf_rise_drop_result.mp4',
   },
   {
     name: "STRAIGHT PUSH WITH RISE",
@@ -624,6 +676,8 @@ const shots = [
     topAnim: drawPushRiseTop,
     sideAnim: drawPushRiseSide,
     personAnim: drawPushRisePerson,
+    operatorVideo: 'clips/07_push_rise_operator.mp4',
+    resultVideo: 'clips/07_push_rise_result.mp4',
   },
   {
     name: "TRIPOD",
@@ -635,6 +689,8 @@ const shots = [
     topAnim: drawTripodTop,
     sideAnim: drawTripodSide,
     personAnim: drawTripodPerson,
+    // No operator video — Tripod is stationary, diagram shows the setup
+    resultVideo: 'clips/08_tripod_result.mp4',
   },
   {
     name: "ORBITING DETAIL SHOT",
@@ -646,6 +702,8 @@ const shots = [
     topAnim: drawOrbitDetailTop,
     sideAnim: drawOrbitDetailSide,
     personAnim: drawOrbitDetailPerson,
+    operatorVideo: 'clips/09_detailed_orbit_operator.mp4',
+    resultVideo: 'clips/09_detailed_orbit_result.mp4',
   },
   {
     name: "COWBOY LIFT",
@@ -657,6 +715,8 @@ const shots = [
     topAnim: drawCowboyTop,
     sideAnim: drawCowboySide,
     personAnim: drawCowboyLiftPerson,
+    operatorVideo: 'clips/10_cowboy_lift_operator.mp4',
+    resultVideo: 'clips/10_cowboy_lift_result.mp4',
   },
   {
     name: "DETAIL SLIDER",
@@ -668,6 +728,8 @@ const shots = [
     topAnim: drawSliderTop,
     sideAnim: drawSliderSide,
     personAnim: drawSliderPerson,
+    operatorVideo: 'clips/11_slider_operator.mp4',
+    resultVideo: 'clips/11_slider_result.mp4',
   },
   {
     name: "PTF ORBIT",
@@ -679,6 +741,8 @@ const shots = [
     topAnim: drawPTFOrbitTop,
     sideAnim: drawPTFOrbitSide,
     personAnim: drawPTFOrbitPerson,
+    operatorVideo: 'clips/12_ptf_orbit_operator.mp4',
+    resultVideo: 'clips/12_ptf_orbit_result.mp4',
   },
   {
     name: "TOP DOWN DETAIL",
@@ -690,6 +754,8 @@ const shots = [
     topAnim: drawTopDownTop,
     sideAnim: drawTopDownSide,
     personAnim: drawTopDownPerson,
+    operatorVideo: 'clips/13_top_down_operator.mp4',
+    resultVideo: 'clips/13_top_down_result.mp4',
   },
 ];
 
@@ -718,14 +784,46 @@ function selectShot(idx) {
 
   const topEl = document.getElementById('topCanvas');
   const sideEl = document.getElementById('sideCanvas');
-  const personEl = document.getElementById('personCanvas');
+  const operatorEl = document.getElementById('operatorCanvas');
+  const resultEl = document.getElementById('resultCanvas');
+  const operatorLabel = document.getElementById('operatorLabel');
   topEl.innerHTML = '';
   sideEl.innerHTML = '';
-  personEl.innerHTML = '';
+  operatorEl.innerHTML = '';
+  resultEl.innerHTML = '';
 
   s.topAnim(topEl);
   s.sideAnim(sideEl);
-  if (s.personAnim) s.personAnim(personEl);
+
+  // Operator panel: video if available, else fall back to stick-figure animation
+  if (s.operatorVideo) {
+    operatorLabel.textContent = 'OPERATOR VIEW — LIVE FOOTAGE';
+    mountVideo(operatorEl, s.operatorVideo);
+  } else if (s.personAnim) {
+    operatorLabel.textContent = 'OPERATOR VIEW — PERSON + GIMBAL (DIAGRAM)';
+    s.personAnim(operatorEl);
+  }
+
+  // Result panel: video if available, else placeholder
+  if (s.resultVideo) {
+    mountVideo(resultEl, s.resultVideo);
+  } else {
+    const fb = document.createElement('div');
+    fb.className = 'video-fallback';
+    fb.textContent = 'NO RESULT CLIP AVAILABLE';
+    resultEl.appendChild(fb);
+  }
+}
+
+function mountVideo(parent, src) {
+  const v = document.createElement('video');
+  v.src = src;
+  v.autoplay = true;
+  v.loop = true;
+  v.muted = true;
+  v.playsInline = true;
+  v.setAttribute('preload', 'auto');
+  parent.appendChild(v);
 }
 
 function nextShot() { selectShot((current + 1) % shots.length); }
