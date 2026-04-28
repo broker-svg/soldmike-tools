@@ -1,0 +1,2528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPM Shot Commander — Motion Visualizer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;600&display=swap');
+
+  :root {
+    --red: #E53E00;
+    --orange: #FF6B1A;
+    --dark: #0A0A0A;
+    --panel: #141414;
+    --border: #252525;
+    --text: #E8E8E8;
+    --muted: #666;
+    --wide: #1A6EBF;
+    --detail: #C4640A;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 42px; height: 42px;
+    background: var(--red);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: white;
+    letter-spacing: 1px;
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: white;
+  }
+
+  .logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 6px;
+  }
+
+  .toggle-btn {
+    padding: 7px 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: calc(100vh - 89px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px 0;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    color: var(--muted);
+    padding: 8px 20px 6px;
+    text-transform: uppercase;
+  }
+
+  .shot-item {
+    padding: 11px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .shot-item:hover { background: rgba(255,255,255,0.04); }
+  .shot-item.active {
+    background: rgba(229,62,0,0.08);
+    border-left-color: var(--red);
+  }
+
+  .shot-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    width: 18px;
+    flex-shrink: 0;
+  }
+
+  .shot-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .shot-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 2px;
+  }
+
+  .badge-wide { background: rgba(26,110,191,0.25); color: #5BA3E8; }
+  .badge-detail { background: rgba(196,100,10,0.25); color: #F5A05A; }
+
+  /* STAGE */
+  .stage {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stage-header {
+    padding: 24px 36px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .shot-title-area h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    letter-spacing: 2px;
+    color: white;
+    line-height: 1;
+  }
+
+  .shot-meta {
+    display: flex;
+    gap: 12px;
+    margin-top: 6px;
+    align-items: center;
+  }
+
+  .meta-chip {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .meta-chip.wide-chip { border-color: #1A6EBF; color: #5BA3E8; }
+  .meta-chip.detail-chip { border-color: #C4640A; color: #F5A05A; }
+
+  .nav-arrows {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    width: 38px; height: 38px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .canvas-area {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+    padding: 0;
+    min-height: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .canvas-area {
+      grid-template-columns: 1fr;
+      grid-auto-rows: minmax(220px, auto);
+    }
+  }
+
+  .view-panel {
+    position: relative;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .view-panel:last-child { border-right: none; }
+
+  .view-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .view-canvas {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  svg.anim-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* DESCRIPTION */
+  .desc-panel {
+    border-top: 1px solid var(--border);
+    padding: 20px 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    background: rgba(255,255,255,0.015);
+  }
+
+  .desc-block h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--red);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .desc-block p {
+    font-size: 12px;
+    color: #AAA;
+    line-height: 1.6;
+  }
+
+  /* ANIMATIONS */
+
+  /* Room grid background */
+  .room-floor {
+    fill: none;
+    stroke: rgba(255,255,255,0.06);
+    stroke-width: 0.5;
+  }
+
+  .camera-body {
+    fill: #E53E00;
+  }
+
+  .camera-lens {
+    fill: #0A0A0A;
+    stroke: #E53E00;
+    stroke-width: 1;
+  }
+
+  .motion-path {
+    fill: none;
+    stroke: rgba(255,107,26,0.5);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+  }
+
+  .motion-trail {
+    fill: none;
+    stroke: rgba(229,62,0,0.3);
+    stroke-width: 1;
+  }
+
+  .subject-dot {
+    fill: rgba(255,255,255,0.15);
+    stroke: rgba(255,255,255,0.4);
+    stroke-width: 1;
+  }
+
+  /* Arrow head */
+  .arrow-tip {
+    fill: var(--orange);
+  }
+
+  .playback-bar {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .play-btn {
+    width: 28px; height: 28px;
+    background: var(--red);
+    border: none;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+  }
+
+  .progress-track {
+    width: 80px;
+    height: 2px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    transition: width 0.1s;
+  }
+
+  /* LEGEND COLORS */
+  .legend-bar {
+    padding: 8px 36px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 9px;
+    letter-spacing: 1px; color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  .gimbal-mode {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: rgba(255,107,26,0.15);
+    border: 1px solid rgba(255,107,26,0.3);
+    color: var(--orange);
+    padding: 2px 8px;
+    letter-spacing: 1px;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">TPM</div>
+    <div>
+      <div class="logo-text">Shot Commander</div>
+      <div class="logo-sub">Motion Visualizer — All 13 Shots</div>
+    </div>
+  </div>
+  <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;">
+    TORONTO PROPERTY MEDIA
+  </div>
+</header>
+
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="section-label">Wide Angle / Regular</div>
+    <div class="shot-item active" data-shot="0" onclick="selectShot(0)">
+      <span class="shot-num">01</span>
+      <span class="shot-name">Straight Push</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="1" onclick="selectShot(1)">
+      <span class="shot-num">02</span>
+      <span class="shot-name">Straight Push Curve</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="2" onclick="selectShot(2)">
+      <span class="shot-num">03</span>
+      <span class="shot-name">Orbiting Clip</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="3" onclick="selectShot(3)">
+      <span class="shot-num">04</span>
+      <span class="shot-name">Yee-haw Drop</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="4" onclick="selectShot(4)">
+      <span class="shot-num">05</span>
+      <span class="shot-name">FPV</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="5" onclick="selectShot(5)">
+      <span class="shot-num">06</span>
+      <span class="shot-name">PTF Rise and Drop</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="6" onclick="selectShot(6)">
+      <span class="shot-num">07</span>
+      <span class="shot-name">Straight Push + Rise</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+    <div class="shot-item" data-shot="7" onclick="selectShot(7)">
+      <span class="shot-num">08</span>
+      <span class="shot-name">Tripod</span>
+      <span class="shot-badge badge-wide">WIDE</span>
+    </div>
+
+    <div class="section-label" style="margin-top:8px;">Detail Shots — 50mm</div>
+    <div class="shot-item" data-shot="8" onclick="selectShot(8)">
+      <span class="shot-num">09</span>
+      <span class="shot-name">Orbiting Detail</span>
+      <span class="shot-badge badge-detail">50mm</span>
+    </div>
+    <div class="shot-item" data-shot="9" onclick="selectShot(9)">
+      <span class="shot-num">10</span>
+      <span class="shot-name">Cowboy Lift</span>
+      <span class="shot-badge badge-detail">50mm</span>
+    </div>
+    <div class="shot-item" data-shot="10" onclick="selectShot(10)">
+      <span class="shot-num">11</span>
+      <span class="shot-name">Detail Slider</span>
+      <span class="shot-badge badge-detail">50mm</span>
+    </div>
+    <div class="shot-item" data-shot="11" onclick="selectShot(11)">
+      <span class="shot-num">12</span>
+      <span class="shot-name">PTF Orbit</span>
+      <span class="shot-badge badge-detail">50mm f/1.4</span>
+    </div>
+    <div class="shot-item" data-shot="12" onclick="selectShot(12)">
+      <span class="shot-num">13</span>
+      <span class="shot-name">Top Down Detail</span>
+      <span class="shot-badge badge-detail">50mm</span>
+    </div>
+  </div>
+
+  <!-- STAGE -->
+  <div class="stage">
+    <div class="stage-header">
+      <div class="shot-title-area">
+        <h2 id="shotTitle">STRAIGHT PUSH</h2>
+        <div class="shot-meta">
+          <span id="shotBadge" class="meta-chip wide-chip">WIDE ANGLE</span>
+          <span id="shotLens" class="meta-chip">WIDE LENS</span>
+          <span id="shotMode" class="gimbal-mode">STANDARD MODE</span>
+        </div>
+      </div>
+      <div class="nav-arrows">
+        <button class="nav-btn" onclick="prevShot()">&#8592;</button>
+        <button class="nav-btn" onclick="nextShot()">&#8594;</button>
+      </div>
+    </div>
+
+    <div class="legend-bar">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#E53E00;"></div> Camera position
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:rgba(255,107,26,0.5);width:16px;height:2px;border-radius:0;"></div> Motion path
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:rgba(255,255,255,0.3);"></div> Subject / focal point
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#5BA3E8;"></div> Camera direction
+      </div>
+    </div>
+
+    <div class="canvas-area">
+      <div class="view-panel">
+        <div class="view-label">BIRD'S EYE VIEW — TOP DOWN</div>
+        <div class="view-canvas" id="topCanvas"></div>
+      </div>
+      <div class="view-panel">
+        <div class="view-label">SIDE VIEW — ELEVATION</div>
+        <div class="view-canvas" id="sideCanvas"></div>
+      </div>
+      <div class="view-panel">
+        <div class="view-label">OPERATOR VIEW — PERSON + GIMBAL</div>
+        <div class="view-canvas" id="personCanvas"></div>
+      </div>
+    </div>
+
+    <div class="desc-panel">
+      <div class="desc-block">
+        <h4>Key Technique</h4>
+        <p id="descTech">—</p>
+      </div>
+      <div class="desc-block">
+        <h4>Common Mistake</h4>
+        <p id="descMistake">—</p>
+      </div>
+      <div class="desc-block">
+        <h4>Pro Tip</h4>
+        <p id="descTip">—</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const shots = [
+  {
+    name: "STRAIGHT PUSH",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "STANDARD MODE",
+    tech: "Ninja walk — smooth forward/backward motion keeping grid lines aligned with room lines.",
+    mistake: "Letting hips sway side to side breaks the smooth glide and makes the footage look shaky.",
+    tip: "Use the center X on your grid overlay to anchor where you want the viewer's eye to go.",
+    topAnim: drawStraightPushTop,
+    sideAnim: drawStraightPushSide,
+    personAnim: drawStraightPushPerson,
+  },
+  {
+    name: "STRAIGHT PUSH CURVE",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "STANDARD MODE",
+    tech: "Push in straight, then introduce a gentle wrist turn — let the gimbal curve, not your body.",
+    mistake: "Twisting your whole torso creates a harsh 90° snap instead of a smooth, cinematic arc.",
+    tip: "The curve should feel like water flowing — initiated by the fingertips, not the shoulders.",
+    topAnim: drawCurveTop,
+    sideAnim: drawCurveSide,
+    personAnim: drawCurvePerson,
+  },
+  {
+    name: "ORBITING CLIP",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "STANDARD MODE",
+    tech: "Move your feet in a 'C' shape (bird's eye) while spinning and gently turning your wrist.",
+    mistake: "Moving too fast loses the smooth orbit and creates a panning clip instead of a true orbit.",
+    tip: "This shot meshes naturally with other clips in the edit because it shows all four sides of the subject.",
+    topAnim: drawOrbitTop,
+    sideAnim: drawOrbitSide,
+    personAnim: drawOrbitPerson,
+  },
+  {
+    name: "YEE-HAW DROP",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "PTF MODE",
+    tech: "PTF mode: joystick up, reach wide, drop the camera all the way down your legs.",
+    mistake: "Not going wide enough with your reach limits the dramatic drop effect.",
+    tip: "The 'wide reach + full drop' creates the cowboy style height reveal — commit to the full range of motion.",
+    topAnim: drawYeeHawTop,
+    sideAnim: drawYeeHawSide,
+    personAnim: drawYeeHawPerson,
+  },
+  {
+    name: "FPV — FIRST PERSON VIEW",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "FOLLOW MODE",
+    tech: "Mimic a flying drone — energetic, swooping movement through the space.",
+    mistake: "Overusing FPV kills its impact. One or two per video maximum.",
+    tip: "Best in modern homes with reflections and great light — avoid in traditional or dark spaces.",
+    topAnim: drawFPVTop,
+    sideAnim: drawFPVSide,
+    personAnim: drawFPVPerson,
+  },
+  {
+    name: "PTF RISE AND DROP",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "PTF MODE",
+    tech: "Walk in straight, push up with wrist showing height, orbit if possible, then drop.",
+    mistake: "Forgetting the orbit makes this just a rise — the orbit is what makes it special.",
+    tip: "Works beautifully around a staircase — orbit the newel post while changing elevation.",
+    topAnim: drawPTFRiseTop,
+    sideAnim: drawPTFRiseSide,
+    personAnim: drawPTFRiseDropPerson,
+  },
+  {
+    name: "STRAIGHT PUSH WITH RISE",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "PTF MODE",
+    tech: "PTF mode: move in straight while simultaneously lifting the camera upward.",
+    mistake: "Tilting the camera down as you rise — keep the framing level while the camera lifts.",
+    tip: "Great for revealing tall ceilings or dramatic architectural height from a low starting position.",
+    topAnim: drawPushRiseTop,
+    sideAnim: drawPushRiseSide,
+    personAnim: drawPushRisePerson,
+  },
+  {
+    name: "TRIPOD",
+    badge: "WIDE ANGLE", badgeClass: "wide-chip",
+    lens: "WIDE LENS", mode: "TRIPOD",
+    tech: "Mount perfectly squared on tripod, execute a subtle zoom-out. Camera is STATIONARY.",
+    mistake: "Not squaring up to the room — even 1° of tilt shows on the horizontal lines.",
+    tip: "Use for artwork, textures (backsplash, wood grain, stone). Changes the editing pace beautifully.",
+    topAnim: drawTripodTop,
+    sideAnim: drawTripodSide,
+    personAnim: drawTripodPerson,
+  },
+  {
+    name: "ORBITING DETAIL SHOT",
+    badge: "DETAIL SHOT", badgeClass: "detail-chip",
+    lens: "50mm", mode: "STANDARD MODE",
+    tech: "Brace body, springload the wrist, orbit the subject while simultaneously rising and dropping.",
+    mistake: "Not springloading the wrist causes jerky movement — pre-tension is key.",
+    tip: "Reach all the way up first, then let the drop happen naturally — gravity helps the movement.",
+    topAnim: drawOrbitDetailTop,
+    sideAnim: drawOrbitDetailSide,
+    personAnim: drawOrbitDetailPerson,
+  },
+  {
+    name: "COWBOY LIFT",
+    badge: "DETAIL SHOT", badgeClass: "detail-chip",
+    lens: "50mm", mode: "PTF MODE",
+    tech: "Maintain center focus point, orbit around it, lift camera via PTF with foreground top and bottom.",
+    mistake: "Losing the center focal point during the orbit — the subject must stay perfectly centered.",
+    tip: "Foreground elements at the START and END of the lift give this shot its euphoric cinematic feel.",
+    topAnim: drawCowboyTop,
+    sideAnim: drawCowboySide,
+    personAnim: drawCowboyLiftPerson,
+  },
+  {
+    name: "DETAIL SLIDER",
+    badge: "DETAIL SHOT", badgeClass: "detail-chip",
+    lens: "50mm", mode: "STANDARD MODE",
+    tech: "Slide laterally with a slight simultaneous drop, keeping all horizontal lines perfectly even.",
+    mistake: "Letting the camera tilt — ovens, cabinets, range hoods must stay perfectly horizontal throughout.",
+    tip: "This is the hardest wide-shot equivalent for detail work. Slow and deliberate wins every time.",
+    topAnim: drawSliderTop,
+    sideAnim: drawSliderSide,
+    personAnim: drawSliderPerson,
+  },
+  {
+    name: "PTF ORBIT",
+    badge: "DETAIL SHOT", badgeClass: "detail-chip",
+    lens: "50mm @ f/1.4", mode: "PTF MODE",
+    tech: "Position ABOVE subject, wrap around it, move upward keeping subject perfectly centered.",
+    mistake: "Losing center alignment — the subject must not drift. This is the hardest shot to execute.",
+    tip: "Multiple changing foreground + background dimensions create the euphoric look. f/1.4 for max bokeh.",
+    topAnim: drawPTFOrbitTop,
+    sideAnim: drawPTFOrbitSide,
+    personAnim: drawPTFOrbitPerson,
+  },
+  {
+    name: "TOP DOWN DETAIL",
+    badge: "DETAIL SHOT", badgeClass: "detail-chip",
+    lens: "50mm", mode: "STANDARD MODE",
+    tech: "Point camera straight down at detail, pull backward while tilting the camera upward.",
+    mistake: "Not including a foreground element at the end — it's what makes the shot look special.",
+    tip: "End on a foreground element to give the pull-back a natural, elegant stopping point.",
+    topAnim: drawTopDownTop,
+    sideAnim: drawTopDownSide,
+    personAnim: drawTopDownPerson,
+  },
+];
+
+let current = 0;
+let animFrames = [];
+
+function stopAnims() {
+  animFrames.forEach(id => cancelAnimationFrame(id));
+  animFrames = [];
+}
+
+function selectShot(idx) {
+  stopAnims();
+  current = idx;
+  document.querySelectorAll('.shot-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[data-shot="${idx}"]`).classList.add('active');
+  const s = shots[idx];
+  document.getElementById('shotTitle').textContent = s.name;
+  document.getElementById('shotBadge').textContent = s.badge;
+  document.getElementById('shotBadge').className = 'meta-chip ' + s.badgeClass;
+  document.getElementById('shotLens').textContent = s.lens;
+  document.getElementById('shotMode').textContent = s.mode;
+  document.getElementById('descTech').textContent = s.tech;
+  document.getElementById('descMistake').textContent = s.mistake;
+  document.getElementById('descTip').textContent = s.tip;
+
+  const topEl = document.getElementById('topCanvas');
+  const sideEl = document.getElementById('sideCanvas');
+  const personEl = document.getElementById('personCanvas');
+  topEl.innerHTML = '';
+  sideEl.innerHTML = '';
+  personEl.innerHTML = '';
+
+  s.topAnim(topEl);
+  s.sideAnim(sideEl);
+  if (s.personAnim) s.personAnim(personEl);
+}
+
+function nextShot() { selectShot((current + 1) % shots.length); }
+function prevShot() { selectShot((current + shots.length - 1) % shots.length); }
+
+// ===================== SVG HELPERS =====================
+
+function makeSVG(parent) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('width','100%');
+  svg.setAttribute('height','100%');
+  svg.setAttribute('viewBox','0 0 300 260');
+  parent.appendChild(svg);
+  return svg;
+}
+
+function addGrid(svg, viewBox='top') {
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  for(let i=0;i<=300;i+=30) {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',i); l.setAttribute('y1',0);
+    l.setAttribute('x2',i); l.setAttribute('y2',260);
+    l.setAttribute('stroke','rgba(255,255,255,0.05)'); l.setAttribute('stroke-width','0.5');
+    g.appendChild(l);
+  }
+  for(let i=0;i<=260;i+=30) {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1',0); l.setAttribute('y1',i);
+    l.setAttribute('x2',300); l.setAttribute('y2',i);
+    l.setAttribute('stroke','rgba(255,255,255,0.05)'); l.setAttribute('stroke-width','0.5');
+    g.appendChild(l);
+  }
+  svg.appendChild(g);
+}
+
+function addRoom(svg) {
+  const room = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  room.setAttribute('x','50'); room.setAttribute('y','40');
+  room.setAttribute('width','200'); room.setAttribute('height','160');
+  room.setAttribute('fill','rgba(255,255,255,0.03)');
+  room.setAttribute('stroke','rgba(255,255,255,0.12)');
+  room.setAttribute('stroke-width','1');
+  svg.appendChild(room);
+}
+
+function addSubject(svg, cx, cy, r=14, label='SUBJECT') {
+  const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx',cx); c.setAttribute('cy',cy); c.setAttribute('r',r);
+  c.setAttribute('fill','rgba(255,255,255,0.08)');
+  c.setAttribute('stroke','rgba(255,255,255,0.35)'); c.setAttribute('stroke-width','1');
+  svg.appendChild(c);
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',cx); t.setAttribute('y',cy+4);
+  t.setAttribute('text-anchor','middle'); t.setAttribute('font-size','7');
+  t.setAttribute('fill','rgba(255,255,255,0.5)'); t.setAttribute('font-family','DM Mono,monospace');
+  t.textContent = label;
+  svg.appendChild(t);
+}
+
+function addCamera(svg, x, y, angle=0, id='cam') {
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('id',id);
+  g.setAttribute('transform',`translate(${x},${y}) rotate(${angle})`);
+
+  const body = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  body.setAttribute('x','-8'); body.setAttribute('y','-5');
+  body.setAttribute('width','16'); body.setAttribute('height','10');
+  body.setAttribute('fill','#E53E00'); body.setAttribute('rx','2');
+  g.appendChild(body);
+
+  const lens = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  lens.setAttribute('cx','6'); lens.setAttribute('cy','0'); lens.setAttribute('r','4');
+  lens.setAttribute('fill','#0A0A0A'); lens.setAttribute('stroke','#FF6B1A'); lens.setAttribute('stroke-width','1.2');
+  g.appendChild(lens);
+
+  // Direction arrow
+  const arrow = document.createElementNS('http://www.w3.org/2000/svg','line');
+  arrow.setAttribute('x1','10'); arrow.setAttribute('y1','0');
+  arrow.setAttribute('x2','24'); arrow.setAttribute('y2','0');
+  arrow.setAttribute('stroke','#5BA3E8'); arrow.setAttribute('stroke-width','1.5');
+  arrow.setAttribute('marker-end','url(#arrowhead)');
+  g.appendChild(arrow);
+
+  svg.appendChild(g);
+  return g;
+}
+
+function addDefs(svg) {
+  const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+  defs.innerHTML = `
+    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#5BA3E8"/>
+    </marker>
+    <marker id="patharrow" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+      <polygon points="0 0, 6 2, 0 4" fill="#FF6B1A"/>
+    </marker>
+  `;
+  svg.appendChild(defs);
+}
+
+function addLabel(svg, x, y, text, color='rgba(255,255,255,0.4)') {
+  const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t.setAttribute('x',x); t.setAttribute('y',y);
+  t.setAttribute('font-size','7'); t.setAttribute('fill',color);
+  t.setAttribute('font-family','DM Mono,monospace'); t.setAttribute('text-anchor','middle');
+  t.textContent = text;
+  svg.appendChild(t);
+}
+
+function animateEl(el, prop, fromVal, toVal, duration, easing, onDone) {
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    let p = Math.min((ts - start) / duration, 1);
+    let e = easing ? easing(p) : p;
+    if (prop === 'transform') {
+      el.setAttribute('transform', fromVal(e));
+    } else {
+      el.setAttribute(prop, fromVal + (toVal - fromVal) * e);
+    }
+    if (p < 1) {
+      animFrames.push(requestAnimationFrame(step));
+    } else if (onDone) onDone();
+  }
+  animFrames.push(requestAnimationFrame(step));
+}
+
+function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+function linear(t) { return t; }
+
+function loopAnim(fn, delay=200) {
+  fn();
+  setTimeout(() => {
+    const id = setInterval(() => { stopSvgAnims(); fn(); }, 3000);
+    animFrames.push({cancel: () => clearInterval(id)});
+  }, delay);
+}
+
+function stopSvgAnims() {
+  animFrames.forEach(id => {
+    if (typeof id === 'number') cancelAnimationFrame(id);
+    else if (id && id.cancel) id.cancel();
+  });
+  animFrames = [];
+}
+
+// ===================== SHOT ANIMATIONS =====================
+
+function drawStraightPushTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — STRAIGHT PUSH');
+
+  // Path line
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','150'); path.setAttribute('y1','220');
+  path.setAttribute('x2','150'); path.setAttribute('y2','120');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  addLabel(svg, 150, 245, 'CAMERA PUSHES FORWARD');
+  addLabel(svg, 150, 110, '← ROOM INTERIOR');
+
+  const cam = addCamera(svg, 150, 220, -90, 'camTop');
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2000, 1));
+      const y = 220 - p * 80;
+      cam.setAttribute('transform', `translate(150,${y}) rotate(-90)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawStraightPushSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  // Floor
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','200');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','200');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  // Ceiling
+  const ceil = document.createElementNS('http://www.w3.org/2000/svg','line');
+  ceil.setAttribute('x1','20'); ceil.setAttribute('y1','80');
+  ceil.setAttribute('x2','280'); ceil.setAttribute('y2','80');
+  ceil.setAttribute('stroke','rgba(255,255,255,0.08)'); ceil.setAttribute('stroke-width','1');
+  svg.appendChild(ceil);
+  addLabel(svg, 150, 20, 'SIDE VIEW — STRAIGHT PUSH');
+  addLabel(svg, 150, 215, 'NO ELEVATION CHANGE — FLAT MOTION');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','60'); path.setAttribute('y1','165');
+  path.setAttribute('x2','220'); path.setAttribute('y2','165');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3'); path.setAttribute('marker-end','url(#patharrow)');
+  svg.appendChild(path);
+
+  addLabel(svg, 40, 168, 'START', '#666');
+  addLabel(svg, 240, 168, 'END', '#666');
+
+  const cam = addCamera(svg, 60, 165, 0, 'camSide');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2000, 1));
+      cam.setAttribute('transform', `translate(${60 + p * 150},165) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCurveTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — STRAIGHT PUSH CURVE');
+
+  // Curved path
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 150 220 Q 150 150 200 110');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.45)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 150, 245, 'PUSH STRAIGHT → CURVE RIGHT');
+
+  const cam = addCamera(svg, 150, 220, -90, 'camCurve');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2400, 1));
+      // Bezier manually: from (150,220) Q (150,150) to (200,110)
+      const bx = (1-p)*(1-p)*150 + 2*(1-p)*p*150 + p*p*200;
+      const by = (1-p)*(1-p)*220 + 2*(1-p)*p*150 + p*p*110;
+      // Tangent for angle
+      const tx = 2*(1-p)*(150-150) + 2*p*(200-150);
+      const ty = 2*(1-p)*(150-220) + 2*p*(110-150);
+      const angle = Math.atan2(ty, tx) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCurveSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','200');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','200');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — SAME HEIGHT');
+  addLabel(svg, 150, 215, 'NO ELEVATION CHANGE DURING CURVE');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','60'); path.setAttribute('y1','165');
+  path.setAttribute('x2','240'); path.setAttribute('y2','165');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  const cam = addCamera(svg, 60, 165, 0, 'camCS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2400, 1));
+      cam.setAttribute('transform', `translate(${60 + p * 170},165) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawOrbitTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addSubject(svg, 150, 130);
+  addLabel(svg, 150, 20, 'TOP VIEW — ORBITING CLIP (C SHAPE)');
+
+  // C-shape arc
+  const arc = document.createElementNS('http://www.w3.org/2000/svg','path');
+  arc.setAttribute('d','M 80 180 A 80 80 0 0 1 80 80');
+  arc.setAttribute('fill','none'); arc.setAttribute('stroke','rgba(255,107,26,0.4)');
+  arc.setAttribute('stroke-width','1.5'); arc.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(arc);
+
+  addLabel(svg, 150, 245, 'FEET DRAW A "C" SHAPE — BIRD\'S EYE');
+
+  const cam = addCamera(svg, 80, 180, 0, 'camOrb');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      // Arc from bottom to top around left side
+      const angle = (180 + p * 180) * Math.PI / 180; // 180° arc
+      const cx = 150, cy = 130, r = 80;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+      const faceAngle = (Math.atan2(cy - y, cx - x)) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(${faceAngle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawOrbitSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','200');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','200');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — ORBIT STAYS LEVEL');
+  addLabel(svg, 150, 245, 'CONSISTENT HEIGHT THROUGHOUT ORBIT');
+
+  const cam = addCamera(svg, 80, 165, 0, 'camOS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      const x = 80 + p * 140;
+      cam.setAttribute('transform', `translate(${x},165) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawYeeHawTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — YEE-HAW DROP');
+  addLabel(svg, 150, 245, 'CAMERA REACH OUT → DROP STRAIGHT DOWN');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','150'); path.setAttribute('y1','80');
+  path.setAttribute('x2','150'); path.setAttribute('y2','180');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  addLabel(svg, 170, 85, 'REACH HIGH', '#FF6B1A');
+  addLabel(svg, 170, 175, 'DROP LOW', '#FF6B1A');
+
+  const cam = addCamera(svg, 150, 130, -90, 'camYT');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      cam.setAttribute('transform', `translate(150,${130}) rotate(-90)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawYeeHawSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — YEE-HAW DROP');
+
+  // Drop path
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','150'); path.setAttribute('y1','60');
+  path.setAttribute('x2','150'); path.setAttribute('y2','200');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','2');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  addLabel(svg, 180, 65, 'UP — REACH WIDE', '#FF6B1A');
+  addLabel(svg, 180, 200, 'DOWN LEGS', '#FF6B1A');
+
+  const cam = addCamera(svg, 150, 60, 90, 'camYS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      const y = 60 + p * 140;
+      cam.setAttribute('transform', `translate(150,${y}) rotate(90)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawFPVTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — FPV (ENERGETIC FLIGHT PATH)');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 70 210 Q 120 160 150 130 Q 180 100 220 80');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','4,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 150, 245, 'SWOOPING — MIMICS FPV DRONE FLIGHT');
+
+  const cam = addCamera(svg, 70, 210, -45, 'camFT');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      // Quadratic bezier
+      const bx = (1-p)*(1-p)*70 + 2*(1-p)*p*150 + p*p*220;
+      const by = (1-p)*(1-p)*210 + 2*(1-p)*p*130 + p*p*80;
+      const tx2 = 2*(1-p)*(150-70) + 2*p*(220-150);
+      const ty2 = 2*(1-p)*(130-210) + 2*p*(80-130);
+      const angle = Math.atan2(ty2, tx2) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawFPVSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — FPV SWOOP');
+  addLabel(svg, 150, 245, 'USE SPARINGLY: MAX 2 PER VIDEO');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 60 190 Q 130 120 240 90');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  const cam = addCamera(svg, 60, 190, -30, 'camFS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      const bx = (1-p)*(1-p)*60 + 2*(1-p)*p*130 + p*p*240;
+      const by = (1-p)*(1-p)*190 + 2*(1-p)*p*120 + p*p*90;
+      const tx2 = 2*(1-p)*(130-60) + 2*p*(240-130);
+      const ty2 = 2*(1-p)*(120-190) + 2*p*(90-120);
+      const angle = Math.atan2(ty2, tx2) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFRiseTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addSubject(svg, 150, 130, 10, 'STAIR');
+  addLabel(svg, 150, 20, 'TOP VIEW — PTF RISE + ORBIT');
+
+  const arc = document.createElementNS('http://www.w3.org/2000/svg','path');
+  arc.setAttribute('d','M 150 220 L 150 170 A 45 45 0 0 1 195 130');
+  arc.setAttribute('fill','none'); arc.setAttribute('stroke','rgba(255,107,26,0.4)');
+  arc.setAttribute('stroke-width','1.5'); arc.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(arc);
+
+  addLabel(svg, 150, 245, 'PUSH IN → ORBIT SUBJECT');
+
+  const cam = addCamera(svg, 150, 220, -90, 'camPRT');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      let x, y, angle;
+      if (p < 0.4) {
+        const lp = p / 0.4;
+        x = 150; y = 220 - lp * 50;
+        angle = -90;
+      } else {
+        const ap = (p - 0.4) / 0.6;
+        const a = -90 + ap * 90;
+        x = 150 + 45 * Math.cos(a * Math.PI / 180);
+        y = 130 + 45 * Math.sin(a * Math.PI / 180);
+        const fa = Math.atan2(130 - y, 150 - x) * 180 / Math.PI;
+        angle = fa;
+      }
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFRiseSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — RISE THEN DROP');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 60 175 L 140 175 L 180 70 L 240 175');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 180, 60, 'PEAK', '#FF6B1A');
+  addLabel(svg, 150, 245, 'RISE → ORBIT → DROP');
+
+  const cam = addCamera(svg, 60, 175, 0, 'camPRS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3500, 1));
+      let x, y;
+      if (p < 0.35) { x = 60 + p/0.35*80; y = 175; }
+      else if (p < 0.65) { const rp = (p-0.35)/0.3; x = 140 + rp*40; y = 175 - rp*105; }
+      else { const dp = (p-0.65)/0.35; x = 180 + dp*60; y = 70 + dp*105; }
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPushRiseTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — PUSH WITH RISE');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','150'); path.setAttribute('y1','210');
+  path.setAttribute('x2','150'); path.setAttribute('y2','100');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  addLabel(svg, 150, 245, 'STRAIGHT FORWARD — NO LATERAL CHANGE');
+
+  const cam = addCamera(svg, 150, 210, -90, 'camPRT2');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      cam.setAttribute('transform', `translate(150,${210 - p * 100}) rotate(-90)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPushRiseSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — RISING PUSH');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 60 185 Q 180 120 240 70');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 50, 188, 'LOW', '#666');
+  addLabel(svg, 248, 73, 'HIGH', '#FF6B1A');
+  addLabel(svg, 150, 245, 'SIMULTANEOUS FORWARD + UPWARD');
+
+  const cam = addCamera(svg, 60, 185, -20, 'camPRS2');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      const bx = (1-p)*(1-p)*60 + 2*(1-p)*p*180 + p*p*240;
+      const by = (1-p)*(1-p)*185 + 2*(1-p)*p*120 + p*p*70;
+      const tx2 = 2*(1-p)*(180-60) + 2*p*(240-180);
+      const ty2 = 2*(1-p)*(120-185) + 2*p*(70-120);
+      const angle = Math.atan2(ty2, tx2) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTripodTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addRoom(svg);
+  addLabel(svg, 150, 20, 'TOP VIEW — TRIPOD (STATIC)');
+
+  // Tripod legs
+  const legs = [[-20,20],[0,28],[20,20]];
+  legs.forEach(([dx,dy]) => {
+    const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l.setAttribute('x1','150'); l.setAttribute('y1','160');
+    l.setAttribute('x2',150+dx); l.setAttribute('y2',160+dy);
+    l.setAttribute('stroke','rgba(255,255,255,0.3)'); l.setAttribute('stroke-width','2');
+    svg.appendChild(l);
+  });
+
+  addSubject(svg, 150, 110, 20, 'SUBJECT');
+  addLabel(svg, 150, 245, 'CAMERA STATIONARY — SUBTLE ZOOM ONLY');
+
+  const cam = addCamera(svg, 150, 160, -90, 'camTT');
+  // pulse animation to show zoom
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = Math.min((ts - t) / 2000, 1);
+      const scale = 1 + 0.15 * Math.sin(p * Math.PI);
+      cam.setAttribute('transform', `translate(150,160) rotate(-90) scale(${scale})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTripodSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — TRIPOD NO MOVEMENT');
+  addLabel(svg, 150, 245, 'SQUARED UP — SLIGHT ZOOM OUT ONLY');
+
+  // Tripod stand
+  const stand = document.createElementNS('http://www.w3.org/2000/svg','line');
+  stand.setAttribute('x1','130'); stand.setAttribute('y1','180');
+  stand.setAttribute('x2','130'); stand.setAttribute('y2','210');
+  stand.setAttribute('stroke','rgba(255,255,255,0.3)'); stand.setAttribute('stroke-width','2');
+  svg.appendChild(stand);
+  const legL = document.createElementNS('http://www.w3.org/2000/svg','line');
+  legL.setAttribute('x1','130'); legL.setAttribute('y1','210');
+  legL.setAttribute('x2','100'); legL.setAttribute('y2','210');
+  legL.setAttribute('stroke','rgba(255,255,255,0.2)'); legL.setAttribute('stroke-width','1.5');
+  svg.appendChild(legL);
+  const legR = document.createElementNS('http://www.w3.org/2000/svg','line');
+  legR.setAttribute('x1','130'); legR.setAttribute('y1','210');
+  legR.setAttribute('x2','160'); legR.setAttribute('y2','210');
+  legR.setAttribute('stroke','rgba(255,255,255,0.2)'); legR.setAttribute('stroke-width','1.5');
+  svg.appendChild(legR);
+
+  addLabel(svg, 240, 140, 'ARTWORK /\nTEXTURE', 'rgba(255,255,255,0.4)');
+
+  addCamera(svg, 130, 175, 0, 'camTS');
+}
+
+// DETAIL SHOTS
+function drawOrbitDetailTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addSubject(svg, 150, 130, 12, 'DETAIL');
+  addLabel(svg, 150, 20, 'TOP VIEW — ORBITING DETAIL SHOT');
+
+  // Full orbit circle
+  const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx','150'); circle.setAttribute('cy','130'); circle.setAttribute('r','60');
+  circle.setAttribute('fill','none'); circle.setAttribute('stroke','rgba(255,107,26,0.25)');
+  circle.setAttribute('stroke-width','1'); circle.setAttribute('stroke-dasharray','4,4');
+  svg.appendChild(circle);
+
+  addLabel(svg, 150, 245, 'ORBIT AROUND DETAIL — SPRINGLOAD WRIST');
+
+  const cam = addCamera(svg, 210, 130, 0, 'camOD');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      const a = p * 360 * Math.PI / 180;
+      const x = 150 + 60 * Math.cos(a);
+      const y = 130 + 60 * Math.sin(a);
+      const fa = Math.atan2(130 - y, 150 - x) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(${fa})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawOrbitDetailSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — RISE + DROP WHILE ORBITING');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 80 170 Q 150 60 220 170');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 150, 55, 'PEAK — FULL ELEVATION', '#FF6B1A');
+  addLabel(svg, 150, 245, 'RISE + DROP WHILE ORBITING');
+
+  const cam = addCamera(svg, 80, 170, 0, 'camODS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      const bx = (1-p)*(1-p)*80 + 2*(1-p)*p*150 + p*p*220;
+      const by = (1-p)*(1-p)*170 + 2*(1-p)*p*60 + p*p*170;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCowboyTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addSubject(svg, 150, 130, 12, 'SUBJECT');
+  addLabel(svg, 150, 20, 'TOP VIEW — COWBOY LIFT (ORBIT + LIFT)');
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx','150'); circle.setAttribute('cy','130'); circle.setAttribute('r','55');
+  circle.setAttribute('fill','none'); circle.setAttribute('stroke','rgba(255,107,26,0.25)');
+  circle.setAttribute('stroke-width','1'); circle.setAttribute('stroke-dasharray','4,4');
+  svg.appendChild(circle);
+
+  addLabel(svg, 150, 245, 'ORBIT + LIFT — CENTER MUST STAY LOCKED');
+
+  const cam = addCamera(svg, 205, 130, 0, 'camCB');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3200, 1));
+      const a = p * 270 * Math.PI / 180;
+      const x = 150 + 55 * Math.cos(a);
+      const y = 130 + 55 * Math.sin(a);
+      const fa = Math.atan2(130 - y, 150 - x) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(${fa})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCowboySide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+
+  // Foreground markers
+  const fg1 = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  fg1.setAttribute('x','40'); fg1.setAttribute('y','185'); fg1.setAttribute('width','30'); fg1.setAttribute('height','8');
+  fg1.setAttribute('fill','rgba(255,255,255,0.1)'); fg1.setAttribute('stroke','rgba(255,255,255,0.2)'); fg1.setAttribute('stroke-width','0.5');
+  svg.appendChild(fg1);
+  addLabel(svg, 55, 195, 'FG START', 'rgba(255,255,255,0.4)');
+
+  const fg2 = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  fg2.setAttribute('x','220'); fg2.setAttribute('y','60'); fg2.setAttribute('width','30'); fg2.setAttribute('height','8');
+  fg2.setAttribute('fill','rgba(255,255,255,0.1)'); fg2.setAttribute('stroke','rgba(255,255,255,0.2)'); fg2.setAttribute('stroke-width','0.5');
+  svg.appendChild(fg2);
+  addLabel(svg, 235, 52, 'FG END', 'rgba(255,255,255,0.4)');
+
+  addLabel(svg, 150, 20, 'SIDE VIEW — COWBOY LIFT');
+  addLabel(svg, 150, 245, 'FOREGROUND AT START + END = EUPHORIC');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','line');
+  pathEl.setAttribute('x1','70'); pathEl.setAttribute('y1','188');
+  pathEl.setAttribute('x2','220'); pathEl.setAttribute('y2','65');
+  pathEl.setAttribute('stroke','rgba(255,107,26,0.4)'); pathEl.setAttribute('stroke-width','1.5');
+  pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  const cam = addCamera(svg, 70, 188, -45, 'camCBS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3200, 1));
+      const x = 70 + p * 150;
+      const y = 188 - p * 123;
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(-45)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawSliderTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  // Kitchen surface representation
+  const surface = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  surface.setAttribute('x','60'); surface.setAttribute('y','110');
+  surface.setAttribute('width','180'); surface.setAttribute('height','40');
+  surface.setAttribute('fill','rgba(255,255,255,0.05)');
+  surface.setAttribute('stroke','rgba(255,255,255,0.15)'); surface.setAttribute('stroke-width','1');
+  svg.appendChild(surface);
+  addLabel(svg, 150, 133, 'COUNTER / SUBJECT SURFACE');
+  addLabel(svg, 150, 20, 'TOP VIEW — DETAIL SLIDER');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','80'); path.setAttribute('y1','170');
+  path.setAttribute('x2','220'); path.setAttribute('y2','170');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  addLabel(svg, 150, 245, 'LATERAL SLIDE — KEEP LINES LEVEL');
+
+  const cam = addCamera(svg, 80, 170, 0, 'camST');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      cam.setAttribute('transform', `translate(${80 + p * 140},170) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawSliderSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — SLIDE + SLIGHT DROP');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 60 150 Q 160 155 240 170');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 150, 245, 'SLIGHT DROP — ALL HORIZ LINES STAY EVEN');
+
+  const cam = addCamera(svg, 60, 150, 5, 'camSS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      const bx = (1-p)*(1-p)*60 + 2*(1-p)*p*160 + p*p*240;
+      const by = (1-p)*(1-p)*150 + 2*(1-p)*p*155 + p*p*170;
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(5)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFOrbitTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addSubject(svg, 150, 130, 14, 'SUBJECT');
+  addLabel(svg, 150, 20, 'TOP VIEW — PTF ORBIT (HARDEST SHOT)');
+
+  const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx','150'); circle.setAttribute('cy','130'); circle.setAttribute('r','50');
+  circle.setAttribute('fill','none'); circle.setAttribute('stroke','rgba(255,107,26,0.3)');
+  circle.setAttribute('stroke-width','1'); circle.setAttribute('stroke-dasharray','3,3');
+  svg.appendChild(circle);
+
+  // Above marker
+  const above = document.createElementNS('http://www.w3.org/2000/svg','text');
+  above.setAttribute('x','150'); above.setAttribute('y','68');
+  above.setAttribute('font-size','7'); above.setAttribute('fill','#FF6B1A');
+  above.setAttribute('font-family','DM Mono,monospace'); above.setAttribute('text-anchor','middle');
+  above.textContent = '▲ START ABOVE SUBJECT';
+  svg.appendChild(above);
+
+  addLabel(svg, 150, 245, 'POSITION ABOVE → WRAP AROUND → UPWARD');
+
+  const cam = addCamera(svg, 150, 80, 90, 'camPO');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 4000, 1));
+      const a = (-90 + p * 360) * Math.PI / 180;
+      const x = 150 + 50 * Math.cos(a);
+      const y = 130 + 50 * Math.sin(a);
+      const fa = Math.atan2(130 - y, 150 - x) * 180 / Math.PI;
+      cam.setAttribute('transform', `translate(${x},${y}) rotate(${fa})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFOrbitSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  addLabel(svg, 150, 20, 'SIDE VIEW — ABOVE → WRAP → RISE');
+  addLabel(svg, 150, 245, '50mm f/1.4 — MAX BOKEH — HARDEST SHOT');
+
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 150 80 Q 80 100 60 150 Q 80 175 150 150');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  addLabel(svg, 155, 75, 'START ABOVE', '#FF6B1A');
+
+  const cam = addCamera(svg, 150, 80, 180, 'camPOS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 4000, 1));
+      let bx, by;
+      if (p < 0.33) {
+        const lp = p/0.33;
+        bx = 150 - lp*90; by = 80 + lp*70;
+      } else if (p < 0.66) {
+        const lp = (p-0.33)/0.33;
+        bx = 60 + lp*20; by = 150 + lp*25;
+      } else {
+        const lp = (p-0.66)/0.34;
+        bx = 80 + lp*70; by = 175 - lp*25;
+      }
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(0)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTopDownTop(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+
+  // Detail subject
+  const subj = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  subj.setAttribute('x','115'); subj.setAttribute('y','110');
+  subj.setAttribute('width','70'); subj.setAttribute('height','50');
+  subj.setAttribute('fill','rgba(255,255,255,0.06)');
+  subj.setAttribute('stroke','rgba(255,255,255,0.25)'); subj.setAttribute('stroke-width','1');
+  svg.appendChild(subj);
+  addLabel(svg, 150, 139, 'DETAIL');
+  addLabel(svg, 150, 20, 'TOP VIEW — TOP DOWN DETAIL');
+  addLabel(svg, 150, 245, 'CAMERA POINTS DOWN → PULL BACK');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+  path.setAttribute('x1','150'); path.setAttribute('y1','140');
+  path.setAttribute('x2','150'); path.setAttribute('y2','210');
+  path.setAttribute('stroke','rgba(255,107,26,0.4)'); path.setAttribute('stroke-width','1.5');
+  path.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(path);
+
+  const cam = addCamera(svg, 150, 140, 90, 'camTDT');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      cam.setAttribute('transform', `translate(150,${140 + p * 65}) rotate(90)`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTopDownSide(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1','210');
+  floor.setAttribute('x2','280'); floor.setAttribute('y2','210');
+  floor.setAttribute('stroke','rgba(255,255,255,0.2)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+
+  // Detail surface
+  const surf = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  surf.setAttribute('x','120'); surf.setAttribute('y','170');
+  surf.setAttribute('width','60'); surf.setAttribute('height','8');
+  surf.setAttribute('fill','rgba(255,255,255,0.08)');
+  surf.setAttribute('stroke','rgba(255,255,255,0.2)'); surf.setAttribute('stroke-width','0.5');
+  svg.appendChild(surf);
+
+  addLabel(svg, 150, 20, 'SIDE VIEW — DOWN THEN TILT UP + PULL');
+  addLabel(svg, 150, 245, 'END ON FOREGROUND FOR ELEGANT FINISH');
+
+  // Camera path: starts pointing down, pulls back and tilts up
+  const pathEl = document.createElementNS('http://www.w3.org/2000/svg','path');
+  pathEl.setAttribute('d','M 150 100 Q 120 130 80 170');
+  pathEl.setAttribute('fill','none'); pathEl.setAttribute('stroke','rgba(255,107,26,0.4)');
+  pathEl.setAttribute('stroke-width','1.5'); pathEl.setAttribute('stroke-dasharray','5,3');
+  svg.appendChild(pathEl);
+
+  // Foreground element at end
+  const fg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  fg.setAttribute('x','55'); fg.setAttribute('y','155'); fg.setAttribute('width','30'); fg.setAttribute('height','12');
+  fg.setAttribute('fill','rgba(255,107,26,0.15)'); fg.setAttribute('stroke','rgba(255,107,26,0.4)'); fg.setAttribute('stroke-width','0.5');
+  svg.appendChild(fg);
+  addLabel(svg, 70, 167, 'FOREGROUND', '#FF6B1A');
+
+  addLabel(svg, 155, 95, 'START — POINT DOWN', '#666');
+
+  const cam = addCamera(svg, 150, 100, 90, 'camTDS');
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2500, 1));
+      const bx = (1-p)*(1-p)*150 + 2*(1-p)*p*120 + p*p*80;
+      const by = (1-p)*(1-p)*100 + 2*(1-p)*p*130 + p*p*170;
+      const angle = 90 - p * 80; // from pointing down to tilting up
+      cam.setAttribute('transform', `translate(${bx},${by}) rotate(${angle})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+// ===================== OPERATOR (PERSON + GIMBAL) =====================
+
+// Builds a side-profile stick figure operator holding a gimbal.
+// Returns an object with refs to body/arm/gimbal so animations can transform parts independently.
+// x, y = feet anchor position. The operator stands ~95px tall.
+function addOperator(svg, x, y, opts={}) {
+  const facing = opts.facing || 1; // 1 = facing right, -1 = facing left
+  const root = document.createElementNS('http://www.w3.org/2000/svg','g');
+  root.setAttribute('transform', `translate(${x},${y}) scale(${facing},1)`);
+
+  // Legs (two)
+  const legL = document.createElementNS('http://www.w3.org/2000/svg','line');
+  legL.setAttribute('x1','-3'); legL.setAttribute('y1','-40');
+  legL.setAttribute('x2','-5'); legL.setAttribute('y2','0');
+  legL.setAttribute('stroke','#E8E8E8'); legL.setAttribute('stroke-width','2.2');
+  legL.setAttribute('stroke-linecap','round');
+  root.appendChild(legL);
+
+  const legR = document.createElementNS('http://www.w3.org/2000/svg','line');
+  legR.setAttribute('x1','3'); legR.setAttribute('y1','-40');
+  legR.setAttribute('x2','5'); legR.setAttribute('y2','0');
+  legR.setAttribute('stroke','#E8E8E8'); legR.setAttribute('stroke-width','2.2');
+  legR.setAttribute('stroke-linecap','round');
+  root.appendChild(legR);
+
+  // Torso
+  const torso = document.createElementNS('http://www.w3.org/2000/svg','line');
+  torso.setAttribute('x1','0'); torso.setAttribute('y1','-40');
+  torso.setAttribute('x2','0'); torso.setAttribute('y2','-72');
+  torso.setAttribute('stroke','#E8E8E8'); torso.setAttribute('stroke-width','3');
+  torso.setAttribute('stroke-linecap','round');
+  root.appendChild(torso);
+
+  // Head
+  const head = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  head.setAttribute('cx','0'); head.setAttribute('cy','-80');
+  head.setAttribute('r','7');
+  head.setAttribute('fill','#E8E8E8');
+  root.appendChild(head);
+
+  // Arm group — pivots from shoulder at (0, -70). Default angle: 0 = horizontal forward
+  const armGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+  armGroup.setAttribute('transform','translate(0,-70) rotate(0)');
+
+  // Upper + lower arm as one extended segment for simplicity
+  const arm = document.createElementNS('http://www.w3.org/2000/svg','line');
+  arm.setAttribute('x1','0'); arm.setAttribute('y1','0');
+  arm.setAttribute('x2','24'); arm.setAttribute('y2','0');
+  arm.setAttribute('stroke','#E8E8E8'); arm.setAttribute('stroke-width','2.4');
+  arm.setAttribute('stroke-linecap','round');
+  armGroup.appendChild(arm);
+
+  // Gimbal handle at end of arm (vertical grip going down ~14)
+  const gimbalGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+  gimbalGroup.setAttribute('transform','translate(24,0)');
+
+  const handle = document.createElementNS('http://www.w3.org/2000/svg','line');
+  handle.setAttribute('x1','0'); handle.setAttribute('y1','-2');
+  handle.setAttribute('x2','0'); handle.setAttribute('y2','12');
+  handle.setAttribute('stroke','#FF6B1A'); handle.setAttribute('stroke-width','2.4');
+  handle.setAttribute('stroke-linecap','round');
+  gimbalGroup.appendChild(handle);
+
+  // Gimbal body (camera) on top of handle
+  const camBody = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  camBody.setAttribute('x','-7'); camBody.setAttribute('y','-10');
+  camBody.setAttribute('width','14'); camBody.setAttribute('height','9');
+  camBody.setAttribute('fill','#E53E00'); camBody.setAttribute('rx','1.5');
+  gimbalGroup.appendChild(camBody);
+
+  // Gimbal lens
+  const camLens = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  camLens.setAttribute('cx','5'); camLens.setAttribute('cy','-5.5');
+  camLens.setAttribute('r','2.6');
+  camLens.setAttribute('fill','#0A0A0A');
+  camLens.setAttribute('stroke','#FF6B1A'); camLens.setAttribute('stroke-width','0.8');
+  gimbalGroup.appendChild(camLens);
+
+  armGroup.appendChild(gimbalGroup);
+  root.appendChild(armGroup);
+
+  svg.appendChild(root);
+  return { root, armGroup, gimbalGroup, legL, legR, torso, head };
+}
+
+function addFloor(svg, y=235) {
+  const floor = document.createElementNS('http://www.w3.org/2000/svg','line');
+  floor.setAttribute('x1','20'); floor.setAttribute('y1',y);
+  floor.setAttribute('x2','280'); floor.setAttribute('y2',y);
+  floor.setAttribute('stroke','rgba(255,255,255,0.25)'); floor.setAttribute('stroke-width','1.5');
+  svg.appendChild(floor);
+  // Floor hatching
+  for (let i=0; i<14; i++) {
+    const h = document.createElementNS('http://www.w3.org/2000/svg','line');
+    h.setAttribute('x1', 20 + i*20); h.setAttribute('y1', y);
+    h.setAttribute('x2', 14 + i*20); h.setAttribute('y2', y+6);
+    h.setAttribute('stroke','rgba(255,255,255,0.08)'); h.setAttribute('stroke-width','0.6');
+    svg.appendChild(h);
+  }
+}
+
+// Walking leg bob — call inside step() with phase 0..1
+function walkLegs(op, phase) {
+  const swing = Math.sin(phase * Math.PI * 4) * 4;
+  op.legL.setAttribute('x2', -5 + swing);
+  op.legR.setAttribute('x2', 5 - swing);
+}
+
+function setArmAngle(op, deg) {
+  op.armGroup.setAttribute('transform', `translate(0,-70) rotate(${deg})`);
+}
+
+// ===================== PERSON ANIMATIONS =====================
+
+function drawStraightPushPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — NINJA WALK FORWARD');
+  addLabel(svg, 150, 252, 'SMOOTH STEPS · HIPS LEVEL · ARMS STEADY');
+
+  // Subject hint at far end
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  sub.setAttribute('x','230'); sub.setAttribute('y','195'); sub.setAttribute('width','32'); sub.setAttribute('height','40');
+  sub.setAttribute('fill','rgba(255,255,255,0.04)'); sub.setAttribute('stroke','rgba(255,255,255,0.15)'); sub.setAttribute('stroke-width','0.8');
+  svg.appendChild(sub);
+  addLabel(svg, 246, 215, 'SUBJECT', 'rgba(255,255,255,0.3)');
+
+  const op = addOperator(svg, 70, 235);
+  setArmAngle(op, 0);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2400, 1));
+      const x = 70 + p * 130;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCurvePerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — WRIST CURVES, BODY GLIDES');
+  addLabel(svg, 150, 252, 'TURN COMES FROM THE FINGERTIPS');
+
+  const op = addOperator(svg, 70, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2600, 1));
+      const x = 70 + p * 130;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p);
+      // Wrist tilt: gimbal head rotates relative to handle
+      const tilt = p * 28;
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${tilt})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawOrbitPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — SIDESTEPS IN A "C" SHAPE');
+  addLabel(svg, 150, 252, 'FEET CRAB-WALK · GIMBAL FACES SUBJECT');
+
+  // Subject in the middle
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  sub.setAttribute('cx','200'); sub.setAttribute('cy','215'); sub.setAttribute('r','12');
+  sub.setAttribute('fill','rgba(255,255,255,0.08)'); sub.setAttribute('stroke','rgba(255,255,255,0.35)'); sub.setAttribute('stroke-width','1');
+  svg.appendChild(sub);
+  addLabel(svg, 200, 218, 'SUBJ', 'rgba(255,255,255,0.5)');
+
+  const op = addOperator(svg, 90, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      // Sidestep arc — operator slides right while wrist keeps gimbal pointing at subject
+      const x = 90 + p * 80;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p * 0.7);
+      // Wrist gradually rotates so gimbal stays aimed at subject (pivot)
+      const wristRot = p * 35;
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${wristRot})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawYeeHawPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — REACH HIGH → DROP TO LEGS');
+  addLabel(svg, 150, 252, 'PTF MODE · JOYSTICK UP · COMMIT THE DROP');
+
+  const op = addOperator(svg, 150, 235);
+
+  // Motion arc indicator
+  const arc = document.createElementNS('http://www.w3.org/2000/svg','path');
+  arc.setAttribute('d','M 175 130 Q 220 175 195 230');
+  arc.setAttribute('fill','none'); arc.setAttribute('stroke','rgba(255,107,26,0.35)');
+  arc.setAttribute('stroke-width','1.2'); arc.setAttribute('stroke-dasharray','4,3');
+  svg.appendChild(arc);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = Math.min((ts - t) / 2800, 1);
+      // Two-phase: 0..0.5 reach UP, 0.5..1 drop DOWN
+      let armDeg;
+      if (p < 0.5) {
+        const k = ease(p * 2);
+        armDeg = 0 - k * 90; // 0 → -90 (straight up)
+      } else {
+        const k = ease((p - 0.5) * 2);
+        armDeg = -90 + k * 165; // -90 → +75 (down past legs)
+      }
+      setArmAngle(op, armDeg);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawFPVPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — DYNAMIC SWOOP, BODY LEANS');
+  addLabel(svg, 150, 252, 'FOLLOW MODE · ENERGETIC · LEAN INTO IT');
+
+  const op = addOperator(svg, 60, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      const x = 60 + p * 180;
+      // Operator dips low at start, rises at end (knees-bent crouch → standing tall)
+      const dip = Math.sin(p * Math.PI) * -10;
+      const yOffset = -p * 18 + dip;
+      op.root.setAttribute('transform', `translate(${x},${235 + yOffset}) scale(1,1)`);
+      walkLegs(op, p * 1.2);
+      // Arm swoops up as they rise
+      const armDeg = -p * 35;
+      setArmAngle(op, armDeg);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFRiseDropPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — PUSH IN, RISE, ORBIT, DROP');
+  addLabel(svg, 150, 252, 'PTF MODE · 4 PHASES IN ONE FLUID MOVE');
+
+  const op = addOperator(svg, 60, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = Math.min((ts - t) / 3400, 1);
+      // x advances throughout
+      const x = 60 + p * 180;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p);
+      // Arm: 0..0.4 rise to overhead, 0.4..0.7 hold, 0.7..1 drop
+      let armDeg;
+      if (p < 0.4) armDeg = -ease(p / 0.4) * 90;
+      else if (p < 0.7) armDeg = -90;
+      else armDeg = -90 + ease((p - 0.7) / 0.3) * 130;
+      setArmAngle(op, armDeg);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPushRisePerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — WALK + LIFT GIMBAL UPWARD');
+  addLabel(svg, 150, 252, 'KEEP FRAMING LEVEL WHILE ARMS RISE');
+
+  const op = addOperator(svg, 60, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      const x = 60 + p * 180;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p);
+      const armDeg = -p * 75;
+      setArmAngle(op, armDeg);
+      // Keep gimbal level: counter-rotate handle so camera stays horizontal
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${p * 75})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTripodPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — STATIONARY, MOUNTED ON TRIPOD');
+  addLabel(svg, 150, 252, 'CAMERA IS LOCKED · SUBTLE ZOOM-OUT ONLY');
+
+  // Tripod
+  const tg = document.createElementNS('http://www.w3.org/2000/svg','g');
+  tg.setAttribute('transform','translate(180,235)');
+
+  const leg1 = document.createElementNS('http://www.w3.org/2000/svg','line');
+  leg1.setAttribute('x1','0'); leg1.setAttribute('y1','-60');
+  leg1.setAttribute('x2','-14'); leg1.setAttribute('y2','0');
+  leg1.setAttribute('stroke','#888'); leg1.setAttribute('stroke-width','2'); leg1.setAttribute('stroke-linecap','round');
+  tg.appendChild(leg1);
+
+  const leg2 = document.createElementNS('http://www.w3.org/2000/svg','line');
+  leg2.setAttribute('x1','0'); leg2.setAttribute('y1','-60');
+  leg2.setAttribute('x2','14'); leg2.setAttribute('y2','0');
+  leg2.setAttribute('stroke','#888'); leg2.setAttribute('stroke-width','2'); leg2.setAttribute('stroke-linecap','round');
+  tg.appendChild(leg2);
+
+  const leg3 = document.createElementNS('http://www.w3.org/2000/svg','line');
+  leg3.setAttribute('x1','0'); leg3.setAttribute('y1','-60');
+  leg3.setAttribute('x2','0'); leg3.setAttribute('y2','0');
+  leg3.setAttribute('stroke','#666'); leg3.setAttribute('stroke-width','2'); leg3.setAttribute('stroke-linecap','round');
+  tg.appendChild(leg3);
+
+  // Camera on tripod
+  const cam = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  cam.setAttribute('x','-12'); cam.setAttribute('y','-75'); cam.setAttribute('width','24'); cam.setAttribute('height','14');
+  cam.setAttribute('fill','#E53E00'); cam.setAttribute('rx','2');
+  tg.appendChild(cam);
+
+  const lens = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  lens.setAttribute('cx','12'); lens.setAttribute('cy','-68'); lens.setAttribute('r','4');
+  lens.setAttribute('fill','#0A0A0A'); lens.setAttribute('stroke','#FF6B1A'); lens.setAttribute('stroke-width','1');
+  tg.appendChild(lens);
+
+  svg.appendChild(tg);
+
+  // Operator standing beside, arms relaxed (down at sides)
+  const op = addOperator(svg, 110, 235);
+  setArmAngle(op, 75); // arm hanging down
+
+  // Subtle "watching" head bob
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = Math.min((ts - t) / 2200, 1);
+      const bob = Math.sin(p * Math.PI * 2) * 0.5;
+      op.head.setAttribute('cy', -80 + bob);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 600);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawOrbitDetailPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — BRACE BODY, SPRINGLOAD WRIST');
+  addLabel(svg, 150, 252, '50MM · ORBIT WHILE ARM RISES + DROPS');
+
+  // Small detail subject (e.g., faucet)
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  sub.setAttribute('x','215'); sub.setAttribute('y','215'); sub.setAttribute('width','12'); sub.setAttribute('height','20');
+  sub.setAttribute('fill','rgba(255,255,255,0.08)'); sub.setAttribute('stroke','rgba(255,255,255,0.3)'); sub.setAttribute('stroke-width','0.8');
+  svg.appendChild(sub);
+  addLabel(svg, 221, 213, 'DETAIL', 'rgba(255,255,255,0.4)');
+
+  const op = addOperator(svg, 110, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = Math.min((ts - t) / 3000, 1);
+      // Slight sidestep
+      const x = 110 + p * 70;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p * 0.5);
+      // Wrist springloads: arm up first (0..0.5), then drop (0.5..1)
+      let armDeg;
+      if (p < 0.5) armDeg = -ease(p / 0.5) * 55;
+      else armDeg = -55 + ease((p - 0.5) / 0.5) * 80;
+      setArmAngle(op, armDeg);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawCowboyLiftPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — ORBIT + ARMS LIFT UPWARD');
+  addLabel(svg, 150, 252, 'KEEP CENTER LOCKED · FOREGROUND BOOKENDS');
+
+  // Center subject
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  sub.setAttribute('cx','220'); sub.setAttribute('cy','215'); sub.setAttribute('r','10');
+  sub.setAttribute('fill','rgba(255,255,255,0.08)'); sub.setAttribute('stroke','rgba(255,255,255,0.35)'); sub.setAttribute('stroke-width','1');
+  svg.appendChild(sub);
+
+  const op = addOperator(svg, 110, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      const x = 110 + p * 60;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p * 0.6);
+      // Arm lifts continuously upward
+      const armDeg = -p * 75;
+      setArmAngle(op, armDeg);
+      // Counter-rotate gimbal so it stays aimed at subject
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${p * 75})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawSliderPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — LATERAL SIDESTEP, SLOW & DELIBERATE');
+  addLabel(svg, 150, 252, 'KEEP HORIZONTALS PERFECTLY EVEN');
+
+  const op = addOperator(svg, 80, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3000, 1));
+      const x = 80 + p * 140;
+      // Slight vertical drop during slide
+      const yOffset = p * 6;
+      op.root.setAttribute('transform', `translate(${x},${235 + yOffset}) scale(1,1)`);
+      // Crab-step legs (small alternating shift)
+      const swing = Math.sin(p * Math.PI * 3) * 2;
+      op.legL.setAttribute('x2', -5 + swing);
+      op.legR.setAttribute('x2', 5 + swing);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 800);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawPTFOrbitPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — ARM ABOVE, WRAP + RISE');
+  addLabel(svg, 150, 252, '50MM F/1.4 · HARDEST SHOT · LOCK CENTER');
+
+  // Subject (low — operator is above)
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  sub.setAttribute('cx','215'); sub.setAttribute('cy','228'); sub.setAttribute('r','7');
+  sub.setAttribute('fill','rgba(255,255,255,0.08)'); sub.setAttribute('stroke','rgba(255,255,255,0.35)'); sub.setAttribute('stroke-width','1');
+  svg.appendChild(sub);
+  addLabel(svg, 215, 248, 'SUBJ', 'rgba(255,255,255,0.4)');
+
+  const op = addOperator(svg, 120, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 3200, 1));
+      const x = 120 + p * 50;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p * 0.5);
+      // Arm starts overhead and swings forward and down toward subject
+      const armDeg = -90 + p * 70;
+      setArmAngle(op, armDeg);
+      // Gimbal points down at subject throughout
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${90 - p * 70})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+function drawTopDownPerson(parent) {
+  const svg = makeSVG(parent);
+  addDefs(svg);
+  addGrid(svg);
+  addFloor(svg);
+  addLabel(svg, 150, 20, 'OPERATOR — POINT DOWN → PULL BACK + TILT UP');
+  addLabel(svg, 150, 252, 'END ON A FOREGROUND ELEMENT');
+
+  // Detail directly under start position
+  const sub = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  sub.setAttribute('x','120'); sub.setAttribute('y','230'); sub.setAttribute('width','24'); sub.setAttribute('height','5');
+  sub.setAttribute('fill','rgba(255,255,255,0.08)'); sub.setAttribute('stroke','rgba(255,255,255,0.3)'); sub.setAttribute('stroke-width','0.6');
+  svg.appendChild(sub);
+  addLabel(svg, 132, 248, 'DETAIL', 'rgba(255,255,255,0.4)');
+
+  // Foreground element appearing at end position
+  const fg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  fg.setAttribute('x','205'); fg.setAttribute('y','220'); fg.setAttribute('width','18'); fg.setAttribute('height','15');
+  fg.setAttribute('fill','rgba(255,107,26,0.15)'); fg.setAttribute('stroke','rgba(255,107,26,0.4)'); fg.setAttribute('stroke-width','0.8');
+  svg.appendChild(fg);
+  addLabel(svg, 214, 248, 'FOREGROUND', '#FF6B1A');
+
+  const op = addOperator(svg, 130, 235);
+
+  let t = 0;
+  function loop() {
+    t = 0;
+    function step(ts) {
+      if (!t) t = ts;
+      const p = ease(Math.min((ts - t) / 2800, 1));
+      // Walk backwards (feet move right-to-left in operator-facing-right view becomes pull)
+      const x = 130 + p * 40;
+      op.root.setAttribute('transform', `translate(${x},235) scale(1,1)`);
+      walkLegs(op, p * 0.7);
+      // Arm starts pointing down (90°), tilts up toward forward (0°) over course of move
+      const armDeg = 90 - p * 90;
+      setArmAngle(op, armDeg);
+      // Counter-rotate gimbal so camera tilts from down to forward
+      op.gimbalGroup.setAttribute('transform', `translate(24,0) rotate(${-90 + p * 90})`);
+      if (p < 1) animFrames.push(requestAnimationFrame(step));
+      else setTimeout(loop, 700);
+    }
+    animFrames.push(requestAnimationFrame(step));
+  }
+  loop();
+}
+
+// Init
+selectShot(0);
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextShot();
+  if (e.key === 'ArrowLeft') prevShot();
+});
+</script>
+</body>
+</html>
