@@ -43,6 +43,7 @@ button{cursor:pointer;}
       <div style="display:flex;gap:8px;margin-bottom:18px;" id="tmpl-row"></div>
       <button onclick="startShoot()" class="tap" style="width:100%;background:#1B3A6B;border:none;border-radius:12px;padding:15px;color:#fff;font-size:14px;font-weight:700;letter-spacing:2px;">START SHOOT →</button>
     </div>
+    <button onclick="showPage('pg-moves')" class="tap" style="width:100%;background:#1B3A6B;border:none;border-radius:12px;padding:13px;color:#C9A84C;font-size:13px;font-weight:700;letter-spacing:2px;margin-bottom:10px;">🎬  13 GIMBAL MOVES</button>
     <button onclick="showPage('pg-vault')" class="tap" style="width:100%;background:#fff;border:2px solid #E2E8F0;border-radius:12px;padding:13px;color:#1B3A6B;font-size:13px;font-weight:700;letter-spacing:1px;margin-bottom:22px;">🗂  CREATIVE VAULT</button>
     <div class="section-label">RECENT SHOOTS</div>
     <div id="recent-list"></div>
@@ -80,6 +81,81 @@ button{cursor:pointer;}
   </div>
 
   <div id="sess-body" style="padding:14px 20px;"></div>
+</div>
+
+<!-- ══════════ GIMBAL MOVES LIBRARY ══════════ -->
+<div id="pg-moves" class="page">
+  <div style="background:#1B3A6B;padding:28px 20px 24px;">
+    <button onclick="showPage('pg-home')" style="background:none;border:none;color:rgba(255,255,255,0.45);font-size:11px;padding:0;margin-bottom:10px;display:block;">← HOME</button>
+    <div style="font-family:'Bebas Neue';font-size:36px;letter-spacing:4px;color:#C9A84C;">GIMBAL MOVES</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:2px;margin-top:3px;">13 FUNDAMENTALS · TAP TO WATCH</div>
+  </div>
+  <div style="padding:14px 16px 30px;">
+    <!-- Category filter -->
+    <div id="moves-cat-row" style="display:flex;gap:5px;overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px;padding-bottom:4px;"></div>
+    <div id="moves-list"></div>
+  </div>
+</div>
+
+<!-- ══════ MODAL: Move Detail with Videos ══════ -->
+<div id="modal-move" class="modal-wrap" style="align-items:stretch;">
+  <div class="modal-box fadeIn" style="border-radius:0;max-height:100vh;height:100%;padding:0;display:flex;flex-direction:column;">
+    <!-- Sticky header -->
+    <div style="background:#1B3A6B;padding:18px 20px 14px;position:sticky;top:0;z-index:10;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <button onclick="closeMoveDetail()" style="background:none;border:none;color:rgba(255,255,255,0.55);font-size:20px;padding:0;line-height:1;">✕</button>
+        <div id="md-num" style="font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:2px;"></div>
+      </div>
+      <div id="md-name" style="font-family:'Bebas Neue';font-size:32px;letter-spacing:3px;color:#C9A84C;line-height:1;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <span id="md-cat" style="font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;"></span>
+        <span id="md-lens" style="font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,0.15);color:#fff;"></span>
+        <span id="md-mode" style="font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 9px;border-radius:20px;background:rgba(201,168,76,0.2);color:#C9A84C;"></span>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div style="flex:1;overflow-y:auto;padding:0 0 30px;">
+      <!-- Operator video -->
+      <div id="md-op-wrap">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#9CA3AF;padding:14px 20px 8px;">OPERATOR — YOUR BODY</div>
+        <div style="background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
+          <video id="md-op-video" autoplay loop muted playsinline preload="auto" style="width:100%;height:100%;object-fit:contain;"></video>
+        </div>
+      </div>
+      <div id="md-op-fallback" style="display:none;padding:14px 20px;background:#F8FAFC;color:#9CA3AF;font-size:12px;text-align:center;font-style:italic;">No operator video for this move — see technique notes below.</div>
+
+      <!-- Result video -->
+      <div id="md-res-wrap">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#9CA3AF;padding:14px 20px 8px;">RESULT — CAMERA OUTPUT</div>
+        <div style="background:#000;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;">
+          <video id="md-res-video" autoplay loop muted playsinline preload="auto" style="width:100%;height:100%;object-fit:contain;"></video>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div style="padding:18px 20px 0;">
+        <div style="background:#F8FAFC;border-left:3px solid #1B3A6B;padding:12px 14px;margin-bottom:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#1B3A6B;margin-bottom:4px;">KEY TECHNIQUE</div>
+          <div id="md-tech" style="font-size:13px;color:#111;line-height:1.55;"></div>
+        </div>
+        <div style="background:#FEF2F2;border-left:3px solid #DC2626;padding:12px 14px;margin-bottom:10px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#DC2626;margin-bottom:4px;">COMMON MISTAKE</div>
+          <div id="md-mistake" style="font-size:13px;color:#111;line-height:1.55;"></div>
+        </div>
+        <div style="background:#FFFBEB;border-left:3px solid #C9A84C;padding:12px 14px;">
+          <div style="font-size:9px;font-weight:700;letter-spacing:2px;color:#92400E;margin-bottom:4px;">PRO TIP</div>
+          <div id="md-tip" style="font-size:13px;color:#111;line-height:1.55;"></div>
+        </div>
+      </div>
+
+      <!-- Nav between moves -->
+      <div style="display:flex;gap:8px;padding:18px 20px 0;">
+        <button onclick="prevMove()" class="tap" style="flex:1;padding:13px;background:#F3F4F6;border:none;border-radius:10px;color:#1B3A6B;font-size:13px;font-weight:700;letter-spacing:1px;">← PREV</button>
+        <button onclick="nextMove()" class="tap" style="flex:1;padding:13px;background:#1B3A6B;border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;letter-spacing:1px;">NEXT →</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════ VAULT (standalone) ══════════ -->
@@ -207,6 +283,86 @@ const BASE_SHOTS = [
 ];
 
 // ══════════════════════════════════════════════
+// GIMBAL MOVES LIBRARY — 13 fundamentals
+// Reference videos live in /clips/ folder of this repo
+// ══════════════════════════════════════════════
+const MOVES_LIBRARY = [
+  {id:1, name:"STRAIGHT PUSH",         lens:"WIDE", mode:"STANDARD", category:"hero",
+   tech:"Ninja walk — smooth forward/backward motion keeping grid lines aligned with room lines.",
+   mistake:"Letting hips sway side to side breaks the smooth glide and makes the footage look shaky.",
+   tip:"Use the center X on your grid overlay to anchor where you want the viewer's eye to go.",
+   op:"clips/01_straight_push_operator.mp4", res:"clips/01_straight_push_result.mp4"},
+  {id:2, name:"PUSH CURVE",            lens:"WIDE", mode:"STANDARD", category:"hero",
+   tech:"Push in straight, then introduce a gentle wrist turn — let the gimbal curve, not your body.",
+   mistake:"Twisting your whole torso creates a harsh 90° snap instead of a smooth, cinematic arc.",
+   tip:"The curve should feel like water flowing — initiated by the fingertips, not the shoulders.",
+   op:"clips/02_push_curve_operator.mp4", res:"clips/02_push_curve_result.mp4"},
+  {id:3, name:"ORBITING CLIP",         lens:"WIDE", mode:"STANDARD", category:"orbit",
+   tech:"Move your feet in a 'C' shape (bird's eye) while spinning and gently turning your wrist.",
+   mistake:"Moving too fast loses the smooth orbit and creates a panning clip instead of a true orbit.",
+   tip:"Meshes naturally with other clips in the edit — shows all four sides of the subject.",
+   op:"clips/03_orbit_operator.mp4", res:"clips/03_orbit_result.mp4"},
+  {id:4, name:"YEE-HAW DROP",          lens:"WIDE", mode:"PTF", category:"specialty",
+   tech:"PTF mode: joystick up, reach wide, drop the camera all the way down your legs.",
+   mistake:"Not going wide enough with your reach limits the dramatic drop effect.",
+   tip:"Wide reach + full drop creates the cowboy-style height reveal — commit to the full range.",
+   op:"clips/04_yeehaw_drop_operator.mp4", res:"clips/04_yeehaw_drop_result.mp4"},
+  {id:5, name:"FPV — FIRST PERSON",    lens:"WIDE", mode:"FOLLOW", category:"specialty",
+   tech:"Mimic a flying drone — energetic, swooping movement through the space.",
+   mistake:"Overusing FPV kills its impact. One or two per video maximum.",
+   tip:"Best in modern homes with reflections and great light — avoid in traditional or dark spaces.",
+   op:null, res:"clips/05_fpv_result.mp4"},
+  {id:6, name:"PTF RISE & DROP",       lens:"WIDE", mode:"PTF", category:"specialty",
+   tech:"Walk in straight, push up with wrist showing height, orbit if possible, then drop.",
+   mistake:"Forgetting the orbit makes this just a rise — the orbit is what makes it special.",
+   tip:"Works beautifully around a staircase — orbit the newel post while changing elevation.",
+   op:"clips/06_ptf_rise_drop_operator.mp4", res:"clips/06_ptf_rise_drop_result.mp4"},
+  {id:7, name:"PUSH + RISE",           lens:"WIDE", mode:"PTF", category:"hero",
+   tech:"PTF mode: move in straight while simultaneously lifting the camera upward.",
+   mistake:"Tilting the camera down as you rise — keep framing level while the camera lifts.",
+   tip:"Great for revealing tall ceilings or dramatic architectural height from a low start.",
+   op:"clips/07_push_rise_operator.mp4", res:"clips/07_push_rise_result.mp4"},
+  {id:8, name:"TRIPOD",                lens:"WIDE", mode:"TRIPOD", category:"static",
+   tech:"Mount perfectly squared on tripod, execute a subtle zoom-out. Camera is STATIONARY.",
+   mistake:"Not squaring up to the room — even 1° of tilt shows on the horizontal lines.",
+   tip:"Use for artwork, textures (backsplash, wood grain, stone). 5-frame stills can be lumped 6 or 12 at a time for opener montages.",
+   op:null, res:"clips/08_tripod_result.mp4"},
+  {id:9, name:"DETAILED ORBIT",        lens:"50mm", mode:"STANDARD", category:"detail",
+   tech:"Brace body, springload the wrist, orbit the subject while simultaneously rising and dropping.",
+   mistake:"Not springloading the wrist causes jerky movement — pre-tension is key.",
+   tip:"Reach all the way up first, then let the drop happen naturally — gravity helps the movement.",
+   op:"clips/09_detailed_orbit_operator.mp4", res:"clips/09_detailed_orbit_result.mp4"},
+  {id:10, name:"COWBOY LIFT",          lens:"50mm", mode:"PTF", category:"detail",
+   tech:"Maintain center focus point, orbit around it, lift camera via PTF with foreground top + bottom.",
+   mistake:"Losing the center focal point during the orbit — the subject must stay perfectly centered.",
+   tip:"Foreground at the START and END of the lift gives this shot its euphoric cinematic feel.",
+   op:"clips/10_cowboy_lift_operator.mp4", res:"clips/10_cowboy_lift_result.mp4"},
+  {id:11, name:"DETAIL SLIDER",        lens:"50mm", mode:"STANDARD", category:"detail",
+   tech:"Slide laterally with a slight simultaneous drop, keeping all horizontal lines perfectly even.",
+   mistake:"Letting the camera tilt — ovens, cabinets, range hoods must stay perfectly horizontal.",
+   tip:"Hardest wide-shot equivalent for detail work. Slow and deliberate wins every time.",
+   op:"clips/11_slider_operator.mp4", res:"clips/11_slider_result.mp4"},
+  {id:12, name:"PTF ORBIT",            lens:"50mm f/1.4", mode:"PTF", category:"detail",
+   tech:"Position ABOVE subject, wrap around it, move upward keeping subject perfectly centered.",
+   mistake:"Losing center alignment — subject must not drift. Hardest shot to execute.",
+   tip:"Multiple changing foreground + background dimensions create the euphoric look. f/1.4 for max bokeh.",
+   op:"clips/12_ptf_orbit_operator.mp4", res:"clips/12_ptf_orbit_result.mp4"},
+  {id:13, name:"TOP DOWN DETAIL",      lens:"50mm", mode:"STANDARD", category:"detail",
+   tech:"Point camera straight down at detail, pull backward while tilting the camera upward.",
+   mistake:"Not including a foreground element at the end — it's what makes the shot look special.",
+   tip:"End on a foreground element to give the pull-back a natural, elegant stopping point.",
+   op:"clips/13_top_down_operator.mp4", res:"clips/13_top_down_result.mp4"},
+];
+
+const MOVE_CAT = {
+  hero:      {label:"HERO",      color:"#1B3A6B", bg:"#EFF6FF"},
+  orbit:     {label:"ORBIT",     color:"#7C3AED", bg:"#F5F3FF"},
+  detail:    {label:"DETAIL",    color:"#C9A84C", bg:"#FFFBEB"},
+  specialty: {label:"SPECIALTY", color:"#DB2777", bg:"#FDF2F8"},
+  static:    {label:"STATIC",    color:"#0D9488", bg:"#F0FDFA"},
+};
+
+// ══════════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════════
 let S = {
@@ -236,6 +392,122 @@ function showPage(id){
   if(id==="pg-home")    renderHome();
   if(id==="pg-session") renderSession();
   if(id==="pg-vault")   renderVaultSA();
+  if(id==="pg-moves")   renderMoves();
+}
+
+// ══════════════════════════════════════════════
+// GIMBAL MOVES
+// ══════════════════════════════════════════════
+let movesCat = "all";
+let currentMoveIdx = 0;
+
+function renderMoves(){
+  // Category filter row
+  const cats = [["all","ALL · 13"]].concat(
+    Object.entries(MOVE_CAT).map(([k,v])=>{
+      const count = MOVES_LIBRARY.filter(m=>m.category===k).length;
+      return [k, `${v.label} · ${count}`];
+    })
+  );
+  document.getElementById("moves-cat-row").innerHTML = cats.map(([k,lbl])=>{
+    const active = movesCat===k;
+    const cat = MOVE_CAT[k];
+    const bg = active ? (cat?cat.color:"#1B3A6B") : "#F3F4F6";
+    const color = active ? "#fff" : "#6B7280";
+    return `<button onclick="setMovesCat('${k}')" class="tap" style="flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:1.5px;background:${bg};border:none;color:${color};white-space:nowrap;">${lbl}</button>`;
+  }).join("");
+
+  // Filtered list
+  const list = movesCat==="all" ? MOVES_LIBRARY : MOVES_LIBRARY.filter(m=>m.category===movesCat);
+  document.getElementById("moves-list").innerHTML = list.map(m=>{
+    const cat = MOVE_CAT[m.category];
+    const numStr = String(m.id).padStart(2,"0");
+    return `<div onclick="openMoveDetail(${m.id})" class="tap" style="background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.06);cursor:pointer;display:flex;gap:14px;align-items:center;">
+      <div style="font-family:'Bebas Neue';font-size:30px;color:${cat.color};line-height:1;flex-shrink:0;width:34px;text-align:center;">${numStr}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Bebas Neue';font-size:18px;letter-spacing:1.5px;color:#111;line-height:1.1;margin-bottom:4px;">${m.name}</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <span style="font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:${cat.bg};color:${cat.color};">${cat.label}</span>
+          <span style="font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:#F3F4F6;color:#6B7280;">${m.lens}</span>
+          ${m.mode!=="STANDARD"?`<span style="font-size:8px;font-weight:700;letter-spacing:1px;padding:2px 7px;border-radius:20px;background:#FFFBEB;color:#92400E;">${m.mode}</span>`:""}
+        </div>
+      </div>
+      <div style="color:#C9A84C;font-size:18px;flex-shrink:0;">▶</div>
+    </div>`;
+  }).join("");
+
+  if(!list.length){
+    document.getElementById("moves-list").innerHTML = `<div style="text-align:center;color:#9CA3AF;padding:30px;font-size:13px;">No moves in this category.</div>`;
+  }
+}
+
+function setMovesCat(c){ movesCat=c; renderMoves(); }
+
+function openMoveDetail(id){
+  const idx = MOVES_LIBRARY.findIndex(m=>m.id===id);
+  if(idx<0) return;
+  currentMoveIdx = idx;
+  loadMoveDetail();
+  document.getElementById("modal-move").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function loadMoveDetail(){
+  const m = MOVES_LIBRARY[currentMoveIdx];
+  const cat = MOVE_CAT[m.category];
+  document.getElementById("md-num").textContent = String(m.id).padStart(2,"0") + " / 13";
+  document.getElementById("md-name").textContent = m.name;
+  const catEl = document.getElementById("md-cat");
+  catEl.textContent = cat.label;
+  catEl.style.background = cat.color;
+  catEl.style.color = "#fff";
+  document.getElementById("md-lens").textContent = m.lens;
+  document.getElementById("md-mode").textContent = m.mode;
+  document.getElementById("md-tech").textContent = m.tech;
+  document.getElementById("md-mistake").textContent = m.mistake;
+  document.getElementById("md-tip").textContent = m.tip;
+
+  // Operator video — show or hide based on availability
+  const opWrap = document.getElementById("md-op-wrap");
+  const opFallback = document.getElementById("md-op-fallback");
+  const opVid = document.getElementById("md-op-video");
+  if(m.op){
+    opWrap.style.display = "block";
+    opFallback.style.display = "none";
+    opVid.src = m.op;
+    opVid.load();
+    opVid.play().catch(()=>{});
+  } else {
+    opWrap.style.display = "none";
+    opFallback.style.display = "block";
+    opVid.removeAttribute("src");
+  }
+
+  // Result video
+  const resVid = document.getElementById("md-res-video");
+  resVid.src = m.res;
+  resVid.load();
+  resVid.play().catch(()=>{});
+}
+
+function closeMoveDetail(){
+  document.getElementById("modal-move").classList.remove("open");
+  document.body.style.overflow = "";
+  // Stop videos to free up memory
+  ["md-op-video","md-res-video"].forEach(id=>{
+    const v = document.getElementById(id);
+    v.pause();
+    v.removeAttribute("src");
+  });
+}
+
+function nextMove(){
+  currentMoveIdx = (currentMoveIdx + 1) % MOVES_LIBRARY.length;
+  loadMoveDetail();
+}
+function prevMove(){
+  currentMoveIdx = (currentMoveIdx - 1 + MOVES_LIBRARY.length) % MOVES_LIBRARY.length;
+  loadMoveDetail();
 }
 
 // ══════════════════════════════════════════════
