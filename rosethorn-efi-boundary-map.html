@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rosethorn JS — Early French Immersion Catchment | SOLDMIKE</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root {
+    --navy: #28388F;
+    --gold: #C9A04A;
+    --ink: #1a1a1a;
+    --paper: #fafaf7;
+    --line: #d8d4c8;
+    --soft: #f0ece1;
+    --confirmed: #2c7a3a;
+    --confirmed-fill: rgba(44, 122, 58, 0.18);
+    --inferred: #c9a04a;
+    --inferred-fill: rgba(201, 160, 74, 0.15);
+    --current: #28388F;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .header {
+    background: var(--navy);
+    color: white;
+    padding: 18px 24px;
+    border-bottom: 4px solid var(--gold);
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .header .sub {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 2px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    height: calc(100vh - 80px);
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; height: auto; }
+    #map { height: 60vh; }
+  }
+  #map { height: 100%; background: #eee; }
+  .panel {
+    background: var(--paper);
+    border-left: 1px solid var(--line);
+    overflow-y: auto;
+    padding: 18px 20px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+  }
+  .panel h2 {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+    color: var(--navy);
+  }
+  .panel h2:not(:first-child) { margin-top: 18px; }
+  .layer-toggle {
+    background: var(--soft);
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    border-left: 3px solid var(--gold);
+  }
+  .layer-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .layer-toggle label .swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+  .layer-toggle .desc {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+    margin-left: 26px;
+    line-height: 1.4;
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .legend-row .pin {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.4);
+  }
+  .verify-btn {
+    display: block;
+    background: var(--navy);
+    color: white;
+    text-decoration: none;
+    padding: 10px 12px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 8px;
+    font-size: 13px;
+    transition: background 0.15s;
+  }
+  .verify-btn:hover { background: #1f2d72; }
+  .verify-btn .small { font-size: 11px; font-weight: 400; opacity: 0.85; display: block; margin-top: 2px; }
+  .note {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .boundary-table {
+    width: 100%;
+    font-size: 12px;
+    border-collapse: collapse;
+    margin-top: 4px;
+  }
+  .boundary-table th, .boundary-table td {
+    text-align: left;
+    padding: 5px 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .boundary-table th {
+    background: var(--soft);
+    font-weight: 600;
+  }
+  .conf {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .conf.high { background: #d6ebd6; color: #1d5d2c; }
+  .conf.med  { background: #fbeacb; color: #8a5a00; }
+  .footer-note {
+    margin-top: 12px;
+    padding: 10px;
+    background: #fff8e3;
+    border-left: 3px solid var(--gold);
+    font-size: 11px;
+    line-height: 1.5;
+    border-radius: 2px;
+  }
+  .popup-content { font-family: Georgia, serif; font-size: 13px; }
+  .popup-content strong { color: var(--navy); }
+  .popup-content .badge {
+    display: inline-block;
+    background: var(--confirmed);
+    color: white;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin-left: 4px;
+  }
+  .popup-content .badge.current { background: var(--current); }
+  .popup-content .badge.school { background: var(--gold); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Rosethorn JS — Early French Immersion Catchment</h1>
+  <div class="sub">Buyer search reference • Iafolla file • Inferred boundary — verify edge cases via TDSB tool</div>
+</div>
+
+<div class="layout">
+  <div id="map"></div>
+  <div class="panel">
+
+    <h2>Boundary Layers</h2>
+
+    <div class="layer-toggle">
+      <label>
+        <input type="checkbox" id="generous" checked />
+        <span class="swatch" style="background: var(--inferred-fill); border: 2px solid var(--inferred);"></span>
+        <span>Generous (gold)</span>
+      </label>
+      <div class="desc">Wider polygon. Use this in Stratus to avoid missing borderline listings. Verify each hit's address via the TDSB tool before showing.</div>
+    </div>
+
+    <div class="layer-toggle">
+      <label>
+        <input type="checkbox" id="conservative" checked />
+        <span class="swatch" style="background: var(--confirmed-fill); border: 2px solid var(--confirmed);"></span>
+        <span>Conservative (green)</span>
+      </label>
+      <div class="desc">High-confidence core: Princess-Rosethorn, Princess Margaret Gardens, Humber Valley Village. Listings here are almost certainly in zone.</div>
+    </div>
+
+    <h2>Pins on the map</h2>
+    <div class="legend-row"><span class="pin" style="background: var(--gold);"></span>Rosethorn JS (2 Remington Dr)</div>
+    <div class="legend-row"><span class="pin" style="background: var(--confirmed);"></span>Confirmed in-zone (TDSB lookup)</div>
+    <div class="legend-row"><span class="pin" style="background: var(--current);"></span>Iafolla current home</div>
+
+    <h2>Inferred boundaries</h2>
+    <table class="boundary-table">
+      <thead>
+        <tr><th>Side</th><th>Street</th><th>Conf.</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>North</td><td>~Wilson Ave / Hwy 401</td><td><span class="conf med">MED</span></td></tr>
+        <tr><td>South</td><td>~Dundas St W</td><td><span class="conf med">MED</span></td></tr>
+        <tr><td>East</td><td>Royal York / Humber R.</td><td><span class="conf high">HIGH</span></td></tr>
+        <tr><td>West</td><td>Hwy 427</td><td><span class="conf med">MED</span></td></tr>
+      </tbody>
+    </table>
+
+    <h2>Verify any address</h2>
+    <a class="verify-btn" href="https://www.tdsb.on.ca/Elementary-School/School-Choices/French-Programs/School-Search" target="_blank" rel="noopener">
+      Open TDSB EFI Lookup
+      <span class="small">tdsb.on.ca → enter address → confirm Rosethorn</span>
+    </a>
+
+    <div class="footer-note">
+      <strong>How to use this in Stratus:</strong> Use the <em>Generous</em> polygon as your map filter (better to over-include than miss a ravine listing). Before scheduling a showing, paste each candidate address into the TDSB lookup. If it returns "Rosethorn Junior School," you're in.
+    </div>
+
+    <div class="note">
+      Boundaries shown are inferred from one confirmed address (122 Wimbleton), Marco's confirmation re: Humber Valley Village, the location of neighbouring EFI schools (Sir Adam Beck JS to the south, John English JMS), and the Rosethorn school location itself. TDSB does not publish the official polygon. Final verification must be done per-address via the TDSB tool.
+    </div>
+
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // ---- Map setup ----
+  const map = L.map('map', { zoomControl: true }).setView([43.672, -79.545], 13);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(map);
+
+  // ---- Polygons ----
+  // GENEROUS boundary (intentionally wider — verify each listing manually)
+  const generous = L.polygon([
+    [43.7050, -79.5800], // NW — Hwy 427 + Wilson Ave area
+    [43.7080, -79.5350], // N — over Princess-Rosethorn
+    [43.6920, -79.5050], // NE — north of Humber Valley Village
+    [43.6700, -79.5000], // E — Royal York / Humber River
+    [43.6500, -79.5050], // SE — Bloor/Dundas + Royal York
+    [43.6440, -79.5450], // S — Dundas mid
+    [43.6450, -79.5800], // SW — Dundas + Hwy 427
+    [43.6650, -79.5850]  // W — Hwy 427
+  ], {
+    color: '#C9A04A',
+    weight: 2.5,
+    fillColor: '#C9A04A',
+    fillOpacity: 0.12,
+    dashArray: '6,5'
+  }).addTo(map);
+
+  // CONSERVATIVE boundary — high-confidence core
+  const conservative = L.polygon([
+    [43.6880, -79.5650], // NW — Princess Margaret Gardens north
+    [43.6900, -79.5300], // N — top of Princess-Rosethorn
+    [43.6780, -79.5100], // NE — Humber Valley Village north
+    [43.6600, -79.5050], // E — eastern edge HVV (Royal York)
+    [43.6520, -79.5180], // SE — south HVV
+    [43.6520, -79.5500], // S — Rathburn area
+    [43.6550, -79.5720]  // SW — Princess Margaret Gardens
+  ], {
+    color: '#2c7a3a',
+    weight: 2.5,
+    fillColor: '#2c7a3a',
+    fillOpacity: 0.18
+  }).addTo(map);
+
+  // ---- Markers ----
+  function pin(color) {
+    return L.divIcon({
+      className: '',
+      html: `<div style="width:18px;height:18px;border-radius:50%;background:${color};border:3px solid white;box-shadow:0 0 0 1px rgba(0,0,0,0.5);"></div>`,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9]
+    });
+  }
+
+  L.marker([43.6600398, -79.53975419999999], { icon: pin('#C9A04A') })
+    .addTo(map)
+    .bindPopup('<div class="popup-content"><strong>Rosethorn Junior School</strong> <span class="badge school">EFI</span><br>2 Remington Dr, Etobicoke<br>416-394-6360</div>');
+
+  L.marker([43.6634811, -79.5297471], { icon: pin('#2c7a3a') })
+    .addTo(map)
+    .bindPopup('<div class="popup-content"><strong>122 Wimbleton Rd</strong> <span class="badge">In zone</span><br>Confirmed via TDSB lookup<br><em>Humber Valley Village</em></div>');
+
+  L.marker([43.6608729, -79.55424699999999], { icon: pin('#28388F') })
+    .addTo(map)
+    .bindPopup('<div class="popup-content"><strong>57 Ravenscrest Dr</strong> <span class="badge current">Current home</span><br>Iafolla family<br><em>Princess Margaret Gardens</em></div>');
+
+  // ---- Toggle handlers ----
+  document.getElementById('generous').addEventListener('change', e => {
+    if (e.target.checked) generous.addTo(map); else map.removeLayer(generous);
+  });
+  document.getElementById('conservative').addEventListener('change', e => {
+    if (e.target.checked) conservative.addTo(map); else map.removeLayer(conservative);
+  });
+</script>
+</body>
+</html>
