@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Opinion — Pine Grove Rd, Vaughan | SOLDMIKE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#ffffff; --card:#1a1a26; --border:#2a2a3a;
+  --gold:#c5a55a; --gold-dim:rgba(197,165,90,.15);
+  --text:#e8e6e1; --text-dim:#8a8a9a; --text-muted:#5a5a6a;
+  --green:#4ade80; --green-dim:rgba(74,222,128,.12);
+  --red:#f87171; --red-dim:rgba(248,113,113,.12);
+  --blue:#60a5fa; --blue-dim:rgba(96,165,250,.12);
+  --page-text:#1a1a1a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--page-text);line-height:1.6}
+.serif{font-family:'Cormorant Garamond',serif}
+.wrap{max-width:1080px;margin:0 auto;padding:0 1.25rem}
+
+/* HEADER */
+header{background:#11111a;color:var(--text);padding:1.75rem 0 1.5rem;border-bottom:3px solid var(--gold)}
+.brand{font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:600}
+.title{font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:700;margin-top:.4rem;line-height:1.1}
+.subtitle{color:var(--text-dim);margin-top:.5rem;font-size:.95rem}
+.realm-btn{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;background:var(--gold);color:#11111a;font-weight:700;
+  text-decoration:none;padding:.7rem 1.3rem;border-radius:9px;font-size:.9rem;transition:.2s;box-shadow:0 4px 14px rgba(197,165,90,.3)}
+.realm-btn:hover{transform:translateY(-1px);background:#d4b66a}
+
+/* TABS */
+.tabs{display:flex;gap:.6rem;background:#11111a;padding:0 1.25rem;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--border)}
+.tab{flex:1;max-width:340px;background:transparent;border:none;color:var(--text-dim);font-family:'Inter',sans-serif;
+  font-size:1rem;font-weight:600;padding:1.1rem .5rem;cursor:pointer;border-bottom:3px solid transparent;transition:.2s;text-align:center}
+.tab .tnum{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.08);font-size:.85rem;margin-right:.55rem;vertical-align:middle}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab.active .tnum{background:var(--gold);color:#11111a}
+.tabwrap{max-width:1110px;margin:0 auto}
+
+/* SECTIONS */
+.page{display:none;padding:2.25rem 0 1rem;animation:fade .35s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--page-text);margin:2.2rem 0 1rem}
+.sec-title:first-child{margin-top:0}
+.lead{font-size:1.02rem;color:#33333a;max-width:760px;margin-bottom:.4rem}
+.muted-note{font-size:.82rem;color:#7a7a85;margin-top:.4rem}
+
+/* INTRO CARD */
+.intro{background:var(--card);color:var(--text);border-radius:14px;padding:1.6rem 1.7rem;border:1px solid var(--border);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.intro p{color:#cfcdc6;margin-bottom:.85rem}
+.intro p:last-child{margin-bottom:0}
+.intro strong{color:var(--gold);font-weight:600}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin:1.3rem 0}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1rem;text-align:center}
+.stat .v{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:700;color:var(--gold)}
+.stat .l{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-top:.25rem}
+.stat.good .v{color:var(--green)}
+.stat.red .v{color:var(--red)}
+
+/* COMP TABLE */
+.comp-block{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.4rem;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+table{width:100%;border-collapse:collapse}
+.comp-block th,.comp-block td{padding:.8rem .9rem;text-align:left;font-size:.88rem;border-bottom:1px solid var(--border)}
+.comp-block thead th{background:rgba(255,255,255,.04);color:var(--text);font-weight:600;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}
+.comp-block tbody td{color:var(--text)}
+.comp-block tr:last-child td{border-bottom:none}
+.row-subject td{background:rgba(197,165,90,.1)}
+.cv-subject{color:var(--gold);font-weight:700}
+.cv-better{color:var(--green);font-weight:500}
+.cv-worse{color:var(--red);font-weight:500}
+.cv-neutral{color:var(--text)}
+.pill{display:inline-block;font-size:.68rem;font-weight:700;padding:.15rem .5rem;border-radius:5px;letter-spacing:.03em}
+.pill.sale{background:var(--blue-dim);color:var(--blue)}
+.pill.sold{background:var(--green-dim);color:var(--green)}
+.pill.you{background:var(--gold-dim);color:var(--gold)}
+
+/* INSIGHT CARDS */
+.insights{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0}
+.insight{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:1.2rem 1.3rem;color:var(--text)}
+.insight h4{font-size:.95rem;color:var(--gold);margin-bottom:.5rem;font-weight:600}
+.insight p{color:#cfcdc6;font-size:.9rem}
+.insight strong{color:var(--text)}
+
+/* CHART */
+.chartcard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.3rem 1.3rem 1rem;margin:1.2rem 0;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.chartcard h4{color:var(--text);font-size:1rem;margin-bottom:.2rem}
+.chartcard .csub{color:var(--text-dim);font-size:.82rem;margin-bottom:.9rem}
+.chartbox{position:relative;height:330px}
+.csource{color:var(--text-muted);font-size:.72rem;margin-top:.7rem}
+
+/* TIER BAR */
+.tier-bar{display:flex;border-radius:10px;overflow:hidden;margin:1.1rem 0 1.4rem;gap:3px}
+.tier-segment{flex:1;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:.7rem .4rem;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.tier-conservative{background:linear-gradient(135deg,rgba(74,222,128,.25),rgba(74,222,128,.12));color:#3aa564}
+.tier-middle{background:linear-gradient(135deg,rgba(197,165,90,.35),rgba(197,165,90,.18));color:#9a7e36;border-left:3px solid var(--gold);border-right:3px solid var(--gold)}
+.tier-optimistic{background:linear-gradient(135deg,rgba(96,165,250,.22),rgba(96,165,250,.1));color:#3b7dd8}
+.tier-over{background:linear-gradient(135deg,rgba(248,113,113,.22),rgba(248,113,113,.1));color:#d85656}
+.tier-price{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;margin-top:.35rem}
+.tier-note{font-size:.62rem;font-weight:500;text-transform:none;letter-spacing:0;margin-top:.3rem;opacity:.85}
+
+.tier-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0 1.5rem}
+.tc{border-radius:10px;padding:1.1rem 1.2rem;border:1px solid var(--border);border-top:3px solid;background:var(--card);color:var(--text)}
+.tc.c{border-top-color:var(--green)} .tc.m{border-top-color:var(--gold)} .tc.o{border-top-color:var(--blue)} .tc.x{border-top-color:var(--red)}
+.tc h4{font-size:.95rem;margin-bottom:.4rem}
+.tc.c h4{color:var(--green)} .tc.m h4{color:var(--gold)} .tc.o h4{color:var(--blue)} .tc.x h4{color:var(--red)}
+.tc p{color:#cfcdc6;font-size:.88rem}
+
+/* STRATEGY STEPS */
+.steps{display:grid;gap:.8rem;margin:1rem 0 1.4rem}
+.step{display:flex;gap:1rem;background:var(--card);border:1px solid var(--border);border-radius:11px;padding:1.1rem 1.3rem;color:var(--text)}
+.step .n{flex:none;width:38px;height:38px;border-radius:50%;background:var(--gold);color:#11111a;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Cormorant Garamond',serif;font-size:1.3rem}
+.step h4{font-size:.98rem;margin-bottom:.25rem;color:var(--text)}
+.step p{color:#cfcdc6;font-size:.89rem}
+
+/* RECOMMENDATION */
+.reco{background:linear-gradient(135deg,#1a1a26,#23232f);border:1px solid var(--gold);border-radius:14px;padding:1.8rem;text-align:center;color:var(--text);margin:1.5rem 0}
+.reco .label{font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.reco .big{font-family:'Cormorant Garamond',serif;font-size:3.4rem;font-weight:700;color:#fff;line-height:1.05;margin:.3rem 0}
+.reco .rng{display:flex;justify-content:center;gap:2.5rem;margin-top:1.1rem;flex-wrap:wrap}
+.reco .rng div .rl{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim)}
+.reco .rng div .rv{font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--gold);font-weight:700}
+
+/* MARKET CLASS */
+.mclass{background:var(--red-dim);border:1px solid rgba(248,113,113,.3);border-radius:12px;padding:1.3rem 1.4rem;margin:1.2rem 0;color:var(--text)}
+.mclass h4{color:var(--red);font-size:1rem;margin-bottom:.6rem}
+.mclass .sigs{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:.8rem 0}
+.mclass .sig{text-align:center}
+.mclass .sig .sv{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#fff}
+.mclass .sig .sl{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-dim);margin-top:.2rem}
+.mclass p{color:#cfcdc6;font-size:.9rem;margin-top:.4rem}
+
+/* LETTER (TAB 1) */
+.letter{background:#fffdf8;border:1px solid #e6e1d4;border-radius:14px;padding:2.2rem 2.4rem;max-width:780px;margin:0 auto;box-shadow:0 8px 28px rgba(0,0,0,.08);color:#2a2a2e}
+.letter .subj{border-bottom:2px solid var(--gold);padding-bottom:.9rem;margin-bottom:1.4rem}
+.letter .subj .sl{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.letter .subj .st{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--page-text);margin-top:.2rem}
+.letter p{margin-bottom:1rem;font-size:1rem;color:#34343a}
+.letter h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--page-text);margin:1.8rem 0 .8rem;padding-top:1rem;border-top:1px solid #ece7da}
+.letter h3 .pn{color:var(--gold)}
+.letter em{color:#5a5a60;font-style:italic}
+.letter strong{color:var(--page-text)}
+.letter ul{margin:.4rem 0 1.1rem;padding-left:0;list-style:none}
+.letter ul li{position:relative;padding-left:1.4rem;margin-bottom:.7rem;font-size:.96rem;color:#34343a}
+.letter ul li:before{content:'';position:absolute;left:0;top:.55em;width:7px;height:7px;border-radius:50%;background:var(--gold)}
+.read-list{background:#f7f4ec;border-radius:10px;padding:1rem 1.2rem;margin:.6rem 0 1.1rem}
+.read-list .r{display:flex;justify-content:space-between;align-items:center;padding:.4rem 0;border-bottom:1px solid #ece7da;font-size:.95rem}
+.read-list .r:last-child{border-bottom:none}
+.read-list .r .rk{color:#5a5a60}
+.read-list .r .rv{font-weight:700;font-family:'Cormorant Garamond',serif;font-size:1.2rem}
+.read-list .r .rv.c{color:#3aa564} .read-list .r .rv.m{color:#9a7e36} .read-list .r .rv.o{color:#3b7dd8}
+.email-table{width:100%;border-collapse:collapse;margin:.6rem 0 1.2rem;font-size:.85rem}
+.email-table th,.email-table td{padding:.55rem .6rem;text-align:left;border-bottom:1px solid #e6e1d4}
+.email-table thead th{background:#f2eee3;color:#2a2a2e;font-size:.7rem;text-transform:uppercase;letter-spacing:.03em}
+.email-table .you td{background:rgba(197,165,90,.13);font-weight:700}
+.letter .lbtn{display:inline-flex;align-items:center;gap:.5rem;background:var(--gold);color:#11111a;font-weight:700;text-decoration:none;padding:.65rem 1.2rem;border-radius:8px;font-size:.9rem;margin:.3rem 0 1.2rem}
+.letter .lbtn:hover{background:#d4b66a}
+.letter .sign{margin-top:1.6rem;padding-top:1.1rem;border-top:1px solid #ece7da}
+.letter .sign .sn{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--page-text)}
+.letter .sign .sd{font-size:.85rem;color:#5a5a60}
+
+/* FOOTER */
+footer{background:#11111a;color:var(--text-dim);padding:2rem 0;margin-top:2.5rem;border-top:3px solid var(--gold);font-size:.82rem}
+footer .fname{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700}
+footer .fteam{color:var(--text);margin:.2rem 0 .6rem}
+footer a{color:var(--gold);text-decoration:none}
+.disc{color:var(--text-muted);font-size:.72rem;margin-top:1rem;max-width:780px;line-height:1.5}
+
+@media(max-width:760px){
+  .stats{grid-template-columns:1fr 1fr}
+  .insights,.tier-cards{grid-template-columns:1fr}
+  .mclass .sigs{grid-template-columns:1fr}
+  .tab{font-size:.85rem;padding:.9rem .3rem}
+  .tab .tnum{display:none}
+  .title{font-size:1.8rem}
+  .reco .big{font-size:2.5rem}
+  .tier-price{font-size:1.1rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">THE OP TEAM &nbsp;|&nbsp; SOLDMIKE</div>
+    <div class="title">Pine Grove Rd, Vaughan</div>
+    <div class="subtitle">Confidential Pricing Opinion &amp; Sale Strategy &nbsp;·&nbsp; 2 Bed / 2 Bath Condo Townhouse &nbsp;·&nbsp; ~899 sq ft</div>
+    <a class="realm-btn" href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/jpQ71mZw29hGyNjWWwZOsek4NobeayTpPE4poZPyuX8qW6GmG5IAJGRaL7w4IqEQNNy5DPcV3Je2jY3OFP6KNgly3YcGVepyLPenIzRLK3QpjghWGVlnlXGrCE8pPX4rKXFKyQlONMBrIMA3k9aGy4ujPLq3kBk2crXw8oAlZwHNQoGPp7PncGEEyAXqr?q=treb%2FlistingID%3AN13157336%2CN12634452%2CN13123998%2CN12553646" target="_blank" rel="noopener">📂 View All 4 Comparables →</a>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab(0,this)"><span class="tnum">1</span>Read First</button>
+  <button class="tab" onclick="showTab(1,this)"><span class="tnum">2</span>The Evaluation</button>
+  <button class="tab" onclick="showTab(2,this)"><span class="tnum">3</span>Moving Forward</button>
+</div>
+
+<div class="tabwrap wrap">
+
+<!-- ============ TAB 1 · THE LETTER ============ -->
+<section class="page active" id="p0">
+  <div class="letter">
+    <div class="subj">
+      <div class="sl">Subject</div>
+      <div class="st">Your Condo — What It's Worth Today &amp; How We Maximize It</div>
+    </div>
+
+    <p>Hi [Client Name],</p>
+
+    <p>I want to walk you through exactly where your unit sits in today's market, why I'm landing on the numbers I am, and — just as important — how we get you the strongest possible result. I'll keep this in two parts: first the value, then the plan.</p>
+
+    <h3><span class="pn">Part 1</span> — What your condo is worth right now</h3>
+
+    <p>I completely understand the frustration. You bought about eight years ago in the low $600s, and on paper it can feel like you're not gaining anything. But here's the part that matters most: you're not just selling — you're <strong>buying again, into the same market.</strong> Whatever has softened on the sale side has also softened on the buy side. So the gap between what you sell for and what you pay next is likely to stay the same or even work in your favour, which means your mortgage position shouldn't get worse, and could get better. You're trading sideways in a market that's discounted on both ends — and that's not a bad time to move.</p>
+
+    <p>Now to your unit specifically. It's a renovated, ~899 sq ft unit backing onto the ravine, and both of those — the renovations and the ravine view — add real value. The question is how much, and where the ceiling is. Here's what the comparable units tell us:</p>
+
+    <table class="email-table">
+      <thead><tr><th>Property</th><th>Size</th><th>Bed/Bath</th><th>Status</th><th>Price</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr class="you"><td>YOUR UNIT</td><td>800–899</td><td>2 / 2</td><td>To be listed</td><td>—</td><td>Renovated · ravine view</td></tr>
+        <tr><td>198 Pine Grove #06</td><td>800–899</td><td>2 / 2</td><td>For Sale (11 DOM)</td><td>$649,900</td><td>Same size · parking-lot view · not yet sold</td></tr>
+        <tr><td>196 Pine Grove #3</td><td>1,000–1,199</td><td>2 / 3</td><td>For Sale (19 DOM)</td><td>$719,000</td><td>Larger unit</td></tr>
+        <tr><td>199 Pine Grove #319</td><td>1,000–1,199</td><td>2 / 3</td><td>Sold Jan 14/26 (30 DOM)</td><td>$668,000</td><td>Larger · sold $20K under ask</td></tr>
+        <tr><td>201 Pine Grove #423</td><td>1,000–1,199</td><td>2 / 3</td><td>Sold Dec 11/25 (23 DOM)</td><td>$710,000</td><td>Larger · sold $19K under ask</td></tr>
+      </tbody>
+    </table>
+
+    <p>A few things jump out:</p>
+    <ul>
+      <li>The only unit on the market that's the same size as yours (198 Pine Grove #06) is listed at $649,900 — but it faces the parking lot, not the ravine, and it hasn't sold yet. That's a <em>list</em> price, not a sale price, and it could close for less. Your ravine view and renovations should command a premium on top of wherever that one actually lands — call it $30K or more above its final number.</li>
+      <li>Everything that sold higher — $668K and $710K — was a <em>larger</em> unit (1,000–1,199 sq ft) that sold in a stronger window a few months ago. Those are bigger homes from a better market, so while they're encouraging, they also set a realistic ceiling that a smaller unit like yours can't fully reach.</li>
+    </ul>
+
+    <p>Putting it together, my honest read:</p>
+    <div class="read-list">
+      <div class="r"><span class="rk">Conservative</span><span class="rv c">low $600s</span></div>
+      <div class="r"><span class="rk">Most likely</span><span class="rv m">mid-$600s</span></div>
+      <div class="r"><span class="rk">Optimistic (with the right competition)</span><span class="rv o">~$670K</span></div>
+    </div>
+
+    <p>The numbers really do speak for themselves here, but I've linked every comparable so you can look at them yourself. If you see an angle I'm missing, I'm genuinely open to it — I'd rather you challenge the numbers and feel confident than just take my word for it.</p>
+
+    <a class="lbtn" href="https://app.realmmlp.ca/shared/portal/PgRal9bnBZUAGVmK1q3a/jpQ71mZw29hGyNjWWwZOsek4NobeayTpPE4poZPyuX8qW6GmG5IAJGRaL7w4IqEQNNy5DPcV3Je2jY3OFP6KNgly3YcGVepyLPenIzRLK3QpjghWGVlnlXGrCE8pPX4rKXFKyQlONMBrIMA3k9aGy4ujPLq3kBk2crXw8oAlZwHNQoGPp7PncGEEyAXqr?q=treb%2FlistingID%3AN13157336%2CN12634452%2CN13123998%2CN12553646" target="_blank" rel="noopener">📂 View All 4 Comparables →</a>
+
+    <h3><span class="pn">Part 2</span> — How we get you the best result: the offer-day strategy</h3>
+
+    <p>This is where the strategy earns its keep. My recommendation is to list at <strong>$598,000</strong>, hold offers for at least <strong>12 days</strong>, then review all offers on <strong>one set offer date.</strong> Here's why that works in your favour right now:</p>
+    <ul>
+      <li>Listing at $598K — below that $649,900 comparable — makes your unit the obvious value play and pulls in the most showings, fast.</li>
+      <li>The 12-day window builds a pool of motivated buyers instead of us fielding offers one at a time.</li>
+      <li>Reviewing everything on a single offer date puts those buyers in competition with each other. That's the engine that drives the final price up into the mid-$600s and gives us a real shot at the optimistic end.</li>
+      <li>We also have a built-in advantage: two units are actively for sale right now at $649,900 and $719,000. Any buyer shopping this building sees those prices first — which makes your unit, with its ravine view and renovations, look like the smart buy. We use their list prices to our benefit.</li>
+    </ul>
+
+    <p>The sold prices are what they are — we can't change those — but we can absolutely control how we position your unit against the two active listings, and that's the lever we pull.</p>
+
+    <p>Take a look at the comps, sit with the numbers, and let's talk. I'm confident in the plan, and I think once you see what I'm seeing, you will be too. The next two tabs break it all down visually if you'd like to dig deeper.</p>
+
+    <div class="sign">
+      <div class="sn">Michael Barillari</div>
+      <div class="sd">Broker · RE/MAX Premier — The OP Team</div>
+      <div class="sd">647-278-2237 · soldmike.com</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 2 · THE EVALUATION ============ -->
+<section class="page" id="p1">
+
+  <div class="intro">
+    <p>I want to walk you through exactly where your unit sits in today's market and why I'm landing on the numbers I am — with all four comparable properties linked at the top so you can look at every one yourself.</p>
+    <p>First, the part that matters most: you're not just selling — you're <strong>buying again, into the same market.</strong> Whatever the market has softened on the sale side, it has also softened on the buy side. So the gap between what you sell for and what you pay next is likely to stay the same, or even work in your favour — which means your mortgage position shouldn't get worse, and could get better. You're trading sideways in a market that's discounted on both ends.</p>
+    <p>Your unit's two real advantages are the <strong>renovations</strong> and the <strong>ravine view</strong>. Both add value. The question is how much — and where the ceiling is.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="v">~899</div><div class="l">Sq Ft</div></div>
+    <div class="stat"><div class="v">2 / 2</div><div class="l">Bed / Bath</div></div>
+    <div class="stat good"><div class="v">Ravine</div><div class="l">View · Premium</div></div>
+    <div class="stat good"><div class="v">Reno'd</div><div class="l">Interior · Premium</div></div>
+  </div>
+
+  <h2 class="sec-title">Your Unit vs. The Comparables</h2>
+  <p class="lead">Four properties in your building tell the whole story. <span style="color:var(--gold);font-weight:600">Gold = your unit</span>, <span style="color:var(--green);font-weight:600">green = advantage to you</span>, <span style="color:var(--red);font-weight:600">red = working against the price.</span></p>
+
+  <div class="comp-block">
+    <table>
+      <thead>
+        <tr><th>Property</th><th>Status</th><th>Size</th><th>Bed/Bath</th><th>View</th><th>Price</th><th>DOM</th></tr>
+      </thead>
+      <tbody>
+        <tr class="row-subject">
+          <td class="cv-subject">YOUR UNIT</td>
+          <td><span class="pill you">To List</span></td>
+          <td class="cv-subject">800–899</td>
+          <td class="cv-neutral">2 / 2</td>
+          <td class="cv-better">Ravine ✓</td>
+          <td class="cv-subject">— TBD —</td>
+          <td class="cv-neutral">—</td>
+        </tr>
+        <tr>
+          <td>198 Pine Grove #06</td>
+          <td><span class="pill sale">For Sale</span></td>
+          <td class="cv-neutral">800–899</td>
+          <td class="cv-neutral">2 / 2</td>
+          <td class="cv-worse">Parking lot</td>
+          <td class="cv-neutral">$649,900</td>
+          <td class="cv-neutral">11</td>
+        </tr>
+        <tr>
+          <td>196 Pine Grove #3</td>
+          <td><span class="pill sale">For Sale</span></td>
+          <td class="cv-better">1,000–1,199</td>
+          <td class="cv-neutral">2 / 3</td>
+          <td class="cv-neutral">—</td>
+          <td class="cv-neutral">$719,000</td>
+          <td class="cv-neutral">19</td>
+        </tr>
+        <tr>
+          <td>199 Pine Grove #319</td>
+          <td><span class="pill sold">Sold Jan 14/26</span></td>
+          <td class="cv-better">1,000–1,199</td>
+          <td class="cv-neutral">2 / 3</td>
+          <td class="cv-neutral">—</td>
+          <td class="cv-neutral">$668,000 <span style="color:var(--red);font-size:.78rem">▼$20K</span></td>
+          <td class="cv-neutral">30</td>
+        </tr>
+        <tr>
+          <td>201 Pine Grove #423</td>
+          <td><span class="pill sold">Sold Dec 11/25</span></td>
+          <td class="cv-better">1,000–1,199</td>
+          <td class="cv-neutral">2 / 3</td>
+          <td class="cv-neutral">—</td>
+          <td class="cv-neutral">$710,000 <span style="color:var(--red);font-size:.78rem">▼$19K</span></td>
+          <td class="cv-neutral">23</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insights">
+    <div class="insight">
+      <h4>The only same-size unit is unsold</h4>
+      <p>198 Pine Grove #06 is the <strong>only comparable that matches your size</strong> (800–899 sq ft). It's listed at <strong>$649,900 — but it faces the parking lot, not the ravine, and it hasn't sold.</strong> That's a list price, not a sale price, and it could close for less. Your ravine view and renovations should command a premium <em>on top of</em> wherever that one actually lands — roughly $30K or more.</p>
+    </div>
+    <div class="insight">
+      <h4>The higher sales set the ceiling</h4>
+      <p>The two units that sold higher — <strong>$668K and $710K — were larger</strong> (1,000–1,199 sq ft) and sold in a stronger window months back. Both also sold <strong>under their asking price.</strong> Bigger homes from a better market are encouraging, but they set a realistic ceiling a smaller unit like yours can't fully reach.</p>
+    </div>
+  </div>
+
+  <div class="chartcard">
+    <h4>Price vs. Size — Why the Numbers Land Where They Do</h4>
+    <div class="csub">Larger units (right) carry the higher prices. At your size band, the only data point on the market is the $649,900 active listing — with an inferior view.</div>
+    <div class="chartbox"><canvas id="scatter"></canvas></div>
+  </div>
+
+  <p class="muted-note">The numbers genuinely speak for themselves — but if you see an angle I'm missing after reviewing the comps, I'm all ears.</p>
+</section>
+
+<!-- ============ TAB 3 · MOVING FORWARD ============ -->
+<section class="page" id="p2">
+
+  <h2 class="sec-title">Where We Price It</h2>
+  <p class="lead">Four tiers, based on the comparables and the current market. The recommended <em>list</em> price sits below all of them on purpose — that's the strategy, explained further down.</p>
+
+  <div class="tier-bar">
+    <div class="tier-segment tier-conservative">Conservative<div class="tier-price">$600–615K</div><div class="tier-note">Quick, certain sale</div></div>
+    <div class="tier-segment tier-middle">Market Middle<div class="tier-price">~$635K</div><div class="tier-note">Most likely outcome</div></div>
+    <div class="tier-segment tier-optimistic">Optimistic<div class="tier-price">~$670K</div><div class="tier-note">With strong competition</div></div>
+    <div class="tier-segment tier-over">Overpriced<div class="tier-price">$680K+</div><div class="tier-note">Above the ceiling — sits</div></div>
+  </div>
+
+  <div class="tier-cards">
+    <div class="tc c"><h4>Conservative · low $600s</h4><p>Roughly where the parking-lot unit may actually close. A safe floor that sells fast with little risk.</p></div>
+    <div class="tc m"><h4>Market Middle · ~$635K</h4><p>The most probable result: your renovations and ravine view earning a premium over the same-size comp, without reaching the larger units' prices.</p></div>
+    <div class="tc o"><h4>Optimistic · ~$670K</h4><p>Achievable if we generate genuine competition on offer day. Pushes right up toward the ceiling set by the bigger sold units.</p></div>
+    <div class="tc x"><h4>Overpriced · $680K+</h4><p>Above what even larger units sold for. This is where listings stall, go stale, and end up cutting — the outcome we design around.</p></div>
+  </div>
+
+  <h2 class="sec-title">What the Condo Market Is Doing</h2>
+  <p class="lead">Context matters: this isn't about your unit — it's the market. The GTA condo segment has corrected hard and is now finding a floor.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="v">$636K</div><div class="l">Avg Condo · Apr '26</div></div>
+    <div class="stat red"><div class="v">−9.1%</div><div class="l">Year-over-Year</div></div>
+    <div class="stat red"><div class="v">~−23%</div><div class="l">Off 2022 Peak</div></div>
+    <div class="stat red"><div class="v">Buyer's</div><div class="l">Market Type</div></div>
+  </div>
+
+  <div class="chartcard">
+    <h4>GTA Condo Apartment — Average Sale Price</h4>
+    <div class="csub">The big drop is behind us; recent months are stabilizing in the low-$600Ks. Prices are at multi-year lows and buyers hold the negotiating power.</div>
+    <div class="chartbox"><canvas id="trend"></canvas></div>
+    <div class="csource">Source: TRREB Market Watch &amp; Condo Market Report (Q1 2025 – Apr 2026). GTA condo apartment segment, shown as broad market context.</div>
+  </div>
+
+  <div class="mclass">
+    <h4>⚠ This is a Buyer's Market — which shapes the strategy</h4>
+    <div class="sigs">
+      <div class="sig"><div class="sv">~35%</div><div class="sl">Sales-to-New-Listings</div></div>
+      <div class="sig"><div class="sv">~3%+</div><div class="sl">Condos sell below ask</div></div>
+      <div class="sig"><div class="sv">Elevated</div><div class="sl">Inventory / choice</div></div>
+    </div>
+    <p>Buyers have abundant choice and leverage. In this environment, an aggressively-attractive list price that creates competition beats an ambitious price that sits and goes stale. That's exactly why we list low and hold offers.</p>
+  </div>
+
+  <h2 class="sec-title">The Plan: How We Maximize Your Result</h2>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><h4>List at $598,000</h4><p>Pricing below the $649,900 same-size comp makes your unit the obvious value play — it pulls in the most showings and the most attention, fast.</p></div></div>
+    <div class="step"><div class="n">2</div><div><h4>Hold offers for at least 12 days</h4><p>Instead of fielding offers one at a time, we build a pool of motivated, interested buyers over nearly two weeks.</p></div></div>
+    <div class="step"><div class="n">3</div><div><h4>Review all offers on one set date</h4><p>Bringing every buyer to a single offer date puts them in competition with each other. That's the engine that drives the final number into the mid-$600s — with a real shot at the optimistic end.</p></div></div>
+    <div class="step"><div class="n">4</div><div><h4>Use the two active listings to our advantage</h4><p>There are two units for sale right now at $649,900 and $719,000. Every buyer shopping this building sees those first — which makes your renovated, ravine-view unit look like the smart buy. We turn their list prices into our leverage.</p></div></div>
+  </div>
+
+  <div class="reco">
+    <div class="label">Recommended List Price</div>
+    <div class="big">$598,000</div>
+    <div style="color:var(--text-dim);font-size:.9rem">12-day offer hold · offers reviewed on one date</div>
+    <div class="rng">
+      <div><div class="rl">Most Likely Close</div><div class="rv">~$635K</div></div>
+      <div><div class="rl">Optimistic Target</div><div class="rv">~$670K</div></div>
+      <div><div class="rl">Conservative Floor</div><div class="rv">low $600s</div></div>
+    </div>
+  </div>
+
+  <p class="muted-note">The sold prices are what they are — we can't change those. But we can absolutely control how we position your unit against the two active listings, and that's the lever we pull.</p>
+</section>
+
+</div><!-- /tabwrap -->
+
+<footer>
+  <div class="wrap">
+    <div class="fname">Michael Barillari</div>
+    <div class="fteam">Broker · RE/MAX Premier — The OP Team, Brokerage &nbsp;|&nbsp; Nick Oppedisano, Salesperson</div>
+    <div>416-987-8000 &nbsp;·&nbsp; <a href="mailto:mike@theopteam.ca">mike@theopteam.ca</a> &nbsp;·&nbsp; <a href="https://soldmike.ca" target="_blank">soldmike.ca</a> &nbsp;·&nbsp; 3550 Rutherford Rd #80, Vaughan, ON L4H 3T8</div>
+    <div class="disc">This pricing opinion is based on comparable sales data and market analysis as of June 2026. It is not a certified appraisal. Values are estimates and the actual sale price may vary based on market conditions, buyer demand, and property presentation.</div>
+  </div>
+</footer>
+
+<script>
+function showTab(i,btn){
+  document.querySelectorAll('.page').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(()=>window.dispatchEvent(new Event('resize')),60);
+}
+
+const gold='#c5a55a', green='#4ade80', blue='#60a5fa', grid='rgba(255,255,255,.08)', tick='#8a8a9a';
+
+// SCATTER: price vs size
+new Chart(document.getElementById('scatter'),{
+  type:'scatter',
+  data:{datasets:[
+    {label:'Sold',data:[{x:1100,y:668000},{x:1100,y:710000}],backgroundColor:green,pointRadius:8,pointHoverRadius:10},
+    {label:'For Sale',data:[{x:850,y:649900},{x:1100,y:719000}],backgroundColor:blue,pointRadius:8,pointHoverRadius:10},
+    {label:'Your Unit (target)',data:[{x:875,y:635000}],backgroundColor:gold,pointStyle:'triangle',pointRadius:14,pointHoverRadius:16}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#e8e6e1',usePointStyle:true,font:{size:12}}},
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+Math.round(c.parsed.x)+' sqft · $'+c.parsed.y.toLocaleString()}}},
+    scales:{
+      x:{title:{display:true,text:'Approx. Size (sq ft)',color:tick},min:750,max:1250,grid:{color:grid},ticks:{color:tick}},
+      y:{title:{display:true,text:'Price ($)',color:tick},grid:{color:grid},ticks:{color:tick,callback:v=>'$'+(v/1000)+'K'}}
+    }}
+});
+
+// TREND line
+new Chart(document.getElementById('trend'),{
+  type:'line',
+  data:{labels:['Q1 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026'],
+    datasets:[{label:'GTA Condo Apt — Avg Price',data:[680243,604759,626650,620479,635653],
+      borderColor:gold,backgroundColor:'rgba(197,165,90,.12)',fill:true,tension:.3,
+      pointBackgroundColor:gold,pointRadius:5,pointHoverRadius:7,borderWidth:3}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#e8e6e1',font:{size:12}}},
+      tooltip:{callbacks:{label:c=>'$'+c.parsed.y.toLocaleString()}}},
+    scales:{
+      x:{grid:{color:grid},ticks:{color:tick}},
+      y:{grid:{color:grid},ticks:{color:tick,callback:v=>'$'+(v/1000)+'K'},suggestedMin:580000,suggestedMax:700000}
+    }}
+});
+</script>
+</body>
+</html>
