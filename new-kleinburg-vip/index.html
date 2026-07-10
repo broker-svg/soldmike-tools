@@ -102,6 +102,14 @@
   .collection-specs{display:flex;gap:20px;padding-top:18px;border-top:1px solid #e0d9cc}
   .collection-specs div{font-size:12px;color:#4a544c}
   .collection-specs strong{display:block;font-family:'Cormorant Garamond',serif;font-size:20px;color:#1a2b23}
+  .collection-link{display:block;text-align:center;margin-top:18px;padding:12px;background:#2f4438;color:#f5f1ea;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;transition:background .3s}
+  .collection-link:hover{background:#1a2b23}
+
+  /* VIDEO TOUR */
+  .tour-section{background:#f0e9db}
+  .tour-video-wrap{max-width:380px;margin:0 auto}
+  .tour-video-wrap video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0f1a14;border:1px solid #d9d0bf}
+  .tour-cta{text-align:center;margin-top:28px}
 
   /* WHY */
   .why-section{background:#f0e9db;padding:100px 0}
@@ -263,6 +271,25 @@
   </div>
 </section>
 
+<!-- VIDEO TOUR -->
+<section class="tour-section" id="tour">
+  <div class="container">
+    <div style="text-align:center;max-width:800px;margin:0 auto 50px">
+      <div class="section-label">Take The Tour</div>
+      <h2 class="section-title">See New Kleinburg in Motion</h2>
+      <p class="section-intro">A quick video walkthrough of the community — watch below or view the full reel on Instagram.</p>
+    </div>
+    <div class="tour-video-wrap">
+      <video controls playsinline preload="metadata" poster="assets/video-cover.jpg">
+        <source src="assets/community-reel.mp4" type="video/mp4">
+      </video>
+      <div class="tour-cta">
+        <a href="https://www.instagram.com/reel/DalGehiFcaM/?igsh=OHc2bTdhdDloanhh" target="_blank" rel="noopener" class="btn">View Full Reel on Instagram</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- VIP PACKAGE -->
 <section class="vip-section" id="vip">
   <div class="container">
@@ -332,6 +359,7 @@
             <div><strong>3</strong>Baths</div>
             <div><strong>1</strong>Garage</div>
           </div>
+          <a href="assets/floorplans/Dixon-FloorPlan.pdf" target="_blank" rel="noopener" class="collection-link">View Floor Plan →</a>
         </div>
       </div>
       <div class="collection-card">
@@ -347,6 +375,7 @@
             <div><strong>3</strong>Baths</div>
             <div><strong>1</strong>Garage</div>
           </div>
+          <a href="assets/floorplans/MatisseEnd-FloorPlan.pdf" target="_blank" rel="noopener" class="collection-link">View Floor Plan →</a>
         </div>
       </div>
       <div class="collection-card">
@@ -362,6 +391,7 @@
             <div><strong>3</strong>Baths</div>
             <div><strong>2</strong>Garage</div>
           </div>
+          <a href="assets/floorplans/Dahlia-FloorPlan.pdf" target="_blank" rel="noopener" class="collection-link">View Floor Plan →</a>
         </div>
       </div>
       <div class="collection-card">
@@ -377,6 +407,7 @@
             <div><strong>3</strong>Baths</div>
             <div><strong>2</strong>Garage</div>
           </div>
+          <a href="assets/floorplans/Forcett-FloorPlan.pdf" target="_blank" rel="noopener" class="collection-link">View Floor Plan →</a>
         </div>
       </div>
       <div class="collection-card">
@@ -392,6 +423,7 @@
             <div><strong>3</strong>Baths</div>
             <div><strong>2</strong>Garage</div>
           </div>
+          <a href="assets/floorplans/Burton-FloorPlan.pdf" target="_blank" rel="noopener" class="collection-link">View Floor Plan →</a>
         </div>
       </div>
     </div>
