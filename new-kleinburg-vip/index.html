@@ -42,6 +42,7 @@
   .hero-bg{position:absolute;inset:0;z-index:1;overflow:hidden}
   .hero-bg img{width:100%;height:100%;object-fit:cover;animation:heroZoom 24s ease-in-out infinite alternate}
   @keyframes heroZoom{0%{transform:scale(1.05) translate(0,0)}100%{transform:scale(1.2) translate(-2%,-1%)}}
+  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
   .hero-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,43,35,.4) 0%,rgba(26,43,35,.8) 100%);z-index:2}
   .hero-content{position:relative;z-index:3;padding:40px 24px;max-width:900px}
   .hero-tagline{font-size:11px;font-weight:600;letter-spacing:.35em;text-transform:uppercase;margin-bottom:24px;color:#c9b88a}
@@ -145,6 +146,15 @@
   .form .btn{width:100%;padding:18px;background:#c9b88a;color:#1a2b23;font-size:13px;margin-top:10px;border-radius:0}
   .form .btn:hover{background:#b8a578}
   .form-note{font-size:11px;color:rgba(245,241,234,.6);text-align:center;margin-top:20px;letter-spacing:.05em}
+  .form-more{margin-bottom:20px;border:1px solid rgba(201,184,138,.2);background:rgba(245,241,234,.03)}
+  .form-more summary{cursor:pointer;padding:16px;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#c9b88a;list-style:none;position:relative;padding-right:40px}
+  .form-more summary::-webkit-details-marker{display:none}
+  .form-more summary::after{content:'+';position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:300}
+  .form-more[open] summary::after{content:'–'}
+  .form-more summary span{color:rgba(245,241,234,.5);font-weight:400;letter-spacing:.05em;text-transform:none;font-size:11px}
+  .form-more-inner{padding:20px 16px 4px}
+  .register-call{margin-top:28px;font-size:14px;color:rgba(245,241,234,.75);letter-spacing:.03em}
+  .register-call a{color:#c9b88a;font-weight:600;border-bottom:1px solid rgba(201,184,138,.5)}
   .form-success{background:rgba(201,184,138,.15);border:1px solid #c9b88a;padding:40px;text-align:center;display:none}
   .form-success.show{display:block}
   .form-success h3{color:#c9b88a;font-size:32px;margin-bottom:12px}
@@ -207,6 +217,9 @@
 <!-- HERO -->
 <header class="hero">
   <div class="hero-bg"><img src="assets/hero-banner.jpg" alt="New Kleinburg townhomes by Fieldgate Homes"></div>
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/hero-banner.jpg">
+    <source src="assets/hero-video.mp4" type="video/mp4">
+  </video>
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-tagline">Coming Soon · Kleinburg's Award-Winning Impressions Community</div>
@@ -499,85 +512,90 @@
   <div class="container">
     <div class="register-inner">
       <div class="section-label">VIP Registration</div>
-      <h2 class="section-title">Claim Your Platinum Access</h2>
-      <p class="section-intro">Complete the form below. A member of our team will be in touch within 24 hours with the complete Platinum Package — floor plans, site plan, pricing, and worksheet.</p>
+      <h2 class="section-title">Register Today &amp; Get the Price List</h2>
+      <p class="section-intro">Three quick fields and the complete July 2026 price list is on its way — including after-rebate pricing, incentives, and floor plans.</p>
 
       <form class="form" id="vipForm" action="#" method="POST">
-        <div class="form-row">
+        <div class="form-row form-row-full">
           <div>
-            <label for="firstName">First Name *</label>
-            <input type="text" id="firstName" name="firstName" required>
-          </div>
-          <div>
-            <label for="lastName">Last Name *</label>
-            <input type="text" id="lastName" name="lastName" required>
+            <label for="fullName">Full Name *</label>
+            <input type="text" id="fullName" name="fullName" autocomplete="name" required>
           </div>
         </div>
         <div class="form-row">
           <div>
             <label for="email">Email *</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email" autocomplete="email" required>
           </div>
           <div>
             <label for="phone">Phone *</label>
-            <input type="tel" id="phone" name="phone" required>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
           </div>
         </div>
-        <div class="form-row">
-          <div>
-            <label for="homeType">Primary Interest</label>
-            <select id="homeType" name="homeType">
-              <option value="Any">Any / All Home Types</option>
-              <option value="Freehold Town">Freehold Towns (Dixon, Matisse End)</option>
-              <option value="Semi">Semi-Detached (Dahlia)</option>
-              <option value="30 Single">30' Singles (Forcett, Burton)</option>
-            </select>
+
+        <details class="form-more" id="formMore">
+          <summary>Tell us what you're looking for <span>(optional — helps us prioritize you)</span></summary>
+          <div class="form-more-inner">
+            <div class="form-row">
+              <div>
+                <label for="homeType">Primary Interest</label>
+                <select id="homeType" name="homeType">
+                  <option value="Any">Any / All Home Types</option>
+                  <option value="Freehold Town">Freehold Towns (Dixon, Matisse End)</option>
+                  <option value="Semi">Semi-Detached (Dahlia)</option>
+                  <option value="30 Single">30' Singles (Forcett, Burton)</option>
+                </select>
+              </div>
+              <div>
+                <label for="bedrooms">Bedroom Preference</label>
+                <select id="bedrooms" name="bedrooms">
+                  <option value="Flexible">Flexible</option>
+                  <option value="3">3 Bedroom</option>
+                  <option value="4">4 Bedroom</option>
+                  <option value="4+">4+ Bedroom / Opt. 5th</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div>
+                <label for="budget">Budget Range</label>
+                <select id="budget" name="budget">
+                  <option value="Flexible" selected>Flexible</option>
+                  <option value="Under $1.2M">Under $1.2M</option>
+                  <option value="$1.2M – $1.5M">$1.2M – $1.5M</option>
+                  <option value="$1.5M+">$1.5M+</option>
+                </select>
+              </div>
+              <div>
+                <label for="purpose">Purpose</label>
+                <select id="purpose" name="purpose">
+                  <option value="Still Evaluating" selected>Still Evaluating</option>
+                  <option value="End User — Primary Residence">End User — Primary Residence</option>
+                  <option value="Investment">Investment</option>
+                  <option value="Both">Both</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row form-row-full">
+              <div>
+                <label for="notes">Additional Notes</label>
+                <textarea id="notes" name="notes" placeholder="Timeline, specific model interest, questions, etc."></textarea>
+              </div>
+            </div>
           </div>
-          <div>
-            <label for="bedrooms">Bedroom Preference</label>
-            <select id="bedrooms" name="bedrooms">
-              <option value="Flexible">Flexible</option>
-              <option value="3">3 Bedroom</option>
-              <option value="4">4 Bedroom</option>
-              <option value="4+">4+ Bedroom / Opt. 5th</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div>
-            <label for="budget">Budget Range</label>
-            <select id="budget" name="budget">
-              <option value="Under $1.2M">Under $1.2M</option>
-              <option value="$1.2M – $1.5M">$1.2M – $1.5M</option>
-              <option value="$1.5M+">$1.5M+</option>
-              <option value="Flexible">Flexible</option>
-            </select>
-          </div>
-          <div>
-            <label for="purpose">Purpose</label>
-            <select id="purpose" name="purpose">
-              <option value="End User — Primary Residence">End User — Primary Residence</option>
-              <option value="Investment">Investment</option>
-              <option value="Both">Both</option>
-              <option value="Still Evaluating">Still Evaluating</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row form-row-full">
-          <div>
-            <label for="notes">Additional Notes (optional)</label>
-            <textarea id="notes" name="notes" placeholder="Timeline, specific model interest, questions, etc."></textarea>
-          </div>
-        </div>
+        </details>
+
         <input type="hidden" name="source" value="New Kleinburg VIP Landing">
         <input type="hidden" name="tags" value="New Kleinburg, Preconstruction, VIP Registration">
-        <button type="submit" class="btn">Submit VIP Registration →</button>
+        <button type="submit" class="btn">Send Me the Price List →</button>
         <p class="form-note">By registering, you agree to receive communications regarding New Kleinburg. Your information is never sold. Unsubscribe at any time.</p>
       </form>
 
+      <p class="register-call">Prefer to talk? Call directly — <a href="tel:+16476943109">647-694-3109</a></p>
+
       <div class="form-success" id="formSuccess">
         <h3>Welcome to the VIP List</h3>
-        <p>Your Platinum Package will arrive by email within 24 hours. For immediate assistance, contact our sales team directly.</p>
+        <p>Your price list and Platinum Package will arrive by email within 24 hours. Need it sooner? Call directly — <a href="tel:+16476943109" style="color:#c9b88a;font-weight:600">647-694-3109</a></p>
       </div>
     </div>
   </div>
@@ -589,7 +607,7 @@
     <div class="footer-grid">
       <div class="footer-contact">
         <div>Sales Inquiries</div>
-        <a href="#register">Register for VIP Access</a>
+        <a href="tel:+16476943109">647-694-3109</a>
       </div>
       <div class="footer-address">
         <div>Sales Centre</div>
@@ -603,13 +621,13 @@
 </footer>
 
 <script>
-  // Community reel — keep autoplay alive (iOS Low Power Mode, tab switches, data-saver)
+  // Autoplay videos — keep playback alive (iOS Low Power Mode, tab switches, data-saver)
   (function(){
-    const reel = document.querySelector('.community-video video');
-    if(!reel) return;
-    const tryPlay = () => { if(reel.paused) reel.play().catch(()=>{}); };
-    ['loadeddata','canplay','visibilitychange'].forEach(ev =>
-      (ev === 'visibilitychange' ? document : reel).addEventListener(ev, tryPlay));
+    const vids = document.querySelectorAll('.hero-video, .community-video video');
+    if(!vids.length) return;
+    const tryPlay = () => { vids.forEach(vd => { if(vd.paused) vd.play().catch(()=>{}); }); };
+    vids.forEach(vd => ['loadeddata','canplay'].forEach(ev => vd.addEventListener(ev, tryPlay)));
+    document.addEventListener('visibilitychange', tryPlay);
     window.addEventListener('scroll', tryPlay, {passive:true});
     window.addEventListener('touchstart', tryPlay, {passive:true, once:true});
     tryPlay();
@@ -631,8 +649,11 @@
     const success = document.getElementById('formSuccess');
     const fd = new FormData(form);
 
-    const firstName = (fd.get('firstName')||'').trim();
-    const lastName = (fd.get('lastName')||'').trim();
+    // Full name auto-splits into first/last for FUB
+    const fullName = (fd.get('fullName')||'').trim().replace(/\s+/g,' ');
+    const nameParts = fullName.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || firstName;
     const email = (fd.get('email')||'').trim();
     const phone = (fd.get('phone')||'').trim();
     const homeType = fd.get('homeType')||'Any';
@@ -642,7 +663,7 @@
     const notes = (fd.get('notes')||'').trim();
 
     // Required field check
-    if(!firstName || !lastName || !email || !phone){
+    if(!firstName || !email || !phone){
       submitBtn.textContent = 'Please complete all required fields';
       submitBtn.style.background = '#c0392b';
       submitBtn.style.color = '#fff';
@@ -653,6 +674,7 @@
     // Rich FUB message payload — everything the lead told us, tagged for routing
     const message = [
       'VIP REGISTRATION — New Kleinburg',
+      'REQUESTED: July 2026 Price List',
       '— — — — — — — — — — — — — — — — —',
       `Home Type Interest: ${homeType}`,
       `Bedroom Preference: ${bedrooms}`,
