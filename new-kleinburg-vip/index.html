@@ -105,11 +105,12 @@
   .collection-link{display:block;text-align:center;margin-top:18px;padding:12px;background:#2f4438;color:#f5f1ea;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;transition:background .3s}
   .collection-link:hover{background:#1a2b23}
 
-  /* VIDEO TOUR */
-  .tour-section{background:#f0e9db}
-  .tour-video-wrap{max-width:380px;margin:0 auto}
-  .tour-video-wrap video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0f1a14;border:1px solid #d9d0bf}
-  .tour-cta{text-align:center;margin-top:28px}
+  /* COMMUNITY VIDEO */
+  .community-video{max-width:400px;margin:0 auto}
+  .community-video video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0f1a14;border:1px solid #d9d0bf;display:block}
+  .community-video-cta{text-align:center;margin-top:16px}
+  .community-video-cta a{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#2f4438;border-bottom:1px solid #c9b88a;padding-bottom:4px;transition:color .3s}
+  .community-video-cta a:hover{color:#c9b88a}
 
   /* WHY */
   .why-section{background:#f0e9db;padding:100px 0}
@@ -254,7 +255,14 @@
       <p class="section-intro">The next release of Kleinburg's award-winning Impressions community — an original collection of freehold towns, semis, and 30' singles at Major Mackenzie Drive &amp; Highway 427.</p>
     </div>
     <div class="community-grid">
-      <div class="community-img"><img src="assets/video-cover.jpg" alt="New Kleinburg community overview"></div>
+      <div class="community-video">
+        <video autoplay muted loop playsinline preload="auto" poster="assets/video-cover.jpg">
+          <source src="assets/community-reel.mp4" type="video/mp4">
+        </video>
+        <div class="community-video-cta">
+          <a href="https://www.instagram.com/reel/DalGehiFcaM/?igsh=OHc2bTdhdDloanhh" target="_blank" rel="noopener">View Full Reel on Instagram →</a>
+        </div>
+      </div>
       <div class="community-text">
         <p>Find homes surrounded by the historic charm of timeless Kleinburg — home to the McMichael Gallery, protected greenspaces, and renowned golf courses — while living just minutes to every modern amenity essential to today's homebuyer.</p>
         <p>New Kleinburg is the latest addition to an established, award-winning Impressions community, built by Fieldgate Homes — a family-owned builder with over 69 years of Ontario homebuilding history.</p>
@@ -266,25 +274,6 @@
           <div class="feature-item"><div><strong>Virtual Presentation Centre</strong><span>Tour From Home</span></div></div>
           <div class="feature-item"><div><strong>TD Mortgage Specialist</strong><span>On-Site Financing Support</span></div></div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- VIDEO TOUR -->
-<section class="tour-section" id="tour">
-  <div class="container">
-    <div style="text-align:center;max-width:800px;margin:0 auto 50px">
-      <div class="section-label">Take The Tour</div>
-      <h2 class="section-title">See New Kleinburg in Motion</h2>
-      <p class="section-intro">A quick video walkthrough of the community — watch below or view the full reel on Instagram.</p>
-    </div>
-    <div class="tour-video-wrap">
-      <video controls playsinline preload="metadata" poster="assets/video-cover.jpg">
-        <source src="assets/community-reel.mp4" type="video/mp4">
-      </video>
-      <div class="tour-cta">
-        <a href="https://www.instagram.com/reel/DalGehiFcaM/?igsh=OHc2bTdhdDloanhh" target="_blank" rel="noopener" class="btn">View Full Reel on Instagram</a>
       </div>
     </div>
   </div>
