@@ -127,7 +127,13 @@
 
   /* COMMUNITY VIDEO */
   .community-video{max-width:400px;margin:0 auto}
+  .community-video-frame{position:relative}
   .community-video video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0f1a14;border:1px solid #d9d0bf;display:block}
+  .video-sound-btn{position:absolute;bottom:16px;right:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(15,26,20,.78);color:#f5f1ea;border:1px solid rgba(201,184,138,.5);border-radius:40px;padding:10px 16px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .3s;backdrop-filter:blur(6px);z-index:2}
+  .video-sound-btn:hover{background:#c9b88a;color:#1a2b23;border-color:#c9b88a}
+  .video-sound-icon{font-size:15px;line-height:1}
+  .community-video-frame.sound-on .video-sound-label{display:none}
+  .community-video-frame.sound-on .video-sound-btn{padding:10px 12px}
   .community-video-cta{text-align:center;margin-top:16px}
   .community-video-cta a{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#2f4438;border-bottom:1px solid #c9b88a;padding-bottom:4px;transition:color .3s}
   .community-video-cta a:hover{color:#c9b88a}
@@ -288,9 +294,15 @@
     </div>
     <div class="community-grid">
       <div class="community-video">
-        <video autoplay muted loop playsinline preload="auto" poster="assets/video-cover.jpg">
-          <source src="assets/community-reel.mp4" type="video/mp4">
-        </video>
+        <div class="community-video-frame">
+          <video id="communityReel" autoplay muted loop playsinline preload="auto" poster="assets/video-cover.jpg">
+            <source src="assets/community-reel.mp4" type="video/mp4">
+          </video>
+          <button type="button" class="video-sound-btn" id="videoSoundBtn" aria-label="Turn sound on">
+            <span class="video-sound-icon" aria-hidden="true">🔇</span>
+            <span class="video-sound-label">Tap for Sound</span>
+          </button>
+        </div>
         <div class="community-video-cta">
           <a href="https://www.instagram.com/reel/DalGehiFcaM/?igsh=OHc2bTdhdDloanhh" target="_blank" rel="noopener">View Full Reel on Instagram →</a>
         </div>
@@ -702,6 +714,28 @@
     window.addEventListener('scroll', tryPlay, {passive:true});
     window.addEventListener('touchstart', tryPlay, {passive:true, once:true});
     tryPlay();
+  })();
+
+  // Community reel — tap-for-sound (browsers block autoplay WITH audio, so it starts
+  // muted and unmutes on the user's tap, which counts as the required gesture)
+  (function(){
+    const reel = document.getElementById('communityReel');
+    const btn = document.getElementById('videoSoundBtn');
+    if(!reel || !btn) return;
+    const frame = reel.closest('.community-video-frame');
+    const setUI = () => {
+      const on = !reel.muted && reel.volume > 0;
+      frame.classList.toggle('sound-on', on);
+      btn.querySelector('.video-sound-icon').textContent = on ? '🔊' : '🔇';
+      btn.querySelector('.video-sound-label').textContent = on ? 'Sound On' : 'Tap for Sound';
+      btn.setAttribute('aria-label', on ? 'Mute sound' : 'Turn sound on');
+    };
+    btn.addEventListener('click', () => {
+      reel.muted = !reel.muted;
+      if(!reel.muted){ reel.volume = 1; reel.play().catch(()=>{}); }
+      setUI();
+    });
+    setUI();
   })();
 
   // Scroll reveal
