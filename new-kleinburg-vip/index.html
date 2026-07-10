@@ -89,6 +89,25 @@
   .vip-cta{text-align:center;margin-top:60px}
   .vip-cta-note{font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:#c9b88a;margin-bottom:20px;font-weight:500}
 
+  /* PRICING TEASER */
+  .price-section{background:#f0e9db}
+  .price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;margin-top:60px}
+  .price-card{background:#fff;border:1px solid #e0d9cc;padding:40px 32px;text-align:center;position:relative}
+  .price-card-type{font-size:11px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:#6b7568;margin-bottom:20px}
+  .price-from{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#c9b88a;margin-bottom:6px}
+  .price-base{font-family:'Cormorant Garamond',serif;font-size:26px;color:#8a938c;text-decoration:line-through;text-decoration-color:rgba(192,57,43,.55);text-decoration-thickness:2px;margin-bottom:4px}
+  .price-rebate{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,4vw,44px);color:#1a2b23;line-height:1;font-weight:500}
+  .price-rebate-label{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#2f4438;margin-top:10px}
+  .price-note{font-size:11px;color:#8a938c;margin-top:30px;text-align:center;line-height:1.6;max-width:760px;margin-left:auto;margin-right:auto}
+  .bonus-band{background:#1a2b23;color:#f5f1ea;margin-top:70px;padding:50px 40px;text-align:center}
+  .bonus-band-label{font-size:11px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:#c9b88a;margin-bottom:14px}
+  .bonus-band h3{font-size:clamp(24px,3vw,34px);margin-bottom:30px;color:#f5f1ea}
+  .bonus-items{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 30px;font-size:13px;color:rgba(245,241,234,.9);letter-spacing:.03em}
+  .bonus-items span{display:flex;align-items:center;gap:8px}
+  .bonus-items span::before{content:'';width:5px;height:5px;background:#c9b88a;border-radius:50%;flex-shrink:0}
+  .bonus-cta{margin-top:36px}
+  .sold-badge{position:absolute;top:16px;right:16px;background:#c0392b;color:#fff;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:8px 14px;z-index:2}
+
   /* COLLECTIONS (home models) */
   .collections-intro{text-align:center;margin-bottom:70px;max-width:800px;margin-left:auto;margin-right:auto}
   .collections-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:36px}
@@ -226,10 +245,10 @@
     <h1><strong>New Kleinburg</strong></h1>
     <p class="hero-sub">Freehold towns, semis &amp; 30' singles<br>from one of the GTA's most trusted builders since 1957.</p>
     <div class="hero-meta">
-      <span>Major Mackenzie Dr &amp; Hwy 427</span>
-      <span>1,808–2,168 Sq Ft</span>
+      <span>From $979,990</span>
       <span>Towns · Semis · Singles</span>
-      <span>Fieldgate Homes</span>
+      <span>1,808–2,168 Sq Ft</span>
+      <span>Major Mackenzie Dr &amp; Hwy 427</span>
     </div>
     <a href="#register" class="btn">Register for VIP Access</a>
   </div>
@@ -252,8 +271,8 @@
         <div class="stat-label">Home Types — Towns, Semis, Singles</div>
       </div>
       <div>
-        <div class="stat-num">$20K</div>
-        <div class="stat-label">Initial Deposit to Secure Your Lot</div>
+        <div class="stat-num">$10K</div>
+        <div class="stat-label">Décor Credit Included</div>
       </div>
     </div>
   </div>
@@ -339,6 +358,57 @@
   </div>
 </section>
 
+<!-- PRICING -->
+<section class="price-section" id="pricing">
+  <div class="container">
+    <div style="text-align:center;max-width:800px;margin:0 auto">
+      <div class="section-label">July 2026 Release</div>
+      <h2 class="section-title">Pricing You Won't See<br>at Public Launch</h2>
+      <p class="section-intro">Current release pricing includes a substantial rebate off the base price — and every home comes with the Exclusive Bonus Package, for a limited time.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="price-card-type">20' Freehold Towns</div>
+        <div class="price-from">From</div>
+        <div class="price-base">$979,990</div>
+        <div class="price-rebate">$888,487</div>
+        <div class="price-rebate-label">After Rebate*</div>
+      </div>
+      <div class="price-card">
+        <div class="price-card-type">Semi-Detached</div>
+        <div class="price-from">From</div>
+        <div class="price-base">$1,199,990</div>
+        <div class="price-rebate">$1,093,990</div>
+        <div class="price-rebate-label">After Rebate*</div>
+      </div>
+      <div class="price-card">
+        <div class="price-card-type">30' Singles</div>
+        <div class="price-from">From</div>
+        <div class="price-base">$1,259,990</div>
+        <div class="price-rebate">$1,153,990</div>
+        <div class="price-rebate-label">After Rebate*</div>
+      </div>
+    </div>
+
+    <div class="bonus-band">
+      <div class="bonus-band-label">Exclusive Bonus Package · Limited Time</div>
+      <h3>Included With Your New Home</h3>
+      <div class="bonus-items">
+        <span>Natural Hardwood Flooring — Main Floor</span>
+        <span>$10,000 Décor Credit</span>
+        <span>Central Air Conditioning</span>
+        <span>Stainless Steel Kitchen Appliance Package</span>
+        <span>Washer &amp; Dryer Included</span>
+      </div>
+      <div class="bonus-cta">
+        <a href="#register" class="btn" style="background:#c9b88a;color:#1a2b23">Register Today &amp; Get the Full Price List</a>
+      </div>
+    </div>
+
+    <p class="price-note">*After-rebate pricing is net of proposed federal and Ontario GST/HST rebate measures that are not yet enacted and remain subject to legislation and purchaser eligibility. Prices include applicable taxes. Some lots subject to premiums. Pricing, availability, and incentives subject to change without notice. E. &amp; O.E.</p>
+  </div>
+</section>
+
 <!-- COLLECTIONS -->
 <section id="collections">
   <div class="container">
@@ -403,7 +473,7 @@
         </div>
         <div class="collection-body">
           <h3 class="collection-name">Forcett</h3>
-          <div class="collection-sqft">2,047 Sq Ft</div>
+          <div class="collection-sqft">2,053 Sq Ft</div>
           <div class="collection-specs">
             <div><strong>4</strong>Beds</div>
             <div><strong>3</strong>Baths</div>
@@ -415,7 +485,8 @@
       <div class="collection-card">
         <div class="collection-img">
           <span class="collection-type">30' Single</span>
-          <img src="assets/burton.jpg" alt="Burton model at New Kleinburg">
+          <span class="sold-badge">Sold Out</span>
+          <img src="assets/burton.jpg" alt="Burton model at New Kleinburg" style="filter:grayscale(.5);opacity:.85">
         </div>
         <div class="collection-body">
           <h3 class="collection-name">Burton</h3>
