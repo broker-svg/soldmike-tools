@@ -603,6 +603,18 @@
 </footer>
 
 <script>
+  // Community reel — keep autoplay alive (iOS Low Power Mode, tab switches, data-saver)
+  (function(){
+    const reel = document.querySelector('.community-video video');
+    if(!reel) return;
+    const tryPlay = () => { if(reel.paused) reel.play().catch(()=>{}); };
+    ['loadeddata','canplay','visibilitychange'].forEach(ev =>
+      (ev === 'visibilitychange' ? document : reel).addEventListener(ev, tryPlay));
+    window.addEventListener('scroll', tryPlay, {passive:true});
+    window.addEventListener('touchstart', tryPlay, {passive:true, once:true});
+    tryPlay();
+  })();
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver((entries)=>{
