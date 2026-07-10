@@ -766,9 +766,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           firstName, lastName, email, phone, message,
-          property: 'New Kleinburg — Platinum VIP Sales',
+          property: { street: 'Major Mackenzie Dr & Hwy 427', city: 'Kleinburg', state: 'ON' },
           source: 'New Kleinburg VIP',
-          system: 'New Kleinburg Landing Page'
+          system: 'New Kleinburg Landing Page',
+          tags: ['New Kleinburg', 'Preconstruction', 'VIP Registration']
         })
       });
       const result = await res.json();
