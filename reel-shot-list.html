@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Reel Shot List</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden}
+  body{font-family:-apple-system,"Helvetica Neue",Arial,sans-serif;color:#14171b;background:#eef1f4;
+    display:flex;flex-direction:column;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .topbar{padding:12px 16px 8px;background:#fff;border-bottom:1px solid #e3e6eb}
+  .trow{display:flex;align-items:center;justify-content:space-between}
+  .ttl{font-size:17px;font-weight:800;letter-spacing:-.01em}
+  .howto{font-size:13px;font-weight:600;color:#2f6fbf;background:#eaf1fb;border:none;padding:6px 11px;border-radius:20px}
+  .prog{margin-top:9px}
+  .pbar{height:7px;background:#e5e8ec;border-radius:6px;overflow:hidden}
+  .pfill{height:100%;background:#1a7f37;width:0;transition:width .25s}
+  .ptxt{font-size:12px;color:#6b7280;margin-top:5px}
+  .filters{display:flex;gap:7px;overflow-x:auto;padding:10px 16px;background:#fff;border-bottom:1px solid #e3e6eb;-webkit-overflow-scrolling:touch}
+  .chip{flex:0 0 auto;font-size:13px;font-weight:600;color:#454b53;background:#eef1f4;border:1px solid #e0e3e8;padding:6px 13px;border-radius:20px;white-space:nowrap}
+  .chip.act{background:#14171b;color:#fff;border-color:#14171b}
+  .deck{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .screen{flex:0 0 100%;scroll-snap-align:start;height:100%;overflow-y:auto;padding:14px 16px 22px}
+  .card{background:#fff;border:1px solid #d5d9de;border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .hd{padding:13px 15px;display:flex;align-items:center;gap:11px}
+  .sc{font-weight:800;font-size:17px}
+  .sc small{font-weight:500;font-size:12.5px;opacity:.85;display:block;margin-top:1px}
+  .dur{margin-left:auto;font-size:13px;font-weight:700;font-family:"Courier New",monospace;background:#fff;border-radius:14px;padding:3px 11px}
+  .body{padding:6px 15px 15px}
+  .grp{padding:11px 0;border-top:1px solid #eef0f2}
+  .grp:first-child{border-top:none}
+  .gh{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#454b53;font-weight:800;margin-bottom:9px;display:flex;justify-content:space-between;align-items:center}
+  .gh a{font-size:11px;color:#2f6fbf;font-weight:700;text-transform:none;letter-spacing:0}
+  .fr{display:flex;gap:11px;align-items:center;padding:5px 0}
+  .lab{flex:0 0 92px;font-size:14px;color:#20242a;font-weight:600}
+  .val{flex:1;min-height:30px;border:1px solid #d5d9de;background:#f7f8fa;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:13.5px;font-weight:500}
+  .pick{flex:1;font-size:13.5px;font-weight:500;background:#f7f8fa;border:1px dashed #c2c7cd;border-radius:8px;min-height:30px;display:flex;align-items:center;padding:0 11px;color:#6b7280}
+  .pick.set{color:#20242a;border-style:solid;border-color:#d5d9de}
+  .chk{width:26px;height:26px;border:2px solid #9aa2ab;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:#fff}
+  .chk.on{border-color:#1a7f37;background:#e9f6ee}
+  .chk.on::after{content:"\2713";color:#1a7f37;font-weight:800;font-size:17px}
+  .opts{display:flex;flex:1;gap:6px}
+  .ostack{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .ostack .chk{width:24px;height:24px}
+  .olab{font-size:11px;color:#20242a;font-weight:600}
+  .mini{font-size:10px;color:#7a828b}
+  .numbox{width:52px;height:30px;border:1px dashed #c2c7cd;border-radius:7px;text-align:center;font-size:14px;font-weight:600;background:#f7f8fa}
+  .notes{width:100%;min-height:78px;border:1px solid #d5d9de;border-radius:9px;padding:9px 11px;font-size:14px;font-family:inherit;resize:none;background:#f7f8fa}
+  .capwrap{display:flex;align-items:center;gap:7px}
+  .capttl{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em}
+  .card.done .hd{background:#e9f6ee !important;color:#1a7f37 !important}
+  .card.done .hd .dur{color:#1a7f37 !important}
+  .nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:9px 16px;background:#fff;border-top:1px solid #e3e6eb}
+  .nav button{border:none;background:#eef1f4;width:40px;height:40px;border-radius:50%;font-size:18px;color:#20242a}
+  .nav .pos{font-size:14px;font-weight:700;min-width:96px;text-align:center}
+  .overlay{position:fixed;inset:0;background:rgba(20,23,27,.55);display:none;align-items:flex-end;z-index:20}
+  .overlay.show{display:flex}
+  .sheet{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:18px 18px calc(20px + env(safe-area-inset-bottom));max-height:78vh;overflow-y:auto}
+  .sheet h3{margin:0 0 4px;font-size:17px}
+  .sheet p{margin:0 0 14px;font-size:13px;color:#6b7280}
+  .move{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid #eef0f2;text-decoration:none;color:#14171b;font-weight:600;font-size:15px}
+  .move span{color:#2f6fbf;font-size:13px;font-weight:700}
+  .close{width:100%;margin-top:14px;padding:13px;border:none;background:#14171b;color:#fff;border-radius:12px;font-size:15px;font-weight:700}
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="trow">
+      <div class="ttl">Reel Shot List</div>
+      <button class="howto" onclick="openMoves()">Gimbal how-to</button>
+    </div>
+    <div class="prog">
+      <div class="pbar"><div class="pfill" id="pfill"></div></div>
+      <div class="ptxt" id="ptxt">0 of 35 captured</div>
+    </div>
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="deck" id="deck"></div>
+  <div class="nav">
+    <button onclick="go(-1)">&#8249;</button>
+    <div class="pos" id="pos">Scene 1 / 35</div>
+    <button onclick="go(1)">&#8250;</button>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="sheet">
+      <h3>Gimbal moves — how to</h3>
+      <p>Tap a move to pull up a tutorial. Swap these for your own saved videos anytime.</p>
+      <div id="movelist"></div>
+      <button class="close" onclick="closeMoves()">Done</button>
+    </div>
+  </div>
+
+<script>
+const CATS={
+  money:{bg:'#E3EEFB',bd:'#3B82D6',tx:'#123E6E',label:'Money'},
+  closeup:{bg:'#FBEFCF',bd:'#D99B2B',tx:'#785412',label:'Close-up'},
+  drone:{bg:'#E7F1D8',bd:'#6FA02E',tx:'#37560F',label:'Drone'},
+  hero:{bg:'#FBE2E0',bd:'#D65149',tx:'#7C1E19',label:'Hero'},
+  pan:{bg:'#EDE9FB',bd:'#7A5AF8',tx:'#3B2C86',label:'Pan'},
+  other:{bg:'#EEF1F4',bd:'#aab0b6',tx:'#3a4048',label:'Other'}
+};
+const SCENES=[
+ {id:1,n:'1',dur:'2s',cat:'money',name:'House',loc:'Exterior · Sony',lens:'Wide',ramp:true},
+ {id:2,n:'2',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
+ {id:3,n:'3',dur:'1s',cat:'closeup',name:'House',loc:'Exterior · Sony',lens:'50mm'},
+ {id:4,n:'4',dur:'4s',cat:'other',name:'Entrance',loc:'Interior · Main',lens:'Wide',ramp:true},
+ {id:5,n:'5',dur:'1s',cat:'other',name:'Door',loc:'Interior · Main',lens:'Wide'},
+ {id:6,n:'6',dur:'1s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'Wide'},
+ {id:7,n:'7',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
+ {id:8,n:'8–11',dur:'2s',cat:'closeup',name:'Rapid burst ×4',loc:'Interior · Main',lens:'50mm',ramp:true},
+ {id:12,n:'12',dur:'2s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'Wide'},
+ {id:13,n:'13',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
+ {id:14,n:'14',dur:'1s',cat:'pan',name:'Pan',loc:'Interior · Main',lens:'Wide'},
+ {id:15,n:'15',dur:'1s',cat:'closeup',name:'50mm detail',loc:'Interior · Main',lens:'50mm'},
+ {id:16,n:'16',dur:'4s',cat:'hero',name:'FPV freeze / reverse',loc:'Interior · Main',lens:'Wide',ramp:true},
+ {id:17,n:'17',dur:'2s',cat:'money',name:'Family room',loc:'Interior · Main',lens:'Wide',ramp:true},
+ {id:18,n:'18',dur:'1s',cat:'closeup',name:'Dining detail',loc:'Interior · Main',lens:'50mm'},
+ {id:19,n:'19',dur:'1s',cat:'other',name:'Dining',loc:'Interior · Main',lens:'Wide'},
+ {id:20,n:'20',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
+ {id:21,n:'21',dur:'1s',cat:'closeup',name:'Stairs detail',loc:'Interior · Main',lens:'50mm'},
+ {id:22,n:'22',dur:'1s',cat:'other',name:'Stairs',loc:'Interior · Main',lens:'Wide'},
+ {id:23,n:'23',dur:'2s',cat:'money',name:'Master',loc:'Interior · Second',lens:'Wide',ramp:true},
+ {id:24,n:'24',dur:'1s',cat:'closeup',name:'Master detail',loc:'Interior · Second',lens:'50mm'},
+ {id:25,n:'25',dur:'1s',cat:'closeup',name:'En suite detail',loc:'Interior · Second',lens:'50mm'},
+ {id:26,n:'26',dur:'2s',cat:'other',name:'En suite (rev ramp)',loc:'Interior · Second',lens:'Wide',ramp:true},
+ {id:27,n:'27',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
+ {id:28,n:'28',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
+ {id:29,n:'29',dur:'1s',cat:'other',name:'Bathroom',loc:'Interior · Second',lens:'Wide'},
+ {id:30,n:'30',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
+ {id:31,n:'31',dur:'2s',cat:'money',name:'Basement',loc:'Interior · Basement',lens:'Wide',ramp:true},
+ {id:32,n:'32',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
+ {id:33,n:'33',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
+ {id:34,n:'34',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
+ {id:35,n:'35',dur:'3s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'}
+];
+const MOVES=['Push in','Pull out','Pan','Tilt','Orbit','Reveal','Reverse / rewind','Crane up','Fly-through','Speed ramp'];
+const SETTINGS=['—','FPV','Follow','Follow-tilt'];
+const DIRS=['—','Forward','Back','Up'];
+const TYPES=['Regular','Cool','Hero','Boss'];
+
+let state={};
+try{state=JSON.parse(localStorage.getItem('reelShotList')||'{}')}catch(e){state={}}
+function save(){try{localStorage.setItem('reelShotList',JSON.stringify(state))}catch(e){}}
+function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'',setting:0,dir:0,notes:''};return state[id]}
+
+let filter='all';
+
+function buildFilters(){
+  const f=document.getElementById('filters');
+  const cats=['all',...Object.keys(CATS)];
+  f.innerHTML=cats.map(c=>{
+    const lbl=c==='all'?'All':CATS[c].label;
+    return '<div class="chip'+(c===filter?' act':'')+'" data-f="'+c+'">'+lbl+'</div>';
+  }).join('');
+  f.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{filter=ch.dataset.f;buildFilters();applyFilter();});
+}
+
+function cardHTML(s){
+  const c=CATS[s.cat];const d=st(s.id);
+  const done=d.cap?' done':'';
+  const shotVal=s.name;
+  const typeRow=TYPES.map(t=>'<div class="ostack"><div class="chk'+(d.type===t?' on':'')+'" data-act="type" data-id="'+s.id+'" data-v="'+t+'"></div><span class="olab">'+t+'</span></div>').join('');
+  function flag(key,label,extra){return '<div class="fr"><div class="lab">'+label+'</div><div class="chk'+(d.flags[key]?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="'+key+'"></div>'+(extra||'')+'</div>';}
+  const clip='<span class="mini">clip #</span><input class="numbox" inputmode="numeric" data-act="clip" data-id="'+s.id+'" value="'+(d.clip||'')+'">';
+  return '<div class="card'+done+'" data-card="'+s.id+'">'
+   +'<div class="hd" style="background:'+c.bg+';color:'+c.tx+'">'
+     +'<div class="capwrap"><div class="chk'+(d.cap?' on':'')+'" data-act="cap" data-id="'+s.id+'"></div></div>'
+     +'<div><div class="sc">Scene '+s.n+'</div><small>'+s.loc+'</small></div>'
+     +'<div class="dur" style="color:'+c.tx+'">'+s.dur+'</div>'
+   +'</div>'
+   +'<div class="body">'
+     +'<div class="grp"><div class="gh">Shot type</div><div class="opts">'+typeRow+'</div></div>'
+     +'<div class="grp">'
+       +flag('ramp','Speed ramp')
+       +flag('combo','Ramp combo',clip)
+       +flag('fwd','Forward reverse')
+       +flag('date','Date night')
+     +'</div>'
+     +'<div class="grp"><div class="gh">Frame</div>'
+       +'<div class="fr"><div class="lab">Lens</div><div class="val">'+s.lens+'</div></div>'
+       +'<div class="fr"><div class="lab">Shot</div><div class="val">'+shotVal+'</div></div>'
+     +'</div>'
+     +'<div class="grp"><div class="gh">Gimbal <a onclick="openMoves()">how-to &#9656;</a></div>'
+       +'<div class="fr"><div class="lab">Setting</div><div class="pick'+(d.setting?' set':'')+'" data-act="setting" data-id="'+s.id+'">'+SETTINGS[d.setting||0]+'</div></div>'
+       +'<div class="fr"><div class="lab">Direction</div><div class="pick'+(d.dir?' set':'')+'" data-act="dir" data-id="'+s.id+'">'+DIRS[d.dir||0]+'</div></div>'
+     +'</div>'
+     +'<div class="grp"><div class="gh">Notes</div><textarea class="notes" data-act="notes" data-id="'+s.id+'" placeholder="Tap to add a note...">'+(d.notes||'')+'</textarea></div>'
+   +'</div></div>';
+}
+
+function render(){
+  const deck=document.getElementById('deck');
+  deck.innerHTML=SCENES.map(s=>'<div class="screen" data-cat="'+s.cat+'" data-id="'+s.id+'">'+cardHTML(s)+'</div>').join('');
+  deck.querySelectorAll('[data-act]').forEach(el=>{
+    const a=el.dataset.act,id=el.dataset.id;
+    if(a==='cap')el.onclick=()=>{const d=st(id);d.cap=!d.cap;save();el.classList.toggle('on',d.cap);el.closest('.card').classList.toggle('done',d.cap);updateProg();};
+    if(a==='type')el.onclick=()=>{const d=st(id);d.type=(d.type===el.dataset.v?'':el.dataset.v);save();el.closest('.opts').querySelectorAll('.chk').forEach(x=>x.classList.toggle('on',x.dataset.v===d.type));};
+    if(a==='flag')el.onclick=()=>{const d=st(id);d.flags[el.dataset.k]=!d.flags[el.dataset.k];save();el.classList.toggle('on',d.flags[el.dataset.k]);};
+    if(a==='clip')el.oninput=()=>{st(id).clip=el.value;save();};
+    if(a==='setting')el.onclick=()=>{const d=st(id);d.setting=((d.setting||0)+1)%SETTINGS.length;save();el.textContent=SETTINGS[d.setting];el.classList.toggle('set',d.setting>0);};
+    if(a==='dir')el.onclick=()=>{const d=st(id);d.dir=((d.dir||0)+1)%DIRS.length;save();el.textContent=DIRS[d.dir];el.classList.toggle('set',d.dir>0);};
+    if(a==='notes')el.oninput=()=>{st(id).notes=el.value;save();};
+  });
+  applyFilter();
+  updateProg();
+}
+
+function visibleScreens(){return [...document.querySelectorAll('.screen')].filter(s=>s.style.display!=='none');}
+function applyFilter(){
+  document.querySelectorAll('.screen').forEach(s=>{s.style.display=(filter==='all'||s.dataset.cat===filter)?'':'none';});
+  document.getElementById('deck').scrollTo({left:0});
+  updateProg();updatePos();
+}
+function updateProg(){
+  const vis=visibleScreens();
+  const total=vis.length;
+  const cap=vis.filter(s=>st(s.dataset.id).cap).length;
+  document.getElementById('pfill').style.width=(total?cap/total*100:0)+'%';
+  const scope=filter==='all'?'':' '+CATS[filter].label.toLowerCase();
+  document.getElementById('ptxt').textContent=cap+' of '+total+scope+' captured'+(total&&cap===total?'  ✓ all done':'');
+}
+function updatePos(){
+  const vis=visibleScreens();if(!vis.length){document.getElementById('pos').textContent='—';return;}
+  const deck=document.getElementById('deck');
+  const idx=Math.round(deck.scrollLeft/deck.clientWidth);
+  const cur=Math.min(idx,vis.length-1);
+  const s=vis[cur];
+  document.getElementById('pos').textContent='Scene '+SCENES.find(x=>x.id==s.dataset.id).n+'  ·  '+(cur+1)+'/'+vis.length;
+}
+document.getElementById('deck').addEventListener('scroll',()=>{clearTimeout(window._t);window._t=setTimeout(updatePos,60)});
+function go(dir){
+  const deck=document.getElementById('deck');
+  deck.scrollBy({left:dir*deck.clientWidth,behavior:'smooth'});
+}
+
+function openMoves(){
+  const ml=document.getElementById('movelist');
+  ml.innerHTML=MOVES.map(m=>{
+    const q=encodeURIComponent(m+' gimbal shot real estate tutorial');
+    return '<a class="move" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+m+'<span>Watch &#9656;</span></a>';
+  }).join('');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeMoves(){document.getElementById('overlay').classList.remove('show');}
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeMoves();});
+
+buildFilters();render();
+</script>
+</body>
+</html>
