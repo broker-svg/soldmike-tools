@@ -38,6 +38,9 @@
   .ostack{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
   .ostack .chk{width:25px;height:25px}
   .olab{font-size:11px;color:#20242a;font-weight:600}
+  .lab-fr{font-size:12px}
+  .dn{margin-left:auto;display:flex;align-items:center;gap:9px}
+  .dnl{font-size:13px;font-weight:600;color:#20242a}
   .mini{font-size:10px;color:#7a828b}
   .numbox{width:52px;height:30px;border:1px dashed #c2c7cd;border-radius:7px;text-align:center;font-size:14px;font-weight:600;background:#f7f8fa}
   .notes{flex:1;width:100%;min-height:44px;border:1px solid #d5d9de;border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit;resize:none;background:#f7f8fa}
@@ -160,10 +163,9 @@ function cardHTML(s){
      +'<div class="grp">'
        +flag('ramp','Speed ramp')
        +flag('combo','Ramp combo',clip)
-       +flag('fwd','Forward reverse')
-       +flag('date','Date night')
+       +'<div class="fr"><div class="lab lab-fr">Forward reverse</div><div class="chk'+(d.flags.fwd?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="fwd"></div><div class="dn"><span class="dnl">Date night</span><div class="chk'+(d.flags.date?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="date"></div></div></div>'
      +'</div>'
-     +'<div class="grp"><div class="gh">Frame</div>'
+     +'<div class="grp">'
        +'<div class="fr"><div class="lab">Lens</div><div class="val">'+s.lens+'</div></div>'
        +'<div class="fr"><div class="lab">Shot</div><div class="val">'+s.name+'</div></div>'
      +'</div>'
