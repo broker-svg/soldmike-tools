@@ -41,6 +41,11 @@
   .lab-fr{font-size:12px}
   .dn{margin-left:auto;display:flex;align-items:center;gap:9px}
   .dnl{font-size:13px;font-weight:600;color:#20242a}
+  .frow{display:grid;grid-template-columns:repeat(4,1fr);align-items:center;column-gap:8px;padding:4px 0}
+  .cc{justify-self:center}
+  .flab{font-size:13.5px;font-weight:600;color:#20242a}
+  .midlabels{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#20242a}
+  .clipwrap{display:flex;align-items:center;gap:7px}
   .mini{font-size:10px;color:#7a828b}
   .numbox{width:52px;height:30px;border:1px dashed #c2c7cd;border-radius:7px;text-align:center;font-size:14px;font-weight:600;background:#f7f8fa}
   .notes{flex:1;width:100%;min-height:44px;border:1px solid #d5d9de;border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit;resize:none;background:#f7f8fa}
@@ -159,11 +164,12 @@ function cardHTML(s){
      +'<div class="dur" style="color:'+c.tx+'">'+s.dur+'</div>'
    +'</div>'
    +'<div class="body">'
-     +'<div class="grp"><div class="gh">Shot type</div><div class="opts">'+typeRow+'</div></div>'
      +'<div class="grp">'
-       +flag('ramp','Speed ramp')
-       +flag('combo','Ramp combo',clip)
-       +'<div class="fr"><div class="lab lab-fr">Forward reverse</div><div class="chk'+(d.flags.fwd?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="fwd"></div><div class="dn"><span class="dnl">Date night</span><div class="chk'+(d.flags.date?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="date"></div></div></div>'
+       +'<div class="gh">Shot type</div>'
+       +'<div class="frow">'+typeRow+'</div>'
+       +'<div class="frow"><div class="chk cc'+(d.flags.ramp?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="ramp"></div><div class="flab" style="grid-column:2/5">Speed ramp</div></div>'
+       +'<div class="frow"><div class="chk cc'+(d.flags.combo?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="combo"></div><div class="flab clipwrap" style="grid-column:2/5"><span>Ramp combo</span><span class="mini">clip #</span><input class="numbox" inputmode="numeric" data-act="clip" data-id="'+s.id+'" value="'+(d.clip||'')+'"></div></div>'
+       +'<div class="frow"><div class="chk cc'+(d.flags.fwd?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="fwd"></div><div class="midlabels" style="grid-column:2/4"><span>Forward reverse</span><span>Date night</span></div><div class="chk cc'+(d.flags.date?' on':'')+'" style="grid-column:4" data-act="flag" data-id="'+s.id+'" data-k="date"></div></div>'
      +'</div>'
      +'<div class="grp">'
        +'<div class="fr"><div class="lab">Lens</div><div class="val">'+s.lens+'</div></div>'
