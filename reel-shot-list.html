@@ -25,9 +25,12 @@
   .grp{padding:8px 0;border-top:1px solid #eef0f2;flex-shrink:0}
   .grp:first-child{border-top:none}
   .gh{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#454b53;font-weight:800;margin-bottom:6px}
+  .gh.gtog{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .chev{font-size:12px;color:#9aa2ab}
+  .grp.collapsed .gbody{display:none}
+  .grp.collapsed .gh{margin-bottom:0}
   .fr{display:flex;gap:10px;align-items:center;padding:3px 0}
   .lab{flex:0 0 84px;font-size:14px;color:#20242a;font-weight:600}
-  .val{flex:1;min-height:34px;border:1px solid #d5d9de;background:#fff;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:14px;font-weight:500}
   .shotinput{flex:1;min-height:34px;border:1px solid #d5d9de;background:#fff;border-radius:8px;padding:0 11px;font-size:14px;font-weight:500;font-family:inherit;color:#20242a}
   .sel{flex:1;height:36px;border:1px solid #d5d9de;border-radius:8px;padding:0 6px;font-size:13.5px;font-weight:500;background:#fff;color:#20242a}
   .selsm{flex:0 0 60px;height:30px}
@@ -70,6 +73,7 @@
   .filters{display:flex;gap:7px;overflow-x:auto;padding:6px 14px;-webkit-overflow-scrolling:touch}
   .chip{flex:0 0 auto;font-size:13px;font-weight:600;color:#454b53;background:#eef1f4;border:1px solid #e0e3e8;padding:7px 14px;border-radius:20px;white-space:nowrap}
   .chip.act{background:#14171b;color:#fff;border-color:#14171b}
+  .chip.home{background:#eaf1fb;color:#2f6fbf;border-color:#cfe0f5;font-weight:800}
   .botrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px 10px}
   .abtn{border:1px solid #e0e3e8;background:#f4f6f8;color:#20242a;font-size:13px;font-weight:700;padding:9px 13px;border-radius:11px}
   .nav{display:flex;align-items:center;gap:12px}
@@ -83,19 +87,42 @@
   .move{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid #eef0f2;text-decoration:none;color:#14171b;font-weight:600;font-size:15px}
   .move span{color:#2f6fbf;font-size:13px;font-weight:700}
   .close{width:100%;margin-top:14px;padding:13px;border:none;background:#14171b;color:#fff;border-radius:12px;font-size:15px;font-weight:700}
+  .home{position:fixed;inset:0;background:#eef1f4;z-index:30;display:none;flex-direction:column;padding:calc(18px + env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom))}
+  .home.show{display:flex}
+  .homehd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+  .homehd h2{margin:0;font-size:22px;font-weight:800}
+  .xbtn{border:none;background:#e5e8ec;width:34px;height:34px;border-radius:50%;font-size:17px;color:#20242a}
+  .homesub{font-size:13px;color:#6b7280;margin:0 0 16px}
+  .homelist{flex:1;overflow-y:auto}
+  .lrow{background:#fff;border:1px solid #e0e3e8;border-radius:14px;padding:13px 14px;margin-bottom:11px}
+  .lopen{cursor:pointer}
+  .lname{font-size:16px;font-weight:800}
+  .lmeta{font-size:12.5px;color:#6b7280;margin-top:2px}
+  .lacts{display:flex;gap:8px;margin-top:11px}
+  .lacts button{flex:1;border:1px solid #e0e3e8;background:#f4f6f8;color:#20242a;font-size:12.5px;font-weight:700;padding:8px;border-radius:9px}
+  .lacts button.del{color:#c0392b}
+  .newlist{width:100%;border:2px dashed #b8bec6;background:#fff;color:#2f6fbf;font-size:15px;font-weight:800;padding:16px;border-radius:14px;margin-top:2px}
+  .maxnote{text-align:center;color:#9aa2ab;font-size:13px;padding:12px}
 </style>
 </head>
 <body>
   <div class="deck" id="deck"></div>
   <div class="bottom">
-    <div class="progline"><div class="pbar"><div class="pfill" id="pfill"></div></div><span class="pcount" id="pcount">0/35</span></div>
+    <div class="progline"><div class="pbar"><div class="pfill" id="pfill"></div></div><span class="pcount" id="pcount">0/0</span></div>
     <div class="filters" id="filters"></div>
     <div class="botrow">
       <button class="abtn" onclick="uncheckAll()">Reset</button>
-      <div class="nav"><button onclick="go(-1)">&#8249;</button><span class="pos" id="pos">Scene 1 · 1/35</span><button onclick="go(1)">&#8250;</button></div>
+      <div class="nav"><button onclick="go(-1)">&#8249;</button><span class="pos" id="pos">—</span><button onclick="go(1)">&#8250;</button></div>
       <button class="abtn" onclick="openMoves()">How-to</button>
     </div>
   </div>
+
+  <div class="home" id="home">
+    <div class="homehd"><h2>My shot lists</h2><button class="xbtn" onclick="hideHome()">&#10005;</button></div>
+    <p class="homesub">Pick a list to open, or make a new one. Up to 5.</p>
+    <div class="homelist" id="homelist"></div>
+  </div>
+
   <div class="overlay" id="overlay">
     <div class="sheet">
       <h3>Gimbal moves — how to</h3>
@@ -106,12 +133,8 @@
   </div>
 <script>
 const CATS={
-  money:{bg:'#E3EEFB',tx:'#123E6E',label:'Money'},
-  closeup:{bg:'#FBEFCF',tx:'#785412',label:'Close-up'},
-  drone:{bg:'#E7F1D8',tx:'#37560F',label:'Drone'},
-  hero:{bg:'#FBE2E0',tx:'#7C1E19',label:'Hero'},
-  pan:{bg:'#EDE9FB',tx:'#3B2C86',label:'Pan'},
-  other:{bg:'#EEF1F4',tx:'#3a4048',label:'Other'}
+  money:{bg:'#E3EEFB',tx:'#123E6E'},closeup:{bg:'#FBEFCF',tx:'#785412'},drone:{bg:'#E7F1D8',tx:'#37560F'},
+  hero:{bg:'#FBE2E0',tx:'#7C1E19'},pan:{bg:'#EDE9FB',tx:'#3B2C86'},other:{bg:'#EEF1F4',tx:'#3a4048'}
 };
 const BASE=[
  {id:1,n:'1',dur:'2s',cat:'money',name:'House',loc:'Exterior · Sony',lens:'12mm'},
@@ -156,18 +179,28 @@ const TYPES=['Regular','Cool','Hero','Boss'];
 const DURS=['0.5s','1s','1.5s','2s','2.5s','3s','3.5s','4s','4.5s','5s','5.5s','6s','6.5s','7s'];
 const FILTERS=[['all','All'],['12mm','12mm'],['50mm','50mm'],['Drone','Drone'],['other','Other'],['agent','Agent']];
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-let state={},custom=[];
-try{state=JSON.parse(localStorage.getItem('reelShotList')||'{}')}catch(e){state={}}
-try{custom=JSON.parse(localStorage.getItem('reelCustomScenes')||'[]')}catch(e){custom=[]}
-function save(){try{localStorage.setItem('reelShotList',JSON.stringify(state))}catch(e){}}
-function saveCustom(){try{localStorage.setItem('reelCustomScenes',JSON.stringify(custom))}catch(e){}}
-function scenes(){return BASE.concat(custom);}
-function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:'',movelink:'',shot:null,dur:null};return state[id]}
-let filter='all';
+const KEY='reelApp_v3';
+let APP=null,filter='all';
+function saveApp(){try{localStorage.setItem(KEY,JSON.stringify(APP))}catch(e){}}
+function loadApp(){
+  try{APP=JSON.parse(localStorage.getItem(KEY))}catch(e){APP=null}
+  if(!APP||!APP.lists||!APP.order){
+    let os={},oc=[];try{os=JSON.parse(localStorage.getItem('reelShotList')||'{}')}catch(e){}
+    try{oc=JSON.parse(localStorage.getItem('reelCustomScenes')||'[]')}catch(e){}
+    APP={currentId:'std',order:['std'],collapsed:{},lists:{std:{name:'Standard reel',scenes:BASE.concat(oc),state:os}}};
+    saveApp();
+  }
+  if(!APP.collapsed)APP.collapsed={};
+}
+function cur(){return APP.lists[APP.currentId];}
+function scenes(){return cur().scenes;}
+function st(id){const s=cur().state;if(!s[id])s[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:'',movelink:'',shot:null,dur:null};return s[id];}
+function save(){saveApp();}
+function iscol(sec){return !!APP.collapsed[sec];}
 function buildFilters(){
   const f=document.getElementById('filters');
-  f.innerHTML=FILTERS.map(([v,l])=>'<div class="chip'+(v===filter?' act':'')+'" data-f="'+v+'">'+l+'</div>').join('');
-  f.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{filter=ch.dataset.f;buildFilters();applyFilter();});
+  f.innerHTML='<div class="chip home" data-home="1">&#9750; Home</div>'+FILTERS.map(([v,l])=>'<div class="chip'+(v===filter?' act':'')+'" data-f="'+v+'">'+l+'</div>').join('');
+  f.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{if(ch.dataset.home){showHome();return;}filter=ch.dataset.f;buildFilters();applyFilter();});
 }
 function effLens(s){const d=st(s.id);return d.lens||s.lens;}
 function matches(s){const e=effLens(s);if(filter==='all')return true;if(filter==='agent')return !!s.agent;if(filter==='other')return ['12mm','50mm','Drone'].indexOf(e)<0;return e===filter;}
@@ -184,6 +217,7 @@ function cardHTML(s){
   const shotVal=esc(d.shot!==null&&d.shot!==undefined?d.shot:s.name);
   const seq=(d.dirs&&d.dirs.length)?d.dirs.map((m,i)=>'<span class="seqchip" data-act="dirdel" data-id="'+s.id+'" data-i="'+i+'"><b>'+(i+1)+'</b>'+m+' &#215;</span>').join(''):'<span class="seqempty">tap moves below to build the sequence</span>';
   const palette=DIRS.map(m=>'<span class="dchip" data-act="diradd" data-id="'+s.id+'" data-m="'+m+'">'+m+'</span>').join('');
+  function chev(sec){return '<span class="chev">'+(iscol(sec)?'\u25B8':'\u25BE')+'</span>';}
   return '<div class="card'+done+'">'
    +'<div class="hd" style="background:'+c.bg+';color:'+c.tx+'">'
      +'<div class="hdrow"><div class="chk'+(d.cap?' on':'')+'" data-act="cap" data-id="'+s.id+'"></div>'
@@ -191,21 +225,21 @@ function cardHTML(s){
      +'<div class="linkline">'+link+'</div>'
    +'</div>'
    +'<div class="body">'
-     +'<div class="grp"><div class="gh">Shot type</div>'
+     +'<div class="grp'+(iscol('type')?' collapsed':'')+'"><div class="gh gtog" data-act="collapse" data-sec="type">Shot type'+chev('type')+'</div><div class="gbody">'
        +'<div class="frow">'+typeRow+'</div>'
        +'<div class="frow"><div class="chk cc'+(d.flags.ramp?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="ramp"></div><div class="flab" style="grid-column:2/5">Speed ramp</div></div>'
        +'<div class="frow"><div class="chk cc'+(d.flags.combo?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="combo"></div><div class="flab clipwrap" style="grid-column:2/5"><span>Ramp combo</span><span class="mini">clip #</span>'+clipSel+'</div></div>'
        +'<div class="frow"><div class="chk cc'+(d.flags.fwd?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="fwd"></div><div class="midlabels" style="grid-column:2/4"><span>Forward reverse</span><span>Date night</span></div><div class="chk cc'+(d.flags.date?' on':'')+'" style="grid-column:4" data-act="flag" data-id="'+s.id+'" data-k="date"></div></div>'
-     +'</div>'
+     +'</div></div>'
      +'<div class="grp">'
        +'<div class="fr"><div class="lab">Lens</div>'+lensSel+'</div>'
        +'<div class="fr"><div class="lab">Shot</div><input class="shotinput" data-act="shot" data-id="'+s.id+'" value="'+shotVal+'" placeholder="what the shot is of"></div>'
      +'</div>'
-     +'<div class="grp"><div class="gh">Gimbal</div>'
+     +'<div class="grp'+(iscol('gimbal')?' collapsed':'')+'"><div class="gh gtog" data-act="collapse" data-sec="gimbal">Gimbal'+chev('gimbal')+'</div><div class="gbody">'
        +'<div class="fr"><div class="lab">Setting</div>'+setSel+'<div class="mv">'+movelink+'</div></div>'
        +'<div class="fr dirrow"><div class="lab">Direction</div><div class="dirbuild"><div class="seq">'+seq+'</div><div class="dchips">'+palette+'</div></div></div>'
-     +'</div>'
-     +'<div class="grp"><div class="gh">Notes</div><textarea class="notes" data-act="notes" data-id="'+s.id+'" placeholder="Tap to add a note...">'+(d.notes||'')+'</textarea></div>'
+     +'</div></div>'
+     +'<div class="grp'+(iscol('notes')?' collapsed':'')+'"><div class="gh gtog" data-act="collapse" data-sec="notes">Notes'+chev('notes')+'</div><div class="gbody"><textarea class="notes" data-act="notes" data-id="'+s.id+'" placeholder="Tap to add a note...">'+(d.notes||'')+'</textarea></div></div>'
    +'</div></div>';
 }
 function rerender(){const deck=document.getElementById('deck');const dl=deck.scrollLeft;render();deck.scrollLeft=dl;}
@@ -226,6 +260,7 @@ function render(){
     if(a==='diradd')el.onclick=()=>{const d=st(id);d.dirs=d.dirs||[];d.dirs.push(el.dataset.m);save();rerender();};
     if(a==='dirdel')el.onclick=()=>{const d=st(id);d.dirs.splice(+el.dataset.i,1);save();rerender();};
     if(a==='notes')el.oninput=()=>{st(id).notes=el.value;save();};
+    if(a==='collapse')el.onclick=()=>{APP.collapsed[el.dataset.sec]=!APP.collapsed[el.dataset.sec];saveApp();rerender();};
     if(a==='linkadd')el.onclick=()=>{const u=prompt('Paste a video link showing what this SHOT should look like:');if(u&&u.trim()){st(id).link=u.trim();save();rerender();}};
     if(a==='linkedit')el.onclick=()=>{const u=prompt('Edit the shot video link (clear to remove):',st(id).link||'');if(u!==null){st(id).link=u.trim();save();rerender();}};
     if(a==='mvadd')el.onclick=()=>{const u=prompt('Paste the GIMBAL-MOVEMENT tutorial link for this scene:');if(u&&u.trim()){st(id).movelink=u.trim();save();rerender();}};
@@ -236,8 +271,8 @@ function render(){
 function addScene(){
   const ids=scenes().map(x=>parseInt(String(x.id),10)).filter(n=>!isNaN(n));
   const nid=Math.max(35,...ids)+1;
-  custom.push({id:nid,n:String(nid),dur:'2s',cat:'other',name:'',loc:'',lens:'12mm'});
-  saveCustom();
+  cur().scenes.push({id:nid,n:String(nid),dur:'2s',cat:'other',name:'',loc:'',lens:'12mm'});
+  saveApp();
   const deck=document.getElementById('deck');render();deck.scrollLeft=deck.scrollWidth;
 }
 function visibleScreens(){return [...document.querySelectorAll('.screen')].filter(s=>s.style.display!=='none');}
@@ -255,20 +290,36 @@ function updateProg(){
 function updatePos(){
   const vis=visibleScreens();if(!vis.length){document.getElementById('pos').textContent='—';return;}
   const deck=document.getElementById('deck');
-  const cur=Math.min(Math.round(deck.scrollLeft/deck.clientWidth),vis.length-1);
-  const s=vis[cur];const sc=scenes().find(x=>x.id==s.dataset.id);
-  document.getElementById('pos').textContent='Scene '+(sc?sc.n:'?')+' · '+(cur+1)+'/'+vis.length;
+  const cur2=Math.min(Math.round(deck.scrollLeft/deck.clientWidth),vis.length-1);
+  const s=vis[cur2];const sc=scenes().find(x=>x.id==s.dataset.id);
+  document.getElementById('pos').textContent='Scene '+(sc?sc.n:'?')+' · '+(cur2+1)+'/'+vis.length;
 }
 document.getElementById('deck').addEventListener('scroll',()=>{clearTimeout(window._t);window._t=setTimeout(updatePos,60)});
 function go(dir){const deck=document.getElementById('deck');deck.scrollBy({left:dir*deck.clientWidth,behavior:'smooth'});}
-function uncheckAll(){if(!confirm('Uncheck everything for a fresh shoot? (Clears all check-offs, selections, and notes. Added scenes stay.)'))return;state={};save();render();}
-function openMoves(){
-  document.getElementById('movelist').innerHTML=MOVES.map(m=>{const q=encodeURIComponent(m+' gimbal shot real estate tutorial');return '<a class="move" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+m+'<span>Watch &#9656;</span></a>';}).join('');
-  document.getElementById('overlay').classList.add('show');
-}
+function uncheckAll(){if(!confirm('Uncheck everything in "'+cur().name+'" for a fresh shoot? (Clears check-offs, selections, notes. Added scenes stay.)'))return;cur().state={};saveApp();render();}
+function openMoves(){document.getElementById('movelist').innerHTML=MOVES.map(m=>{const q=encodeURIComponent(m+' gimbal shot real estate tutorial');return '<a class="move" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+m+'<span>Watch &#9656;</span></a>';}).join('');document.getElementById('overlay').classList.add('show');}
 function closeMoves(){document.getElementById('overlay').classList.remove('show');}
 document.getElementById('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeMoves();});
-buildFilters();render();
+/* ---- homepage / lists ---- */
+function capCount(L){return Object.keys(L.state||{}).filter(k=>L.state[k]&&L.state[k].cap).length;}
+function showHome(){renderHome();document.getElementById('home').classList.add('show');}
+function hideHome(){document.getElementById('home').classList.remove('show');}
+function renderHome(){
+  const w=document.getElementById('homelist');
+  w.innerHTML=APP.order.map(id=>{const L=APP.lists[id];
+    return '<div class="lrow"><div class="lopen" data-h="open" data-id="'+id+'"><div class="lname">'+esc(L.name)+(id===APP.currentId?' <span style="font-size:12px;color:#2f6fbf">(open)</span>':'')+'</div><div class="lmeta">'+L.scenes.length+' scenes · '+capCount(L)+' captured</div></div>'
+      +'<div class="lacts"><button data-h="dup" data-id="'+id+'">Duplicate</button><button data-h="ren" data-id="'+id+'">Rename</button>'+(APP.order.length>1?'<button class="del" data-h="del" data-id="'+id+'">Delete</button>':'')+'</div></div>';
+  }).join('') + (APP.order.length<5?'<button class="newlist" data-h="new">+ New list</button>':'<div class="maxnote">Maximum of 5 lists reached</div>');
+  w.querySelectorAll('[data-h]').forEach(el=>{
+    const h=el.dataset.h,id=el.dataset.id;
+    if(h==='open')el.onclick=()=>{APP.currentId=id;saveApp();filter='all';hideHome();buildFilters();render();document.getElementById('deck').scrollLeft=0;};
+    if(h==='dup')el.onclick=()=>{if(APP.order.length>=5){alert('Max 5 lists.');return;}const L=APP.lists[id];const nid='l'+Date.now();const cp=JSON.parse(JSON.stringify(L));cp.name=L.name+' copy';Object.keys(cp.state||{}).forEach(k=>{if(cp.state[k])cp.state[k].cap=false;});APP.lists[nid]=cp;APP.order.push(nid);saveApp();renderHome();};
+    if(h==='ren')el.onclick=()=>{const n=prompt('Rename list:',APP.lists[id].name);if(n!==null){APP.lists[id].name=n.trim()||APP.lists[id].name;saveApp();renderHome();}};
+    if(h==='del')el.onclick=()=>{if(!confirm('Delete "'+APP.lists[id].name+'"? This cannot be undone.'))return;delete APP.lists[id];APP.order=APP.order.filter(x=>x!==id);if(APP.currentId===id)APP.currentId=APP.order[0];saveApp();renderHome();buildFilters();render();};
+    if(h==='new')el.onclick=()=>{if(APP.order.length>=5)return;const n=prompt('Name this list (starts from the Standard template):','New list');if(n===null)return;const nid='l'+Date.now();APP.lists[nid]={name:n.trim()||'New list',scenes:JSON.parse(JSON.stringify(BASE)),state:{}};APP.order.push(nid);saveApp();renderHome();};
+  });
+}
+loadApp();buildFilters();render();
 </script>
 </body>
 </html>
