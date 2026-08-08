@@ -25,11 +25,16 @@
   .grp{padding:8px 0;border-top:1px solid #eef0f2;flex-shrink:0}
   .grp:first-child{border-top:none}
   .gh{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#454b53;font-weight:800;margin-bottom:6px}
-  .fr{display:flex;gap:11px;align-items:center;padding:3px 0}
-  .lab{flex:0 0 88px;font-size:14px;color:#20242a;font-weight:600}
+  .fr{display:flex;gap:10px;align-items:center;padding:3px 0}
+  .lab{flex:0 0 84px;font-size:14px;color:#20242a;font-weight:600}
   .val{flex:1;min-height:32px;border:1px solid #d5d9de;background:#f7f8fa;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:14px;font-weight:500}
-  .sel{flex:1;height:36px;border:1px solid #d5d9de;border-radius:8px;padding:0 8px;font-size:14px;font-weight:500;background:#fff;color:#20242a}
-  .selsm{flex:0 0 62px;height:30px}
+  .sel{flex:1;height:36px;border:1px solid #d5d9de;border-radius:8px;padding:0 6px;font-size:13.5px;font-weight:500;background:#fff;color:#20242a}
+  .selsm{flex:0 0 60px;height:30px}
+  .selhalf{flex:0 1 40%}
+  .mv{flex:1;display:flex;align-items:center;gap:6px;justify-content:flex-end;min-width:0}
+  .lnkbtn2{font-size:11.5px;font-weight:700;padding:6px 10px;border-radius:16px;border:1px solid #2f6fbf;background:#eaf1fb;color:#2f6fbf;text-decoration:none;white-space:nowrap}
+  .lnkbtn2.on{background:#2f6fbf;color:#fff;border-color:#2f6fbf}
+  .lnkedit2{font-size:11px;font-weight:600;background:transparent;border:none;color:#2f6fbf;text-decoration:underline}
   .chk{width:27px;height:27px;border:2px solid #9aa2ab;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:#fff}
   .chk:active{transform:scale(.9)}
   .chk.on{border-color:#1a7f37;background:#e9f6ee}
@@ -44,9 +49,13 @@
   .olab{font-size:11px;color:#20242a;font-weight:600}
   .mini{font-size:10px;color:#7a828b}
   .dirrow{align-items:flex-start}
-  .dchips{flex:1;display:flex;flex-wrap:wrap;gap:6px}
+  .dirbuild{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0}
+  .seq{display:flex;flex-wrap:wrap;gap:6px;min-height:26px;align-items:center}
+  .seqchip{font-size:12px;font-weight:700;color:#fff;background:#123E6E;border-radius:14px;padding:5px 10px;display:inline-flex;align-items:center;gap:6px}
+  .seqchip b{opacity:.6}
+  .seqempty{font-size:12px;color:#9aa2ab;font-style:italic}
+  .dchips{display:flex;flex-wrap:wrap;gap:6px}
   .dchip{font-size:12px;font-weight:600;color:#454b53;background:#eef1f4;border:1px solid #e0e3e8;padding:6px 10px;border-radius:16px}
-  .dchip.on{background:#123E6E;color:#fff;border-color:#123E6E}
   .notes{width:100%;min-height:80px;border:1px solid #d5d9de;border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit;resize:none;background:#f7f8fa}
   .card.done .hd{background:#e9f6ee !important;color:#1a7f37 !important}
   .card.done .hd .dur{color:#1a7f37 !important}
@@ -87,7 +96,7 @@
   <div class="overlay" id="overlay">
     <div class="sheet">
       <h3>Gimbal moves — how to</h3>
-      <p>Tap a move to pull up a tutorial. Or add your own video link per scene in the blue header.</p>
+      <p>Tap a move for a tutorial. Or add your own video links per scene (shot look in the blue header, gimbal move beside Setting).</p>
       <div id="movelist"></div>
       <button class="close" onclick="closeMoves()">Done</button>
     </div>
@@ -145,7 +154,7 @@ function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').repl
 let state={};
 try{state=JSON.parse(localStorage.getItem('reelShotList')||'{}')}catch(e){state={}}
 function save(){try{localStorage.setItem('reelShotList',JSON.stringify(state))}catch(e){}}
-function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:''};return state[id]}
+function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:'',movelink:''};return state[id]}
 let filter='all';
 function buildFilters(){
   const f=document.getElementById('filters');
@@ -158,12 +167,18 @@ function cardHTML(s){
   const done=d.cap?' done':'';
   const typeRow=TYPES.map(t=>'<div class="ostack"><div class="chk'+(d.type===t?' on':'')+'" data-act="type" data-id="'+s.id+'" data-v="'+t+'"></div><span class="olab">'+t+'</span></div>').join('');
   const link=(d.link&&d.link.length)
-    ?'<a class="lnkbtn on" href="'+esc(d.link)+'" target="_blank" rel="noopener">&#9654; Watch move</a><button class="lnkedit" data-act="linkedit" data-id="'+s.id+'">Edit</button>'
-    :'<button class="lnkbtn" data-act="linkadd" data-id="'+s.id+'">+ Add video link</button>';
+    ?'<a class="lnkbtn on" href="'+esc(d.link)+'" target="_blank" rel="noopener">&#9654; Watch shot</a><button class="lnkedit" data-act="linkedit" data-id="'+s.id+'">Edit</button>'
+    :'<button class="lnkbtn" data-act="linkadd" data-id="'+s.id+'">+ Add shot video</button>';
+  const movelink=(d.movelink&&d.movelink.length)
+    ?'<a class="lnkbtn2 on" href="'+esc(d.movelink)+'" target="_blank" rel="noopener">&#9654; Move</a><button class="lnkedit2" data-act="mvedit" data-id="'+s.id+'">Edit</button>'
+    :'<button class="lnkbtn2" data-act="mvadd" data-id="'+s.id+'">+ Video</button>';
   const lensSel='<select class="sel" data-act="lens" data-id="'+s.id+'">'+LENSES.map(o=>'<option'+((d.lens||s.lens)===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
-  const setSel='<select class="sel" data-act="setting" data-id="'+s.id+'">'+SETTINGS.map(o=>'<option'+((d.setting||'—')===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
+  const setSel='<select class="sel selhalf" data-act="setting" data-id="'+s.id+'">'+SETTINGS.map(o=>'<option'+((d.setting||'—')===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
   const clipSel='<select class="sel selsm" data-act="clip" data-id="'+s.id+'">'+CLIPS.map(o=>'<option'+((d.clip||'0')===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
-  const dirChips=DIRS.map(m=>'<span class="dchip'+((d.dirs||[]).indexOf(m)>=0?' on':'')+'" data-act="dir" data-id="'+s.id+'" data-m="'+m+'">'+m+'</span>').join('');
+  const seq=(d.dirs&&d.dirs.length)
+    ?d.dirs.map((m,i)=>'<span class="seqchip" data-act="dirdel" data-id="'+s.id+'" data-i="'+i+'"><b>'+(i+1)+'</b>'+m+' &#215;</span>').join('')
+    :'<span class="seqempty">tap moves below to build the sequence</span>';
+  const palette=DIRS.map(m=>'<span class="dchip" data-act="diradd" data-id="'+s.id+'" data-m="'+m+'">'+m+'</span>').join('');
   return '<div class="card'+done+'">'
    +'<div class="hd" style="background:'+c.bg+';color:'+c.tx+'">'
      +'<div class="hdrow"><div class="chk'+(d.cap?' on':'')+'" data-act="cap" data-id="'+s.id+'"></div>'
@@ -184,8 +199,8 @@ function cardHTML(s){
        +'<div class="fr"><div class="lab">Shot</div><div class="val">'+s.name+'</div></div>'
      +'</div>'
      +'<div class="grp"><div class="gh">Gimbal</div>'
-       +'<div class="fr"><div class="lab">Setting</div>'+setSel+'</div>'
-       +'<div class="fr dirrow"><div class="lab">Direction</div><div class="dchips">'+dirChips+'</div></div>'
+       +'<div class="fr"><div class="lab">Setting</div>'+setSel+'<div class="mv">'+movelink+'</div></div>'
+       +'<div class="fr dirrow"><div class="lab">Direction</div><div class="dirbuild"><div class="seq">'+seq+'</div><div class="dchips">'+palette+'</div></div></div>'
      +'</div>'
      +'<div class="grp"><div class="gh">Notes</div><textarea class="notes" data-act="notes" data-id="'+s.id+'" placeholder="Tap to add a note...">'+(d.notes||'')+'</textarea></div>'
    +'</div></div>';
@@ -202,10 +217,13 @@ function render(){
     if(a==='lens')el.onchange=()=>{st(id).lens=el.value;save();};
     if(a==='setting')el.onchange=()=>{st(id).setting=el.value;save();};
     if(a==='clip')el.onchange=()=>{st(id).clip=el.value;save();};
-    if(a==='dir')el.onclick=()=>{const d=st(id);d.dirs=d.dirs||[];const m=el.dataset.m;const i=d.dirs.indexOf(m);if(i>=0)d.dirs.splice(i,1);else d.dirs.push(m);save();el.classList.toggle('on',d.dirs.indexOf(m)>=0);};
+    if(a==='diradd')el.onclick=()=>{const d=st(id);d.dirs=d.dirs||[];d.dirs.push(el.dataset.m);save();rerender();};
+    if(a==='dirdel')el.onclick=()=>{const d=st(id);d.dirs.splice(+el.dataset.i,1);save();rerender();};
     if(a==='notes')el.oninput=()=>{st(id).notes=el.value;save();};
-    if(a==='linkadd')el.onclick=()=>{const u=prompt('Paste a video link for this scene\u2019s gimbal move:');if(u&&u.trim()){st(id).link=u.trim();save();rerender();}};
-    if(a==='linkedit')el.onclick=()=>{const cur=st(id).link||'';const u=prompt('Edit the video link (clear the box to remove it):',cur);if(u!==null){st(id).link=u.trim();save();rerender();}};
+    if(a==='linkadd')el.onclick=()=>{const u=prompt('Paste a video link showing what this SHOT should look like:');if(u&&u.trim()){st(id).link=u.trim();save();rerender();}};
+    if(a==='linkedit')el.onclick=()=>{const u=prompt('Edit the shot video link (clear the box to remove it):',st(id).link||'');if(u!==null){st(id).link=u.trim();save();rerender();}};
+    if(a==='mvadd')el.onclick=()=>{const u=prompt('Paste the GIMBAL-MOVEMENT tutorial link for this scene:');if(u&&u.trim()){st(id).movelink=u.trim();save();rerender();}};
+    if(a==='mvedit')el.onclick=()=>{const u=prompt('Edit the gimbal-move video link (clear the box to remove it):',st(id).movelink||'');if(u!==null){st(id).movelink=u.trim();save();rerender();}};
   });
   applyFilter();
 }
