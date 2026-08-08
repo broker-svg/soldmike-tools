@@ -16,7 +16,7 @@
   .hdrow{display:flex;align-items:center;gap:11px}
   .sc{font-weight:800;font-size:16px;line-height:1.1}
   .sc small{font-weight:500;font-size:12px;opacity:.85;display:block;margin-top:1px}
-  .dur{margin-left:auto;font-size:26px;font-weight:800;font-family:"Courier New",monospace}
+  .dursel{margin-left:auto;font-size:22px;font-weight:800;font-family:"Courier New",monospace;background:transparent;border:1px solid currentColor;border-radius:10px;padding:2px 6px;color:inherit}
   .linkline{display:flex;align-items:center;gap:9px}
   .lnkbtn{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:18px;border:1px solid currentColor;background:rgba(255,255,255,.55);color:inherit;text-decoration:none}
   .lnkbtn.on{background:#fff}
@@ -27,7 +27,8 @@
   .gh{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:#454b53;font-weight:800;margin-bottom:6px}
   .fr{display:flex;gap:10px;align-items:center;padding:3px 0}
   .lab{flex:0 0 84px;font-size:14px;color:#20242a;font-weight:600}
-  .val{flex:1;min-height:32px;border:1px solid #d5d9de;background:#f7f8fa;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:14px;font-weight:500}
+  .val{flex:1;min-height:34px;border:1px solid #d5d9de;background:#fff;border-radius:8px;display:flex;align-items:center;padding:0 11px;font-size:14px;font-weight:500}
+  .shotinput{flex:1;min-height:34px;border:1px solid #d5d9de;background:#fff;border-radius:8px;padding:0 11px;font-size:14px;font-weight:500;font-family:inherit;color:#20242a}
   .sel{flex:1;height:36px;border:1px solid #d5d9de;border-radius:8px;padding:0 6px;font-size:13.5px;font-weight:500;background:#fff;color:#20242a}
   .selsm{flex:0 0 60px;height:30px}
   .selhalf{flex:0 1 40%}
@@ -58,7 +59,9 @@
   .dchip{font-size:12px;font-weight:600;color:#454b53;background:#eef1f4;border:1px solid #e0e3e8;padding:6px 10px;border-radius:16px}
   .notes{width:100%;min-height:80px;border:1px solid #d5d9de;border-radius:9px;padding:8px 11px;font-size:14px;font-family:inherit;resize:none;background:#f7f8fa}
   .card.done .hd{background:#e9f6ee !important;color:#1a7f37 !important}
-  .card.done .hd .dur{color:#1a7f37 !important}
+  .card.done .hd .dursel{color:#1a7f37 !important}
+  .addscreen{flex:0 0 100%;scroll-snap-align:start;height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+  .addbtn{border:2px dashed #b8bec6;background:#fff;color:#2f6fbf;font-size:17px;font-weight:800;padding:22px 26px;border-radius:16px;width:100%;max-width:340px}
   .bottom{flex-shrink:0;background:#fff;border-top:1px solid #e3e6eb;padding-bottom:env(safe-area-inset-bottom)}
   .progline{display:flex;align-items:center;gap:9px;padding:7px 14px 4px}
   .pbar{flex:1;height:6px;background:#e5e8ec;border-radius:6px;overflow:hidden}
@@ -110,85 +113,85 @@ const CATS={
   pan:{bg:'#EDE9FB',tx:'#3B2C86',label:'Pan'},
   other:{bg:'#EEF1F4',tx:'#3a4048',label:'Other'}
 };
-const SCENES=[
- {id:1,n:'1',dur:'2s',cat:'money',name:'House',loc:'Exterior · Sony',lens:'Wide'},
+const BASE=[
+ {id:1,n:'1',dur:'2s',cat:'money',name:'House',loc:'Exterior · Sony',lens:'12mm'},
  {id:2,n:'2',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
  {id:3,n:'3',dur:'1s',cat:'closeup',name:'House',loc:'Exterior · Sony',lens:'50mm'},
- {id:4,n:'4',dur:'4s',cat:'other',name:'Entrance',loc:'Interior · Main',lens:'Wide'},
- {id:5,n:'5',dur:'1s',cat:'other',name:'Door',loc:'Interior · Main',lens:'Wide'},
- {id:6,n:'6',dur:'1s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'Wide'},
+ {id:4,n:'4',dur:'4s',cat:'other',name:'Entrance',loc:'Interior · Main',lens:'12mm'},
+ {id:5,n:'5',dur:'1s',cat:'other',name:'Door',loc:'Interior · Main',lens:'12mm'},
+ {id:6,n:'6',dur:'1s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'12mm'},
  {id:7,n:'7',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
  {id:8,n:'8–11',dur:'2s',cat:'closeup',name:'Rapid burst ×4',loc:'Interior · Main',lens:'50mm'},
- {id:12,n:'12',dur:'2s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'Wide'},
+ {id:12,n:'12',dur:'2s',cat:'other',name:'Main floor',loc:'Interior · Main',lens:'12mm'},
  {id:13,n:'13',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
- {id:14,n:'14',dur:'1s',cat:'pan',name:'Pan',loc:'Interior · Main',lens:'Wide'},
+ {id:14,n:'14',dur:'1s',cat:'pan',name:'Pan',loc:'Interior · Main',lens:'12mm'},
  {id:15,n:'15',dur:'1s',cat:'closeup',name:'50mm detail',loc:'Interior · Main',lens:'50mm'},
- {id:16,n:'16',dur:'4s',cat:'hero',name:'FPV freeze / reverse',loc:'Interior · Main',lens:'Wide'},
- {id:17,n:'17',dur:'2s',cat:'money',name:'Family room',loc:'Interior · Main',lens:'Wide'},
+ {id:16,n:'16',dur:'4s',cat:'hero',name:'FPV freeze / reverse',loc:'Interior · Main',lens:'12mm'},
+ {id:17,n:'17',dur:'2s',cat:'money',name:'Family room',loc:'Interior · Main',lens:'12mm'},
  {id:18,n:'18',dur:'1s',cat:'closeup',name:'Dining detail',loc:'Interior · Main',lens:'50mm'},
- {id:19,n:'19',dur:'1s',cat:'other',name:'Dining',loc:'Interior · Main',lens:'Wide'},
+ {id:19,n:'19',dur:'1s',cat:'other',name:'Dining',loc:'Interior · Main',lens:'12mm'},
  {id:20,n:'20',dur:'1s',cat:'closeup',name:'Detail',loc:'Interior · Main',lens:'50mm'},
  {id:21,n:'21',dur:'1s',cat:'closeup',name:'Stairs detail',loc:'Interior · Main',lens:'50mm'},
- {id:22,n:'22',dur:'1s',cat:'other',name:'Stairs',loc:'Interior · Main',lens:'Wide'},
- {id:23,n:'23',dur:'2s',cat:'money',name:'Master',loc:'Interior · Second',lens:'Wide'},
+ {id:22,n:'22',dur:'1s',cat:'other',name:'Stairs',loc:'Interior · Main',lens:'12mm'},
+ {id:23,n:'23',dur:'2s',cat:'money',name:'Master',loc:'Interior · Second',lens:'12mm'},
  {id:24,n:'24',dur:'1s',cat:'closeup',name:'Master detail',loc:'Interior · Second',lens:'50mm'},
  {id:25,n:'25',dur:'1s',cat:'closeup',name:'En suite detail',loc:'Interior · Second',lens:'50mm'},
- {id:26,n:'26',dur:'2s',cat:'other',name:'En suite',loc:'Interior · Second',lens:'Wide'},
- {id:27,n:'27',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
- {id:28,n:'28',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
- {id:29,n:'29',dur:'1s',cat:'other',name:'Bathroom',loc:'Interior · Second',lens:'Wide'},
- {id:30,n:'30',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'Wide'},
- {id:31,n:'31',dur:'2s',cat:'money',name:'Basement',loc:'Interior · Basement',lens:'Wide'},
+ {id:26,n:'26',dur:'2s',cat:'other',name:'En suite',loc:'Interior · Second',lens:'12mm'},
+ {id:27,n:'27',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'12mm'},
+ {id:28,n:'28',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'12mm'},
+ {id:29,n:'29',dur:'1s',cat:'other',name:'Bathroom',loc:'Interior · Second',lens:'12mm'},
+ {id:30,n:'30',dur:'1s',cat:'other',name:'Bedroom',loc:'Interior · Second',lens:'12mm'},
+ {id:31,n:'31',dur:'2s',cat:'money',name:'Basement',loc:'Interior · Basement',lens:'12mm'},
  {id:32,n:'32',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
  {id:33,n:'33',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
  {id:34,n:'34',dur:'2s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'},
  {id:35,n:'35',dur:'3s',cat:'drone',name:'House',loc:'Exterior · Drone',lens:'Drone'}
 ];
 const MOVES=['Push in','Pull out','Pan','Tilt','Orbit','Reveal','Reverse / rewind','Crane up','Fly-through','Speed ramp'];
-const LENSES=['Drone','Wide','24mm','50mm'];
+const LENSES=['Drone','12mm','24mm','50mm'];
 const SETTINGS=['—','FPV','PF (pan follow)','PTF (pan-tilt)','360'];
 const DIRS=['Push','Pull','Tilt up','Tilt down','Pan left','Pan right','Orbit left','Orbit right','Crane up','Crane down','Reveal'];
 const CLIPS=['0','1','2','3','4','5'];
 const TYPES=['Regular','Cool','Hero','Boss'];
+const DURS=['0.5s','1s','1.5s','2s','2.5s','3s','3.5s','4s','4.5s','5s','5.5s','6s','6.5s','7s'];
+const FILTERS=[['all','All'],['12mm','12mm'],['50mm','50mm'],['Drone','Drone'],['other','Other'],['agent','Agent']];
 function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-let state={};
+let state={},custom=[];
 try{state=JSON.parse(localStorage.getItem('reelShotList')||'{}')}catch(e){state={}}
+try{custom=JSON.parse(localStorage.getItem('reelCustomScenes')||'[]')}catch(e){custom=[]}
 function save(){try{localStorage.setItem('reelShotList',JSON.stringify(state))}catch(e){}}
-function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:'',movelink:''};return state[id]}
+function saveCustom(){try{localStorage.setItem('reelCustomScenes',JSON.stringify(custom))}catch(e){}}
+function scenes(){return BASE.concat(custom);}
+function st(id){if(!state[id])state[id]={cap:false,type:'',flags:{},clip:'0',lens:'',setting:'—',dirs:[],notes:'',link:'',movelink:'',shot:null,dur:null};return state[id]}
 let filter='all';
 function buildFilters(){
   const f=document.getElementById('filters');
-  const cats=['all',...Object.keys(CATS)];
-  f.innerHTML=cats.map(c=>'<div class="chip'+(c===filter?' act':'')+'" data-f="'+c+'">'+(c==='all'?'All':CATS[c].label)+'</div>').join('');
+  f.innerHTML=FILTERS.map(([v,l])=>'<div class="chip'+(v===filter?' act':'')+'" data-f="'+v+'">'+l+'</div>').join('');
   f.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{filter=ch.dataset.f;buildFilters();applyFilter();});
 }
+function effLens(s){const d=st(s.id);return d.lens||s.lens;}
+function matches(s){const e=effLens(s);if(filter==='all')return true;if(filter==='agent')return !!s.agent;if(filter==='other')return ['12mm','50mm','Drone'].indexOf(e)<0;return e===filter;}
 function cardHTML(s){
-  const c=CATS[s.cat];const d=st(s.id);
+  const c=CATS[s.cat]||CATS.other;const d=st(s.id);
   const done=d.cap?' done':'';
   const typeRow=TYPES.map(t=>'<div class="ostack"><div class="chk'+(d.type===t?' on':'')+'" data-act="type" data-id="'+s.id+'" data-v="'+t+'"></div><span class="olab">'+t+'</span></div>').join('');
-  const link=(d.link&&d.link.length)
-    ?'<a class="lnkbtn on" href="'+esc(d.link)+'" target="_blank" rel="noopener">&#9654; Watch shot</a><button class="lnkedit" data-act="linkedit" data-id="'+s.id+'">Edit</button>'
-    :'<button class="lnkbtn" data-act="linkadd" data-id="'+s.id+'">+ Add shot video</button>';
-  const movelink=(d.movelink&&d.movelink.length)
-    ?'<a class="lnkbtn2 on" href="'+esc(d.movelink)+'" target="_blank" rel="noopener">&#9654; Move</a><button class="lnkedit2" data-act="mvedit" data-id="'+s.id+'">Edit</button>'
-    :'<button class="lnkbtn2" data-act="mvadd" data-id="'+s.id+'">+ Video</button>';
+  const durSel='<select class="dursel" data-act="dur" data-id="'+s.id+'">'+DURS.map(o=>'<option'+((d.dur||s.dur)===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
+  const link=(d.link&&d.link.length)?'<a class="lnkbtn on" href="'+esc(d.link)+'" target="_blank" rel="noopener">&#9654; Watch shot</a><button class="lnkedit" data-act="linkedit" data-id="'+s.id+'">Edit</button>':'<button class="lnkbtn" data-act="linkadd" data-id="'+s.id+'">+ Add shot video</button>';
+  const movelink=(d.movelink&&d.movelink.length)?'<a class="lnkbtn2 on" href="'+esc(d.movelink)+'" target="_blank" rel="noopener">&#9654; Move</a><button class="lnkedit2" data-act="mvedit" data-id="'+s.id+'">Edit</button>':'<button class="lnkbtn2" data-act="mvadd" data-id="'+s.id+'">+ Video</button>';
   const lensSel='<select class="sel" data-act="lens" data-id="'+s.id+'">'+LENSES.map(o=>'<option'+((d.lens||s.lens)===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
   const setSel='<select class="sel selhalf" data-act="setting" data-id="'+s.id+'">'+SETTINGS.map(o=>'<option'+((d.setting||'—')===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
   const clipSel='<select class="sel selsm" data-act="clip" data-id="'+s.id+'">'+CLIPS.map(o=>'<option'+((d.clip||'0')===o?' selected':'')+'>'+o+'</option>').join('')+'</select>';
-  const seq=(d.dirs&&d.dirs.length)
-    ?d.dirs.map((m,i)=>'<span class="seqchip" data-act="dirdel" data-id="'+s.id+'" data-i="'+i+'"><b>'+(i+1)+'</b>'+m+' &#215;</span>').join('')
-    :'<span class="seqempty">tap moves below to build the sequence</span>';
+  const shotVal=esc(d.shot!==null&&d.shot!==undefined?d.shot:s.name);
+  const seq=(d.dirs&&d.dirs.length)?d.dirs.map((m,i)=>'<span class="seqchip" data-act="dirdel" data-id="'+s.id+'" data-i="'+i+'"><b>'+(i+1)+'</b>'+m+' &#215;</span>').join(''):'<span class="seqempty">tap moves below to build the sequence</span>';
   const palette=DIRS.map(m=>'<span class="dchip" data-act="diradd" data-id="'+s.id+'" data-m="'+m+'">'+m+'</span>').join('');
   return '<div class="card'+done+'">'
    +'<div class="hd" style="background:'+c.bg+';color:'+c.tx+'">'
      +'<div class="hdrow"><div class="chk'+(d.cap?' on':'')+'" data-act="cap" data-id="'+s.id+'"></div>'
-       +'<div><div class="sc">Scene '+s.n+'</div><small>'+s.loc+'</small></div>'
-       +'<div class="dur" style="color:'+c.tx+'">'+s.dur+'</div></div>'
+       +'<div><div class="sc">Scene '+s.n+'</div><small>'+(s.loc||'&nbsp;')+'</small></div>'+durSel+'</div>'
      +'<div class="linkline">'+link+'</div>'
    +'</div>'
    +'<div class="body">'
-     +'<div class="grp">'
-       +'<div class="gh">Shot type</div>'
+     +'<div class="grp"><div class="gh">Shot type</div>'
        +'<div class="frow">'+typeRow+'</div>'
        +'<div class="frow"><div class="chk cc'+(d.flags.ramp?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="ramp"></div><div class="flab" style="grid-column:2/5">Speed ramp</div></div>'
        +'<div class="frow"><div class="chk cc'+(d.flags.combo?' on':'')+'" data-act="flag" data-id="'+s.id+'" data-k="combo"></div><div class="flab clipwrap" style="grid-column:2/5"><span>Ramp combo</span><span class="mini">clip #</span>'+clipSel+'</div></div>'
@@ -196,7 +199,7 @@ function cardHTML(s){
      +'</div>'
      +'<div class="grp">'
        +'<div class="fr"><div class="lab">Lens</div>'+lensSel+'</div>'
-       +'<div class="fr"><div class="lab">Shot</div><div class="val">'+s.name+'</div></div>'
+       +'<div class="fr"><div class="lab">Shot</div><input class="shotinput" data-act="shot" data-id="'+s.id+'" value="'+shotVal+'" placeholder="what the shot is of"></div>'
      +'</div>'
      +'<div class="grp"><div class="gh">Gimbal</div>'
        +'<div class="fr"><div class="lab">Setting</div>'+setSel+'<div class="mv">'+movelink+'</div></div>'
@@ -208,28 +211,39 @@ function cardHTML(s){
 function rerender(){const deck=document.getElementById('deck');const dl=deck.scrollLeft;render();deck.scrollLeft=dl;}
 function render(){
   const deck=document.getElementById('deck');
-  deck.innerHTML=SCENES.map(s=>'<div class="screen" data-cat="'+s.cat+'" data-id="'+s.id+'">'+cardHTML(s)+'</div>').join('');
+  deck.innerHTML=scenes().map(s=>'<div class="screen" data-id="'+s.id+'">'+cardHTML(s)+'</div>').join('')
+    +'<div class="addscreen"><button class="addbtn" onclick="addScene()">+ Add scene</button></div>';
   deck.querySelectorAll('[data-act]').forEach(el=>{
     const a=el.dataset.act,id=el.dataset.id;
     if(a==='cap')el.onclick=()=>{const d=st(id);d.cap=!d.cap;save();el.classList.toggle('on',d.cap);el.closest('.card').classList.toggle('done',d.cap);updateProg();};
     if(a==='type')el.onclick=()=>{const d=st(id);d.type=(d.type===el.dataset.v?'':el.dataset.v);save();el.closest('.frow').querySelectorAll('.chk').forEach(x=>x.classList.toggle('on',x.dataset.v===d.type));};
     if(a==='flag')el.onclick=()=>{const d=st(id);d.flags[el.dataset.k]=!d.flags[el.dataset.k];save();el.classList.toggle('on',d.flags[el.dataset.k]);};
-    if(a==='lens')el.onchange=()=>{st(id).lens=el.value;save();};
+    if(a==='lens')el.onchange=()=>{st(id).lens=el.value;save();applyFilter();};
     if(a==='setting')el.onchange=()=>{st(id).setting=el.value;save();};
     if(a==='clip')el.onchange=()=>{st(id).clip=el.value;save();};
+    if(a==='dur')el.onchange=()=>{st(id).dur=el.value;save();};
+    if(a==='shot')el.oninput=()=>{st(id).shot=el.value;save();};
     if(a==='diradd')el.onclick=()=>{const d=st(id);d.dirs=d.dirs||[];d.dirs.push(el.dataset.m);save();rerender();};
     if(a==='dirdel')el.onclick=()=>{const d=st(id);d.dirs.splice(+el.dataset.i,1);save();rerender();};
     if(a==='notes')el.oninput=()=>{st(id).notes=el.value;save();};
     if(a==='linkadd')el.onclick=()=>{const u=prompt('Paste a video link showing what this SHOT should look like:');if(u&&u.trim()){st(id).link=u.trim();save();rerender();}};
-    if(a==='linkedit')el.onclick=()=>{const u=prompt('Edit the shot video link (clear the box to remove it):',st(id).link||'');if(u!==null){st(id).link=u.trim();save();rerender();}};
+    if(a==='linkedit')el.onclick=()=>{const u=prompt('Edit the shot video link (clear to remove):',st(id).link||'');if(u!==null){st(id).link=u.trim();save();rerender();}};
     if(a==='mvadd')el.onclick=()=>{const u=prompt('Paste the GIMBAL-MOVEMENT tutorial link for this scene:');if(u&&u.trim()){st(id).movelink=u.trim();save();rerender();}};
-    if(a==='mvedit')el.onclick=()=>{const u=prompt('Edit the gimbal-move video link (clear the box to remove it):',st(id).movelink||'');if(u!==null){st(id).movelink=u.trim();save();rerender();}};
+    if(a==='mvedit')el.onclick=()=>{const u=prompt('Edit the gimbal-move video link (clear to remove):',st(id).movelink||'');if(u!==null){st(id).movelink=u.trim();save();rerender();}};
   });
   applyFilter();
 }
+function addScene(){
+  const ids=scenes().map(x=>parseInt(String(x.id),10)).filter(n=>!isNaN(n));
+  const nid=Math.max(35,...ids)+1;
+  custom.push({id:nid,n:String(nid),dur:'2s',cat:'other',name:'',loc:'',lens:'12mm'});
+  saveCustom();
+  const deck=document.getElementById('deck');render();deck.scrollLeft=deck.scrollWidth;
+}
 function visibleScreens(){return [...document.querySelectorAll('.screen')].filter(s=>s.style.display!=='none');}
 function applyFilter(){
-  document.querySelectorAll('.screen').forEach(s=>{s.style.display=(filter==='all'||s.dataset.cat===filter)?'':'none';});
+  const byId={};scenes().forEach(s=>byId[s.id]=s);
+  document.querySelectorAll('.screen').forEach(sc=>{const s=byId[sc.dataset.id];sc.style.display=(s&&matches(s))?'':'none';});
   updateProg();updatePos();
 }
 function updateProg(){
@@ -242,17 +256,14 @@ function updatePos(){
   const vis=visibleScreens();if(!vis.length){document.getElementById('pos').textContent='—';return;}
   const deck=document.getElementById('deck');
   const cur=Math.min(Math.round(deck.scrollLeft/deck.clientWidth),vis.length-1);
-  const s=vis[cur];
-  document.getElementById('pos').textContent='Scene '+SCENES.find(x=>x.id==s.dataset.id).n+' · '+(cur+1)+'/'+vis.length;
+  const s=vis[cur];const sc=scenes().find(x=>x.id==s.dataset.id);
+  document.getElementById('pos').textContent='Scene '+(sc?sc.n:'?')+' · '+(cur+1)+'/'+vis.length;
 }
 document.getElementById('deck').addEventListener('scroll',()=>{clearTimeout(window._t);window._t=setTimeout(updatePos,60)});
 function go(dir){const deck=document.getElementById('deck');deck.scrollBy({left:dir*deck.clientWidth,behavior:'smooth'});}
-function uncheckAll(){if(!confirm('Uncheck everything for a fresh shoot? (Clears all check-offs, selections, and notes.)'))return;state={};save();render();}
+function uncheckAll(){if(!confirm('Uncheck everything for a fresh shoot? (Clears all check-offs, selections, and notes. Added scenes stay.)'))return;state={};save();render();}
 function openMoves(){
-  document.getElementById('movelist').innerHTML=MOVES.map(m=>{
-    const q=encodeURIComponent(m+' gimbal shot real estate tutorial');
-    return '<a class="move" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+m+'<span>Watch &#9656;</span></a>';
-  }).join('');
+  document.getElementById('movelist').innerHTML=MOVES.map(m=>{const q=encodeURIComponent(m+' gimbal shot real estate tutorial');return '<a class="move" href="https://www.youtube.com/results?search_query='+q+'" target="_blank" rel="noopener">'+m+'<span>Watch &#9656;</span></a>';}).join('');
   document.getElementById('overlay').classList.add('show');
 }
 function closeMoves(){document.getElementById('overlay').classList.remove('show');}
