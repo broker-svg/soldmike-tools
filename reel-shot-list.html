@@ -17,6 +17,10 @@
   .sc{font-weight:800;font-size:16px;line-height:1.1}
   .sc small{font-weight:500;font-size:12px;opacity:.85;display:block;margin-top:1px}
   .dursel{margin-left:auto;font-size:22px;font-weight:800;font-family:"Courier New",monospace;background:transparent;border:1px solid currentColor;border-radius:10px;padding:2px 6px;color:inherit}
+  .hdright{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+  .hdright .dursel{margin-left:0}
+  .titleinput{font-size:12px;font-weight:700;text-align:right;background:rgba(255,255,255,.55);border:1px solid currentColor;border-radius:8px;padding:4px 8px;color:inherit;width:135px;font-family:inherit}
+  .scwrap{min-width:0}
   .linkline{display:flex;align-items:center;gap:9px}
   .lnkbtn{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:18px;border:1px solid currentColor;background:rgba(255,255,255,.55);color:inherit;text-decoration:none}
   .lnkbtn.on{background:#fff}
@@ -221,7 +225,8 @@ function cardHTML(s){
   return '<div class="card'+done+'">'
    +'<div class="hd" style="background:'+c.bg+';color:'+c.tx+'">'
      +'<div class="hdrow"><div class="chk'+(d.cap?' on':'')+'" data-act="cap" data-id="'+s.id+'"></div>'
-       +'<div><div class="sc">Scene '+s.n+'</div><small>'+(s.loc||'&nbsp;')+'</small></div>'+durSel+'</div>'
+       +'<div class="scwrap"><div class="sc">Scene '+s.n+'</div><small>'+(s.loc||'&nbsp;')+'</small></div>'
+       +'<div class="hdright">'+durSel+'<input class="titleinput" data-act="title" value="'+esc(cur().name)+'" placeholder="Title"></div></div>'
      +'<div class="linkline">'+link+'</div>'
    +'</div>'
    +'<div class="body">'
@@ -256,6 +261,7 @@ function render(){
     if(a==='setting')el.onchange=()=>{st(id).setting=el.value;save();};
     if(a==='clip')el.onchange=()=>{st(id).clip=el.value;save();};
     if(a==='dur')el.onchange=()=>{st(id).dur=el.value;save();};
+    if(a==='title')el.oninput=()=>{cur().name=el.value;saveApp();};
     if(a==='shot')el.oninput=()=>{st(id).shot=el.value;save();};
     if(a==='diradd')el.onclick=()=>{const d=st(id);d.dirs=d.dirs||[];d.dirs.push(el.dataset.m);save();rerender();};
     if(a==='dirdel')el.onclick=()=>{const d=st(id);d.dirs.splice(+el.dataset.i,1);save();rerender();};
