@@ -199,7 +199,7 @@ function save(){saveApp();}
 function iscol(sec){return !!APP.collapsed[sec];}
 function buildFilters(){
   const f=document.getElementById('filters');
-  f.innerHTML='<div class="chip home" data-home="1">&#9750; Home</div>'+FILTERS.map(([v,l])=>'<div class="chip'+(v===filter?' act':'')+'" data-f="'+v+'">'+l+'</div>').join('');
+  f.innerHTML='<div class="chip home" data-home="1">&#8962; Home</div>'+FILTERS.map(([v,l])=>'<div class="chip'+(v===filter?' act':'')+'" data-f="'+v+'">'+l+'</div>').join('');
   f.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{if(ch.dataset.home){showHome();return;}filter=ch.dataset.f;buildFilters();applyFilter();});
 }
 function effLens(s){const d=st(s.id);return d.lens||s.lens;}
