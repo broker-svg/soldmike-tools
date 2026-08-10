@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shot Storyboard</title>
+<style>
+  :root{
+    --bg:#0e0f13;--panel:#171922;--panel-2:#1e2130;--line:#2a2e3f;
+    --text:#e8eaf2;--muted:#9aa0b5;--dim:#6b7080;--accent:#4f8cff;--accent-2:#c9a04a;
+    --danger:#ff5d6c;--ok:#3fcf8e;
+    --clip:#4f8cff;--gimbal:#c9a04a;--ref:#a06bff;--radius:14px;
+    --green:#34c46a;--green-bg:rgba(52,196,106,.14);--green-bd:#2c9d55;
+    --navy:#1d5299;--navy-bd:#2f6bbd;--orange:#ff9436;--orange-bg:rgba(255,148,54,.12);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+  /* headers */
+  header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 20px;background:rgba(14,15,19,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+  .brand h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.3px}
+  .brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 12px var(--accent-2)}
+  .count{font-size:12px;color:var(--muted);font-weight:500}
+  .namewrap{display:flex;flex-direction:column;min-width:0}
+  .boardname{font:inherit;font-size:16px;font-weight:700;letter-spacing:.3px;color:var(--text);background:transparent;border:0;border-bottom:1px solid transparent;padding:1px 2px;min-width:120px;max-width:260px}
+  .boardname:focus{outline:none;border-bottom-color:var(--accent)}
+  .boardsub{font:inherit;font-size:11.5px;color:var(--muted);background:transparent;border:0;border-bottom:1px solid transparent;padding:1px 2px;min-width:120px;max-width:260px}
+  .boardsub:focus{outline:none;border-bottom-color:var(--accent)}
+  .boardsub::placeholder{color:var(--dim)}
+  body[data-screen="home"] #boardHeader{display:none}
+  body[data-screen="board"] #homeHeader{display:none}
+
+  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  button,.btn{font:inherit;font-size:13px;font-weight:600;color:var(--text);background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+  button:hover,.btn:hover{border-color:var(--accent);background:#232739}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{filter:brightness(1.08)}
+  button.ghost{background:transparent}
+  button.on{background:var(--ok);border-color:var(--ok);color:#0e0f13}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .seg button{border:0;border-radius:0;background:var(--panel);padding:9px 13px}
+  .seg button.active{background:var(--accent);color:#fff}
+  .viewseg button.active{background:var(--accent-2);color:#0e0f13}
+  .only-board{display:inline-flex}
+  body[data-view="overview"] .only-board,body[data-view="shotlist"] .only-board{display:none}
+  body[data-view="shotlist"] .hide-sl{display:none}
+
+  main{padding:22px 20px 120px}
+  body[data-screen="home"] #boardView{display:none}
+  body[data-screen="board"] #home{display:none}
+
+  /* ---------- HOME ---------- */
+  #home{max-width:1500px;margin:0 auto}
+  .home-intro{color:var(--muted);font-size:13px;margin:2px 0 20px}
+  .boards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+  .board-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.15s;position:relative;display:flex;flex-direction:column}
+  .board-card:hover{border-color:var(--accent-2);transform:translateY(-2px)}
+  .cover{aspect-ratio:16/9;background:#000;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .cover.gradient{background:linear-gradient(135deg,var(--acc,#4f8cff),#0e0f13)}
+  .cover.mosaic{display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:1px}
+  .cover-cell{background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .cover-cell video,.cover-cell img{width:100%;height:100%;object-fit:cover}
+  .cover-emoji{font-size:30px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:1px}
+  .board-meta{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+  .board-name{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .board-sub{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .type-chip{background:var(--panel-2);border:1px solid var(--line);border-radius:20px;padding:2px 9px;font-weight:600;color:var(--text)}
+  .board-actions{position:absolute;top:8px;right:8px;display:flex;gap:5px;opacity:0;transition:.15s}
+  .board-card:hover .board-actions{opacity:1}
+  .board-actions button{padding:5px 8px;font-size:12px;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+  .newboard{border:1.5px dashed var(--line);background:transparent;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--muted);cursor:pointer;min-height:200px;transition:.15s}
+  .newboard:hover{border-color:var(--accent);color:var(--accent)}
+  .newboard svg{width:34px;height:34px}
+  .home-empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:14px;line-height:1.7}
+
+  /* ---------- storyboard grid ---------- */
+  .grid{display:grid;grid-template-columns:repeat(var(--cols,4),minmax(0,1fr));gap:18px;max-width:1600px;margin:0 auto}
+  body[data-view="overview"] #grid,body[data-view="shotlist"] #grid{display:none}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;transition:.15s;position:relative}
+  .card:hover{border-color:#39405a}
+  .card.sortable-drag{opacity:.4}
+  .tabs{display:flex;background:var(--panel-2);border-bottom:1px solid var(--line)}
+  .tab{flex:1;border:0;border-radius:0;background:transparent;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.4px;padding:8px 4px;position:relative;display:flex;align-items:center;justify-content:center;gap:5px}
+  .tab:hover{background:#232739;color:var(--text)}
+  .tab.active{color:var(--text);background:var(--panel)}
+  .tab.active[data-slot="clip"]{box-shadow:inset 0 -2px 0 var(--clip)}
+  .tab.active[data-slot="gimbal"]{box-shadow:inset 0 -2px 0 var(--gimbal)}
+  .tab.active[data-slot="ref"]{box-shadow:inset 0 -2px 0 var(--ref)}
+  .tab .fill{width:6px;height:6px;border-radius:50%;background:#3a3f55;transition:.15s}
+  .tab[data-slot="clip"] .fill.on{background:var(--clip)}
+  .tab[data-slot="gimbal"] .fill.on{background:var(--gimbal)}
+  .tab[data-slot="ref"] .fill.on{background:var(--ref)}
+  .mediawrap{position:relative}
+  .num{position:absolute;top:8px;left:8px;z-index:4;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.15)}
+  .num.cap{border-color:var(--green);color:#c9f5d9}
+  .cardtools{position:absolute;top:6px;right:6px;z-index:4;display:flex;gap:5px;opacity:0;transition:.15s}
+  .card:hover .cardtools{opacity:1}
+  .cardtools button{padding:5px 7px;font-size:11px;background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+  .drag-handle{cursor:grab}.drag-handle:active{cursor:grabbing}
+  .media{position:relative;width:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .grid[data-orient="16-9"] .media{aspect-ratio:16/9}
+  .grid[data-orient="9-16"] .media{aspect-ratio:9/16}
+  .media video,.media iframe,.media img{width:100%;height:100%;object-fit:cover;border:0;display:block;background:#000}
+  .media iframe{object-fit:fill}
+  .media.dragover{box-shadow:0 0 0 2px var(--accent) inset}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);text-align:center;padding:14px;width:100%;height:100%}
+  .empty svg{width:24px;height:24px;opacity:.5}
+  .empty .hint{font-size:11.5px;line-height:1.5;cursor:pointer}
+  .empty .hint:hover{color:var(--text)}
+  .empty .link-add{font-size:11px;color:var(--accent);text-decoration:underline;cursor:pointer}
+  .empty .slotlabel{font-size:10px;letter-spacing:.5px;opacity:.7;text-transform:uppercase}
+  .badge{position:absolute;bottom:8px;right:8px;z-index:2;background:rgba(0,0,0,.65);color:#fff;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;letter-spacing:.4px}
+  .badge.file{background:rgba(63,207,142,.85)}
+  .badge.link{background:rgba(79,140,255,.85)}
+  .body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px}
+  .titlein{font:inherit;font-size:13.5px;font-weight:700;color:var(--text);background:transparent;border:0;border-bottom:1px solid transparent;padding:2px 0;width:100%}
+  .titlein:focus{outline:none;border-bottom-color:var(--accent)}
+  .titlein::placeholder{color:var(--muted);font-weight:600}
+  .notes{font:inherit;font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:100%;resize:vertical;min-height:44px;line-height:1.45}
+  .notes:focus{outline:none;border-color:var(--accent);color:var(--text)}
+  .notes::placeholder{color:#666c85}
+  .metarow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .durwrap{display:flex;align-items:center;gap:5px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-size:12px;color:var(--muted)}
+  .durwrap input{width:34px;background:transparent;border:0;color:var(--text);font:inherit;font-size:12px;font-weight:600;text-align:right}
+  .durwrap input:focus{outline:none}
+  .lenschip{font-size:11px;font-weight:700;color:var(--orange);background:var(--orange-bg);border:1px solid rgba(255,148,54,.4);border-radius:20px;padding:2px 9px}
+  .tag{margin-left:auto;font-size:11px;color:var(--muted)}
+  .addcard{border:1.5px dashed var(--line);background:transparent;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted);cursor:pointer;min-height:120px;transition:.15s}
+  .addcard:hover{border-color:var(--accent);color:var(--accent)}
+  .addcard svg{width:28px;height:28px}
+
+  /* ---------- overview ---------- */
+  #overview{display:none;max-width:1700px;margin:0 auto}
+  body[data-view="overview"][data-screen="board"] #overview{display:block}
+  .ov-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--muted);font-size:12px;flex-wrap:wrap}
+  .ov-legend{display:flex;gap:14px;margin-left:auto;flex-wrap:wrap}
+  .ov-legend span{display:inline-flex;align-items:center;gap:5px}
+  .ov-legend i{width:8px;height:8px;border-radius:50%}
+  .ov-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:12px}
+  .ov-grid[data-orient="9-16"]{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .ov-cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;transition:.12s;position:relative}
+  .ov-cell:hover{border-color:var(--accent-2);transform:translateY(-2px)}
+  .ov-thumb{position:relative;width:100%;background:#000;display:flex;align-items:center;justify-content:center;color:#3a3f55}
+  .ov-grid[data-orient="16-9"] .ov-thumb{aspect-ratio:16/9}
+  .ov-grid[data-orient="9-16"] .ov-thumb{aspect-ratio:9/16}
+  .ov-thumb video,.ov-thumb img{width:100%;height:100%;object-fit:cover}
+  .ov-thumb .ph{font-size:22px;font-weight:800;opacity:.35}
+  .ov-num{position:absolute;top:5px;left:5px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:12px}
+  .ov-dots{position:absolute;top:5px;right:5px;display:flex;gap:3px}
+  .ov-dots i{width:7px;height:7px;border-radius:50%;background:#2a2e3f;border:1px solid rgba(255,255,255,.12)}
+  .ov-dots i.clip.on{background:var(--clip)}
+  .ov-dots i.gimbal.on{background:var(--gimbal)}
+  .ov-dots i.ref.on{background:var(--ref)}
+  .ov-dur{position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px}
+  .ov-cap{padding:7px 9px;font-size:11.5px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .ov-cap.empty{color:var(--muted);font-weight:500;font-style:italic}
+  .ov-add{border:1.5px dashed var(--line);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;font-size:22px;min-height:100px}
+  .ov-add:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ---------- SHOT LIST ---------- */
+  #shotlist{display:none;max-width:430px;margin:0 auto}
+  body[data-view="shotlist"][data-screen="board"] #shotlist{display:block}
+  .sl-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  .sl-hd{background:linear-gradient(135deg,#123E6E,#0e2c4f);padding:13px 15px 14px;display:flex;align-items:flex-start;gap:11px}
+  .sl-cap{width:30px;height:30px;border-radius:8px;border:2px solid rgba(255,255,255,.4);flex:0 0 auto;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;margin-top:2px}
+  .sl-cap.on{background:var(--green-bg);border-color:var(--green)}
+  .sl-cap.on::after{content:"\2713";color:var(--green);font-weight:800;font-size:19px}
+  .sl-hd .t{flex:1;min-width:0}
+  .sl-hd h2{margin:0;font-size:21px;font-weight:800;letter-spacing:.2px}
+  .sl-subin{margin-top:3px;background:transparent;border:0;color:#bcd0e8;font-size:13px;font-weight:500;font-family:inherit;width:100%;padding:0}
+  .sl-subin:focus{outline:none}
+  .sl-subin::placeholder{color:#6f8cad}
+  .sl-hd .rt{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .sl-dur{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:14px;font-weight:800;padding:3px 8px;border-radius:8px;font-family:inherit}
+  .sl-reel{background:transparent;border:0;color:#bcd0e8;font-size:11px;font-weight:600;text-align:right;font-family:inherit;width:96px}
+  .sl-reel:focus{outline:none}
+  .sl-body{padding:13px 15px 12px;display:flex;flex-direction:column;gap:12px}
+  .sl-vidbtn{width:100%;background:var(--panel-2);border:1px dashed var(--line);color:var(--muted);border-radius:10px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+  .sl-vidbtn:hover{border-color:var(--orange);color:var(--orange)}
+  .sl-vidbtn.has{border-style:solid;border-color:var(--green-bd);color:var(--green);background:var(--green-bg)}
+  .sl-seclab{font-size:11px;font-weight:800;letter-spacing:1.1px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .sl-seclab .ln{height:1px;background:var(--line);flex:1}
+  .sl-types4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
+  .sl-tcell{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+  .sl-chk{width:25px;height:25px;border:2px solid #4b5164;border-radius:7px;background:transparent;display:flex;align-items:center;justify-content:center;transition:.12s;flex:0 0 auto}
+  .sl-chk.on{background:var(--green-bg);border-color:var(--green)}
+  .sl-chk.on::after{content:"\2713";color:var(--green);font-weight:800;font-size:16px}
+  .sl-tcell .lb{font-size:12.5px;font-weight:600}
+  .sl-flags{display:flex;flex-direction:column;gap:9px;margin-top:11px}
+  .sl-frow{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .sl-frow .lb{font-size:13.5px;font-weight:600}
+  .sl-frow .mini{font-size:11px;color:var(--dim);margin-left:auto}
+  .sl-selsm{background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:7px;padding:4px 7px;font-size:13px;font-weight:600;font-family:inherit}
+  .sl-frow2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .sl-field{display:flex;align-items:center;gap:12px}
+  .sl-field>.k{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--dim);text-transform:uppercase;width:52px;flex:0 0 auto}
+  .sl-sel,.sl-inp{flex:1;background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px 12px;font-size:15px;font-weight:600;font-family:inherit;width:100%}
+  .sl-sel.set,.sl-inp.set{color:var(--orange);border-color:rgba(255,148,54,.5);background:var(--orange-bg)}
+  .sl-inp::placeholder{color:var(--dim);font-weight:500}
+  .sl-gwrap{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:11px;margin-top:9px}
+  .sl-setrow{display:flex;align-items:center;gap:10px}
+  .sl-setrow .k{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--dim);text-transform:uppercase;width:52px}
+  .sl-btnv{background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:9px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .sl-btnv:hover{border-color:var(--gimbal);color:var(--gimbal)}
+  .sl-btnv.has{border-color:var(--green-bd);color:var(--green);background:var(--green-bg)}
+  .sl-dir .k{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;display:block}
+  .sl-ddrop{position:relative}
+  .sl-ddbtn{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:10px 12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+  .sl-ddbtn:hover{border-color:var(--navy-bd)}
+  .sl-dmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:6px;z-index:20;box-shadow:0 16px 40px rgba(0,0,0,.55);display:none;grid-template-columns:1fr 1fr;gap:4px}
+  .sl-dmenu.open{display:grid}
+  .sl-mitem{padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+  .sl-mitem:hover{background:#1c1f2b}
+  .sl-mitem .n{color:var(--navy-bd);font-weight:800;font-size:12px;opacity:0}
+  .sl-mitem.pick .n{opacity:1}
+  .sl-mdone{grid-column:1/3;text-align:center;padding:8px;color:var(--navy-bd);font-weight:800;font-size:12px;letter-spacing:.5px;cursor:pointer;border-top:1px solid var(--line);margin-top:2px}
+  .sl-seq{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;min-height:4px}
+  .sl-seqchip{background:var(--navy);border:1px solid var(--navy-bd);color:#fff;font-size:13px;font-weight:700;border-radius:16px;padding:6px 8px 6px 10px;display:inline-flex;align-items:center;gap:8px}
+  .sl-seqchip .no{background:rgba(255,255,255,.22);width:17px;height:17px;border-radius:50%;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+  .sl-seqchip .x{cursor:pointer;opacity:.7;font-weight:800;font-size:15px;line-height:1}
+  .sl-seqchip .x:hover{opacity:1}
+  .sl-seqempty{color:var(--dim);font-size:12.5px;font-style:italic}
+  .sl-notes{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .sl-nhd{display:flex;align-items:center;gap:8px;padding:11px 13px;cursor:pointer}
+  .sl-nhd .k{font-size:11px;font-weight:800;letter-spacing:1.1px;color:var(--dim);text-transform:uppercase}
+  .sl-nhd .prev{font-size:13.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+  .sl-nhd .prev.set{color:var(--orange)}
+  .sl-nhd .car{color:var(--muted);transition:.2s;font-size:12px}
+  .sl-notes.open .sl-nhd .car{transform:rotate(180deg)}
+  .sl-nbody{max-height:0;transition:max-height .25s ease;overflow:hidden}
+  .sl-notes.open .sl-nbody{max-height:280px}
+  .sl-nbody .in{border-top:1px solid var(--line);padding:11px 13px;display:flex;flex-direction:column;gap:9px}
+  .sl-ntext{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:10px;font-size:14.5px;font-family:inherit;line-height:1.5;resize:none;min-height:96px}
+  .sl-addlink{align-self:flex-start;font-size:12.5px;color:var(--navy-bd);font-weight:700;cursor:pointer}
+  .sl-addlink.has{color:var(--ref)}
+  /* toolbar + pager */
+  .sl-toolbar{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center}
+  .sl-tbtn{background:var(--panel);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:700;cursor:pointer}
+  .sl-tbtn:hover{border-color:var(--accent);color:var(--text)}
+  .sl-tbtn.del:hover{border-color:var(--danger);color:var(--danger)}
+  .sl-moveto{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:12.5px;font-weight:700;color:var(--muted)}
+  .sl-moveto select{background:transparent;border:0;color:var(--orange);font-family:inherit;font-weight:800;font-size:13px}
+  .sl-pager{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px}
+  .sl-pbtn{width:42px;height:42px;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .sl-pbtn:hover{border-color:var(--orange)}
+  .sl-jump{background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:15px;font-weight:800;letter-spacing:.3px;padding:9px 16px;border-radius:22px;cursor:pointer;display:flex;align-items:center;gap:9px}
+  .sl-jump:hover{border-color:var(--orange)}
+  .sl-jump b{color:var(--orange)}
+  .sl-sheet{position:fixed;inset:0;background:rgba(0,0,0,.62);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;z-index:60}
+  .sl-sheet.open{display:flex}
+  .sl-sheetcard{background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:20px 20px 0 0;width:100%;max-width:430px;padding:16px 16px 24px;animation:slup .22s ease}
+  @keyframes slup{from{transform:translateY(24px);opacity:.5}to{transform:none;opacity:1}}
+  .sl-sheettop{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+  .sl-sheettop .close{cursor:pointer;color:var(--muted);font-size:17px}
+  .sl-scenegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;max-height:58vh;overflow:auto}
+  .sl-snum{background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:11px;cursor:grab;position:relative;padding:9px 9px 10px;min-height:66px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;text-align:left;touch-action:none;overflow:hidden}
+  .sl-snum:hover{border-color:var(--orange)}
+  .sl-snum .n{font-size:16px;font-weight:800;line-height:1}
+  .sl-snum .ttl{font-size:10.5px;font-weight:600;color:var(--muted);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .sl-snum.cur{background:var(--orange);border-color:var(--orange);color:#12141c}
+  .sl-snum.cur .n{color:#12141c}.sl-snum.cur .ttl{color:#4a3312}
+  .sl-snum.cap::after{content:"";position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .sl-snum.dragging{opacity:.55;border-color:var(--orange);box-shadow:0 10px 26px rgba(0,0,0,.5);cursor:grabbing}
+  .sl-sheethint{margin-top:12px;font-size:11.5px;color:var(--dim);display:flex;align-items:center;gap:7px}
+  .sl-sheethint .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+  .sl-emptylist{text-align:center;color:var(--muted);padding:50px 20px;line-height:1.7}
+
+  .help{max-width:1600px;margin:26px auto 0;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.7}
+  body[data-view="overview"] .help.storyhelp,body[data-view="shotlist"] .help.storyhelp{display:none}
+  .help b{color:var(--text)}
+  .help .chip{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;color:#fff;vertical-align:middle}
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:100;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  input[type=file]{display:none}
+  @media(max-width:640px){header{padding:12px}main{padding:16px 12px 100px}}
+</style>
+</head>
+<body data-screen="home" data-view="board">
+
+<header id="homeHeader">
+  <div class="brand"><span class="dot"></span><h1>SHOT STORYBOARD</h1><span class="count" id="homeCount"></span></div>
+  <div class="controls"><button id="newBoardBtn" class="primary">＋ New board</button></div>
+</header>
+
+<header id="boardHeader">
+  <div class="brand">
+    <button id="backBtn" class="ghost" title="Back to all boards">‹ Boards</button>
+    <div class="namewrap">
+      <input class="boardname" id="boardName" placeholder="Board name">
+      <input class="boardsub" id="boardSub" placeholder="+ address / reference (optional)">
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="controls">
+    <div class="seg viewseg" title="Switch view"><button id="vShotlist">Shot List</button><button id="vBoard" class="active">Storyboard</button><button id="vOverview">Overview</button></div>
+    <div class="seg hide-sl" title="Horizontal or vertical edit (each keeps its own order)"><button id="oH" class="active">16:9</button><button id="oV">9:16</button></div>
+    <button id="syncBtn" class="only-board" title="Link the 16:9 and 9:16 shot order so moving one moves both">⇄ Sync H↔V</button>
+    <div class="seg only-board" title="Columns per row"><button data-cols="3">3</button><button data-cols="4" class="active">4</button><button data-cols="5">5</button></div>
+    <button id="addBtn" class="primary">＋ Add shot</button>
+    <button id="menuExport" class="ghost" title="Save this board to a file">Export</button>
+    <button id="menuImport" class="ghost" title="Load a board file as a new board">Import</button>
+    <input type="file" id="importFile" accept="application/json">
+  </div>
+</header>
+
+<main>
+  <section id="home">
+    <div class="home-intro">Your storyboards — one per style, video, or property type. Click to open, or duplicate one as a template.</div>
+    <div class="boards-grid" id="boardsGrid"></div>
+  </section>
+
+  <section id="boardView">
+    <div class="grid" id="grid" data-orient="16-9" style="--cols:4"></div>
+
+    <section id="overview">
+      <div class="ov-head"><span>Every shot at a glance — click any tile to open it.</span>
+        <div class="ov-legend"><span><i style="background:var(--clip)"></i>Clip</span><span><i style="background:var(--gimbal)"></i>Gimbal</span><span><i style="background:var(--ref)"></i>Ref</span></div></div>
+      <div class="ov-grid" id="ovGrid" data-orient="16-9"></div>
+    </section>
+
+    <section id="shotlist"></section>
+
+    <div class="help storyhelp">
+      <b>Each shot has three tabs.</b>
+      <span class="chip" style="background:var(--clip)">CLIP</span> the actual shot ·
+      <span class="chip" style="background:var(--gimbal)">GIMBAL</span> a reference of the camera move ·
+      <span class="chip" style="background:var(--ref)">REF</span> the idea source or a deeper how-to.
+      Drop a video on any tab or hit <b>+ Link</b>. On each card: <b>⠿</b> drag to reorder, <b>＋</b> insert, <b>⟲</b> clear, <b>✕</b> delete.
+      <b>16:9 / 9:16</b> are two edits with their own order; <b>⇄ Sync</b> moves a shot in both. The <b>Shot List</b> tab is the same shots, planned scene-by-scene.
+    </div>
+  </section>
+</main>
+
+<div class="sl-sheet" id="slSheet" onclick="if(event.target===this)slCloseJump()">
+  <div class="sl-sheetcard">
+    <div class="sl-sheettop">All scenes — tap to open · drag to reorder <span class="close" onclick="slCloseJump()">✕</span></div>
+    <div class="sl-scenegrid" id="slSceneGrid"></div>
+    <div class="sl-sheethint"><span class="dot"></span> green dot = captured on the shoot · numbers renumber as you drag</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const LS='shotStoryboard.v3';
+const DB_NAME='shotStoryboardDB';const STORE='videos';
+const SLOTS=['clip','gimbal','ref'];const SLOT_LABEL={clip:'Clip',gimbal:'Gimbal',ref:'Ref'};
+const ACCENTS=['#4f8cff','#c9a04a','#a06bff','#3fcf8e','#ff6b8b','#37c6d0','#f2994a'];
+const LENSES=['—','Drone','12mm','24mm','50mm'];
+const GIMBALS=['—','FPV','PF (pan follow)','PTF (pan-tilt)','360'];
+const TYPES=[['regular','Regular'],['cool','Cool'],['hero','Hero'],['boss','Boss']];
+const MOVES=['Push','Pull','Tilt up','Tilt down','Pan left','Pan right','Orbit left','Orbit right','Crane up','Crane down','Reveal'];
+const DURS=[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7];
+
+/* ---------- IndexedDB ---------- */
+let _db=null;
+function db(){return _db?Promise.resolve(_db):new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(STORE);r.onsuccess=()=>{_db=r.result;res(_db)};r.onerror=()=>rej(r.error)})}
+async function putBlob(k,b){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).put(b,k);t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function getBlob(k){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readonly');const q=t.objectStore(STORE).get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function delBlob(k){const d=await db();return new Promise((res)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).delete(k);t.oncomplete=res})}
+function blobKey(id,slot){return slot==='clip'?id:id+':'+slot}
+
+/* ---------- state ---------- */
+let app=loadApp();let ai=0;
+function uid(){return 's'+Math.random().toString(36).slice(2,10)}
+function bid(){return 'b'+Math.random().toString(36).slice(2,10)}
+function pickAccent(){return ACCENTS[(ai++)%ACCENTS.length]}
+function blankMedia(){return {clip:{kind:'',link:''},gimbal:{kind:'',link:''},ref:{kind:'',link:''}}}
+function blankType(){return {regular:false,cool:false,hero:false,boss:false,speedRamp:false,rampCombo:false,rampClip:0,forwardReverse:false,dateNight:false}}
+function newShot(){return {id:uid(),title:'',notes:'',dur:3,media:blankMedia(),sub:'',reel:'Standard reel',lens:'—',gimbalSetting:'—',moves:[],captured:false,type:blankType()}}
+function ensureShot(sh){
+  if(!sh.media){sh.media=blankMedia();sh.media.clip={kind:sh.kind||'',link:sh.link||''};delete sh.kind;delete sh.link}
+  SLOTS.forEach(sl=>{if(!sh.media[sl])sh.media[sl]={kind:'',link:''}});
+  if(sh.sub===undefined)sh.sub='';if(sh.reel===undefined)sh.reel='Standard reel';
+  if(sh.lens===undefined)sh.lens='—';if(sh.gimbalSetting===undefined)sh.gimbalSetting='—';
+  if(!sh.moves)sh.moves=[];if(sh.captured===undefined)sh.captured=false;
+  if(!sh.type)sh.type=blankType();
+  return sh;
+}
+function newBoard(name,type,count){
+  const b={id:bid(),name:name||'Untitled board',type:type||'',sub:'',accent:pickAccent(),created:Date.now(),updated:Date.now(),orient:'16-9',cols:4,view:'board',linkOrder:false,curScene:0,shots:[],orderH:[],orderV:[],orderS:[]};
+  for(let i=0;i<(count||6);i++)addShotTo(b);
+  return b;
+}
+function makeBoardFromV2(v2){
+  const b={id:bid(),name:'My Storyboard',type:'',sub:'',accent:pickAccent(),created:Date.now(),updated:Date.now(),orient:v2.orient||'16-9',cols:v2.cols||4,view:'board',linkOrder:false,curScene:0,shots:(v2.shots||[]).map(ensureShot),orderH:[],orderV:[],orderS:[]};
+  b.orderH=b.shots.map(s=>s.id);b.orderV=[...b.orderH];b.orderS=[...b.orderH];return b;
+}
+function loadApp(){
+  try{const raw=JSON.parse(localStorage.getItem(LS));if(raw&&raw.boards){raw.boards.forEach(migrateBoard);return raw}}catch(e){}
+  try{const v2=JSON.parse(localStorage.getItem('shotStoryboard.v2'));if(v2&&v2.shots){const b=makeBoardFromV2(v2);return {screen:'board',activeId:b.id,boards:[b]}}}catch(e){}
+  return {screen:'home',activeId:null,boards:[]};
+}
+function migrateBoard(b){
+  (b.shots||[]).forEach(ensureShot);
+  if(!b.orderH)b.orderH=b.shots.map(s=>s.id);
+  if(!b.orderV)b.orderV=[...b.orderH];
+  if(!b.orderS)b.orderS=[...b.orderH];
+  if(b.linkOrder==null)b.linkOrder=false;if(b.sub===undefined)b.sub='';if(b.curScene==null)b.curScene=0;
+}
+function save(){const b=board();if(b)b.updated=Date.now();localStorage.setItem(LS,JSON.stringify(app))}
+let _t;function saveLite(){clearTimeout(_t);_t=setTimeout(save,250)}
+function board(){return app.boards.find(b=>b.id===app.activeId)}
+function addShotTo(b,afterId){
+  const sh=newShot();b.shots.push(sh);
+  [b.orderH,b.orderV,b.orderS].forEach(arr=>{if(afterId){const i=arr.indexOf(afterId);if(i>=0){arr.splice(i+1,0,sh.id);return}}arr.push(sh.id)});
+  return sh;
+}
+
+/* ---------- helpers ---------- */
+const grid=document.getElementById('grid');const ovGrid=document.getElementById('ovGrid');
+const boardsGrid=document.getElementById('boardsGrid');const shotlistEl=document.getElementById('shotlist');
+const activeTab={};
+const toast=(m)=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),1900)};
+function ytEmbed(url){let m;
+  if((m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/)))return{embed:`https://www.youtube.com/embed/${m[1]}`,thumb:`https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg`};
+  if((m=url.match(/vimeo\.com\/(?:video\/)?(\d+)/)))return{embed:`https://player.vimeo.com/video/${m[1]}`,thumb:null};
+  return null}
+function isVideoUrl(u){return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(u)}
+function slotFilled(sh,sl){const m=sh.media[sl];return m.kind==='file'||!!m.link}
+function orderedShots(b){const arr=b.orient==='9-16'?b.orderV:b.orderH;return arr.map(id=>b.shots.find(s=>s.id===id)).filter(Boolean)}
+function slShots(b){return b.orderS.map(id=>b.shots.find(s=>s.id===id)).filter(Boolean)}
+function esc(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function timeAgo(t){const d=(Date.now()-t)/1000;if(d<60)return'just now';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'}
+
+/* ============================================================ RENDER ============================================================ */
+function render(){document.body.dataset.screen=app.screen;if(app.screen==='home')renderHome();else renderBoard()}
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  boardsGrid.innerHTML='';
+  document.getElementById('homeCount').textContent=app.boards.length?app.boards.length+(app.boards.length===1?' board':' boards'):'';
+  if(!app.boards.length){const e=document.createElement('div');e.className='home-empty';e.style.gridColumn='1/-1';e.innerHTML='No boards yet.<br>Create your first storyboard to get started.';boardsGrid.appendChild(e)}
+  app.boards.forEach(b=>boardsGrid.appendChild(boardCardEl(b)));
+  const add=document.createElement('div');add.className='newboard';
+  add.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg><span style="font-size:13px;font-weight:600">New board</span>';
+  add.onclick=createBoard;boardsGrid.appendChild(add);save();
+}
+function boardCardEl(b){
+  const card=document.createElement('div');card.className='board-card';const shots=b.shots.length;
+  card.innerHTML=`<div class="cover"></div>
+    <div class="board-actions"><button data-act="rename" title="Rename">✎</button><button data-act="dup" title="Duplicate as template">⎘</button><button data-act="del" title="Delete board">✕</button></div>
+    <div class="board-meta"><div class="board-name">${esc(b.name)}</div>
+    <div class="board-sub">${b.type?`<span class="type-chip">${esc(b.type)}</span>`:''}${b.sub?`<span>${esc(b.sub)}</span><span>·</span>`:''}<span>${shots} shot${shots===1?'':'s'}</span><span>·</span><span>${timeAgo(b.updated||b.created)}</span></div></div>`;
+  coverFill(card.querySelector('.cover'),b);
+  card.onclick=(e)=>{if(e.target.closest('.board-actions'))return;openBoard(b.id)};
+  card.querySelector('[data-act="rename"]').onclick=(e)=>{e.stopPropagation();renameBoard(b.id)};
+  card.querySelector('[data-act="dup"]').onclick=(e)=>{e.stopPropagation();duplicateBoard(b.id)};
+  card.querySelector('[data-act="del"]').onclick=(e)=>{e.stopPropagation();deleteBoard(b.id)};
+  return card;
+}
+async function coverFill(el,b){
+  const withMedia=[];
+  for(const id of b.orderH){const sh=b.shots.find(s=>s.id===id);if(sh&&SLOTS.some(sl=>slotFilled(sh,sl)))withMedia.push(sh);if(withMedia.length>=4)break}
+  if(!withMedia.length){el.classList.add('gradient');el.style.setProperty('--acc',b.accent);el.innerHTML=`<span class="cover-emoji">${esc((b.type||b.name||'🎬').trim().slice(0,2).toUpperCase())}</span>`;return}
+  el.classList.add('mosaic');withMedia.forEach(sh=>{const c=document.createElement('div');c.className='cover-cell';el.appendChild(c);thumbInto(c,sh)});
+}
+
+/* ---------- BOARD (shell) ---------- */
+function renderBoard(){
+  const b=board();if(!b){app.screen='home';return render()}
+  document.body.dataset.view=b.view;
+  document.getElementById('boardName').value=b.name;
+  document.getElementById('boardSub').value=b.sub||'';
+  document.getElementById('syncBtn').classList.toggle('on',b.linkOrder);
+  grid.dataset.orient=b.orient;grid.style.setProperty('--cols',b.cols);ovGrid.dataset.orient=b.orient;
+  setActive(b.orient==='9-16'?'oV':'oH',b.orient==='9-16'?'oH':'oV');
+  ['vBoard','vShotlist','vOverview'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(b.view==='shotlist'?'vShotlist':b.view==='overview'?'vOverview':'vBoard').classList.add('active');
+  document.querySelectorAll('[data-cols]').forEach(x=>x.classList.toggle('active',+x.dataset.cols===b.cols));
+
+  const shots=orderedShots(b);
+  grid.innerHTML='';
+  shots.forEach((sh,i)=>grid.appendChild(cardEl(b,sh,i)));
+  const add=document.createElement('div');add.className='addcard';
+  add.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg><span style="font-size:12px;font-weight:600">Add shot</span>';
+  add.onclick=()=>addShot();grid.appendChild(add);
+
+  renderOverview(b,shots);
+  renderShotList(b);
+  document.getElementById('count').textContent=shots.length+(shots.length===1?' shot':' shots');
+  save();
+}
+
+function cardEl(b,sh,index){
+  const slot=activeTab[sh.id]||'clip';
+  const card=document.createElement('div');card.className='card';card.dataset.id=sh.id;
+  const lens=sh.lens&&sh.lens!=='—'?`<span class="lenschip">${esc(sh.lens)}</span>`:'';
+  card.innerHTML=`
+    <div class="tabs">${SLOTS.map(sl=>`<button class="tab ${sl===slot?'active':''}" data-slot="${sl}">${SLOT_LABEL[sl]}<i class="fill ${slotFilled(sh,sl)?'on':''}"></i></button>`).join('')}</div>
+    <div class="mediawrap">
+      <span class="num ${sh.captured?'cap':''}">${String(index+1).padStart(2,'0')}${sh.captured?' ✓':''}</span>
+      <div class="cardtools">
+        <button class="drag-handle" title="Drag to reorder">⠿</button>
+        <button data-act="insert" title="Insert a shot after this one">＋</button>
+        <button data-act="clear" title="Clear this tab">⟲</button>
+        <button data-act="del" title="Delete shot">✕</button>
+      </div>
+      <div class="media"></div>
+    </div>
+    <div class="body">
+      <input class="titlein" placeholder="Shot title…" value="${esc(sh.title)}">
+      <textarea class="notes" placeholder="What happens in this shot — movement, angle, subject…">${esc(sh.notes)}</textarea>
+      <div class="metarow"><div class="durwrap"><input type="number" min="0" max="30" step="0.5" value="${sh.dur}"> <span>sec</span></div>${lens}<span class="tag">#${index+1}</span></div>
+    </div>`;
+  const media=card.querySelector('.media');fillMedia(media,sh,slot);
+  card.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{activeTab[sh.id]=t.dataset.slot;renderBoard()});
+  const ti=card.querySelector('.titlein');ti.oninput=()=>{sh.title=ti.value;saveLite()};
+  const nt=card.querySelector('.notes');nt.oninput=()=>{sh.notes=nt.value;saveLite()};
+  const du=card.querySelector('.durwrap input');du.oninput=()=>{sh.dur=parseFloat(du.value)||0;saveLite()};
+  card.querySelector('[data-act="insert"]').onclick=()=>addShot(sh.id);
+  card.querySelector('[data-act="del"]').onclick=()=>delShot(sh.id);
+  card.querySelector('[data-act="clear"]').onclick=()=>clearMedia(sh.id,activeTab[sh.id]||'clip');
+  media.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('Files')){e.preventDefault();media.classList.add('dragover')}});
+  media.addEventListener('dragleave',()=>media.classList.remove('dragover'));
+  media.addEventListener('drop',e=>{e.preventDefault();media.classList.remove('dragover');const f=[...e.dataTransfer.files].find(f=>f.type.startsWith('video/'));if(f)attachFile(sh.id,activeTab[sh.id]||'clip',f)});
+  makeDraggable(card,sh.id);
+  return card;
+}
+
+async function fillMedia(media,sh,slot){
+  media.innerHTML='';const m=sh.media[slot];
+  if(m.kind==='file'){const blob=await getBlob(blobKey(sh.id,slot));if(blob){const v=document.createElement('video');v.src=URL.createObjectURL(blob);v.controls=true;v.muted=true;v.loop=true;v.playsInline=true;media.appendChild(v);media.insertAdjacentHTML('beforeend','<span class="badge file">FILE</span>');return}m.kind='';saveLite()}
+  if(m.kind==='link'&&m.link){const yt=ytEmbed(m.link);
+    if(yt){media.innerHTML=`<iframe src="${yt.embed}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><span class="badge link">LINK</span>`}
+    else if(isVideoUrl(m.link)){media.innerHTML=`<video src="${esc(m.link)}" controls muted loop playsinline></video><span class="badge link">LINK</span>`}
+    else{media.innerHTML=`<a href="${esc(m.link)}" target="_blank" class="empty" style="text-decoration:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1" stroke-linecap="round"/></svg><span class="hint" style="word-break:break-all">${esc(m.link)}</span></a><span class="badge link">LINK</span>`}
+    return}
+  const emp=document.createElement('div');emp.className='empty';
+  emp.innerHTML=`<span class="slotlabel">${SLOT_LABEL[slot]}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3V9z" fill="currentColor" stroke="none"/></svg><span class="hint">Drop a video here</span><span class="link-add">＋ Link</span>`;
+  emp.querySelector('.hint').onclick=(e)=>{e.stopPropagation();pickFile(sh.id,slot)};
+  emp.querySelector('svg').onclick=(e)=>{e.stopPropagation();pickFile(sh.id,slot)};
+  emp.querySelector('.link-add').onclick=(e)=>{e.stopPropagation();addLink(sh.id,slot)};
+  media.appendChild(emp);
+}
+
+/* ---------- OVERVIEW ---------- */
+function renderOverview(b,shots){
+  ovGrid.innerHTML='';
+  shots.forEach((sh,i)=>{
+    const cell=document.createElement('div');cell.className='ov-cell';
+    cell.innerHTML=`<div class="ov-thumb"><span class="ph">${String(i+1).padStart(2,'0')}</span></div><span class="ov-num">${String(i+1).padStart(2,'0')}</span><div class="ov-dots">${SLOTS.map(sl=>`<i class="${sl} ${slotFilled(sh,sl)?'on':''}"></i>`).join('')}</div><span class="ov-dur">${sh.dur||0}s</span><div class="ov-cap ${sh.title?'':'empty'}">${sh.title?esc(sh.title):'Untitled shot'}</div>`;
+    cell.onclick=()=>openShot(sh.id);thumbInto(cell.querySelector('.ov-thumb'),sh);ovGrid.appendChild(cell);
+  });
+  const add=document.createElement('div');add.className='ov-cell ov-add';add.textContent='＋';add.onclick=()=>addShot();ovGrid.appendChild(add);
+}
+async function thumbInto(el,sh){
+  for(const sl of SLOTS){const m=sh.media[sl];
+    if(m.kind==='file'){const blob=await getBlob(blobKey(sh.id,sl));if(blob){const v=document.createElement('video');v.src=URL.createObjectURL(blob);v.muted=true;v.playsInline=true;v.preload='auto';v.addEventListener('loadeddata',()=>{try{v.currentTime=.1}catch(e){}});el.innerHTML='';el.appendChild(v);return true}}
+    if(m.kind==='link'&&m.link){const yt=ytEmbed(m.link);if(yt&&yt.thumb){const img=new Image();img.src=yt.thumb;el.innerHTML='';el.appendChild(img);return true}}
+  }
+  return false;
+}
+function openShot(id){const b=board();b.view='board';renderBoard();requestAnimationFrame(()=>{const c=grid.querySelector(`.card[data-id="${id}"]`);if(c){c.scrollIntoView({behavior:'smooth',block:'center'});c.animate([{boxShadow:'0 0 0 2px var(--accent-2)'},{boxShadow:'0 0 0 0 transparent'}],{duration:1200})}})}
+
+/* ---------- SHOT LIST ---------- */
+function renderShotList(b){
+  const list=slShots(b);
+  if(!list.length){shotlistEl.innerHTML=`<div class="sl-emptylist">No scenes yet.<br><button class="sl-tbtn" onclick="addShot()">＋ Add the first scene</button></div>`;return}
+  if(b.curScene>=list.length)b.curScene=list.length-1;if(b.curScene<0)b.curScene=0;
+  const i=b.curScene,sh=list[i],t=sh.type;
+  const durList=DURS.includes(sh.dur)?DURS:[...DURS,sh.dur].sort((a,b)=>a-b);
+  const dopts=durList.map(d=>`<option ${d==sh.dur?'selected':''}>${d}</option>`).join('');
+  const lopts=LENSES.map(l=>`<option ${l===sh.lens?'selected':''}>${l}</option>`).join('');
+  const gopts=GIMBALS.map(g=>`<option ${g===sh.gimbalSetting?'selected':''}>${g}</option>`).join('');
+  const clipHas=slotFilled(sh,'clip'),gimbHas=slotFilled(sh,'gimbal'),refHas=slotFilled(sh,'ref');
+  const notePrev=sh.notes?esc(sh.notes):'Tap to add a note…';
+  const moveOpts=list.map((_,k)=>`<option ${k===i?'selected':''}>${k+1}</option>`).join('');
+  shotlistEl.innerHTML=`
+  <div class="sl-card">
+    <div class="sl-hd">
+      <div class="sl-cap ${sh.captured?'on':''}" onclick="slToggleCap()"></div>
+      <div class="t"><h2>Scene ${i+1}</h2><input class="sl-subin" id="slSub" placeholder="Exterior · Sony" value="${esc(sh.sub)}"></div>
+      <div class="rt"><select class="sl-dur" id="slDur">${dopts}</select><input class="sl-reel" id="slReel" value="${esc(sh.reel)}"></div>
+    </div>
+    <div class="sl-body">
+      <button class="sl-vidbtn ${clipHas?'has':''}" onclick="slVid('clip')">${clipHas?'✓ Shot video attached — tap to change':'＋ Add shot video'}</button>
+      <div>
+        <div class="sl-seclab">Shot type <span class="ln"></span></div>
+        <div class="sl-types4">${TYPES.map(([k,lb])=>`<div class="sl-tcell" onclick="slType('${k}')"><div class="sl-chk ${t[k]?'on':''}"></div><span class="lb">${lb}</span></div>`).join('')}</div>
+        <div class="sl-flags">
+          <div class="sl-frow" onclick="slType('speedRamp')"><div class="sl-chk ${t.speedRamp?'on':''}"></div><span class="lb">Speed ramp</span></div>
+          <div class="sl-frow"><div class="sl-chk ${t.rampCombo?'on':''}" onclick="slType('rampCombo')"></div><span class="lb">Ramp combo</span><span class="mini">clip #</span><select class="sl-selsm" id="slRampClip">${[0,1,2,3,4,5].map(n=>`<option ${n==t.rampClip?'selected':''}>${n}</option>`).join('')}</select></div>
+          <div class="sl-frow2">
+            <div class="sl-frow" onclick="slType('forwardReverse')"><div class="sl-chk ${t.forwardReverse?'on':''}"></div><span class="lb">Forward reverse</span></div>
+            <div class="sl-frow" onclick="slType('dateNight')"><div class="sl-chk ${t.dateNight?'on':''}"></div><span class="lb">Date night</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sl-field"><span class="k">Lens</span><select class="sl-sel ${sh.lens!=='—'?'set':''}" id="slLens">${lopts}</select></div>
+      <div class="sl-field"><span class="k">Shot</span><input class="sl-inp ${sh.title?'set':''}" id="slTitle" placeholder="Describe the shot…" value="${esc(sh.title)}"></div>
+      <div>
+        <div class="sl-seclab">Gimbal <span class="ln"></span></div>
+        <div class="sl-gwrap">
+          <div class="sl-setrow"><span class="k">Setting</span><select class="sl-sel ${sh.gimbalSetting!=='—'?'set':''}" id="slGimbal">${gopts}</select><button class="sl-btnv ${gimbHas?'has':''}" onclick="slVid('gimbal')">${gimbHas?'✓ Video':'＋ Video'}</button></div>
+          <div class="sl-dir">
+            <span class="k">Direction — tap to build the sequence</span>
+            <div class="sl-ddrop"><div class="sl-ddbtn" onclick="slToggleMenu()"><span>＋ Add movement</span><span>▾</span></div><div class="sl-dmenu" id="slDmenu"></div></div>
+            <div class="sl-seq" id="slSeq"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sl-notes" id="slNotes"><div class="sl-nhd" onclick="document.getElementById('slNotes').classList.toggle('open')"><span class="k">Notes</span><span class="prev ${sh.notes?'set':''}" id="slNotePrev">${notePrev}</span><span class="car">▾</span></div>
+        <div class="sl-nbody"><div class="in"><textarea class="sl-ntext" id="slNoteText" placeholder="Tap to add a note…">${esc(sh.notes)}</textarea><span class="sl-addlink ${refHas?'has':''}" onclick="slVid('reflink')">${refHas?'✓ Link added':'＋ Add link'}</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="sl-toolbar">
+    <span class="sl-moveto">Move to <select id="slMoveTo" onchange="slMoveTo(this.value)">${moveOpts}</select></span>
+    <button class="sl-tbtn" onclick="addShot(slCur().id)">＋ Insert scene</button>
+    <button class="sl-tbtn" onclick="slCopyPrompt()">⎘ Copy scenes to…</button>
+    <button class="sl-tbtn del" onclick="delShot(slCur().id)">✕ Delete scene</button>
+  </div>
+  <div class="sl-pager">
+    <div class="sl-pbtn" onclick="slStep(-1)">‹</div>
+    <button class="sl-jump" onclick="slOpenJump()"><span>Scene <b>${i+1}</b> / ${list.length}</span></button>
+    <div class="sl-pbtn" onclick="slStep(1)">›</div>
+  </div>`;
+
+  // bind inputs
+  document.getElementById('slSub').oninput=e=>{sh.sub=e.target.value;saveLite()};
+  document.getElementById('slReel').oninput=e=>{sh.reel=e.target.value;saveLite()};
+  document.getElementById('slDur').onchange=e=>{sh.dur=parseFloat(e.target.value);save()};
+  document.getElementById('slRampClip').onchange=e=>{sh.type.rampClip=+e.target.value;save()};
+  document.getElementById('slLens').onchange=e=>{sh.lens=e.target.value;renderBoard()};
+  document.getElementById('slGimbal').onchange=e=>{sh.gimbalSetting=e.target.value;renderBoard()};
+  const ti=document.getElementById('slTitle');ti.oninput=()=>{sh.title=ti.value;ti.classList.toggle('set',!!ti.value);saveLite()};
+  const nt=document.getElementById('slNoteText');nt.oninput=()=>{sh.notes=nt.value;saveLite()};
+  slBuildMenu();slRenderSeq();
+}
+function slCur(){const b=board();return slShots(b)[b.curScene]}
+function slToggleCap(){const sh=slCur();sh.captured=!sh.captured;renderBoard()}
+function slType(k){const sh=slCur();sh.type[k]=!sh.type[k];save();renderShotList(board())}
+function slStep(d){const b=board();const n=slShots(b).length;b.curScene=Math.min(n-1,Math.max(0,b.curScene+d));renderShotList(b);window.scrollTo({top:0,behavior:'smooth'})}
+function slMoveTo(v){const b=board();const from=b.curScene,to=Math.min(slShots(b).length-1,Math.max(0,(+v)-1));if(from===to)return;const id=b.orderS[from];b.orderS.splice(from,1);b.orderS.splice(to,0,id);b.curScene=to;save();renderBoard();toast('Scene moved to '+(to+1))}
+function slVid(which){const sh=slCur();if(which==='reflink')return addLink(sh.id,'ref');pickFile(sh.id,which)}
+/* direction dropdown */
+function slBuildMenu(){const sh=slCur();const menu=document.getElementById('slDmenu');if(!menu)return;menu.innerHTML='';
+  MOVES.forEach(m=>{const picked=sh.moves.includes(m);const it=document.createElement('div');it.className='sl-mitem'+(picked?' pick':'');it.innerHTML=`<span>${m}</span><span class="n">${picked?('#'+(sh.moves.indexOf(m)+1)):''}</span>`;it.onclick=(e)=>{e.stopPropagation();slToggleMove(m)};menu.appendChild(it)});
+  const done=document.createElement('div');done.className='sl-mdone';done.textContent='DONE';done.onclick=(e)=>{e.stopPropagation();menu.classList.remove('open')};menu.appendChild(done);
+}
+function slToggleMove(m){const sh=slCur();const i=sh.moves.indexOf(m);if(i>=0)sh.moves.splice(i,1);else sh.moves.push(m);save();slRenderSeq();slBuildMenu()}
+function slRenderSeq(){const sh=slCur();const el=document.getElementById('slSeq');if(!el)return;
+  if(!sh.moves.length){el.innerHTML='<span class="sl-seqempty">No movement yet — tap “Add movement”.</span>';return}
+  el.innerHTML=sh.moves.map((m,i)=>`<span class="sl-seqchip"><span class="no">${i+1}</span>${esc(m)}<span class="x" onclick="slToggleMove('${m.replace(/'/g,"\\'")}')">×</span></span>`).join('');
+}
+function slToggleMenu(){const m=document.getElementById('slDmenu');m.classList.toggle('open');slBuildMenu()}
+document.addEventListener('click',e=>{if(!e.target.closest('.sl-ddrop')){const m=document.getElementById('slDmenu');if(m)m.classList.remove('open')}});
+/* jump grid */
+function slOpenJump(){slBuildGrid();document.getElementById('slSheet').classList.add('open')}
+function slCloseJump(){document.getElementById('slSheet').classList.remove('open')}
+function slBuildGrid(){
+  const b=board();const list=slShots(b);const g=document.getElementById('slSceneGrid');g.innerHTML='';
+  list.forEach((sh,k)=>{
+    const btn=document.createElement('button');
+    btn.className='sl-snum'+(k===b.curScene?' cur':'')+(sh.captured?' cap':'');
+    btn.dataset.id=sh.id;
+    btn.innerHTML=`<span class="n">${k+1}</span><span class="ttl">${sh.title?esc(sh.title):'—'}</span>`;
+    slAttachSort(btn,sh.id);
+    g.appendChild(btn);
+  });
+}
+function slRenumberGrid(){const g=document.getElementById('slSceneGrid');[...g.children].forEach((el,i)=>{const n=el.querySelector('.n');if(n)n.textContent=i+1})}
+function slAttachSort(el,id){
+  el.addEventListener('pointerdown',e=>{
+    if(e.button&&e.button!==0)return;
+    const sx=e.clientX,sy=e.clientY;let dragging=false;
+    const move=ev=>{
+      if(!dragging){if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<7)return;dragging=true;el.classList.add('dragging');el.style.pointerEvents='none'}
+      const under=document.elementFromPoint(ev.clientX,ev.clientY);
+      const tile=under&&under.closest?under.closest('.sl-snum'):null;
+      if(tile&&tile!==el){
+        const g=document.getElementById('slSceneGrid');const kids=[...g.children];
+        const ei=kids.indexOf(el),ti=kids.indexOf(tile);
+        if(ti<ei)g.insertBefore(el,tile);else g.insertBefore(el,tile.nextSibling);
+        slRenumberGrid();
+      }
+    };
+    const up=()=>{
+      document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);
+      el.style.pointerEvents='';const b=board();
+      if(!dragging){b.curScene=b.orderS.indexOf(id);slCloseJump();renderShotList(b);window.scrollTo({top:0,behavior:'smooth'});return}
+      el.classList.remove('dragging');
+      const g=document.getElementById('slSceneGrid');
+      b.orderS=[...g.children].map(c=>c.dataset.id).filter(Boolean);
+      b.curScene=b.orderS.indexOf(id);
+      save();renderShotList(b);slBuildGrid();toast('Scenes reordered ✓');
+    };
+    document.addEventListener('pointermove',move);document.addEventListener('pointerup',up);
+  });
+}
+function slCopyPrompt(){
+  const b=board();const others=app.boards.filter(x=>x.id!==b.id);
+  if(!others.length){toast('No other board to copy into — create one first');return}
+  const list=others.map((x,i)=>`${i+1}. ${x.name}`).join('\n');
+  const pick=prompt('Copy ALL scenes from this board into which board?\n\n'+list+'\n\nEnter a number:');
+  if(pick===null)return;const idx=parseInt(pick,10)-1;if(isNaN(idx)||idx<0||idx>=others.length){toast('Invalid choice');return}
+  copyScenesTo(others[idx].id);
+}
+async function copyScenesTo(targetId){
+  const src=board();const tgt=app.boards.find(x=>x.id===targetId);if(!tgt)return;toast('Copying scenes…');
+  for(const id of src.orderS){
+    const sh=src.shots.find(s=>s.id===id);if(!sh)continue;
+    const clone=structuredClone(sh);const nid=uid();clone.id=nid;tgt.shots.push(clone);
+    [tgt.orderH,tgt.orderV,tgt.orderS].forEach(a=>a.push(nid));
+    for(const sl of SLOTS){if(sh.media[sl].kind==='file'){const blob=await getBlob(blobKey(id,sl));if(blob)await putBlob(blobKey(nid,sl),blob)}}
+  }
+  save();toast('Scenes copied to “'+tgt.name+'” ✓');
+}
+
+/* ---------- media actions ---------- */
+function pickFile(id,slot){const inp=document.createElement('input');inp.type='file';inp.accept='video/*';inp.onchange=()=>{if(inp.files[0])attachFile(id,slot,inp.files[0])};inp.click()}
+async function attachFile(id,slot,file){const b=board();const sh=b.shots.find(s=>s.id===id);if(!sh)return;toast('Saving video…');await putBlob(blobKey(id,slot),file);sh.media[slot]={kind:'file',link:''};if(slot==='clip'&&!sh.title)sh.title=file.name.replace(/\.[^.]+$/,'');save();renderBoard();toast('Video saved ✓')}
+function addLink(id,slot){const b=board();const sh=b.shots.find(s=>s.id===id);if(!sh)return;const url=prompt(`Paste a link for “${SLOT_LABEL[slot]}” (YouTube, Vimeo, or direct video URL):`,sh.media[slot].link||'');if(url===null)return;sh.media[slot]={kind:url.trim()?'link':'',link:url.trim()};save();renderBoard()}
+async function clearMedia(id,slot){const b=board();const sh=b.shots.find(s=>s.id===id);if(!sh)return;await delBlob(blobKey(id,slot));sh.media[slot]={kind:'',link:''};save();renderBoard()}
+
+/* ---------- shot actions ---------- */
+function addShot(afterId){const b=board();const sh=addShotTo(b,afterId);save();
+  if(b.view==='shotlist'){b.curScene=b.orderS.indexOf(sh.id);renderBoard();window.scrollTo({top:0,behavior:'smooth'})}
+  else{renderBoard();if(!afterId&&b.view==='board')requestAnimationFrame(()=>window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}))}
+}
+async function delShot(id){if(!confirm('Delete this shot / scene?'))return;const b=board();for(const sl of SLOTS)await delBlob(blobKey(id,sl));b.shots=b.shots.filter(s=>s.id!==id);b.orderH=b.orderH.filter(x=>x!==id);b.orderV=b.orderV.filter(x=>x!==id);b.orderS=b.orderS.filter(x=>x!==id);if(b.curScene>=b.orderS.length)b.curScene=Math.max(0,b.orderS.length-1);save();renderBoard()}
+
+/* ---------- drag reorder (storyboard, per-orientation) ---------- */
+let dragId=null;
+function makeDraggable(card,id){
+  const handle=card.querySelector('.drag-handle');
+  handle.addEventListener('mousedown',()=>card.setAttribute('draggable','true'));
+  card.addEventListener('dragstart',e=>{dragId=id;card.classList.add('sortable-drag');e.dataTransfer.effectAllowed='move'});
+  card.addEventListener('dragend',()=>{card.classList.remove('sortable-drag');card.removeAttribute('draggable');dragId=null});
+  card.addEventListener('dragover',e=>{if(dragId&&dragId!==id)e.preventDefault()});
+  card.addEventListener('drop',e=>{if(dragId&&dragId!==id){e.preventDefault();e.stopPropagation();reorder(dragId,id)}});
+}
+function reorder(fromId,toId){const b=board();const arr=b.orient==='9-16'?b.orderV:b.orderH;const from=arr.indexOf(fromId),to=arr.indexOf(toId);if(from<0||to<0)return;arr.splice(to,0,arr.splice(from,1)[0]);if(b.linkOrder){const other=b.orient==='9-16'?b.orderH:b.orderV;other.length=0;arr.forEach(x=>other.push(x))}save();renderBoard()}
+
+/* ---------- board actions ---------- */
+function createBoard(){
+  const name=prompt('Name this board — the style (e.g. “Two-Story Detached”, “Downtown Condo”, “Luxury”):','');
+  if(name===null)return;
+  const type=prompt('Type / category? (optional — e.g. Condo, Detached, Luxury)','')||'';
+  const b=newBoard(name.trim()||'Untitled board',type.trim(),6);
+  app.boards.unshift(b);app.activeId=b.id;app.screen='board';render();
+}
+function openBoard(id){app.activeId=id;app.screen='board';render()}
+function renameBoard(id){const b=app.boards.find(x=>x.id===id);if(!b)return;const name=prompt('Rename board:',b.name);if(name===null)return;b.name=name.trim()||b.name;const type=prompt('Type / category (optional):',b.type||'');if(type!==null)b.type=type.trim();save();renderHome()}
+async function deleteBoard(id){const b=app.boards.find(x=>x.id===id);if(!b)return;if(!confirm(`Delete “${b.name}” and all its shots? This cannot be undone.`))return;for(const sh of b.shots)for(const sl of SLOTS)await delBlob(blobKey(sh.id,sl));app.boards=app.boards.filter(x=>x.id!==id);save();renderHome()}
+async function duplicateBoard(id){
+  const src=app.boards.find(b=>b.id===id);if(!src)return;toast('Duplicating…');
+  const nb=structuredClone(src);nb.id=bid();nb.name=src.name+' (copy)';nb.created=Date.now();nb.updated=Date.now();nb.accent=pickAccent();nb.curScene=0;
+  const map={};nb.shots.forEach(sh=>{const old=sh.id;const nid=uid();map[old]=nid;sh.id=nid});
+  nb.orderH=src.orderH.map(x=>map[x]).filter(Boolean);nb.orderV=src.orderV.map(x=>map[x]).filter(Boolean);nb.orderS=(src.orderS||src.orderH).map(x=>map[x]).filter(Boolean);
+  for(const oldId in map){const shOld=src.shots.find(s=>s.id===oldId);if(!shOld)continue;for(const sl of SLOTS){if(shOld.media[sl].kind==='file'){const blob=await getBlob(blobKey(oldId,sl));if(blob)await putBlob(blobKey(map[oldId],sl),blob)}}}
+  app.boards.unshift(nb);save();toast('Board duplicated ✓');renderHome();
+}
+
+/* ---------- controls ---------- */
+document.getElementById('newBoardBtn').onclick=createBoard;
+document.getElementById('backBtn').onclick=()=>{app.screen='home';render()};
+document.getElementById('boardName').oninput=(e)=>{const b=board();if(b){b.name=e.target.value;saveLite()}};
+document.getElementById('boardSub').oninput=(e)=>{const b=board();if(b){b.sub=e.target.value;saveLite()}};
+document.getElementById('vBoard').onclick=()=>{board().view='board';renderBoard()};
+document.getElementById('vShotlist').onclick=()=>{board().view='shotlist';renderBoard();window.scrollTo({top:0})};
+document.getElementById('vOverview').onclick=()=>{board().view='overview';renderBoard()};
+document.getElementById('oH').onclick=()=>{board().orient='16-9';renderBoard()};
+document.getElementById('oV').onclick=()=>{board().orient='9-16';renderBoard()};
+document.getElementById('syncBtn').onclick=()=>{const b=board();b.linkOrder=!b.linkOrder;if(b.linkOrder){const cur=b.orient==='9-16'?b.orderV:b.orderH;const other=b.orient==='9-16'?b.orderH:b.orderV;other.length=0;cur.forEach(x=>other.push(x));toast('Orders linked — moves apply to both')}else{toast('Orders independent')}renderBoard()};
+document.querySelectorAll('[data-cols]').forEach(b=>b.onclick=()=>{board().cols=+b.dataset.cols;renderBoard()});
+document.getElementById('addBtn').onclick=()=>addShot();
+function setActive(on,off){const a=document.getElementById(on),z=document.getElementById(off);if(a)a.classList.add('active');if(z)z.classList.remove('active')}
+document.getElementById('menuExport').onclick=()=>{const b=board();const blob=new Blob([JSON.stringify(b,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(b.name||'storyboard').replace(/[^\w-]+/g,'_')+'.json';a.click();toast('Board exported ✓')};
+document.getElementById('menuImport').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);const b=data.shots?data:makeBoardFromV2(data);b.id=bid();migrateBoard(b);if(!b.accent)b.accent=pickAccent();b.created=b.created||Date.now();b.updated=Date.now();app.boards.unshift(b);app.activeId=b.id;app.screen='board';render();toast('Board imported ✓')}catch(err){toast('Could not read that file')}};r.readAsText(f);e.target.value=''};
+
+render();
+</script>
+</body>
+</html>
