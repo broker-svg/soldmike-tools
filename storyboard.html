@@ -160,7 +160,7 @@
   .ov-add:hover{border-color:var(--accent);color:var(--accent)}
 
   /* ---------- SHOT LIST ---------- */
-  #shotlist{display:none;max-width:430px;margin:0 auto}
+  #shotlist{display:none;margin:0 auto}
   body[data-view="shotlist"][data-screen="board"] #shotlist{display:block}
   .sl-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
   .sl-hd{background:linear-gradient(135deg,#123E6E,#0e2c4f);padding:13px 15px 14px;display:flex;align-items:flex-start;gap:11px}
@@ -182,7 +182,7 @@
   .sl-vidbtn.has{border-style:solid;border-color:var(--green-bd);color:var(--green);background:var(--green-bg)}
   .sl-seclab{font-size:11px;font-weight:800;letter-spacing:1.1px;color:var(--dim);text-transform:uppercase;display:flex;align-items:center;gap:8px}
   .sl-seclab .ln{height:1px;background:var(--line);flex:1}
-  .sl-types4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:9px}
+  .sl-types4{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:9px}
   .sl-tcell{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
   .sl-chk{width:25px;height:25px;border:2px solid #4b5164;border-radius:7px;background:transparent;display:flex;align-items:center;justify-content:center;transition:.12s;flex:0 0 auto}
   .sl-chk.on{background:var(--green-bg);border-color:var(--green)}
@@ -209,7 +209,7 @@
   .sl-ddrop{position:relative}
   .sl-ddbtn{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:10px 12px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
   .sl-ddbtn:hover{border-color:var(--navy-bd)}
-  .sl-dmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:6px;z-index:20;box-shadow:0 16px 40px rgba(0,0,0,.55);display:none;grid-template-columns:1fr 1fr;gap:4px}
+  .sl-dmenu{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:6px;z-index:20;box-shadow:0 16px 40px rgba(0,0,0,.55);display:none;grid-template-columns:1fr 1fr;gap:4px;max-height:44vh;overflow-y:auto}
   .sl-dmenu.open{display:grid}
   .sl-mitem{padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:space-between}
   .sl-mitem:hover{background:#1c1f2b}
@@ -267,6 +267,59 @@
   .sl-sheethint .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
   .sl-emptylist{text-align:center;color:var(--muted);padding:50px 20px;line-height:1.7}
 
+  /* shot list sub-view toggle + color bar */
+  .sl-viewbar{display:flex;justify-content:center;margin:0 auto 16px;max-width:430px}
+  .sl-viewseg{display:inline-flex;border:1px solid var(--line);border-radius:11px;overflow:hidden;width:100%}
+  .sl-viewseg button{flex:1;border:0;border-radius:0;background:var(--panel);color:var(--muted);font-size:13px;font-weight:700;padding:10px 8px;cursor:pointer}
+  .sl-viewseg button.active{background:var(--accent-2);color:#0e0f13}
+  .sl-colorbar{display:flex;align-items:center;gap:9px;padding:10px 15px;background:var(--panel-2);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .sl-colorbar .lbl{font-size:10px;font-weight:800;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+  .sl-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.12s}
+  .sl-swatch.sel{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+  /* grid (3-across quick fill) */
+  .sl-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.sl-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:560px){.sl-grid{grid-template-columns:1fr}}
+  .sl-gcard{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden;display:flex;flex-direction:column}
+  .sl-gstripe{height:6px}
+  .sl-ghd{display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--line)}
+  .sl-ghd .no{font-size:13px;font-weight:800;color:var(--muted)}
+  .sl-gcap{width:22px;height:22px;border:2px solid #4b5164;border-radius:6px;cursor:pointer;flex:0 0 auto;display:flex;align-items:center;justify-content:center;margin-left:auto}
+  .sl-gcap.on{background:var(--green-bg);border-color:var(--green)}
+  .sl-gcap.on::after{content:"\2713";color:var(--green);font-weight:800;font-size:14px}
+  .sl-gopen{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);border-radius:7px;font-size:11px;font-weight:700;padding:4px 8px;cursor:pointer}
+  .sl-gopen:hover{border-color:var(--orange);color:var(--orange)}
+  .sl-gbody{padding:11px;display:flex;flex-direction:column;gap:8px}
+  .sl-gin{background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 10px;font-size:13.5px;font-weight:600;font-family:inherit;width:100%}
+  .sl-gin.set{color:var(--orange);border-color:rgba(255,148,54,.45)}
+  .sl-grow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .sl-gsel{background:var(--panel-2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px;font-size:13px;font-weight:600;font-family:inherit;width:100%}
+  .sl-gsel.set{color:var(--orange);border-color:rgba(255,148,54,.45)}
+  .sl-gvid{display:flex;gap:6px}
+  .sl-gvbtn{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--muted);border-radius:8px;font-size:11.5px;font-weight:700;padding:7px;cursor:pointer}
+  .sl-gvbtn.has{border-color:var(--green-bd);color:var(--green);background:var(--green-bg)}
+  /* overview (birds-eye) */
+  .sl-ovwrap{max-width:1100px;margin:0 auto}
+  .sl-ovcount{display:flex;align-items:center;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;margin-bottom:14px}
+  .sl-ovcount b{color:var(--text);font-size:14px}
+  .sl-ovcount .cap{color:var(--green);font-weight:700}
+  .sl-ovgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .sl-otile{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--tc,#1d5299);border-radius:11px;padding:9px 10px 10px;cursor:grab;position:relative;min-height:78px;display:flex;flex-direction:column;gap:5px;touch-action:none;overflow:hidden}
+  .sl-otile:hover{border-color:var(--orange)}
+  .sl-otile.dragging{opacity:.55;box-shadow:0 10px 26px rgba(0,0,0,.5);cursor:grabbing}
+  .sl-otile .on-no{font-size:15px;font-weight:800;line-height:1}
+  .sl-otile .on-ttl{font-size:10.5px;font-weight:600;color:var(--muted);line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1}
+  .sl-otile .on-dots{display:flex;gap:4px;margin-top:auto}
+  .sl-otile .on-dots i{width:7px;height:7px;border-radius:50%;background:#2a2e3f;border:1px solid rgba(255,255,255,.1)}
+  .sl-otile .on-dots i.on-clip.on{background:var(--clip)}
+  .sl-otile .on-dots i.on-lens.on{background:var(--orange)}
+  .sl-otile .on-dots i.on-type.on{background:var(--green)}
+  .sl-otile .on-dots i.on-move.on{background:var(--navy-bd)}
+  .sl-otile .on-cap{position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .sl-ovlegend{margin-top:14px;font-size:11px;color:var(--dim);display:flex;gap:14px;flex-wrap:wrap}
+  .sl-ovlegend span{display:inline-flex;align-items:center;gap:5px}
+  .sl-ovlegend i{width:8px;height:8px;border-radius:50%}
+
   .help{max-width:1600px;margin:26px auto 0;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted);line-height:1.7}
   body[data-view="overview"] .help.storyhelp,body[data-view="shotlist"] .help.storyhelp{display:none}
   .help b{color:var(--text)}
@@ -281,7 +334,7 @@
 
 <header id="homeHeader">
   <div class="brand"><span class="dot"></span><h1>SHOT STORYBOARD</h1><span class="count" id="homeCount"></span></div>
-  <div class="controls"><button id="newBoardBtn" class="primary">＋ New board</button></div>
+  <div class="controls"><button id="newTemplateBtn" class="ghost" title="New board pre-loaded with the full 35-shot template">＋ 35-shot template</button><button id="newBoardBtn" class="primary">＋ New board</button></div>
 </header>
 
 <header id="boardHeader">
@@ -299,6 +352,7 @@
     <button id="syncBtn" class="only-board" title="Link the 16:9 and 9:16 shot order so moving one moves both">⇄ Sync H↔V</button>
     <div class="seg only-board" title="Columns per row"><button data-cols="3">3</button><button data-cols="4" class="active">4</button><button data-cols="5">5</button></div>
     <button id="addBtn" class="primary">＋ Add shot</button>
+    <button id="dupBtn" class="ghost" title="Duplicate this whole board (shot list + storyboard)">⎘ Duplicate</button>
     <button id="menuExport" class="ghost" title="Save this board to a file">Export</button>
     <button id="menuImport" class="ghost" title="Load a board file as a new board">Import</button>
     <input type="file" id="importFile" accept="application/json">
@@ -333,14 +387,6 @@
   </section>
 </main>
 
-<div class="sl-sheet" id="slSheet" onclick="if(event.target===this)slCloseJump()">
-  <div class="sl-sheetcard">
-    <div class="sl-sheettop">All scenes — tap to open · drag to reorder <span class="close" onclick="slCloseJump()">✕</span></div>
-    <div class="sl-scenegrid" id="slSceneGrid"></div>
-    <div class="sl-sheethint"><span class="dot"></span> green dot = captured on the shoot · numbers renumber as you drag</div>
-  </div>
-</div>
-
 <div id="toast"></div>
 
 <script>
@@ -350,8 +396,11 @@ const SLOTS=['clip','gimbal','ref'];const SLOT_LABEL={clip:'Clip',gimbal:'Gimbal
 const ACCENTS=['#4f8cff','#c9a04a','#a06bff','#3fcf8e','#ff6b8b','#37c6d0','#f2994a'];
 const LENSES=['—','Drone','12mm','24mm','50mm'];
 const GIMBALS=['—','FPV','PF (pan follow)','PTF (pan-tilt)','360'];
-const TYPES=[['regular','Regular'],['cool','Cool'],['hero','Hero'],['boss','Boss']];
-const MOVES=['Push','Pull','Tilt up','Tilt down','Pan left','Pan right','Orbit left','Orbit right','Crane up','Crane down','Reveal'];
+const TYPES=[['image','Image'],['regular','Regular'],['cool','Cool'],['hero','Hero'],['boss','Boss']];
+const MOVES=['Push','Pull','Tilt up','Tilt down','Pan left','Pan right','Orbit left','Orbit right','Crane up','Crane down','Up','Down','Side left','Side right','Tripod twist','Reveal'];
+const SCENE_COLORS=['#1d5299','#c9a04a','#a06bff','#34c46a','#ff6b8b','#37c6d0','#ff9436'];
+const TEMPLATE_SCENES=[{sub:'Exterior · Sony'},{sub:'Exterior · Drone'},{sub:'Exterior · Sony'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Main'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Second'},{sub:'Interior · Basement'},{sub:'Exterior · Drone'},{sub:'Exterior · Drone'},{sub:'Exterior · Drone'},{sub:'Exterior · Drone'}];
+function areaColor(sub){if(/Basement/i.test(sub))return '#34c46a';if(/Second/i.test(sub))return '#a06bff';if(/Interior/i.test(sub))return '#c9a04a';return '#1d5299'}
 const DURS=[0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,6.5,7];
 
 /* ---------- IndexedDB ---------- */
@@ -368,20 +417,22 @@ function uid(){return 's'+Math.random().toString(36).slice(2,10)}
 function bid(){return 'b'+Math.random().toString(36).slice(2,10)}
 function pickAccent(){return ACCENTS[(ai++)%ACCENTS.length]}
 function blankMedia(){return {clip:{kind:'',link:''},gimbal:{kind:'',link:''},ref:{kind:'',link:''}}}
-function blankType(){return {regular:false,cool:false,hero:false,boss:false,speedRamp:false,rampCombo:false,rampClip:0,forwardReverse:false,dateNight:false}}
-function newShot(){return {id:uid(),title:'',notes:'',dur:3,media:blankMedia(),sub:'',reel:'Standard reel',lens:'—',gimbalSetting:'—',moves:[],captured:false,type:blankType()}}
+function blankType(){return {image:false,regular:false,cool:false,hero:false,boss:false,speedRamp:false,rampCombo:false,rampClip:0,forwardReverse:false,dateNight:false}}
+function newShot(){return {id:uid(),title:'',notes:'',dur:3,media:blankMedia(),sub:'',reel:'Standard reel',lens:'—',gimbalSetting:'—',moves:[],captured:false,color:'#1d5299',type:blankType()}}
 function ensureShot(sh){
   if(!sh.media){sh.media=blankMedia();sh.media.clip={kind:sh.kind||'',link:sh.link||''};delete sh.kind;delete sh.link}
   SLOTS.forEach(sl=>{if(!sh.media[sl])sh.media[sl]={kind:'',link:''}});
   if(sh.sub===undefined)sh.sub='';if(sh.reel===undefined)sh.reel='Standard reel';
   if(sh.lens===undefined)sh.lens='—';if(sh.gimbalSetting===undefined)sh.gimbalSetting='—';
   if(!sh.moves)sh.moves=[];if(sh.captured===undefined)sh.captured=false;
+  if(!sh.color)sh.color='#1d5299';
   if(!sh.type)sh.type=blankType();
+  if(sh.type.image===undefined)sh.type.image=false;
   return sh;
 }
 function newBoard(name,type,count){
-  const b={id:bid(),name:name||'Untitled board',type:type||'',sub:'',accent:pickAccent(),created:Date.now(),updated:Date.now(),orient:'16-9',cols:4,view:'board',linkOrder:false,curScene:0,shots:[],orderH:[],orderV:[],orderS:[]};
-  for(let i=0;i<(count||6);i++)addShotTo(b);
+  const b={id:bid(),name:name||'Untitled board',type:type||'',sub:'',accent:pickAccent(),created:Date.now(),updated:Date.now(),orient:'16-9',cols:4,view:'board',slView:'single',linkOrder:false,curScene:0,shots:[],orderH:[],orderV:[],orderS:[]};
+  for(let i=0;i<(count==null?6:count);i++)addShotTo(b);
   return b;
 }
 function makeBoardFromV2(v2){
@@ -399,6 +450,7 @@ function migrateBoard(b){
   if(!b.orderV)b.orderV=[...b.orderH];
   if(!b.orderS)b.orderS=[...b.orderH];
   if(b.linkOrder==null)b.linkOrder=false;if(b.sub===undefined)b.sub='';if(b.curScene==null)b.curScene=0;
+  if(!b.slView)b.slView='single';
 }
 function save(){const b=board();if(b)b.updated=Date.now();localStorage.setItem(LS,JSON.stringify(app))}
 let _t;function saveLite(){clearTimeout(_t);_t=setTimeout(save,250)}
@@ -558,8 +610,22 @@ function openShot(id){const b=board();b.view='board';renderBoard();requestAnimat
 /* ---------- SHOT LIST ---------- */
 function renderShotList(b){
   const list=slShots(b);
-  if(!list.length){shotlistEl.innerHTML=`<div class="sl-emptylist">No scenes yet.<br><button class="sl-tbtn" onclick="addShot()">＋ Add the first scene</button></div>`;return}
+  if(!list.length){shotlistEl.innerHTML=slViewBar(b.slView||'single')+`<div class="sl-emptylist">No scenes yet.<br><button class="sl-tbtn" onclick="addShot()">＋ Add the first scene</button></div>`;return}
   if(b.curScene>=list.length)b.curScene=list.length-1;if(b.curScene<0)b.curScene=0;
+  const view=b.slView||'single';
+  if(view==='grid')return renderSLGrid(b,list);
+  if(view==='overview')return renderSLOverview(b,list);
+  return renderSLSingle(b,list);
+}
+function slViewBar(view){return `<div class="sl-viewbar"><div class="sl-viewseg">
+  <button class="${view==='single'?'active':''}" onclick="setSLView('single')">Single</button>
+  <button class="${view==='grid'?'active':''}" onclick="setSLView('grid')">Grid</button>
+  <button class="${view==='overview'?'active':''}" onclick="setSLView('overview')">Overview</button></div></div>`}
+function setSLView(v){const b=board();b.slView=v;renderBoard();window.scrollTo({top:0})}
+function shade(c){return `color-mix(in srgb, ${c} 45%, #05070c)`}
+function slColor(c){const sh=slCur();sh.color=c;save();renderBoard()}
+
+function renderSLSingle(b,list){
   const i=b.curScene,sh=list[i],t=sh.type;
   const durList=DURS.includes(sh.dur)?DURS:[...DURS,sh.dur].sort((a,b)=>a-b);
   const dopts=durList.map(d=>`<option ${d==sh.dur?'selected':''}>${d}</option>`).join('');
@@ -568,13 +634,15 @@ function renderShotList(b){
   const clipHas=slotFilled(sh,'clip'),gimbHas=slotFilled(sh,'gimbal'),refHas=slotFilled(sh,'ref');
   const notePrev=sh.notes?esc(sh.notes):'Tap to add a note…';
   const moveOpts=list.map((_,k)=>`<option ${k===i?'selected':''}>${k+1}</option>`).join('');
-  shotlistEl.innerHTML=`
-  <div class="sl-card">
-    <div class="sl-hd">
+  const swatches=SCENE_COLORS.map(c=>`<span class="sl-swatch ${c===sh.color?'sel':''}" style="background:${c}" onclick="slColor('${c}')"></span>`).join('');
+  shotlistEl.innerHTML=slViewBar('single')+`
+  <div class="sl-card" style="max-width:430px;margin:0 auto">
+    <div class="sl-hd" style="background:linear-gradient(135deg,${sh.color},${shade(sh.color)})">
       <div class="sl-cap ${sh.captured?'on':''}" onclick="slToggleCap()"></div>
       <div class="t"><h2>Scene ${i+1}</h2><input class="sl-subin" id="slSub" placeholder="Exterior · Sony" value="${esc(sh.sub)}"></div>
       <div class="rt"><select class="sl-dur" id="slDur">${dopts}</select><input class="sl-reel" id="slReel" value="${esc(sh.reel)}"></div>
     </div>
+    <div class="sl-colorbar"><span class="lbl">Colour</span>${swatches}</div>
     <div class="sl-body">
       <button class="sl-vidbtn ${clipHas?'has':''}" onclick="slVid('clip')">${clipHas?'✓ Shot video attached — tap to change':'＋ Add shot video'}</button>
       <div>
@@ -615,7 +683,7 @@ function renderShotList(b){
   </div>
   <div class="sl-pager">
     <div class="sl-pbtn" onclick="slStep(-1)">‹</div>
-    <button class="sl-jump" onclick="slOpenJump()"><span>Scene <b>${i+1}</b> / ${list.length}</span></button>
+    <button class="sl-jump" onclick="setSLView('overview')"><span>Scene <b>${i+1}</b> / ${list.length}</span></button>
     <div class="sl-pbtn" onclick="slStep(1)">›</div>
   </div>`;
 
@@ -648,45 +716,65 @@ function slRenderSeq(){const sh=slCur();const el=document.getElementById('slSeq'
 }
 function slToggleMenu(){const m=document.getElementById('slDmenu');m.classList.toggle('open');slBuildMenu()}
 document.addEventListener('click',e=>{if(!e.target.closest('.sl-ddrop')){const m=document.getElementById('slDmenu');if(m)m.classList.remove('open')}});
-/* jump grid */
-function slOpenJump(){slBuildGrid();document.getElementById('slSheet').classList.add('open')}
-function slCloseJump(){document.getElementById('slSheet').classList.remove('open')}
-function slBuildGrid(){
-  const b=board();const list=slShots(b);const g=document.getElementById('slSceneGrid');g.innerHTML='';
-  list.forEach((sh,k)=>{
-    const btn=document.createElement('button');
-    btn.className='sl-snum'+(k===b.curScene?' cur':'')+(sh.captured?' cap':'');
-    btn.dataset.id=sh.id;
-    btn.innerHTML=`<span class="n">${k+1}</span><span class="ttl">${sh.title?esc(sh.title):'—'}</span>`;
-    slAttachSort(btn,sh.id);
-    g.appendChild(btn);
-  });
+/* ---- GRID sub-view (3-across quick fill) ---- */
+function renderSLGrid(b,list){
+  const cards=list.map((sh,k)=>{
+    const durList=DURS.includes(sh.dur)?DURS:[...DURS,sh.dur].sort((a,b)=>a-b);
+    const dopts=durList.map(d=>`<option ${d==sh.dur?'selected':''}>${d} sec</option>`).join('');
+    const lopts=LENSES.map(l=>`<option ${l===sh.lens?'selected':''}>${l}</option>`).join('');
+    const gopts=GIMBALS.map(g=>`<option ${g===sh.gimbalSetting?'selected':''}>${g}</option>`).join('');
+    const clipHas=slotFilled(sh,'clip'),gimbHas=slotFilled(sh,'gimbal');
+    return `<div class="sl-gcard" data-id="${sh.id}">
+      <div class="sl-gstripe" style="background:${sh.color}"></div>
+      <div class="sl-ghd"><span class="no">Scene ${k+1}</span><button class="sl-gopen" data-act="open">Open ▸</button><div class="sl-gcap ${sh.captured?'on':''}" data-act="cap" title="Captured"></div></div>
+      <div class="sl-gbody">
+        <input class="sl-gin ${sh.title?'set':''}" data-f="title" placeholder="Shot…" value="${esc(sh.title)}">
+        <input class="sl-gin" data-f="sub" placeholder="Exterior · Sony" value="${esc(sh.sub)}" style="font-size:12px;font-weight:500;color:var(--muted)">
+        <div class="sl-grow"><select class="sl-gsel ${sh.lens!=='—'?'set':''}" data-f="lens">${lopts}</select><select class="sl-gsel" data-f="dur">${dopts}</select></div>
+        <select class="sl-gsel ${sh.gimbalSetting!=='—'?'set':''}" data-f="gimbalSetting">${gopts}</select>
+        <div class="sl-gvid"><button class="sl-gvbtn ${clipHas?'has':''}" data-act="clip">${clipHas?'✓ Clip':'＋ Clip'}</button><button class="sl-gvbtn ${gimbHas?'has':''}" data-act="gimbal">${gimbHas?'✓ Gimbal':'＋ Gimbal'}</button></div>
+      </div></div>`;
+  }).join('');
+  shotlistEl.innerHTML=slViewBar('grid')+`<div class="sl-grid">${cards}<div class="addcard" style="min-height:0;padding:26px 12px" onclick="addShot()"><span style="font-size:13px;font-weight:600">＋ Add scene</span></div></div>`;
+  const g=shotlistEl.querySelector('.sl-grid');
+  g.addEventListener('input',e=>{const f=e.target.dataset.f;if(f!=='title'&&f!=='sub')return;const c=e.target.closest('[data-id]');const sh=b.shots.find(s=>s.id===c.dataset.id);if(!sh)return;sh[f]=e.target.value;if(f==='title')e.target.classList.toggle('set',!!e.target.value);saveLite()});
+  g.addEventListener('change',e=>{const f=e.target.dataset.f;if(!f)return;const c=e.target.closest('[data-id]');const sh=b.shots.find(s=>s.id===c.dataset.id);if(!sh)return;if(f==='dur')sh.dur=parseFloat(e.target.value);else sh[f]=e.target.value;if(f==='lens'||f==='gimbalSetting')e.target.classList.toggle('set',e.target.value!=='—');save()});
+  g.addEventListener('click',e=>{const btn=e.target.closest('[data-act]');if(!btn)return;const c=e.target.closest('[data-id]');if(!c)return;const sh=b.shots.find(s=>s.id===c.dataset.id);const act=btn.dataset.act;
+    if(act==='open'){b.slView='single';b.curScene=b.orderS.indexOf(sh.id);renderBoard();window.scrollTo({top:0})}
+    else if(act==='cap'){sh.captured=!sh.captured;save();btn.classList.toggle('on')}
+    else if(act==='clip'){pickFile(sh.id,'clip')}
+    else if(act==='gimbal'){pickFile(sh.id,'gimbal')}});
 }
-function slRenumberGrid(){const g=document.getElementById('slSceneGrid');[...g.children].forEach((el,i)=>{const n=el.querySelector('.n');if(n)n.textContent=i+1})}
-function slAttachSort(el,id){
+/* ---- OVERVIEW sub-view (birds-eye, colour-coded, draggable) ---- */
+function renderSLOverview(b,list){
+  const capN=list.filter(s=>s.captured).length;
+  const tiles=list.map((sh,k)=>{
+    const clip=slotFilled(sh,'clip'),lens=sh.lens&&sh.lens!=='—',type=Object.entries(sh.type).some(([kk,v])=>kk!=='rampClip'&&v),moves=sh.moves.length>0;
+    return `<div class="sl-otile" data-id="${sh.id}" style="--tc:${sh.color}">${sh.captured?'<span class="on-cap"></span>':''}<span class="on-no">${k+1}</span><span class="on-ttl">${sh.title?esc(sh.title):'—'}</span><span class="on-dots"><i class="on-clip ${clip?'on':''}"></i><i class="on-lens ${lens?'on':''}"></i><i class="on-type ${type?'on':''}"></i><i class="on-move ${moves?'on':''}"></i></span></div>`;
+  }).join('');
+  shotlistEl.innerHTML=slViewBar('overview')+`<div class="sl-ovwrap">
+    <div class="sl-ovcount"><b>${list.length} shots</b> <span class="cap">${capN} captured</span><span>· tap to open · drag to reorder (numbers renumber live)</span></div>
+    <div class="sl-ovgrid" id="slOvGrid">${tiles}<div class="addcard" style="min-height:78px" onclick="addShot()">＋</div></div>
+    <div class="sl-ovlegend"><span><i style="background:var(--clip)"></i>Clip</span><span><i style="background:var(--orange)"></i>Lens</span><span><i style="background:var(--green)"></i>Type</span><span><i style="background:var(--navy-bd)"></i>Movement</span><span><i style="background:var(--green)"></i>captured</span></div></div>`;
+  [...document.getElementById('slOvGrid').querySelectorAll('.sl-otile')].forEach(el=>slOvSort(el,el.dataset.id));
+}
+function slOvSort(el,id){
   el.addEventListener('pointerdown',e=>{
     if(e.button&&e.button!==0)return;
     const sx=e.clientX,sy=e.clientY;let dragging=false;
     const move=ev=>{
       if(!dragging){if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<7)return;dragging=true;el.classList.add('dragging');el.style.pointerEvents='none'}
-      const under=document.elementFromPoint(ev.clientX,ev.clientY);
-      const tile=under&&under.closest?under.closest('.sl-snum'):null;
-      if(tile&&tile!==el){
-        const g=document.getElementById('slSceneGrid');const kids=[...g.children];
-        const ei=kids.indexOf(el),ti=kids.indexOf(tile);
-        if(ti<ei)g.insertBefore(el,tile);else g.insertBefore(el,tile.nextSibling);
-        slRenumberGrid();
-      }
+      const under=document.elementFromPoint(ev.clientX,ev.clientY);const tile=under&&under.closest?under.closest('.sl-otile'):null;
+      if(tile&&tile!==el){const g=document.getElementById('slOvGrid');const kids=[...g.querySelectorAll('.sl-otile')];const ei=kids.indexOf(el),ti=kids.indexOf(tile);if(ti<ei)g.insertBefore(el,tile);else g.insertBefore(el,tile.nextSibling);[...g.querySelectorAll('.sl-otile')].forEach((t,i)=>{const n=t.querySelector('.on-no');if(n)n.textContent=i+1})}
     };
     const up=()=>{
       document.removeEventListener('pointermove',move);document.removeEventListener('pointerup',up);
       el.style.pointerEvents='';const b=board();
-      if(!dragging){b.curScene=b.orderS.indexOf(id);slCloseJump();renderShotList(b);window.scrollTo({top:0,behavior:'smooth'});return}
+      if(!dragging){b.slView='single';b.curScene=b.orderS.indexOf(id);renderBoard();window.scrollTo({top:0});return}
       el.classList.remove('dragging');
-      const g=document.getElementById('slSceneGrid');
-      b.orderS=[...g.children].map(c=>c.dataset.id).filter(Boolean);
-      b.curScene=b.orderS.indexOf(id);
-      save();renderShotList(b);slBuildGrid();toast('Scenes reordered ✓');
+      const g=document.getElementById('slOvGrid');
+      b.orderS=[...g.querySelectorAll('.sl-otile')].map(c=>c.dataset.id).filter(Boolean);
+      save();renderShotList(b);toast('Scenes reordered ✓');
     };
     document.addEventListener('pointermove',move);document.addEventListener('pointerup',up);
   });
@@ -757,6 +845,16 @@ async function duplicateBoard(id){
 
 /* ---------- controls ---------- */
 document.getElementById('newBoardBtn').onclick=createBoard;
+document.getElementById('newTemplateBtn').onclick=createTemplateBoard;
+document.getElementById('dupBtn').onclick=()=>{if(app.activeId)duplicateBoard(app.activeId)};
+function createTemplateBoard(){
+  const name=prompt('Name this template board (e.g. “Template”, “Full Walkthrough”):','Template');
+  if(name===null)return;
+  const type=prompt('Type / category? (optional)','Template')||'';
+  const b=newBoard(name.trim()||'Template',type.trim(),0);
+  TEMPLATE_SCENES.forEach(s=>{const sh=addShotTo(b);sh.sub=s.sub;sh.color=areaColor(s.sub)});
+  app.boards.unshift(b);app.activeId=b.id;app.screen='board';b.view='shotlist';render();
+}
 document.getElementById('backBtn').onclick=()=>{app.screen='home';render()};
 document.getElementById('boardName').oninput=(e)=>{const b=board();if(b){b.name=e.target.value;saveLite()}};
 document.getElementById('boardSub').oninput=(e)=>{const b=board();if(b){b.sub=e.target.value;saveLite()}};
@@ -773,6 +871,8 @@ document.getElementById('menuExport').onclick=()=>{const b=board();const blob=ne
 document.getElementById('menuImport').onclick=()=>document.getElementById('importFile').click();
 document.getElementById('importFile').onchange=(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);const b=data.shots?data:makeBoardFromV2(data);b.id=bid();migrateBoard(b);if(!b.accent)b.accent=pickAccent();b.created=b.created||Date.now();b.updated=Date.now();app.boards.unshift(b);app.activeId=b.id;app.screen='board';render();toast('Board imported ✓')}catch(err){toast('Could not read that file')}};r.readAsText(f);e.target.value=''};
 
+/* Always open on the hub so your boards are the first thing you see */
+app.screen='home';
 render();
 </script>
 </body>
