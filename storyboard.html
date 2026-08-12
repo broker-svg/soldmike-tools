@@ -847,13 +847,15 @@ async function duplicateBoard(id){
 document.getElementById('newBoardBtn').onclick=createBoard;
 document.getElementById('newTemplateBtn').onclick=createTemplateBoard;
 document.getElementById('dupBtn').onclick=()=>{if(app.activeId)duplicateBoard(app.activeId)};
-function createTemplateBoard(){
-  const name=prompt('Name this template board (e.g. “Template”, “Full Walkthrough”):','Template');
-  if(name===null)return;
-  const type=prompt('Type / category? (optional)','Template')||'';
-  const b=newBoard(name.trim()||'Template',type.trim(),0);
+function buildTemplateBoard(name,type){
+  const b=newBoard(name||'Template',type||'Template',0);
   TEMPLATE_SCENES.forEach(s=>{const sh=addShotTo(b);sh.sub=s.sub;sh.color=areaColor(s.sub)});
-  app.boards.unshift(b);app.activeId=b.id;app.screen='board';b.view='shotlist';render();
+  return b;
+}
+function createTemplateBoard(){
+  const b=buildTemplateBoard('Template','Template');
+  app.boards.unshift(b);app.activeId=b.id;app.screen='board';b.view='shotlist';b.slView='overview';render();
+  toast('35-shot Template created — rename it on the Boards screen');
 }
 document.getElementById('backBtn').onclick=()=>{app.screen='home';render()};
 document.getElementById('boardName').oninput=(e)=>{const b=board();if(b){b.name=e.target.value;saveLite()}};
@@ -871,6 +873,11 @@ document.getElementById('menuExport').onclick=()=>{const b=board();const blob=ne
 document.getElementById('menuImport').onclick=()=>document.getElementById('importFile').click();
 document.getElementById('importFile').onchange=(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const data=JSON.parse(r.result);const b=data.shots?data:makeBoardFromV2(data);b.id=bid();migrateBoard(b);if(!b.accent)b.accent=pickAccent();b.created=b.created||Date.now();b.updated=Date.now();app.boards.unshift(b);app.activeId=b.id;app.screen='board';render();toast('Board imported ✓')}catch(err){toast('Could not read that file')}};r.readAsText(f);e.target.value=''};
 
+/* First-ever run in this browser: seed the 35-shot Template so it's ready (and fresh/incognito windows aren't empty). Guarded so it won't return after you delete it. */
+if(!app.boards.length && !localStorage.getItem('sb_seeded')){
+  app.boards.unshift(buildTemplateBoard('Template','Template'));
+  localStorage.setItem('sb_seeded','1');
+}
 /* Always open on the hub so your boards are the first thing you see */
 app.screen='home';
 render();
