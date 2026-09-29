@@ -109,6 +109,18 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:1250px;width:100%
 .verdict .v small{display:block;font-size:17px;font-weight:600;color:#C9A96E;margin-top:4px}
 .verdict ul{margin:6px 0 0;padding-left:18px;font-size:15px;color:#D5DDE8}
 .verdict li{margin-bottom:4px}
+.strat{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.st-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.st-card .kind{font-family:var(--f-display);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.st-card h3{font-size:20px;font-weight:700}
+.st-card .price{font-family:var(--f-display);font-size:32px;font-weight:700;line-height:1.05}
+.st-card .x{font-weight:600;color:var(--gold)}
+.st-card p{margin:0;font-size:15px;color:var(--muted)}
+.st-card.market{border:2px solid var(--good);background:color-mix(in srgb,var(--good) 9%,var(--paper))}
+.st-card.market .kind,.st-card.market .price{color:var(--good)}
+.st-card.market .badge{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--good);border-radius:99px;padding:2px 10px}
+.st-card.over{border-style:dashed;border-color:var(--bad)}
+.st-card.over .kind,.st-card.over .price{color:var(--bad)}
 .method{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
 .method ul{margin:8px 0 0;padding-left:20px}
 .method li{margin-bottom:6px;max-width:75ch}
@@ -206,6 +218,38 @@ table.grid{border-collapse:separate;border-spacing:0;min-width:1250px;width:100%
   <p class="lede">Two listings whose results will reset the range. 23 Lesgay is priced low for an offer date. 112 Kingslake is the fully renovated ceiling. Once they sell, update the result row.</p>
   <div class="scroller watchbox"><table class="grid watch" id="watch"></table></div>
   <p class="note" style="margin-top:8px">Lesgay benchmarks from its $886K assessment: 1.20× = $1.06M · 1.23× = $1.09M · 1.30× = $1.15M. Waddington has an updated main floor, a second suite and a pool, so it should sell above whatever Lesgay gets.</p>
+</section>
+
+<section>
+  <h2>Listing strategy</h2>
+  <p class="lede">Four ways to price 45 Waddington, from drawing a bidding war to listing at market value. Each price is also shown as a multiple of the $916,000 assessment so it lines up with the comps above.</p>
+  <div class="strat">
+    <div class="st-card">
+      <span class="kind">Offer date · aggressive</span>
+      <div class="price num">$998,800</div>
+      <div class="x num">1.09× assessment</div>
+      <p>Priced under $1M to reach the widest pool of buyers and build competition on offer night. Priced-right homes here have sold at 105–106% of list (67 Grove Park, 63 Hobart).</p>
+    </div>
+    <div class="st-card">
+      <span class="kind">Offer date · standard</span>
+      <div class="price num">$1,088,000</div>
+      <div class="x num">1.19× assessment</div>
+      <p>The same list price 67 Grove Park used before selling for $1,146,800. It invites offers without looking like a lowball.</p>
+    </div>
+    <div class="st-card market">
+      <span class="badge">Market strategy</span>
+      <span class="kind">Market middle</span>
+      <div class="price num">$1,189,000</div>
+      <div class="x num">1.30× assessment</div>
+      <p>The top of our value range, and just under the $1.2M search bracket so it shows up for more buyers. Homes here sell at about 96% of list, so expect negotiation toward $1.14M – $1.17M.</p>
+    </div>
+    <div class="st-card over">
+      <span class="kind">Slightly overpriced</span>
+      <div class="price num">$1,200,000+</div>
+      <div class="x num">1.31×+ assessment</div>
+      <p>Above anything a comparable home has proven. Listings asking this much are sitting: 18 Lisburn and 105 Whitehorn at 67 days, 80 Kingslake at 209.</p>
+    </div>
+  </div>
 </section>
 
 <section>
