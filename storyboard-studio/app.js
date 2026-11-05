@@ -1,0 +1,363 @@
+/* Storyboard Studio app. Plain JS, no build step. */
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const fmt=n=>(Math.round(n*10)/10).toString();
+const tc=s=>{const m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFixed(1)};
+const moveOf=id=>MOVES.find(m=>m.id==id)||MOVES[0];
+const LS='storyboardStudio.v1';
+const LINKED=['script','gfx','broll','loc','pos','move','hard','lens','fps','kind','roll','beat','notes'];
+const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],['shoot','Shoot Order'],['build','Combos & Hard Moves']];
+
+const S={boards:{},meta:clone(SEED_META),order:[]};
+SEED_BOARDS.forEach(b=>{S.boards[b.id]=clone(b);S.order.push(b.id)});
+const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},scope:'whole',cat:null};
+let db=null,assets=null,saved={},timer=null,dirty=new Set(),metaDirty=false;
+
+/* ---------- storage ---------- */
+function lsRead(){try{const r=JSON.parse(localStorage.getItem(LS));if(r){Object.assign(S.boards,r.boards||{});r.boards&&Object.keys(r.boards).forEach(k=>{dirtyAll.add(k);if(!S.order.includes(k))S.order.push(k)});if(r.meta)S.meta=r.meta;if(r.ui){U.board=S.boards[r.ui.board]?r.ui.board:U.board;U.view=r.ui.view||U.view}}}catch(e){}}
+function lsWrite(){try{const out={};dirtyAll.forEach(k=>{if(S.boards[k])out[k]=S.boards[k]});localStorage.setItem(LS,JSON.stringify({boards:out,meta:S.meta,ui:{board:U.board,view:U.view}}))}catch(e){}}
+const dirtyAll=new Set();
+function touch(b){b.updated=Date.now();dirty.add(b.id);dirtyAll.add(b.id);queue()}
+function touchMeta(){metaDirty=true;queue()}
+function queue(){clearTimeout(timer);timer=setTimeout(flush,700);setSave('Saving…')}
+async function flush(){
+  lsWrite();
+  if(!db){setSave('Saved on this computer');return}
+  try{
+    for(const id of [...dirty]){const body=clone(S.boards[id]);saved[id]=JSON.stringify(body);await db.doc('boards/'+id).set(body);dirty.delete(id)}
+    if(metaDirty){await db.doc('meta/shoot').set(clone(S.meta));metaDirty=false}
+    setSave('Saved online. Phone and Macs match.');
+  }catch(e){setSave('Could not save online. Kept on this computer.')}
+}
+function setSave(t){const el=$('saveNote');if(el)el.textContent=t}
+async function connect(){
+  if(!window.claude||!claude.use)return;
+  try{db=await claude.use('db')}catch(e){db=null}
+  if(!db)return;
+  try{assets=await claude.use('assets')}catch(e){assets=null}
+  setSave('Saved online. Phone and Macs match.');
+  db.collection('boards').onSnapshot(q=>{
+    let ch=false;
+    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
+    if(ch&&!document.activeElement.closest?.('.insp'))render();
+  },()=>setSave('Online saving stopped. Kept on this computer.'));
+  db.doc('meta/shoot').onSnapshot(d=>{if(d.exists&&!d.metadata.hasPendingWrites){S.meta=clone(d.data());if(U.view==='shoot')renderMain()}},()=>{});
+  if(U.shot)renderInsp();
+}
+
+/* ---------- helpers ---------- */
+const B=()=>S.boards[U.board];
+const shotById=(b,id)=>b.shots.find(s=>s.id===id);
+const total=b=>b.shots.reduce((a,s)=>a+(+s.dur||0),0);
+const needsNum=s=>/\[/.test(s.script||'');
+const num=(b,s)=>b.shots.indexOf(s)+1;
+function comboRuns(b){const out=[];b.shots.forEach((s,i)=>{if(!s.combo)return;const l=out[out.length-1];if(l&&l.key===s.combo&&l.end===i-1){l.end=i;l.shots.push(s)}else out.push({key:s.combo,start:i,end:i,shots:[s]})});return out}
+function combosNext(b,i){const s=b.shots[i],n=b.shots[i+1];return s&&n&&s.combo&&s.combo===n.combo}
+function heroSrc(s){if(s.media&&s.media.hero)return s.media.hero.url;return moveOf(s.move).res||''}
+function gimbalSrc(s){if(s.media&&s.media.gimbal)return s.media.gimbal.url;return moveOf(s.move).op||''}
+const dots=n=>`<span class="dots ${n>=3?'h3':''}" title="Difficulty ${n} of 3">${'●'.repeat(n)}${'○'.repeat(3-n)}</span>`;
+
+/* ---------- drawn scenes (viewBox 90x160) ---------- */
+const SC={
+ wall:(a,b)=>`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="90" height="160" fill="url(#g)"/>`,
+ living:()=>SC.wall('#b9a58b','#6d5a48')+`<rect x="52" y="14" width="30" height="62" fill="#e9dcc2"/><path d="M67 14v62M52 45h30" stroke="#8d7a62" stroke-width="1"/><rect y="118" width="90" height="42" fill="#4a382b"/><rect x="4" y="96" width="46" height="24" rx="3" fill="#8a8f92"/><rect x="4" y="88" width="46" height="14" rx="3" fill="#9da2a5"/>`,
+ sofa:()=>SC.wall('#a99479','#5c4b3c')+`<rect x="14" y="20" width="24" height="32" fill="#403328"/><rect x="16" y="22" width="20" height="28" fill="#c4b193"/><rect y="124" width="90" height="36" fill="#43332a"/><rect x="-4" y="84" width="98" height="46" rx="5" fill="#7c8286"/><rect x="-4" y="72" width="98" height="24" rx="5" fill="#8f9599"/>`,
+ armchair:()=>SC.wall('#8f7f6c','#463a30')+`<rect x="60" y="12" width="20" height="74" fill="#d6c7a8" opacity=".7"/><path d="M78 124c0-40-12-52-33-52s-33 12-33 52z" fill="#7a5a3f"/><rect y="124" width="90" height="36" fill="#3a2c23"/>`,
+ kitchen:()=>SC.wall('#d7d2c8','#a8a39a')+`<rect x="4" y="6" width="36" height="42" fill="#2a3036"/><rect x="50" y="6" width="36" height="42" fill="#2a3036"/><path d="M22 0v60M68 0v54" stroke="#222" stroke-width=".7"/><path d="M14 72a8 10 0 0 1 16 0zM60 66a8 10 0 0 1 16 0z" fill="#17191c"/><rect y="100" width="90" height="8" fill="#f1eee8"/><rect y="108" width="90" height="52" fill="#20262c"/>`,
+ terrace:()=>`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#32507a"/><stop offset=".5" stop-color="#d78a55"/><stop offset=".72" stop-color="#f4c47b"/></linearGradient></defs><rect width="90" height="160" fill="url(#g)"/><path d="M0 92h12V70h9v12h10V60h8v26h14V74h10v14h12V66h15v30H0z" fill="#2a3346"/><rect y="104" width="90" height="56" fill="#46392f"/><path d="M0 96h90M0 104h90M10 96v8M30 96v8M50 96v8M70 96v8" stroke="#16191f" stroke-width="1.2"/>`,
+ patio:()=>`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a8a9c"/><stop offset=".6" stop-color="#ecc48a"/></linearGradient></defs><rect width="90" height="160" fill="url(#g)"/><ellipse cx="18" cy="72" rx="22" ry="30" fill="#3f5a3c"/><ellipse cx="74" cy="66" rx="24" ry="34" fill="#35503a"/><rect y="104" width="90" height="56" fill="#8b7a68"/><path d="M0 120h90M0 138h90M30 104l-8 56M60 104l8 56" stroke="#6d5f50" stroke-width=".8"/>`,
+ exterior:()=>`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb3cc"/><stop offset="1" stop-color="#dfe8ee"/></linearGradient></defs><rect width="90" height="160" fill="url(#g)"/><path d="M4 74 45 38l41 36z" fill="#3b3f46"/><rect x="12" y="74" width="66" height="50" fill="#b68c6e"/><rect x="39" y="94" width="13" height="30" fill="#232a31"/><rect x="18" y="84" width="14" height="14" fill="#e9dfbd"/><rect x="58" y="84" width="14" height="14" fill="#e9dfbd"/><rect y="124" width="90" height="36" fill="#5f6a61"/><path d="M38 124h15l14 36H24z" fill="#a9a8a2"/>`,
+ drone:()=>`<rect width="90" height="160" fill="#4d6e49"/><path d="M0 104h90v14H0z" fill="#8e8f8c"/><path d="M14 30h62v54H14z" fill="#59402f"/><path d="M14 30l31 27 31-27M14 84l31-27 31 27" stroke="#3a2a1f" stroke-width="1.2" fill="none"/><rect x="26" y="124" width="38" height="20" rx="3" fill="#2fa7c4"/><ellipse cx="9" cy="20" rx="12" ry="11" fill="#2f4d2f"/><ellipse cx="82" cy="134" rx="13" ry="12" fill="#2f4d2f"/>`,
+ entry:()=>SC.wall('#c8bca8','#7e7364')+`<rect x="27" y="30" width="36" height="96" fill="#2d3640"/><rect x="31" y="34" width="28" height="88" fill="#f3e6c4" opacity=".9"/><rect y="126" width="90" height="34" fill="#54473a"/><path d="M45 34v88" stroke="#2d3640"/>`,
+ dining:()=>SC.wall('#b7a68f','#6a5a4a')+`<path d="M45 0v26" stroke="#222"/><path d="M30 38a15 12 0 0 1 30 0z" fill="#d7b46a"/><rect x="10" y="94" width="70" height="7" fill="#3a2a20"/><rect x="16" y="101" width="4" height="36" fill="#2a1e17"/><rect x="70" y="101" width="4" height="36" fill="#2a1e17"/><rect y="136" width="90" height="24" fill="#4a3a2d"/>`,
+ stairs:()=>SC.wall('#c2b8a9','#756a5c')+`<path d="M0 160V130h22v-16h20V98h20V82h28v78z" fill="#54402f"/><path d="M6 118 78 54" stroke="#20252b" stroke-width="2.4"/>`,
+ bedroom:()=>SC.wall('#a8a397','#5d5850')+`<rect x="56" y="16" width="26" height="60" fill="#e6dcc4"/><rect x="6" y="88" width="78" height="40" rx="3" fill="#e9e6df"/><rect x="6" y="76" width="78" height="18" rx="3" fill="#6d7a84"/><rect x="12" y="84" width="24" height="12" rx="3" fill="#fff"/><rect x="42" y="84" width="24" height="12" rx="3" fill="#fff"/><rect y="128" width="90" height="32" fill="#4b3e33"/>`,
+ ensuite:()=>SC.wall('#dfe0dc','#a3a6a4')+`<rect x="8" y="26" width="42" height="40" rx="2" fill="#b8c8d2"/><rect x="4" y="84" width="60" height="9" fill="#f5f4f0"/><rect x="6" y="93" width="56" height="42" fill="#3a4750"/><rect y="135" width="90" height="25" fill="#8d8f8e"/><rect x="66" y="20" width="24" height="115" fill="#c8d6dc" opacity=".55"/>`,
+ basement:()=>SC.wall('#6f6a64','#3c3834')+`<rect x="8" y="30" width="74" height="40" fill="#1e2024"/><rect x="11" y="33" width="68" height="34" fill="#35506a"/><rect x="8" y="96" width="74" height="28" rx="3" fill="#59616a"/><rect y="124" width="90" height="36" fill="#2c2a28"/>`,
+ backyard:()=>`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9dc0d6"/><stop offset="1" stop-color="#e1e7dd"/></linearGradient></defs><rect width="90" height="160" fill="url(#g)"/><rect y="62" width="90" height="26" fill="#4f6f46"/><rect y="88" width="90" height="72" fill="#6d8f54"/><rect x="10" y="104" width="70" height="28" rx="3" fill="#8e8a82"/><rect x="18" y="110" width="30" height="16" fill="#553f2e"/>`,
+ phone:()=>SC.wall('#d5915a','#58402f')+`<rect x="24" y="40" width="42" height="80" rx="5" fill="#0d1217"/><rect x="27" y="45" width="36" height="70" rx="2" fill="#35566f"/><path d="M14 150c0-22 10-38 22-40l18-2c8 2 18 14 22 42z" fill="#b9856a"/>`,
+ gear:()=>SC.wall('#71695f','#37322c')+`<rect x="20" y="62" width="50" height="34" rx="4" fill="#15181b"/><circle cx="45" cy="79" r="13" fill="#262b30"/><circle cx="45" cy="79" r="7" fill="#3f6d8a"/><path d="M45 96v30M14 62V40h62v22" stroke="#111" stroke-width="3" fill="none"/>`,
+ card:()=>`<rect width="90" height="160" fill="#fff"/>`
+};
+function sceneSvg(k){const f=SC[k];return f?`<svg class="sc" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${f()}</svg>`:`<svg class="sc" viewBox="0 0 90 160" aria-hidden="true"><rect width="90" height="160" fill="#26394c"/></svg>`}
+let gid=0;
+function frameHTML(s,mode){
+  const f=s.f||{};
+  if(mode==='hero'||mode==='gimbal'){const src=mode==='hero'?heroSrc(s):gimbalSrc(s);if(src)return `<div class="fr"><video class="ct" src="${esc(src)}" autoplay muted loop playsinline></video><span class="cue">${mode==='hero'?'HERO':'HOW TO'}</span></div>`}
+  if(s.media&&s.media.frame)return `<div class="fr"><img class="real" src="${esc(s.media.frame.url)}" alt=""></div>`;
+  if(f.img)return `<div class="fr"><img class="real" src="${esc(f.img)}" alt="" loading="lazy"></div>`;
+  const uid='f'+(++gid);
+  let h=sceneSvg(f.scene).replace(/id="g"/g,`id="${uid}"`).replace(/url\(#g\)/g,`url(#${uid})`);
+  if(f.scene==='card'&&!f.el)h+=`<div class="endcard">THE OP TEAM<small>SoldMike</small></div>`;
+  if(f.el==='collage')h+=`<div class="collage">${'<i></i>'.repeat(16)}</div>`;
+  if(f.behind)h+=`<div class="bh ${esc(f.bs||'serif')}">${esc(f.behind)}</div>`;
+  if(f.talent)h+=`<img class="tal ${f.talent}" src="img/mike.png" alt="">`;
+  const ev=(f.ev||'').split('|');
+  if(f.el==='bar')h+=`<div class="el barx"><b>${esc(ev[0])}</b><div class="t"><i></i></div></div><i class="rc" style="left:6cqw;top:16cqw;transform:rotate(-7deg)"></i><i class="rc" style="right:6cqw;top:12cqw;transform:rotate(6deg)"></i>`;
+  if(f.el==='pills'){const p=[['left:4cqw','top:34cqw'],['right:4cqw','top:60cqw'],['left:8cqw','top:88cqw']];ev.forEach((t,i)=>h+=`<span class="pill" style="${p[i%3].join(';')}">${esc(t)}</span>`)}
+  if(f.el==='logos'){const p=[['left:7cqw','top:26cqw'],['right:7cqw','top:42cqw'],['left:11cqw','top:62cqw']];ev.forEach((t,i)=>h+=`<span class="chip" style="${p[i%3].join(';')}">${esc(t)}</span>`)}
+  if(f.el==='carousel')h+=`<i class="rc" style="left:4cqw;bottom:56cqw;transform:rotate(-10deg) scale(.86)"></i><i class="rc" style="left:39cqw;bottom:92cqw"></i><i class="rc" style="right:4cqw;bottom:56cqw;transform:rotate(10deg) scale(.86)"></i>`;
+  if(f.el==='endpill')h+=`<div class="endp"><img src="img/mike.png" alt=""><span>${esc(ev[0])}</span></div>`;
+  if(f.el==='strike')h+=`<div class="el strike">${esc(ev[0])}<i></i></div>`;
+  if(s.title&&!f.talent)h+=`<div class="ttl">${esc(s.title)}</div>`;
+  if(f.cap){const c=esc(f.cap).replace(/\*(.+?)\*/g,'<em>$1</em>');h+=`<div class="cap">${c}</div>`}
+  return `<div class="fr">${h}</div>`;
+}
+
+/* ---------- rail ---------- */
+function renderRail(){
+  const boardsIn=c=>S.order.filter(id=>S.boards[id]&&S.boards[id].cat===c);
+  const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.length}</small></button>`};
+  const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${ids.map(nb).join('')}</div>`};
+  const top=CATEGORIES.filter(c=>!c.parent),re=CATEGORIES.filter(c=>c.parent);
+  $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>
+  <div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
+  <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
+  <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
+  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>13</small></button></div>
+  <div class="save" id="saveNote">${db?'Saved online. Phone and Macs match.':'Saved on this computer'}</div>`;
+  $('rail').querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;render()});
+  $('rail').querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
+  $('rail').querySelector('[data-m]').onclick=()=>{U.sec='moves';U.shot=null;render()};
+}
+
+/* ---------- main ---------- */
+function render(){renderRail();renderMain();renderInsp();try{lsWrite()}catch(e){}}
+function renderMain(){
+  gid=0;
+  const wide=U.sec==='board'&&B().aspect==='16/9';$('main').classList.toggle('wide',wide);$('insp').classList.toggle('wide',wide);
+  if(U.sec==='moves')return renderMoves();
+  if(U.sec==='cat')return renderCat();
+  const b=B();
+  const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](b);
+  $('main').innerHTML=`<div class="head"><div><h1>${esc(b.name)}</h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
+    <div class="acts"><button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
+  ${versionBar(b)}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
+  wireMain(b);
+}
+function siblings(b){return b.family?S.order.map(i=>S.boards[i]).filter(x=>x&&x.family===b.family&&x.id!==b.id):[]}
+function versionBar(b){
+  const form=U.addV?`<form class="verform" id="verForm"><label class="fld"><span>Version name</span><input id="vName" value="Virtual Tour"></label><label class="fld"><span>Shape</span><select id="vShape"><option value="16/9">Horizontal 16:9</option><option value="9/16">Vertical 9:16</option></select></label><button class="btn pri">Create linked version</button><button type="button" class="btn" id="vCancel">Cancel</button></form>`:'';
+  if(!b.family)return form;
+  const sib=siblings(b),on=b.linked!==false;
+  return `<div class="vers"><div class="seg2">${[b,...sib].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id)).map(x=>`<button class="${x.id===b.id?'on':''}" data-ver="${x.id}">${esc(x.version||x.name)}</button>`).join('')}</div>
+  <button class="sw ${on?'on':''}" id="linkT" role="switch" aria-checked="${on}"><i></i>${on?'Linked: changes here also go to '+esc(sib.map(x=>x.version||x.name).join(', ')):'Not linked: changes stay on this version'}</button></div>${form}`;
+}
+function syncShot(b,s,k){
+  if(!b.family||b.linked===false||s.solo||!LINKED.includes(k))return;
+  siblings(b).forEach(x=>{if(x.linked===false)return;const t=x.shots.find(y=>y.lid===s.lid);if(t&&!t.solo){t[k]=s[k];touch(x)}});
+}
+function createVersion(b,name,aspect){
+  const id='b'+Date.now().toString(36);
+  if(!b.family){b.family='f'+id;b.linked=true;b.version=b.version||'Original';b.shots.forEach(s=>s.lid=s.lid||s.id)}
+  const n=clone(b);n.id=id;n.version=name;n.name=(b.name+' · '+name);n.aspect=aspect;n.linked=true;delete n.group;
+  n.shots.forEach(s=>{s.id='s'+Math.random().toString(36).slice(2,9);s.got=false;s.lid=s.lid});
+  S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;touch(b);touch(n);render();toast('Linked version created');
+}
+function legend(b){
+  const used=[...new Set(b.shots.map(s=>s.kind))];
+  return `<div class="legend">${used.map(k=>`<span><i style="background:${KINDS[k].c}"></i>${KINDS[k].label}</span>`).join('')}${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
+}
+function flagsHTML(b){
+  const n=b.shots.filter(needsNum);
+  let h=(b.flags||[]).map(f=>`<div class="flag"><b>CHECK</b><span>${esc(f)}</span></div>`).join('');
+  if(n.length)h+=`<div class="flag"><b>NUMBERS</b><span>${n.length} ${n.length===1?'line needs':'lines need'} a real number: shot ${n.map(s=>num(b,s)).join(', ')}.</span></div>`;
+  return h;
+}
+function birdView(b){
+  const T=total(b)||1,over=T>b.target,rs=comboRuns(b);
+  const a=b.shots.filter(s=>s.roll==='A').reduce((x,s)=>x+(+s.dur||0),0),br=b.shots.filter(s=>s.roll==='B').reduce((x,s)=>x+(+s.dur||0),0);
+  const film=b.shots.filter(s=>s.roll!=='G'),got=film.filter(s=>s.got).length;
+  const hard=b.shots.filter(s=>s.hard>=3).length;
+  const locs=new Set(film.map(s=>s.loc)).size;
+  const beats=[];let t=0;b.shots.forEach(s=>{const l=beats[beats.length-1];if(l&&l.n===s.beat)l.d+=+s.dur||0;else beats.push({n:s.beat,t,d:+s.dur||0});t+=+s.dur||0});
+  const starts=[];t=0;b.shots.forEach(s=>{starts.push(t);t+=+s.dur||0});
+  const ticks=[];for(let i=0;i<=T;i+=5)ticks.push(i);
+  return `${flagsHTML(b)}
+  <div class="stats">
+    <div class="stat"><b class="${over?'over':''}">${fmt(T)}s</b><span>runtime, target ${b.target}s</span></div>
+    <div class="stat"><b>${b.shots.length}</b><span>shots</span></div>
+    <div class="stat"><b>${locs}</b><span>locations</span></div>
+    <div class="stat"><b>${fmt(a)}s / ${fmt(br)}s</b><span>A-roll / B-roll</span></div>
+    <div class="stat"><b>${rs.length}</b><span>combos</span></div>
+    <div class="stat"><b>${hard}</b><span>hard moves</span></div>
+    <div class="stat"><b>${got}/${film.length}</b><span>captured</span></div>
+  </div>
+  ${legend(b)}
+  <div class="tlwrap"><div class="tl">
+    <div class="lane">${beats.map(x=>`<div class="seg" style="left:${x.t/T*100}%;width:${x.d/T*100}%" title="${esc(x.n)}">${esc(x.n)}</div>`).join('')}</div>
+    <div class="tiles">${b.shots.map((s,i)=>{const c=KINDS[s.kind].c,cm=!!s.combo;return `<button class="tile ${U.shot===s.id?'sel':''} ${s.got?'got':''}" style="flex:${s.dur} 1 0;background:${c}" data-s="${s.id}" title="${i+1}. ${esc(s.title||s.script||s.gfx)} (${s.dur}s)">${cm?'<i class="hd l"></i><i class="hd r"></i>':''}${s.dur>=1?i+1:''}</button>`}).join('')}</div>
+    <div class="rollrow">${b.shots.map(s=>`<i class="${s.roll}" style="flex:${s.dur} 1 0"></i>`).join('')}</div>
+    ${rs.length?`<div class="lane combos">${rs.map(r=>{const st=starts[r.start],en=starts[r.end]+(+b.shots[r.end].dur||0);return `<div class="seg" style="left:${st/T*100}%;width:${(en-st)/T*100}%">${esc(r.key)}</div>`}).join('')}</div>`:''}
+    <div class="ruler">${ticks.map(i=>`<span style="left:${i/T*100}%">${i}s</span>`).join('')}</div>
+  </div></div>
+  <div class="sect">Every shot at a glance</div>
+  <div class="sheet">${b.shots.map((s,i)=>`<button class="mini ${U.shot===s.id?'sel':''}" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</button>`).join('')}</div>`;
+}
+function storyView(b){
+  const runs=comboRuns(b),pos={};runs.forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));
+  return `${legend(b)}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
+    const k=KINDS[s.kind],m=moveOf(s.move),tab=U.ctab[s.id]||'frame',p=pos[s.id];
+    const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
+    return `<article class="card ${U.shot===s.id?'sel':''}" draggable="true" data-s="${s.id}">
+      <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
+      ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>${p.i} of ${p.n}</span></div>`:''}
+      <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
+        <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
+      <div class="body"><div class="line">${line}</div>
+        <div class="kv"><b>Where</b><span>${esc(s.loc)}${s.pos&&!s.title?' · '+esc(s.pos):''}</span><b>Move</b><span>${esc(m.name)} ${dots(s.hard||1)}</span>${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}${s.gfx?`<b>Graphic</b><span>${esc(s.gfx)}</span>`:''}${s.broll?`<b>B-roll</b><span>${esc(s.broll)}</span>`:''}</div></div>
+      ${combosNext(b,i)?`<div class="link"><span class="lk" title="${esc(s.link||'Linked to next clip')}">${esc(s.combo)}</span></div>`:''}
+    </article>`}).join('')}<button class="addcard" id="addS2">Add shot</button></div>`;
+}
+
+function listView(b){
+  let t=0;const notes=b.shots.filter(s=>s.ask).length;
+  const rows=b.shots.map((s,i)=>{const at=t;t+=+s.dur||0;const m=moveOf(s.move),k=KINDS[s.kind];
+    return `<tr data-open="${s.id}" class="${U.shot===s.id?'on':''}"><td class="n">${i+1}</td><td class="n">${tc(at)}</td><td class="n">${s.dur}s</td><td><span class="lb" style="background:${k.c}">${esc(k.label)}</span></td><td class="n">${s.roll==='G'?'GFX':s.roll}</td><td>${esc(s.loc)}</td><td class="w">${s.combo?`<span class="cmb">${esc(s.combo)}</span>`:''}${esc(s.title||s.script||s.gfx)}${s.title&&s.script?'<br><small>'+esc(s.script)+'</small>':''}</td><td>${esc(m.name)} ${dots(s.hard||1)}</td><td class="n">${esc(s.lens)}${s.fps?' · '+s.fps:''}</td><td class="n">${s.got?'✓':''}</td><td class="w ask">${esc(s.ask||'')}</td></tr>`}).join('');
+  return `${notes?`<div class="flag"><b>NOTES</b><span>${notes} ${notes===1?'note':'notes'} for Claude on this board. ${db?'Tell Claude to check your notes.':'Copy them and paste them to Claude.'}</span>${db?'':'<button class="btn" id="copyN" style="margin-left:auto">Copy notes</button>'}</div>`:''}<div class="tblwrap"><table class="sl"><thead><tr><th>#</th><th>At</th><th>Len</th><th>Label</th><th>Roll</th><th>Where</th><th>Shot</th><th>Move</th><th>Lens · fps</th><th>Got</th><th>Note for Claude</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+/* ---------- shoot order ---------- */
+function setupsFor(b,whole){
+  const list=whole&&b.group?S.order.map(i=>S.boards[i]).filter(x=>x&&x.group===b.group):[b];
+  const map={};
+  list.forEach(x=>x.shots.forEach(s=>{if(s.roll==='G')return;const k=(x.family||x.id)+'|'+s.loc;(map[k]=map[k]||{key:k,board:x,loc:s.loc,shots:[]}).shots.push(s)}));
+  const g=b.group||b.family||b.id,saved=(S.meta.order&&S.meta.order[g])||[];
+  const keys=Object.keys(map).sort((p,q)=>{const a=saved.indexOf(p),c=saved.indexOf(q);return (a<0?99:a)-(c<0?99:c)});
+  return keys.map(k=>map[k]);
+}
+const startOf=b=>(S.meta.starts&&S.meta.starts[b.group||b.family||b.id])||S.meta.start||'12:45';
+function setupMin(su){const n=S.meta.mins&&S.meta.mins[su.key];if(n)return +n;return 15+su.shots.length*5+su.shots.filter(s=>s.hard>=3).length*10}
+function shootView(b){
+  const whole=U.scope==='whole'&&!!b.group;
+  const sets=setupsFor(b,whole),all=sets.flatMap(x=>x.shots),got=all.filter(s=>s.got).length;
+  let clock=toMin(startOf(b));
+  const totalMin=sets.reduce((a,x)=>a+setupMin(x),0);
+  return `<div class="scope">${b.group?`<div class="seg2"><button data-sc="whole" class="${whole?'on':''}">Whole shoot day</button><button data-sc="one" class="${whole?'':'on'}">This video only</button></div>`:''}
+    <label>Start <input class="inp" type="time" id="startT" value="${esc(startOf(b))}"></label>
+    <span>${sets.length} setups · about ${Math.floor(totalMin/60)}h ${totalMin%60}m · ${all.length} shots, filmed out of story order</span></div>
+  <div class="prog" aria-label="Captured"><i style="width:${all.length?got/all.length*100:0}%"></i></div>
+  <div class="scope"><span>${got} of ${all.length} captured</span></div>
+  ${sets.map((su,i)=>{const when=fromMin(clock);clock+=setupMin(su);const note=S.meta.notes&&S.meta.notes[su.key];
+    const prev=sets[i-1],chg=su.board.outfit&&(!prev||prev.board.id!==su.board.id);
+    const rows=[...su.shots].sort((p,q)=>(p.combo?0:1)-(q.combo?0:1));
+    return `<section class="setup"><header><span class="clock">${when}</span><div><h3>${esc(su.loc)}</h3><div class="meta">${esc(su.board.name)}${su.board.outfit?' · '+esc(su.board.outfit):''}${chg&&i?' · outfit change':''} · ${su.shots.length} shots</div></div>
+      <div class="ord"><label class="meta">Min <input class="inp" style="width:58px" type="number" min="5" step="5" data-min="${esc(su.key)}" value="${setupMin(su)}"></label><button data-up="${i}" aria-label="Move setup up">↑</button><button data-dn="${i}" aria-label="Move setup down">↓</button></div></header>
+      ${note?`<div class="note">${esc(note)}</div>`:''}
+      ${rows.map(s=>{const bb=su.board,m=moveOf(s.move);return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><span class="sn">#${num(bb,s)}</span><span>${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}</span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}).join('')}
+    </section>`}).join('')}`;
+}
+const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return (h||0)*60+(m||0)};
+const fromMin=x=>{const h=Math.floor(x/60)%24,m=x%60,ap=h>=12?'PM':'AM';return ((h%12)||12)+':'+(m<10?'0':'')+m+' '+ap};
+
+/* ---------- combos + hard moves ---------- */
+function buildView(b){
+  const runs=comboRuns(b);
+  const seen={};b.shots.forEach(s=>{if(s.roll==='G')return;const m=moveOf(s.move);if(m.id===0)return;const e=seen[m.id]=seen[m.id]||{m,hard:0,n:[]};e.hard=Math.max(e.hard,s.hard||1);e.n.push(num(b,s))});
+  const lad=Object.values(seen).sort((p,q)=>p.hard-q.hard||p.n[0]-q.n[0]);
+  const cs=runs.map(r=>{const c=(b.combos||{})[r.key]||{name:'Combo '+r.key,drill:[],checks:[]};
+    return `<section class="combo"><h3>Combo ${esc(r.key)}: ${esc(c.name)}</h3><p>${esc(c.why||'')}</p>
+    <div class="chain">${r.shots.map((s,i)=>`<div class="cc" data-open="${s.id}">${frameHTML(s)}<small>#${num(b,s)} · ${s.dur}s on screen<br>roll ${+s.dur+4}s · ${s.fps} fps</small></div>${i<r.shots.length-1?`<div class="jn">${esc(s.link||'Linked')}</div>`:''}`).join('')}</div>
+    <div class="cols"><div><div class="sect" style="margin-top:0">The handoff</div><p>${esc(c.handoff||'')}</p><p>Roll at least 2s before and 2s after what the edit needs, so the ramp has room.</p></div>
+    <div class="drill"><div class="sect" style="margin-top:0">Build up to it</div>${(c.drill||[]).map((d,i)=>`<label><input type="checkbox" data-dr="${esc(r.key)}|${i}" ${(c.checks||[]).includes(i)?'checked':''}><span>${esc(d)}</span></label>`).join('')}</div></div></section>`}).join('');
+  return `${runs.length?cs:'<div class="empty">No combos on this board yet. Open a shot and link it to the next clip.</div>'}
+  <div class="sect">Practice ladder: easiest move to hardest</div>
+  <div class="ladder">${lad.map(e=>`<div class="lad">${e.m.op||e.m.res?`<video src="${esc(e.m.op||e.m.res)}" muted loop playsinline preload="metadata" data-hv></video>`:'<div class="novid"></div>'}<div><h4>${esc(e.m.name)} ${dots(e.hard)}</h4><p>Shot ${e.n.join(', ')}. ${esc(e.m.mode)} mode, ${esc(e.m.lens)}.</p><p>${esc(e.m.mistake)}</p></div></div>`).join('')}</div>`;
+}
+
+/* ---------- library pages ---------- */
+function renderMoves(){
+  $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Your 13 moves from Shot Commander, plus locked off and drone. Hover a clip to play it.</div></div></div>
+  <div class="movegrid">${MOVES.filter(m=>m.res||m.op).map(m=>`<article class="move"><div class="vids"><div>${m.res?`<video src="${esc(m.res)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No clip yet</em>'}<span>RESULT</span></div><div>${m.op?`<video src="${esc(m.op)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No operator clip yet</em>'}<span>HOW TO</span></div></div>
+  <div class="tx"><h3>${esc(m.name)} ${dots(m.hard)}</h3><p>${esc(m.mode)} mode · ${esc(m.lens)}</p><p><b>Technique.</b> ${esc(m.tech)}</p><p><b>Mistake.</b> ${esc(m.mistake)}</p><p><b>Tip.</b> ${esc(m.tip)}</p></div></article>`).join('')}</div>`;
+  hover();
+}
+function renderCat(){
+  const c=CATEGORIES.find(x=>x.id===U.cat),ids=S.order.filter(i=>S.boards[i]&&S.boards[i].cat===c.id);
+  $('main').innerHTML=`<div class="head"><div><h1>${esc(c.name)}</h1><div class="sub">${c.parent?esc(c.parent)+' · ':''}${ids.length} ${ids.length===1?'board':'boards'}</div></div><div class="acts"><button class="btn pri" id="newB">New board</button></div></div>
+  ${ids.length?`<div class="sheet" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px">${ids.map(i=>{const b=S.boards[i];return `<button class="mini" data-b2="${i}">${frameHTML(b.shots[0]||{f:{}})}<div style="padding-top:7px;font-weight:700">${esc(b.name)}</div><div style="font-size:12px;color:var(--mut)">${b.shots.length} shots · ${fmt(total(b))}s</div></button>`}).join('')}</div>`:`<div class="empty">No boards here yet. Start one, or duplicate a board from another category.</div>`}`;
+  $('main').querySelectorAll('[data-b2]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b2;render()});
+  const n=$('newB');if(n)n.onclick=()=>{const id='b'+Date.now().toString(36);S.boards[id]={id,cat:c.id,name:'Untitled board',sub:c.name,status:'Draft',target:45,outfit:'',flags:[],combos:{},shots:[newShot()]};S.order.push(id);U.sec='board';U.board=id;U.view='story';touch(S.boards[id]);render()};
+}
+function newShot(){return {id:'s'+Math.random().toString(36).slice(2,9),roll:'B',kind:'wide',beat:'New',loc:'Location',pos:'',dur:2,move:1,hard:1,lens:'24mm',fps:30,script:'',gfx:'',broll:'',f:{scene:'living'}}}
+
+/* ---------- wiring ---------- */
+function hover(){document.querySelectorAll('video[data-hv]').forEach(v=>{v.onmouseenter=()=>v.play().catch(()=>{});v.onmouseleave=()=>v.pause();v.onclick=()=>v.paused?v.play().catch(()=>{}):v.pause()})}
+function open(id){U.shot=id;U.itab='frame';renderInsp();document.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'));document.querySelectorAll(`[data-s="${id}"]`).forEach(e=>e.classList.add('sel'))}
+function wireMain(b){
+  const m=$('main');
+  m.querySelectorAll('[data-v]').forEach(e=>e.onclick=()=>{U.view=e.dataset.v;renderMain();lsWrite()});
+  $('dupB').onclick=()=>{const id='b'+Date.now().toString(36),n=clone(b);n.id=id;n.name=b.name+' copy';delete n.group;delete n.family;delete n.linked;delete n.version;n.shots.forEach(s=>{s.got=false;s.id='s'+Math.random().toString(36).slice(2,9)});S.boards[id]=n;S.order.push(id);U.board=id;touch(n);render();toast('Board duplicated')};
+  const add=()=>{const s=newShot();b.shots.push(s);if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);x.shots.push(c);touch(x)})}touch(b);renderMain();open(s.id)};
+  $('addV').onclick=()=>{U.addV=!U.addV;renderMain()};
+  const vf=$('verForm');if(vf){vf.onsubmit=e=>{e.preventDefault();createVersion(b,$('vName').value.trim()||'Version',$('vShape').value)};$('vCancel').onclick=()=>{U.addV=false;renderMain()}}
+  m.querySelectorAll('[data-ver]').forEach(e=>e.onclick=()=>{U.board=e.dataset.ver;U.shot=null;render()});
+  const lt=$('linkT');if(lt)lt.onclick=()=>{b.linked=b.linked===false;touch(b);renderMain()};
+  $('addS').onclick=add;const a2=$('addS2');if(a2)a2.onclick=add;
+  m.querySelectorAll('.tile,.mini[data-s]').forEach(e=>e.onclick=()=>open(e.dataset.s));
+  m.querySelectorAll('[data-open]').forEach(e=>e.onclick=()=>open(e.dataset.open));
+  m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;renderMain()});
+  m.querySelectorAll('.card').forEach(c=>{
+    c.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',c.dataset.s);c.classList.add('drag')});
+    c.addEventListener('dragend',()=>c.classList.remove('drag'));
+    c.addEventListener('dragover',ev=>{ev.preventDefault();c.classList.add('over')});
+    c.addEventListener('dragleave',()=>c.classList.remove('over'));
+    c.addEventListener('drop',ev=>{ev.preventDefault();const from=ev.dataTransfer.getData('text/plain'),to=c.dataset.s;if(from===to)return;const i=b.shots.findIndex(s=>s.id===from),[x]=b.shots.splice(i,1);b.shots.splice(b.shots.findIndex(s=>s.id===to),0,x);touch(b);renderMain()});
+  });
+  m.querySelectorAll('[data-sc]').forEach(e=>e.onclick=()=>{U.scope=e.dataset.sc;renderMain()});
+  const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
+  m.querySelectorAll('[data-got]').forEach(e=>e.onchange=()=>{const [bi,si]=e.dataset.got.split('|'),x=S.boards[bi],s=shotById(x,si);s.got=e.checked;touch(x);renderMain()});
+  m.querySelectorAll('[data-open2]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.open2.split('|');U.board=bi;renderMain();renderRail();open(si)});
+  m.querySelectorAll('[data-min]').forEach(e=>e.onchange=()=>{(S.meta.mins=S.meta.mins||{})[e.dataset.min]=+e.value;touchMeta();renderMain()});
+  const mv=(i,d)=>{const sets=setupsFor(b,U.scope==='whole'&&!!b.group).map(x=>x.key);const j=i+d;if(j<0||j>=sets.length)return;[sets[i],sets[j]]=[sets[j],sets[i]];const g=b.group||b.family||b.id;(S.meta.order=S.meta.order||{})[g]=sets;touchMeta();renderMain()};
+  m.querySelectorAll('[data-up]').forEach(e=>e.onclick=()=>mv(+e.dataset.up,-1));
+  m.querySelectorAll('[data-dn]').forEach(e=>e.onclick=()=>mv(+e.dataset.dn,1));
+  m.querySelectorAll('[data-dr]').forEach(e=>e.onchange=()=>{const [k,i]=e.dataset.dr.split('|'),c=b.combos[k];c.checks=c.checks||[];const n=+i;c.checks=e.checked?[...c.checks,n]:c.checks.filter(x=>x!==n);touch(b)});
+  const cn=$('copyN');if(cn)cn.onclick=()=>{const t=b.name+'\n'+b.shots.filter(s=>s.ask).map(s=>'Shot '+num(b,s)+' ('+(s.title||s.script||'').slice(0,50)+'): '+s.ask).join('\n');navigator.clipboard.writeText(t).then(()=>toast('Notes copied'),()=>toast('Could not copy'))};
+  hover();
+}
+
+/* ---------- inspector: the three-in-one block ---------- */
+function renderInsp(){
+  const el=$('insp');
+  if(U.sec!=='board'||!U.shot){el.hidden=true;return}
+  const b=B(),s=shotById(b,U.shot);if(!s){el.hidden=true;return}
+  const i=b.shots.indexOf(s),m=moveOf(s.move),tab=U.itab;
+  const opt=(o,v)=>o.map(([k,n])=>`<option value="${esc(k)}" ${String(k)===String(v)?'selected':''}>${esc(n)}</option>`).join('');
+  const side=tab==='gimbal'?`<b>${esc(m.name)}</b><p>${esc(m.tech)}</p><p>${esc(m.mistake)}</p><em>TIP</em><p>${esc(m.tip)}</p>`
+    :tab==='hero'?`<b>Hero moment</b><p>${s.media&&s.media.hero?'Your clip for this shot.':'Sample of this move from your library. Upload the real money moment when you have it.'}</p>`
+    :`<b>${esc(KINDS[s.kind].label)} · ${s.roll==='G'?'graphic':s.roll+'-roll'}</b><p>${esc(s.loc)}${s.pos?' · '+esc(s.pos):''}</p><p>${esc(m.name)}</p>${s.combo?`<em>COMBO ${esc(s.combo)} · ROLL ${+s.dur+4}S</em>`:''}`;
+  el.hidden=false;
+  el.innerHTML=`<div class="ih"><h2>Shot ${i+1}</h2><button class="x" id="prevS" aria-label="Previous shot">←</button><button class="x" style="margin-left:0" id="nextS" aria-label="Next shot">→</button><button class="x" id="closeI">Close</button></div>
+  <div class="vtabs"><button class="${tab==='frame'?'on':''}" data-it="frame">Frame</button><button class="${tab==='hero'?'on':''}" data-it="hero" ${heroSrc(s)?'':'disabled'}>Hero moment</button><button class="${tab==='gimbal'?'on':''}" data-it="gimbal" ${gimbalSrc(s)?'':'disabled'}>Gimbal move</button></div>
+  <div class="three"><div>${frameHTML(s,tab)}</div><div class="side">${side}</div></div>
+  ${assets?`<div class="up">${['frame','hero','gimbal'].map(k=>`<label class="btn">Upload ${k}<input type="file" accept="${k==='frame'?'image/*':'video/*,image/gif'}" data-up2="${k}"></label>`).join('')}</div>`:''}
+  <label class="fld note4"><span>Note for Claude</span><textarea data-f="ask" placeholder="Type a change for this shot, then tell Claude to check your notes.">${esc(s.ask)}</textarea></label>
+  <label class="fld"><span>Script line</span><textarea data-f="script">${esc(s.script)}</textarea></label>
+  <label class="fld"><span>Graphic overlay</span><textarea data-f="gfx">${esc(s.gfx)}</textarea></label>
+  <label class="fld"><span>B-roll over top</span><input data-f="broll" value="${esc(s.broll)}"></label>
+  <div class="fg2"><label class="fld"><span>Location</span><input data-f="loc" value="${esc(s.loc)}"></label><label class="fld"><span>Position</span><input data-f="pos" value="${esc(s.pos)}"></label></div>
+  <div class="fg3"><label class="fld"><span>Roll</span><select data-f="roll">${opt([['A','A-roll'],['B','B-roll'],['G','Graphic']],s.roll)}</select></label><label class="fld"><span>Label</span><select data-f="kind">${opt(Object.entries(KINDS).map(([k,v])=>[k,v.label]),s.kind)}</select></label><label class="fld"><span>Seconds</span><input type="number" min=".5" step=".5" data-f="dur" value="${s.dur}"></label></div>
+  <div class="fg3"><label class="fld"><span>Move</span><select data-f="move">${opt(MOVES.map(x=>[x.id,x.name]),s.move)}</select></label><label class="fld"><span>Difficulty</span><select data-f="hard">${opt([[1,'Easy'],[2,'Medium'],[3,'Hard']],s.hard||1)}</select></label><label class="fld"><span>Lens / fps</span><input data-f="lens" value="${esc(s.lens)}"></label></div>
+  <div class="fg2"><label class="fld"><span>Frame rate</span><input data-f="fps" value="${esc(s.fps)}"></label><label class="fld"><span>Beat</span><input data-f="beat" value="${esc(s.beat)}"></label></div>
+  <label class="fld"><span>Notes</span><textarea data-f="notes">${esc(s.notes)}</textarea></label>
+  ${b.family?`<label class="solo"><input type="checkbox" id="soloS" ${s.solo?'checked':''}> Change this shot only on this version</label>`:''}
+  <div class="up"><button class="btn" id="linkN">${combosNext(b,i)?'Unlink from next clip':'Link to next clip (combo)'}</button><button class="btn" id="dupS">Duplicate</button><button class="btn" id="delS">Delete</button></div>`;
+  $('closeI').onclick=()=>{U.shot=null;renderInsp();document.querySelectorAll('.sel').forEach(e=>e.classList.remove('sel'))};
+  $('prevS').onclick=()=>{const p=b.shots[i-1];if(p)open(p.id)};
+  $('nextS').onclick=()=>{const n=b.shots[i+1];if(n)open(n.id)};
+  el.querySelectorAll('[data-it]').forEach(e=>e.onclick=()=>{U.itab=e.dataset.it;renderInsp()});
+  let t;
+  el.querySelectorAll('[data-f]').forEach(e=>{e.oninput=()=>{const k=e.dataset.f;s[k]=e.type==='number'||k==='move'||k==='hard'?+e.value:e.value;syncShot(b,s,k);touch(b);clearTimeout(t);t=setTimeout(renderMain,250)};if(e.tagName==='SELECT')e.onchange=()=>{e.oninput();renderInsp()}});
+  el.querySelectorAll('[data-up2]').forEach(e=>e.onchange=async()=>{const f=e.files[0];if(!f)return;toast('Uploading…');try{const r=await assets.upload(f);s.media=s.media||{};s.media[e.dataset.up2]={id:r.id,url:r.url};touch(b);render();toast('Uploaded')}catch(x){toast('Upload failed. Files must be under 20 MB.')}});
+  const so=$('soloS');if(so)so.onchange=()=>{s.solo=so.checked;touch(b)};
+  $('linkN').onclick=()=>{const n=b.shots[i+1];if(!n)return toast('This is the last shot');if(combosNext(b,i)){delete n.combo;delete s.link}else{const k=s.combo||nextCombo(b);s.combo=k;n.combo=k;b.combos[k]=b.combos[k]||{name:'New combo',why:'',handoff:'Match speed and direction across the cut.',drill:['Rehearse the move','Shoot each clip with 2s of room at both ends','Check the handoff on the monitor'],checks:[]}}touch(b);render()};
+  $('dupS').onclick=()=>{const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);c.got=false;b.shots.splice(i+1,0,c);touch(b);renderMain();open(c.id)};
+  let armed=false;$('delS').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to delete';return}b.shots.splice(i,1);U.shot=null;touch(b);render()};
+}
+const nextCombo=b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l=>!b.shots.some(s=>s.combo===l));
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,2200)}
+addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
+
+lsRead();render();connect();
