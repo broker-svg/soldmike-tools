@@ -225,7 +225,11 @@ add('re15','vtx2','Island or faucet, wrap and rise','closeup',12,3,'50mm',60,3);
 add('re17','vtx3','Feature wall or fireplace, slow zoom out','wide',8,1,'12mm',30,3);
 add('re19','vtx4','Dining table orbit','wide',3,2,'12mm',60,3);
 add('re24','vtx5','Vanity, top down pull back','closeup',13,2,'50mm',60,3);
-t.flags.push('5 EXTRA shots added to bring in moves the tour was not using. They are on this version only, and take the tour to about 150s against the 120s target.')})();
+t.flags.push('5 EXTRA shots added to bring in moves the tour was not using. They are on this version only, and take the tour to about 150s against the 120s target.');
+/* Swaps: repeat straight pushes changed to wide moves, same lens and hold time */
+const swap=(lid,move,hard,pos)=>{const n=t.shots.find(x=>x.lid===lid);if(!n||n.move!==1)throw new Error('no swap '+lid);Object.assign(n,{move,hard,swapped:true,solo:true});if(pos){n.pos=pos;n.title=pos}};
+swap('re6',2,2);swap('re14',3,2,'Kitchen island orbit');swap('re19',7,2);swap('re27',2,2);swap('re28',3,2);swap('re29',11,2);swap('re30',4,2);
+t.flags.push('7 repeat Straight Pushes changed to other moves, tagged SWAP. Same lens and hold times, on this version only.')})();
 
 /* Condo starter board, drafted from the house list: no exterior, stairs or basement */
 (function(){const r=SEED_BOARDS.find(x=>x.id==='reel');const b=JSON.parse(JSON.stringify(r));
