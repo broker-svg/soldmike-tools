@@ -183,19 +183,19 @@ function birdView(b){
     <div class="stat"><b>${locs}</b><span>locations</span></div>
     <div class="stat"><b>${fmt(a)}s / ${fmt(br)}s</b><span>A-roll / B-roll</span></div>
     <div class="stat"><b>${rs.length}</b><span>combos</span></div>
-    <div class="stat"><b>${hard}</b><span>hard moves</span></div>
+    <div class="stat"><b>${hard}</b><span>hard moves</span></div>${b.shots.some(s=>s.extra)?`<div class="stat"><b>${b.shots.filter(s=>s.extra).length}</b><span>extras</span></div>`:''}
     <div class="stat"><b>${got}/${film.length}</b><span>captured</span></div>
   </div>
   ${legend(b)}
   <div class="tlwrap"><div class="tl">
     <div class="lane">${beats.map(x=>`<div class="seg" style="left:${x.t/T*100}%;width:${x.d/T*100}%" title="${esc(x.n)}">${esc(x.n)}</div>`).join('')}</div>
-    <div class="tiles">${b.shots.map((s,i)=>{const c=KINDS[s.kind].c,cm=!!s.combo;return `<button class="tile ${U.shot===s.id?'sel':''} ${s.got?'got':''}" style="flex:${s.dur} 1 0;background:${c}" data-s="${s.id}" title="${i+1}. ${esc(s.title||s.script||s.gfx)} (${s.dur}s)">${cm?'<i class="hd l"></i><i class="hd r"></i>':''}${s.dur>=1?i+1:''}</button>`}).join('')}</div>
+    <div class="tiles">${b.shots.map((s,i)=>{const c=KINDS[s.kind].c,cm=!!s.combo;return `<button class="tile ${U.shot===s.id?'sel':''} ${s.got?'got':''} ${s.extra?'isx':''}" style="flex:${s.dur} 1 0;background:${c}" data-s="${s.id}" title="${i+1}. ${esc(s.title||s.script||s.gfx)} (${s.dur}s)">${cm?'<i class="hd l"></i><i class="hd r"></i>':''}${s.dur>=1?i+1:''}</button>`}).join('')}</div>
     <div class="rollrow">${b.shots.map(s=>`<i class="${s.roll}" style="flex:${s.dur} 1 0"></i>`).join('')}</div>
     ${rs.length?`<div class="lane combos">${rs.map(r=>{const st=starts[r.start],en=starts[r.end]+(+b.shots[r.end].dur||0);return `<div class="seg" style="left:${st/T*100}%;width:${(en-st)/T*100}%">${esc(r.key)}</div>`}).join('')}</div>`:''}
     <div class="ruler">${ticks.map(i=>`<span style="left:${i/T*100}%">${i}s</span>`).join('')}</div>
   </div></div>
   <div class="sect">Every shot at a glance</div>
-  <div class="sheet">${b.shots.map((s,i)=>`<button class="mini ${U.shot===s.id?'sel':''}" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</button>`).join('')}</div>`;
+  <div class="sheet">${b.shots.map((s,i)=>`<button class="mini ${U.shot===s.id?'sel':''}" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</button>`).join('')}</div>`;
 }
 function storyView(b){
   const runs=comboRuns(b),pos={};runs.forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));
@@ -203,7 +203,7 @@ function storyView(b){
     const k=KINDS[s.kind],m=moveOf(s.move),tab=U.ctab[s.id]||'frame',p=pos[s.id];
     const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
     return `<article class="card ${U.shot===s.id?'sel':''}" draggable="true" data-s="${s.id}">
-      <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
+      <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${s.extra?'<span class="xtra">EXTRA</span>':''}${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
       ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>${p.i} of ${p.n}</span></div>`:''}
       <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
         <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
@@ -216,7 +216,7 @@ function storyView(b){
 function listView(b){
   let t=0;const notes=b.shots.filter(s=>s.ask).length;
   const rows=b.shots.map((s,i)=>{const at=t;t+=+s.dur||0;const m=moveOf(s.move),k=KINDS[s.kind];
-    return `<tr data-open="${s.id}" class="${U.shot===s.id?'on':''}"><td class="n">${i+1}</td><td class="n">${tc(at)}</td><td class="n">${s.dur}s</td><td><span class="lb" style="background:${k.c}">${esc(k.label)}</span></td><td class="n">${s.roll==='G'?'GFX':s.roll}</td><td>${esc(s.loc)}</td><td class="w">${s.combo?`<span class="cmb">${esc(s.combo)}</span>`:''}${esc(s.title||s.script||s.gfx)}${s.title&&s.script?'<br><small>'+esc(s.script)+'</small>':''}</td><td>${esc(m.name)} ${dots(s.hard||1)}</td><td class="n">${esc(s.lens)}${s.fps?' · '+s.fps:''}</td><td class="n">${s.got?'✓':''}</td><td class="w ask">${esc(s.ask||'')}</td></tr>`}).join('');
+    return `<tr data-open="${s.id}" class="${U.shot===s.id?'on':''}"><td class="n">${i+1}</td><td class="n">${tc(at)}</td><td class="n">${s.dur}s</td><td><span class="lb" style="background:${k.c}">${esc(k.label)}</span>${s.extra?'<span class="xtra">EXTRA</span>':''}</td><td class="n">${s.roll==='G'?'GFX':s.roll}</td><td>${esc(s.loc)}</td><td class="w">${s.combo?`<span class="cmb">${esc(s.combo)}</span>`:''}${esc(s.title||s.script||s.gfx)}${s.title&&s.script?'<br><small>'+esc(s.script)+'</small>':''}</td><td>${esc(m.name)} ${dots(s.hard||1)}</td><td class="n">${esc(s.lens)}${s.fps?' · '+s.fps:''}</td><td class="n">${s.got?'✓':''}</td><td class="w ask">${esc(s.ask||'')}</td></tr>`}).join('');
   return `${notes?`<div class="flag"><b>NOTES</b><span>${notes} ${notes===1?'note':'notes'} for Claude on this board. ${db?'Tell Claude to check your notes.':'Copy them and paste them to Claude.'}</span>${db?'':'<button class="btn" id="copyN" style="margin-left:auto">Copy notes</button>'}</div>`:''}<div class="tblwrap"><table class="sl"><thead><tr><th>#</th><th>At</th><th>Len</th><th>Label</th><th>Roll</th><th>Where</th><th>Shot</th><th>Move</th><th>Lens · fps</th><th>Got</th><th>Note for Claude</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -242,10 +242,10 @@ function shootRows(su){
   return rows.sort((p,q)=>(p.combo?0:1)-(q.combo?0:1));
 }
 function shootRowHTML(su,s){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind];
-  return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><button class="sn sblink" data-sb="${bb.id}|${s.id}" title="See this shot in the Storyboard">#${num(bb,s)}</button><span>${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}<small class="rowsub">${esc(k.label)}${byLens()?' · '+esc(s.loc):''}</small></span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}
+  return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><button class="sn sblink" data-sb="${bb.id}|${s.id}" title="See this shot in the Storyboard">#${num(bb,s)}</button><span>${s.extra?'<span class="xtra">EXTRA</span>':''}${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}<small class="rowsub">${esc(k.label)}${byLens()?' · '+esc(s.loc):''}</small></span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}
 function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind],tab=U.ctab[s.id]||'frame',p=pos[s.id];
   return `<article class="card shootcard ${s.got?'got':''} ${U.shot===s.id?'sel':''}" data-s="${s.id}">
-    <div class="top" style="background:${k.c}"><span class="badge">${esc(k.label)}</span><span>Shoot ${n}</span><span class="r">#${num(bb,s)} · ${s.dur}s</span></div>
+    <div class="top" style="background:${k.c}"><span class="badge">${esc(k.label)}</span><span>Shoot ${n}</span>${s.extra?'<span class="xtra">EXTRA</span>':''}<span class="r">#${num(bb,s)} · ${s.dur}s</span></div>
     ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>clip ${p.i} of ${p.n}</span></div>`:''}
     <div class="pic" data-open2="${bb.id}|${s.id}">${frameHTML(s,tab)}
       <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
@@ -299,9 +299,10 @@ function buildView(b){
 function renderMoves(){
   $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Your 13 moves from Shot Commander, plus The Hurley Special, locked off and drone. Hover a clip to play it.</div></div></div>
   <div class="movegrid">${MOVES.filter(m=>m.res||m.op).map(m=>`<article class="move"><div class="vids"><div>${m.res?`<video src="${esc(m.res)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No clip yet</em>'}<span>RESULT</span></div><div>${m.op?`<video src="${esc(m.op)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No operator clip yet</em>'}<span>HOW TO</span></div></div>
-  <div class="tx"><h3>${esc(m.name)} ${dots(m.hard)}</h3><p>${esc(m.mode)} mode · ${esc(m.lens)}</p><p><b>Technique.</b> ${esc(m.tech)}</p><p><b>Mistake.</b> ${esc(m.mistake)}</p><p><b>Tip.</b> ${esc(m.tip)}</p></div></article>`).join('')}</div>`;
+  <div class="tx"><h3>${esc(m.name)} ${dots(m.hard)}</h3><p class="used">${tourUse(m)}</p><p>${esc(m.mode)} mode · ${esc(m.lens)}</p><p><b>Technique.</b> ${esc(m.tech)}</p><p><b>Mistake.</b> ${esc(m.mistake)}</p><p><b>Tip.</b> ${esc(m.tip)}</p></div></article>`).join('')}</div>`;
   hover();
 }
+const tourUse=m=>{const t=S.boards.tour;if(!t)return '';const n=t.shots.filter(s=>s.move==m.id).length,x=t.shots.filter(s=>s.move==m.id&&s.extra).length;return n?`On the Standard Virtual Tour: ${n} ${n===1?'shot':'shots'}${x?' (extra)':''}`:'Not on the Standard Virtual Tour yet'};
 function renderCat(){
   const c=CATEGORIES.find(x=>x.id===U.cat),ids=S.order.filter(i=>S.boards[i]&&S.boards[i].cat===c.id);
   $('main').innerHTML=`<div class="head"><div><h1>${esc(c.name)}</h1><div class="sub">${c.parent?esc(c.parent)+' · ':''}${ids.length} ${ids.length===1?'board':'boards'}</div></div><div class="acts"><button class="btn pri" id="newB">New board</button></div></div>

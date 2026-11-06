@@ -216,6 +216,17 @@ t.flags=['Hold times are a starting point, about 2x the reel. Set each one by ha
 t.shots.forEach((s,i)=>{s.id='mt'+(i+1);s.dur=s.roll==='A'?s.dur:Math.max(2,s.dur*2)});SEED_BOARDS.push(t);
 })();
 
+/* Virtual Tour extras: gimbal moves the tour was not using. This version only, tagged EXTRA. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const add=(after,id,title,kind,move,hard,lens,fps,dur)=>{const i=t.shots.findIndex(x=>x.lid===after);if(i<0)throw new Error('no '+after);const n=JSON.parse(JSON.stringify(t.shots[i]));delete n.combo;delete n.link;delete n.ramp;
+Object.assign(n,{id,lid:id,title,pos:title,kind,move,hard,lens,fps,dur,extra:true,solo:true});t.shots.splice(i+1,0,n)};
+add('re6','vtx1','Foyer height drop','wide',4,2,'12mm',60,3);
+add('re15','vtx2','Island or faucet, wrap and rise','closeup',12,3,'50mm',60,3);
+add('re17','vtx3','Feature wall or fireplace, slow zoom out','wide',8,1,'12mm',30,3);
+add('re19','vtx4','Dining table orbit','wide',3,2,'12mm',60,3);
+add('re24','vtx5','Vanity, top down pull back','closeup',13,2,'50mm',60,3);
+t.flags.push('5 EXTRA shots added to bring in moves the tour was not using. They are on this version only, and take the tour to about 150s against the 120s target.')})();
+
 /* Condo starter board, drafted from the house list: no exterior, stairs or basement */
 (function(){const r=SEED_BOARDS.find(x=>x.id==='reel');const b=JSON.parse(JSON.stringify(r));
 const out=new Set(['re22','re21','re28','re29','re30']);
