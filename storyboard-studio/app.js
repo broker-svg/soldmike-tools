@@ -115,7 +115,7 @@ function renderRail(){
   <div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
   <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
   <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
-  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>13</small></button></div>
+  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>14</small></button></div>
   <div class="save" id="saveNote">${db?'Saved online. Phone and Macs match.':'Saved on this computer'}</div>`;
   $('rail').querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;render()});
   $('rail').querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
@@ -268,7 +268,7 @@ function buildView(b){
 
 /* ---------- library pages ---------- */
 function renderMoves(){
-  $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Your 13 moves from Shot Commander, plus locked off and drone. Hover a clip to play it.</div></div></div>
+  $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Your 13 moves from Shot Commander, plus The Hurley Special, locked off and drone. Hover a clip to play it.</div></div></div>
   <div class="movegrid">${MOVES.filter(m=>m.res||m.op).map(m=>`<article class="move"><div class="vids"><div>${m.res?`<video src="${esc(m.res)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No clip yet</em>'}<span>RESULT</span></div><div>${m.op?`<video src="${esc(m.op)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No operator clip yet</em>'}<span>HOW TO</span></div></div>
   <div class="tx"><h3>${esc(m.name)} ${dots(m.hard)}</h3><p>${esc(m.mode)} mode · ${esc(m.lens)}</p><p><b>Technique.</b> ${esc(m.tech)}</p><p><b>Mistake.</b> ${esc(m.mistake)}</p><p><b>Tip.</b> ${esc(m.tip)}</p></div></article>`).join('')}</div>`;
   hover();

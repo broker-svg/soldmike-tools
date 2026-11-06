@@ -17,7 +17,8 @@ const MOVES = [
   {id:11,name:'Detail Slider',lens:'50mm',mode:'Standard',hard:2,tech:'Slide laterally with a slight drop, keeping all horizontal lines perfectly even.',mistake:'Letting the camera tilt. Ovens, cabinets and range hoods must stay perfectly horizontal.',tip:'Slow and deliberate wins every time.',op:'clips/11_slider_operator.mp4',res:'clips/11_slider_result.mp4'},
   {id:12,name:'PTF Orbit',lens:'50mm f/1.4',mode:'PTF',hard:3,tech:'Position above the subject, wrap around it, move upward keeping the subject centered.',mistake:'Losing center alignment. The subject must not drift. Hardest shot to execute.',tip:'Changing foreground and background layers create the look. f/1.4 for max bokeh.',op:'clips/12_ptf_orbit_operator.mp4',res:'clips/12_ptf_orbit_result.mp4'},
   {id:13,name:'Top Down Detail',lens:'50mm',mode:'Standard',hard:2,tech:'Point camera straight down at the detail, pull backward while tilting the camera upward.',mistake:'Not including a foreground element at the end. That is what makes the shot look special.',tip:'End on a foreground element for a natural, elegant stopping point.',op:'clips/13_top_down_operator.mp4',res:'clips/13_top_down_result.mp4'},
-  {id:14,name:'Drone',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Set the move before you hit record, then one slow, committed pass.',mistake:'Adjusting two sticks halfway through. Plan the line, then fly it.',tip:'Drone works best as an act break, not filler.'}
+  {id:14,name:'Drone',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Set the move before you hit record, then one slow, committed pass.',mistake:'Adjusting two sticks halfway through. Plan the line, then fly it.',tip:'Drone works best as an act break, not filler.'},
+  {id:15,name:'The Hurley Special',lens:'Wide',mode:'PTF (confirm)',hard:3,tech:'Reverse parallel park. Start close with the gimbal at head height, camera up at the ceiling. Walk backward around the corner of the island, twisting the camera down as you sink into a squat. Land low, level and wide.',mistake:'Landing tilted up or down. The final frame must be level, or the whole move falls apart.',tip:'Walk the path first so you know where the island corner is. Operator clip runs at 75% speed.',op:'clips/15_hurley_special_operator.mp4',res:'clips/15_hurley_special_result.mp4'}
 ];
 
 const KINDS = {
@@ -151,10 +152,14 @@ const SEED_BOARDS = [
 (function(){const b=SEED_BOARDS.find(x=>x.id==='reel');const m={re3:'Ramp to the door',re4:'Ramp through the door',re8:'Hard cut',re9:'Hard cut',re10:'Hard cut',re16:'Reverse into the landing',re25:'Reverse ramp'};b.shots.forEach(s=>{if(m[s.id])s.link=m[s.id]})})();
 
 /* Virtual tour: a linked horizontal version of the reel. Same shots, longer holds. */
+/* The Hurley Special: kitchen reveal on the residential reel, right after Kitchen wide */
+(function(){const r=SEED_BOARDS.find(x=>x.id==='reel');const i=r.shots.findIndex(x=>x.id==='re12');const n=JSON.parse(JSON.stringify(r.shots[i]));
+Object.assign(n,{id:'re36',title:'The Hurley Special',pos:'The Hurley Special, ceiling down to full kitchen',kind:'hero',dur:4,move:15,hard:3,lens:'12mm',fps:60,f:{img:'img/hurley-special-vertical.jpg'}});
+r.shots.splice(i+1,0,n);r.flags[0]='Runs about 10s over the 45s B-roll target with the Hurley Special added. Trim the drone finale first. The 3 agent segments (15s) are not in this list yet.'})();
 (function(){const r=SEED_BOARDS.find(x=>x.id==='reel');r.shots.forEach(s=>s.lid=s.id);
 const t=JSON.parse(JSON.stringify(r));t.id='tour';t.version='Virtual Tour';t.name='Standard Virtual Tour';t.sub='Linked to the reel · horizontal';t.aspect='16/9';t.target=120;
 t.flags=['Hold times are a starting point, about 2.5x the reel. Set each one by hand.'];
-t.shots.forEach((s,i)=>{s.id='vt'+(i+1);s.dur=Math.max(2,Math.round(s.dur*5)/2)});SEED_BOARDS.push(t)})();
+t.shots.forEach((s,i)=>{s.id='vt'+(i+1);if(s.move===15)s.f={img:'img/hurley-special.jpg'};else s.dur=Math.max(2,Math.round(s.dur*5)/2)});SEED_BOARDS.push(t)})();
 
 /* 1 Merino Rd: real house. Frames marked img are from Mike's Nov 4 walkthrough clip. */
 (function(){
@@ -210,6 +215,16 @@ const t=JSON.parse(JSON.stringify(b));t.id='merinotour';t.version='Virtual Tour'
 t.flags=['Hold times are a starting point, about 2x the reel. Set each one by hand.'];t.status='Ready to shoot, not booked';
 t.shots.forEach((s,i)=>{s.id='mt'+(i+1);s.dur=s.roll==='A'?s.dur:Math.max(2,s.dur*2)});SEED_BOARDS.push(t);
 })();
+
+/* Condo starter board, drafted from the house list: no exterior, stairs or basement */
+(function(){const r=SEED_BOARDS.find(x=>x.id==='reel');const b=JSON.parse(JSON.stringify(r));
+const out=new Set(['re22','re21','re28','re29','re30']);
+b.shots=b.shots.filter(s=>!s.loc.startsWith('Exterior')&&s.loc!=='Interior · Basement'&&!out.has(s.id));
+b.shots.forEach((s,i)=>{s.id='co'+(i+1);s.lid=s.id;s.loc='Interior · Suite';if(s.beat==='Upstairs')s.beat='Bedrooms';if(s.beat==='Main floor')s.beat='Living';if(s.combo==='A'){delete s.combo;delete s.link}});
+delete b.combos.A;delete b.family;delete b.linked;delete b.version;delete b.group;
+Object.assign(b,{id:'condo',cat:'condos',name:'Standard Condo Reel',sub:'Starter list from the house reel · edit to suit',status:'Draft',target:30,kit:'Sony A7S III · DJI RS 4 · 12mm + 50mm',
+flags:['Draft: built from the house list with the exterior, stairs and basement removed. Not a finished condo plan yet.','The Hurley Special needs room to back around an island. In a tight condo kitchen, check the path first. With no skylight, start on a ceiling feature or lights.']});
+SEED_BOARDS.push(b)})();
 
 /* Shoot day plan for the two scripts. Investment first (indoors), ending in the
    kitchen so the outfit change happens in place, then Social into golden hour. */
