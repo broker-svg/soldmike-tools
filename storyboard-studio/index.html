@@ -1,5 +1,18 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}.move video[src*="15_hurley_special_operator"]{object-fit:contain;background:#000}
+.seglab{font:500 10.5px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.05em}
+.rowsub{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.jump{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.jump button{border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:13px;font-weight:600;background:var(--panel)}
+.jump small{font:500 11px var(--mono);color:var(--dim);margin-left:4px}
+.shootboard{padding:14px}
+.shootcard.got{opacity:.55}
+.capt{display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:7px;border-top:1px solid var(--line);font-weight:700;font-size:13.5px;cursor:pointer}
+.capt input{width:21px;height:21px;accent-color:var(--ok)}
+.sblink{color:var(--gold);font-weight:700;text-align:left;text-decoration:underline;text-underline-offset:2px}
+.row .sn.sblink{color:var(--gold)}
+.card .sblink{font-size:13px;padding:5px 0 0}
+@media(max-width:820px){.row{align-items:start;gap:2px 10px}.row>input{grid-column:1;grid-row:1/span 4}.row>.th{grid-column:2;grid-row:1/span 4}.row>.sn,.row>span{grid-column:3;text-align:left}}
 </style></head><body>
 <title>Storyboard Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">

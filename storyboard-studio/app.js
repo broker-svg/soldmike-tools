@@ -11,7 +11,9 @@ const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],[
 
 const S={boards:{},meta:clone(SEED_META),order:[]};
 SEED_BOARDS.forEach(b=>{S.boards[b.id]=clone(b);S.order.push(b.id)});
-const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},scope:'whole',cat:null};
+const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},scope:'whole',cat:null,groupBy:'loc',shootLook:'list'};
+try{const p=JSON.parse(localStorage.getItem('storyboardStudio.shootView'));if(p){U.groupBy=p.groupBy==='lens'?'lens':'loc';U.shootLook=p.shootLook==='cards'?'cards':'list'}}catch(e){}
+const saveShootPrefs=()=>{try{localStorage.setItem('storyboardStudio.shootView',JSON.stringify({groupBy:U.groupBy,shootLook:U.shootLook}))}catch(e){}};
 let db=null,assets=null,saved={},timer=null,dirty=new Set(),metaDirty=false;
 
 /* ---------- storage ---------- */
@@ -219,33 +221,60 @@ function listView(b){
 }
 
 /* ---------- shoot order ---------- */
+const byLens=()=>U.groupBy==='lens';
+const orderKey=b=>(b.group||b.family||b.id)+(byLens()?':lens':'');
+function gearOf(s){return s.kind==='drone'||/drone/i.test(s.lens||'')?'Drone':(s.lens||'No lens set')}
+function gearLabel(g){const n=parseInt(g,10);return !n?g:g+(n>=35?' · Detail lens':' · Wide lens')}
+function gearRank(g){if(g==='Drone')return 1000;return parseInt(g,10)||2000}
 function setupsFor(b,whole){
   const list=whole&&b.group?S.order.map(i=>S.boards[i]).filter(x=>x&&x.group===b.group):[b];
-  const map={};
-  list.forEach(x=>x.shots.forEach(s=>{if(s.roll==='G')return;const k=(x.family||x.id)+'|'+s.loc;(map[k]=map[k]||{key:k,board:x,loc:s.loc,shots:[]}).shots.push(s)}));
-  const g=b.group||b.family||b.id,saved=(S.meta.order&&S.meta.order[g])||[];
-  const keys=Object.keys(map).sort((p,q)=>{const a=saved.indexOf(p),c=saved.indexOf(q);return (a<0?99:a)-(c<0?99:c)});
+  const map={},lens=byLens();
+  list.forEach(x=>x.shots.forEach(s=>{if(s.roll==='G')return;const g=gearOf(s),k=(x.family||x.id)+'|'+(lens?'lens:'+g:s.loc);(map[k]=map[k]||{key:k,board:x,gear:g,loc:lens?gearLabel(g):s.loc,shots:[]}).shots.push(s)}));
+  const saved=(S.meta.order&&S.meta.order[orderKey(b)])||[];
+  const keys=Object.keys(map).sort((p,q)=>{const a=saved.indexOf(p),c=saved.indexOf(q);return (a<0?99:a)-(c<0?99:c)||(lens?gearRank(map[p].gear)-gearRank(map[q].gear):0)});
   return keys.map(k=>map[k]);
 }
 const startOf=b=>(S.meta.starts&&S.meta.starts[b.group||b.family||b.id])||S.meta.start||'12:45';
 function setupMin(su){const n=S.meta.mins&&S.meta.mins[su.key];if(n)return +n;return 15+su.shots.length*5+su.shots.filter(s=>s.hard>=3).length*10}
+function shootRows(su){
+  const rows=[...su.shots];
+  if(byLens()){const seen=[];su.board.shots.forEach(s=>{if(!seen.includes(s.loc))seen.push(s.loc)});return rows.sort((p,q)=>seen.indexOf(p.loc)-seen.indexOf(q.loc))}
+  return rows.sort((p,q)=>(p.combo?0:1)-(q.combo?0:1));
+}
+function shootRowHTML(su,s){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind];
+  return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><button class="sn sblink" data-sb="${bb.id}|${s.id}" title="See this shot in the Storyboard">#${num(bb,s)}</button><span>${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}<small class="rowsub">${esc(k.label)}${byLens()?' · '+esc(s.loc):''}</small></span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}
+function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind],tab=U.ctab[s.id]||'frame',p=pos[s.id];
+  return `<article class="card shootcard ${s.got?'got':''} ${U.shot===s.id?'sel':''}" data-s="${s.id}">
+    <div class="top" style="background:${k.c}"><span class="badge">${esc(k.label)}</span><span>Shoot ${n}</span><span class="r">#${num(bb,s)} · ${s.dur}s</span></div>
+    ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>clip ${p.i} of ${p.n}</span></div>`:''}
+    <div class="pic" data-open2="${bb.id}|${s.id}">${frameHTML(s,tab)}
+      <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
+    <div class="body"><div class="line">${esc(s.script||s.title||s.pos||'')}</div>
+      <div class="kv"><b>Where</b><span>${esc(s.loc)}</span><b>Move</b><span>${esc(m.name)} ${dots(s.hard||1)}</span>${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}${s.combo?`<b>Roll</b><span>${+s.dur+4}s</span>`:''}</div>
+      <label class="capt"><input type="checkbox" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}>Captured</label><button class="sblink" data-sb="${bb.id}|${s.id}">See in Storyboard #${num(bb,s)}</button></div>
+  </article>`}
 function shootView(b){
-  const whole=U.scope==='whole'&&!!b.group;
+  const whole=U.scope==='whole'&&!!b.group,cards=U.shootLook==='cards';
   const sets=setupsFor(b,whole),all=sets.flatMap(x=>x.shots),got=all.filter(s=>s.got).length;
-  let clock=toMin(startOf(b));
+  let clock=toMin(startOf(b)),n=0;
   const totalMin=sets.reduce((a,x)=>a+setupMin(x),0);
+  const pos={};new Set(sets.map(x=>x.board)).forEach(x=>comboRuns(x).forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length})));
   return `<div class="scope">${b.group?`<div class="seg2"><button data-sc="whole" class="${whole?'on':''}">Whole shoot day</button><button data-sc="one" class="${whole?'':'on'}">This video only</button></div>`:''}
-    <label>Start <input class="inp" type="time" id="startT" value="${esc(startOf(b))}"></label>
-    <span>${sets.length} setups · about ${Math.floor(totalMin/60)}h ${totalMin%60}m · ${all.length} shots, filmed out of story order</span></div>
+    <span class="seglab">Group by</span><div class="seg2"><button data-gb="loc" class="${byLens()?'':'on'}">Location</button><button data-gb="lens" class="${byLens()?'on':''}">Lens</button></div>
+    <span class="seglab">View</span><div class="seg2"><button data-sl="list" class="${cards?'':'on'}">List</button><button data-sl="cards" class="${cards?'on':''}">Storyboard</button></div>
+    <label>Start <input class="inp" type="time" id="startT" value="${esc(startOf(b))}"></label></div>
+  <div class="scope"><span>${sets.length} setups · about ${Math.floor(totalMin/60)}h ${totalMin%60}m · ${all.length} shots, filmed out of story order</span></div>
   <div class="prog" aria-label="Captured"><i style="width:${all.length?got/all.length*100:0}%"></i></div>
   <div class="scope"><span>${got} of ${all.length} captured</span></div>
+  ${byLens()&&sets.some(x=>x.shots.some(s=>s.combo))?'<div class="flag"><b>COMBOS</b><span>Combo clips are split across lenses in this view. Match height, direction and speed where the clips join.</span></div>':''}
+  ${sets.length>1?`<div class="jump">${sets.map((su,i)=>`<button data-jump="${i}">${esc(su.gear&&byLens()?su.gear:su.loc)} <small>${su.shots.filter(s=>s.got).length}/${su.shots.length}</small></button>`).join('')}</div>`:''}
   ${sets.map((su,i)=>{const when=fromMin(clock);clock+=setupMin(su);const note=S.meta.notes&&S.meta.notes[su.key];
     const prev=sets[i-1],chg=su.board.outfit&&(!prev||prev.board.id!==su.board.id);
-    const rows=[...su.shots].sort((p,q)=>(p.combo?0:1)-(q.combo?0:1));
-    return `<section class="setup"><header><span class="clock">${when}</span><div><h3>${esc(su.loc)}</h3><div class="meta">${esc(su.board.name)}${su.board.outfit?' · '+esc(su.board.outfit):''}${chg&&i?' · outfit change':''} · ${su.shots.length} shots</div></div>
+    const rows=shootRows(su);
+    return `<section class="setup" id="setup${i}"><header><span class="clock">${when}</span><div><h3>${esc(su.loc)}</h3><div class="meta">${esc(su.board.name)}${su.board.outfit?' · '+esc(su.board.outfit):''}${chg&&i?' · outfit change':''} · ${su.shots.length} shots</div></div>
       <div class="ord"><label class="meta">Min <input class="inp" style="width:58px" type="number" min="5" step="5" data-min="${esc(su.key)}" value="${setupMin(su)}"></label><button data-up="${i}" aria-label="Move setup up">↑</button><button data-dn="${i}" aria-label="Move setup down">↓</button></div></header>
       ${note?`<div class="note">${esc(note)}</div>`:''}
-      ${rows.map(s=>{const bb=su.board,m=moveOf(s.move);return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><span class="sn">#${num(bb,s)}</span><span>${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}</span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}).join('')}
+      ${cards?`<div class="board shootboard">${rows.map(s=>shootCardHTML(su,s,++n,pos)).join('')}</div>`:rows.map(s=>shootRowHTML(su,s)).join('')}
     </section>`}).join('')}`;
 }
 const toMin=t=>{const [h,m]=String(t).split(':').map(Number);return (h||0)*60+(m||0)};
@@ -298,7 +327,7 @@ function wireMain(b){
   m.querySelectorAll('.tile,.mini[data-s]').forEach(e=>e.onclick=()=>open(e.dataset.s));
   m.querySelectorAll('[data-open]').forEach(e=>e.onclick=()=>open(e.dataset.open));
   m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;renderMain()});
-  m.querySelectorAll('.card').forEach(c=>{
+  m.querySelectorAll('.card[draggable]').forEach(c=>{
     c.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',c.dataset.s);c.classList.add('drag')});
     c.addEventListener('dragend',()=>c.classList.remove('drag'));
     c.addEventListener('dragover',ev=>{ev.preventDefault();c.classList.add('over')});
@@ -306,11 +335,15 @@ function wireMain(b){
     c.addEventListener('drop',ev=>{ev.preventDefault();const from=ev.dataTransfer.getData('text/plain'),to=c.dataset.s;if(from===to)return;const i=b.shots.findIndex(s=>s.id===from),[x]=b.shots.splice(i,1);b.shots.splice(b.shots.findIndex(s=>s.id===to),0,x);touch(b);renderMain()});
   });
   m.querySelectorAll('[data-sc]').forEach(e=>e.onclick=()=>{U.scope=e.dataset.sc;renderMain()});
+  m.querySelectorAll('[data-gb]').forEach(e=>e.onclick=()=>{U.groupBy=e.dataset.gb;saveShootPrefs();renderMain()});
+  m.querySelectorAll('[data-sl]').forEach(e=>e.onclick=()=>{U.shootLook=e.dataset.sl;saveShootPrefs();renderMain()});
+  m.querySelectorAll('[data-sb]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sb.split('|');U.board=bi;U.view='story';U.shot=si;renderMain();renderRail();const c=document.querySelector(`.card[data-s="${si}"]`);if(c){c.classList.add('sel');c.scrollIntoView({block:'center'})}});
+  m.querySelectorAll('[data-jump]').forEach(e=>e.onclick=()=>{const t=$('setup'+e.dataset.jump);if(t)t.scrollIntoView({block:'start'})});
   const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
   m.querySelectorAll('[data-got]').forEach(e=>e.onchange=()=>{const [bi,si]=e.dataset.got.split('|'),x=S.boards[bi],s=shotById(x,si);s.got=e.checked;touch(x);renderMain()});
   m.querySelectorAll('[data-open2]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.open2.split('|');U.board=bi;renderMain();renderRail();open(si)});
   m.querySelectorAll('[data-min]').forEach(e=>e.onchange=()=>{(S.meta.mins=S.meta.mins||{})[e.dataset.min]=+e.value;touchMeta();renderMain()});
-  const mv=(i,d)=>{const sets=setupsFor(b,U.scope==='whole'&&!!b.group).map(x=>x.key);const j=i+d;if(j<0||j>=sets.length)return;[sets[i],sets[j]]=[sets[j],sets[i]];const g=b.group||b.family||b.id;(S.meta.order=S.meta.order||{})[g]=sets;touchMeta();renderMain()};
+  const mv=(i,d)=>{const sets=setupsFor(b,U.scope==='whole'&&!!b.group).map(x=>x.key);const j=i+d;if(j<0||j>=sets.length)return;[sets[i],sets[j]]=[sets[j],sets[i]];(S.meta.order=S.meta.order||{})[orderKey(b)]=sets;touchMeta();renderMain()};
   m.querySelectorAll('[data-up]').forEach(e=>e.onclick=()=>mv(+e.dataset.up,-1));
   m.querySelectorAll('[data-dn]').forEach(e=>e.onclick=()=>mv(+e.dataset.dn,1));
   m.querySelectorAll('[data-dr]').forEach(e=>e.onchange=()=>{const [k,i]=e.dataset.dr.split('|'),c=b.combos[k];c.checks=c.checks||[];const n=+i;c.checks=e.checked?[...c.checks,n]:c.checks.filter(x=>x!==n);touch(b)});
