@@ -176,9 +176,12 @@ function createVersion(b,name,aspect){
   S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;touch(b);touch(n);render();toast('Linked version created');
 }
 function legend(b){
-  const vis=b.shots.filter(s=>!s.hidden),cnt=k=>vis.filter(s=>s.kind===k).length,hero=cnt('hero');
-  const rows=[['wide','Wide',cnt('wide')+hero],['medium','Medium',cnt('medium')],['closeup','Close-up',cnt('closeup')],['burst','0.5s burst',cnt('burst')],['drone','Drone',cnt('drone')],['graphic','Graphic only',cnt('graphic')]].filter(r=>r[2]);
-  return `<div class="legend">${rows.map(([k,l,n])=>`<span><i style="background:${KINDS[k].c}"></i>${l} <b class="lc">${n}</b></span>`).join('')}${hero?`<span><i style="background:${KINDS.hero.c}"></i>Hero <b class="lc">${hero}</b> <small class="ls">of the wide</small></span>`:''}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
+  const vis=b.shots.filter(s=>!s.hidden),of=ks=>vis.filter(s=>ks.includes(s.kind));
+  const area=l=>({'Exterior · Sony':'Exterior','Exterior · Drone':'Drone','Interior · Main':'Main floor','Interior · Second':'Second floor','Interior · Basement':'Basement','Interior · Suite':'Suite'})[l]||l||'Other';
+  const dd=list=>{const g={};list.forEach(s=>{const a=area(s.loc);(g[a]=g[a]||[]).push(s)});return `<div class="dd">${Object.entries(g).map(([a,ss])=>`<div class="ddg"><b>${esc(a)} <span>${ss.length}</span></b>${ss.map(s=>`<button class="ddi" data-open="${s.id}"><span>#${num(b,s)}</span>${esc(s.title||s.script||s.pos||'')}<em>${esc(moveOf(s.move).name)}</em></button>`).join('')}</div>`).join('')}</div>`};
+  const item=(sw,label,list,sub)=>list.length?`<details class="lgd"><summary><i style="background:${sw}"></i>${label} <b class="lc">${list.length}</b>${sub?` <small class="ls">${sub}</small>`:''}<span class="car">▾</span></summary>${dd(list)}</details>`:'';
+  const wide=of(['wide','hero','burst']);
+  return `<div class="legend">${item(KINDS.wide.c,'Wide',wide)}${item(KINDS.medium.c,'Medium',of(['medium']))}${item(KINDS.closeup.c,'Close-up',of(['closeup']))}${item(KINDS.drone.c,'Drone',of(['drone']))}${item(KINDS.burst.c,'0.5s burst',of(['burst']),'of the wide')}${item(KINDS.hero.c,'Hero',of(['hero']),'of the wide')}${item(KINDS.graphic.c,'Graphic only',of(['graphic']))}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
 }
 function flagsHTML(b){
   const n=b.shots.filter(needsNum);
@@ -389,6 +392,8 @@ function wireMain(b){
   const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
   m.querySelectorAll('[data-hid]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.hid.split('|'),x=S.boards[bi],s=shotById(x,si);if(e.checked)s.hidden=true;else delete s.hidden;touch(x);render()}});
   m.querySelectorAll('[data-del]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();if(!e.classList.contains('armed')){e.classList.add('armed');e.textContent='Tap again to delete';setTimeout(()=>{if(e.isConnected){e.classList.remove('armed');e.textContent='Delete'}},3000);return}const [bi,si]=e.dataset.del.split('|'),x=S.boards[bi],j=x.shots.findIndex(y=>y.id===si);if(j<0)return;x.shots.splice(j,1);if(U.shot===si)U.shot=null;touch(x);render()});
+  m.querySelectorAll('details.lgd').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)m.querySelectorAll('details.lgd[open]').forEach(o=>{if(o!==d)o.open=false})}));
+  m.querySelectorAll('.ddi[data-open]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();e.closest('details').open=false;open(e.dataset.open)});
   const sh=$('showHid');if(sh)sh.onchange=()=>{U.showHid=sh.checked;renderMain()};
   m.querySelectorAll('[data-cundo]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();ev.preventDefault();const [bi,si]=e.dataset.cundo.split('|'),x=S.boards[bi];undoCombo(x,si);touch(x);renderMain()});
   m.querySelectorAll('[data-cmb]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.cmb.split('|'),x=S.boards[bi];toggleCombo(x,si);touch(x);renderMain()}});
