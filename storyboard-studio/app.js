@@ -384,7 +384,7 @@ function wireMain(b){
     c.addEventListener('dragend',()=>c.classList.remove('drag'));
     c.addEventListener('dragover',ev=>{ev.preventDefault();c.classList.add('over')});
     c.addEventListener('dragleave',()=>c.classList.remove('over'));
-    c.addEventListener('drop',ev=>{ev.preventDefault();const from=ev.dataTransfer.getData('text/plain'),to=c.dataset.s;if(from===to)return;const i=b.shots.findIndex(s=>s.id===from),[x]=b.shots.splice(i,1);b.shots.splice(b.shots.findIndex(s=>s.id===to),0,x);touch(b);renderMain()});
+    c.addEventListener('drop',ev=>{ev.preventDefault();c.classList.remove('over');const from=ev.dataTransfer.getData('text/plain'),to=c.dataset.s;if(from===to)return;if(moveGroup(b,from,to)){touch(b);renderMain()}});
   });
   m.querySelectorAll('[data-sc]').forEach(e=>e.onclick=()=>{U.scope=e.dataset.sc;renderMain()});
   m.querySelectorAll('[data-gb]').forEach(e=>e.onclick=()=>{U.groupBy=e.dataset.gb;saveShootPrefs();renderMain()});
@@ -448,6 +448,12 @@ function renderInsp(){
   $('dupS').onclick=()=>{const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);c.got=false;b.shots.splice(i+1,0,c);touch(b);renderMain();open(c.id)};
   let armed=false;$('delS').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to delete';return}b.shots.splice(i,1);U.shot=null;touch(b);render()};
 }
+/* drag: a combo moves as one block; dropping on another combo lands before it, never inside it */
+function runOf(b,id){const i=b.shots.findIndex(x=>x.id===id);if(i<0)return null;const k=b.shots[i].combo;let a=i,z=i;if(k){while(a>0&&b.shots[a-1].combo===k)a--;while(z<b.shots.length-1&&b.shots[z+1].combo===k)z++}return [a,z]}
+function moveGroup(b,from,to){const f=runOf(b,from),t=runOf(b,to);if(!f||!t)return false;if(t[0]>=f[0]&&t[1]<=f[1])return false;
+  const down=t[0]>f[1],ref=b.shots[down?t[1]:t[0]].id,blk=b.shots.splice(f[0],f[1]-f[0]+1);
+  const at=b.shots.findIndex(x=>x.id===ref)+(down?1:0);b.shots.splice(at,0,...blk);
+  if(blk.length>1)toast(`Moved combo ${blk[0].combo} (${blk.length} clips) together`);return true}
 const nextCombo=b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l=>!b.shots.some(s=>s.combo===l));
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,t.length>60?4500:2200)}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
