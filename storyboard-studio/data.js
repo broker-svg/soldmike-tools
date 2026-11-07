@@ -290,3 +290,14 @@ add('re3','vtx6',{title:'Exterior detail, cowboy lift',pos:'Exterior detail, cow
 add('vtx4','vtx7',{title:'Dining chandelier, wrap and rise',pos:'Dining chandelier, wrap and rise',kind:'wide',move:12,hard:3,lens:'12mm',fps:60,dur:3,f:{img:'img/sb-dining-ptf.jpg'}});
 t.shots.forEach((s,i)=>s.id='vt'+(i+1));
 t.flags.push('Nov 7: Foyer is now a push and tilt up, the fireplace takes the Yee-Haw Drop, stairs close-up is a Detail Slider, and 2 EXTRA shots added (exterior Cowboy Lift, dining chandelier PTF Orbit on 12mm). Tour about 135s. Orbit has no How-to clip until a better one is found.')})();
+
+/* Nov 7: Backyard becomes a Push Curve; cowboy lift detail goes 12mm, right after the kitchen */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const by=l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no '+l);return n};
+Object.assign(by('re33'),{move:2,hard:2,swapped:true,solo:true,title:'Backyard push and pan',pos:'Backyard push and pan'});
+const i=t.shots.findIndex(x=>x.lid==='vtx6');const c=t.shots.splice(i,1)[0];
+Object.assign(c,{lens:'12mm',kind:'wide',beat:'Main floor'});
+const k=t.shots.findIndex(x=>x.lid==='vtx2');t.shots.splice(k+1,0,c);
+t.shots.forEach((s,j)=>s.id='vt'+(j+1));
+t.flags.push('Backyard is a Push Curve now (the old "truck" was a mistake). The exterior Cowboy Lift is 12mm and sits right after the kitchen. Ideas to try: a backyard drone near the start, and using the Cowboy Lift in a combo.')})();
+
