@@ -61,12 +61,14 @@ function tplDiff(b){const t=tplOf(b);if(!t||!b.tbase)return null;const cur=snapT
   cur.order.forEach(l=>{const c=cur.shots[l],bs=base.shots[l],s=b.shots.find(x=>lidOf(x)===l);
     if(!bs){if(!s)add.push(l);return}if(!s)return;
     TF.forEach(k=>{if(!eqv(c[k],bs[k])&&eqv(s[k],bs[k])&&!eqv(s[k],c[k]))ch.push([l,k,c[k]])})});
+  const rem=base.order.filter(l=>!cur.shots[l]&&b.shots.some(x=>lidOf(x)===l));
   const fl=!eqv(cur.flags,base.flags)&&eqv(b.flags,base.flags);
-  return {cur,ch,add,fl,shots:new Set(ch.map(x=>x[0])).size+add.length,n:ch.length+add.length+(fl?1:0)}}
+  return {cur,ch,add,rem,fl,shots:new Set(ch.map(x=>x[0])).size+add.length+rem.length,n:ch.length+add.length+rem.length+(fl?1:0)}}
 function applyTpl(b){const d=tplDiff(b),t=tplOf(b);if(!d)return 0;
   d.ch.forEach(([l,k,v])=>{const s=b.shots.find(x=>lidOf(x)===l);if(v===null)delete s[k];else s[k]=clone(v)});
   d.add.forEach(l=>{const ts=t.shots.find(x=>lidOf(x)===l),n=clone(ts);n.lid=l;if(b.shots.some(x=>x.id===n.id))n.id='s'+Math.random().toString(36).slice(2,9);n.got=false;
     const prev=d.cur.order[d.cur.order.indexOf(l)-1],pi=prev?b.shots.findIndex(x=>lidOf(x)===prev):-1;b.shots.splice(pi+1,0,n)});
+  d.rem.forEach(l=>{const j=b.shots.findIndex(x=>lidOf(x)===l);if(j>=0)b.shots.splice(j,1)});
   if(d.fl)b.flags=clone(t.flags||[]);b.tbase=d.cur;touch(b);return d.shots}
 function tplBtn(b){const d=tplDiff(b);if(!d||!d.n){if(d&&b.tbase&&!eqv(b.tbase,d.cur))b.tbase=d.cur;return ''}return `<button class="btn tplu" id="tplU" title="Brings in the template's newer names, moves, images and new shots. Keeps your combos, hidden shots, order and anything you changed yourself.">Get template updates <b>${d.shots||1}</b></button>`}
 const total=b=>b.shots.reduce((a,s)=>a+(+s.dur||0),0);

@@ -19,6 +19,7 @@ const MOVES = [
   {id:13,name:'Top Down Detail',lens:'50mm',mode:'Standard',hard:2,tech:'Point camera straight down at the detail, pull backward while tilting the camera upward.',mistake:'Not including a foreground element at the end. That is what makes the shot look special.',tip:'End on a foreground element for a natural, elegant stopping point.',op:'clips/13_top_down_operator.mp4'},
   {id:14,name:'Drone',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Set the move before you hit record, then one slow, committed pass.',mistake:'Adjusting two sticks halfway through. Plan the line, then fly it.',tip:'Drone works best as an act break, not filler.'},
   {id:15,name:'The Hurley Special',lens:'Wide',mode:'PTF (confirm)',hard:3,tech:'Reverse parallel park. Start close with the gimbal at head height, camera up at the ceiling. Walk backward around the corner of the island, twisting the camera down as you sink into a squat. Land low, level and wide.',mistake:'Landing tilted up or down. The final frame must be level, or the whole move falls apart.',tip:'Walk the path first so you know where the island corner is. Operator clip runs at 75% speed.',op:'clips/15_hurley_special_operator.mp4',res:'clips/15_hurley_special_result.mp4'}
+  ,{id:16,name:'Detail Slider Rise',lens:'50mm',mode:'Standard',hard:2,tech:'Slide sideways and slowly lift the camera at the same time, keeping every horizontal line level.',mistake:'Tilting as you rise. Keep the camera level and let the height change do the work.',tip:'Michael uses this a lot on family room details: coffee table, shelves, the mantel. Clips coming later.'}
 ];
 
 const KINDS = {
@@ -323,4 +324,13 @@ Object.entries({re6:'Foyer Hero',vtx1:'Foyer Height Hero',re19:'Dining Room Hero
 /* Hero rule (Michael): a Hero is a push-type move (Straight Push, Push Curve, Push + Rise) on a main room, wide. Orbits and specials are not Heroes. */
 (function(){const t=SEED_BOARDS.find(x=>x.id==='tour');const PUSH=[1,2,7];
 t.shots.forEach(s=>{if(s.kind==='hero'&&!PUSH.includes(s.move))s.kind='wide'})})();
+
+/* Nov 7 (Michael): Front Door Detail is never used. Family Room gets a detail shot with the Detail Slider Rise instead. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const i=t.shots.findIndex(x=>x.lid==='re5');if(i<0)throw new Error('no re5');const old=t.shots.splice(i,1)[0];
+const n=JSON.parse(JSON.stringify(old));['combo','link','ask','swapped','ramp'].forEach(k=>delete n[k]);
+Object.assign(n,{id:'vtx8',lid:'vtx8',title:'Family Room Detail',pos:'Family Room Detail',kind:'closeup',loc:'Interior · Main',beat:'Main floor',move:16,hard:2,lens:'50mm',fps:60,dur:2.5,extra:true,solo:true,f:{img:'img/sb-family-detail.jpg'}});
+t.shots.splice(t.shots.findIndex(x=>x.lid==='re17')+1,0,n);
+t.shots.forEach((s,j)=>s.id='vt'+(j+1));
+t.flags.push('Front Door Detail removed. New Family Room Detail uses the Detail Slider Rise (clips to come).')})();
 
