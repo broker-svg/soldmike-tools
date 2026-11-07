@@ -153,7 +153,7 @@ function renderMain(){
   if(U.sec==='cat')return renderCat();
   const b=B();
   const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
-  $('main').innerHTML=`<div class="head"><div><h1>${esc(b.name)}</h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
+  $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
     <div class="acts">${tplBtn(b)}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
   ${versionBar(b)}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
   wireMain(b);
@@ -368,6 +368,7 @@ function wireMain(b){
   const m=$('main');
   m.querySelectorAll('[data-v]').forEach(e=>e.onclick=()=>{U.view=e.dataset.v;renderMain();lsWrite()});
   const tu=$('tplU');if(tu)tu.onclick=()=>{if(!tu.classList.contains('armed')){tu.classList.add('armed');tu.innerHTML='Tap again to update';setTimeout(()=>{if(tu.isConnected)render()},3500);return}const n=applyTpl(b);render();toast(n?`Updated ${n} ${n===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`:'Already up to date')};
+  const bn=$('bName');if(bn)bn.onclick=()=>{if(bn.querySelector('input'))return;const inp=document.createElement('input');inp.value=b.name;inp.style.cssText='font:inherit;width:100%;max-width:640px;padding:2px 6px;border:2px solid var(--acc,#4d9be6);border-radius:6px;background:transparent;color:inherit';bn.innerHTML='';bn.appendChild(inp);inp.focus();inp.select();let done=false;const save=ok=>{if(done)return;done=true;const v=inp.value.trim();if(ok&&v&&v!==b.name){b.name=v;touch(b);toast('Board renamed')}render()};inp.onkeydown=e=>{if(e.key==='Enter')save(true);if(e.key==='Escape')save(false)};inp.onblur=()=>save(true)};
   $('dupB').onclick=()=>{const id='b'+Date.now().toString(36),n=clone(b);n.id=id;n.name=b.name+' copy';delete n.group;delete n.family;delete n.linked;delete n.version;n.from=b.from||b.id;n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id='s'+Math.random().toString(36).slice(2,9)});S.boards[id]=n;S.order.push(id);U.board=id;touch(n);render();toast('Board duplicated')};
   const add=()=>{const s=newShot();b.shots.push(s);if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);x.shots.push(c);touch(x)})}touch(b);renderMain();open(s.id)};
   $('addV').onclick=()=>{U.addV=!U.addV;renderMain()};
