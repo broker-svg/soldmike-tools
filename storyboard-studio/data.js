@@ -315,3 +315,7 @@ t.flags.push('Shot names cleaned up. Entrance is a push for now; fill in rise or
 /* Nov 7: Exterior Detail now sits with the arrival shots */
 (function(){const t=SEED_BOARDS.find(x=>x.id==='tour');t.shots.find(x=>x.lid==='vtx6').beat='Arrival'})();
 
+/* Nov 7: each main room's wide shot is a Hero (Michael) */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+['re1','re6','vtx1','re12','re17','re19','re23','re26','re31','re33'].forEach(l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no '+l);n.kind='hero'})})();
+
