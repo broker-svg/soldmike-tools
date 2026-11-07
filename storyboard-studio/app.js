@@ -167,6 +167,9 @@ function flagsHTML(b){
   if(n.length)h+=`<div class="flag"><b>NUMBERS</b><span>${n.length} ${n.length===1?'line needs':'lines need'} a real number: shot ${n.map(s=>num(b,s)).join(', ')}.</span></div>`;
   return h;
 }
+function storyStrip(b){const pos={};comboRuns(b).forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));let lastBeat=null,t=0;
+  return `<div class="sheet story ${b.aspect==='16/9'?'h':'v'}">${b.shots.map((s,i)=>{const p=pos[s.id],m=moveOf(s.move),at=t;t+=+s.dur||0;const beat=s.beat!==lastBeat?`<div class="beatlab">${esc(s.beat||'')}<small>${tc(at)}</small></div>`:'';lastBeat=s.beat;
+    return `${beat}<div class="mini sbm ${U.shot===s.id?'sel':''}${p?' inc':''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} role="button" tabindex="0" draggable="true" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra||s.swapped?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}<div class="mcap"><b>${esc(s.title||s.script||s.pos||'')}</b><span>${esc(m.name)} · ${s.dur}s${p?` · <i style="color:var(--cc)">combo ${esc(p.k)} ${p.i}/${p.n}</i>`:''}</span>${comboBtn(b.id,s)}</div>${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</div>`}).join('')}</div>`}
 function birdView(b){
   const T=total(b)||1,over=T>b.target,rs=comboRuns(b);
   const a=b.shots.filter(s=>s.roll==='A').reduce((x,s)=>x+(+s.dur||0),0),br=b.shots.filter(s=>s.roll==='B').reduce((x,s)=>x+(+s.dur||0),0);
@@ -194,8 +197,8 @@ function birdView(b){
     ${rs.length?`<div class="lane combos">${rs.map(r=>{const st=starts[r.start],en=starts[r.end]+(+b.shots[r.end].dur||0);return `<div class="seg" style="left:${st/T*100}%;width:${(en-st)/T*100}%">${esc(r.key)}</div>`}).join('')}</div>`:''}
     <div class="ruler">${ticks.map(i=>`<span style="left:${i/T*100}%">${i}s</span>`).join('')}</div>
   </div></div>
-  <div class="sect">Every shot at a glance</div>
-  <div class="sheet">${b.shots.map((s,i)=>`<button class="mini ${U.shot===s.id?'sel':''}" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra||s.swapped?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</button>`).join('')}</div>`;
+  <div class="sect">Storyboard, in story order <small>· how the finished video plays · drag to reorder</small></div>
+  ${storyStrip(b)}`;
 }
 function allTabs(b){const a=U.allTab[b.id]??'frame';return `<div class="alltabs"><span class="seglab">Show all</span><div class="seg2">${[['frame','Frame'],['hero','Hero'],['gimbal','Gimbal']].map(([k,l])=>`<button data-all="${k}" class="${a===k?'on':''}">${l}</button>`).join('')}</div></div>`}
 function storyView(b){
@@ -347,7 +350,7 @@ function wireMain(b){
   m.querySelectorAll('[data-open]').forEach(e=>e.onclick=()=>open(e.dataset.open));
   m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;U.allTab[B().id]='';renderMain()});
   m.querySelectorAll('[data-all]').forEach(e=>e.onclick=()=>{const b=B(),k=e.dataset.all;U.allTab[b.id]=k;b.shots.forEach(s=>{U.ctab[s.id]=(k==='hero'&&!heroSrc(s))||(k==='gimbal'&&!gimbalSrc(s))?'frame':k});renderMain()});
-  m.querySelectorAll('.card[draggable]').forEach(c=>{
+  m.querySelectorAll('.card[draggable],.mini[draggable]').forEach(c=>{
     c.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',c.dataset.s);c.classList.add('drag')});
     c.addEventListener('dragend',()=>c.classList.remove('drag'));
     c.addEventListener('dragover',ev=>{ev.preventDefault();c.classList.add('over')});

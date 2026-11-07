@@ -312,3 +312,6 @@ t.shots.splice(t.shots.findIndex(x=>x.lid==='re3'),0,c);
 t.shots.forEach((s,j)=>s.id='vt'+(j+1));
 t.flags.push('Shot names cleaned up. Entrance is a push for now; fill in rise or curve for the house. The two exterior details sit side by side so you can pick one.')})();
 
+/* Nov 7: Exterior Detail now sits with the arrival shots */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');t.shots.find(x=>x.lid==='vtx6').beat='Arrival'})();
+
