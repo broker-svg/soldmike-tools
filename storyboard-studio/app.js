@@ -11,7 +11,7 @@ const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],[
 
 const S={boards:{},meta:clone(SEED_META),order:[]};
 SEED_BOARDS.forEach(b=>{S.boards[b.id]=clone(b);S.order.push(b.id)});
-const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},allTab:{},scope:'whole',cat:null,groupBy:'loc',shootLook:'list'};
+const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},allTab:{},showHid:false,scope:'whole',cat:null,groupBy:'loc',shootLook:'list'};
 try{const p=JSON.parse(localStorage.getItem('storyboardStudio.shootView'));if(p){U.groupBy=p.groupBy==='lens'?'lens':'loc';U.shootLook=p.shootLook==='cards'?'cards':'list'}}catch(e){}
 const saveShootPrefs=()=>{try{localStorage.setItem('storyboardStudio.shootView',JSON.stringify({groupBy:U.groupBy,shootLook:U.shootLook}))}catch(e){}};
 let db=null,assets=null,saved={},timer=null,dirty=new Set(),metaDirty=false;
@@ -51,6 +51,7 @@ async function connect(){
 /* ---------- helpers ---------- */
 const B=()=>S.boards[U.board];
 const shotById=(b,id)=>b.shots.find(s=>s.id===id);
+const act=b=>b.shots.some(s=>s.hidden)?Object.assign(Object.create(b),{shots:b.shots.filter(s=>!s.hidden)}):b;
 const total=b=>b.shots.reduce((a,s)=>a+(+s.dur||0),0);
 const needsNum=s=>/\[/.test(s.script||'');
 const num=(b,s)=>b.shots.indexOf(s)+1;
@@ -110,7 +111,7 @@ function frameHTML(s,mode){
 /* ---------- rail ---------- */
 function renderRail(){
   const boardsIn=c=>S.order.filter(id=>S.boards[id]&&S.boards[id].cat===c);
-  const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.length}</small></button>`};
+  const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`};
   const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${ids.map(nb).join('')}</div>`};
   const top=CATEGORIES.filter(c=>!c.parent),re=CATEGORIES.filter(c=>c.parent);
   $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>
@@ -132,7 +133,7 @@ function renderMain(){
   if(U.sec==='moves')return renderMoves();
   if(U.sec==='cat')return renderCat();
   const b=B();
-  const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](b);
+  const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
   $('main').innerHTML=`<div class="head"><div><h1>${esc(b.name)}</h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
     <div class="acts"><button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
   ${versionBar(b)}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
@@ -158,8 +159,8 @@ function createVersion(b,name,aspect){
   S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;touch(b);touch(n);render();toast('Linked version created');
 }
 function legend(b){
-  const used=[...new Set(b.shots.map(s=>s.kind))];
-  return `<div class="legend">${used.map(k=>`<span><i style="background:${KINDS[k].c}"></i>${KINDS[k].label}</span>`).join('')}${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
+  const vis=b.shots.filter(s=>!s.hidden),used=[...new Set(vis.map(s=>s.kind))],cnt=k=>vis.filter(s=>s.kind===k).length;
+  return `<div class="legend">${used.map(k=>`<span><i style="background:${KINDS[k].c}"></i>${KINDS[k].label} <b class="lc">${cnt(k)}</b></span>`).join('')}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
 }
 function flagsHTML(b){
   const n=b.shots.filter(needsNum);
@@ -204,18 +205,20 @@ function birdView(b){
 function allTabs(b){const a=U.allTab[b.id]??'frame';return `<div class="alltabs"><span class="seglab">Show all</span><div class="seg2">${[['frame','Frame'],['hero','Hero'],['gimbal','Gimbal']].map(([k,l])=>`<button data-all="${k}" class="${a===k?'on':''}">${l}</button>`).join('')}</div></div>`}
 function storyView(b){
   const runs=comboRuns(b),pos={};runs.forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));
-  return `${legend(b)}${allTabs(b)}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
+  const hc=b.shots.filter(s=>s.hidden).length;let vn=0;
+  return `${legend(b)}${allTabs(b)}${hc?`<label class="showhid"><input type="checkbox" id="showHid" ${U.showHid?'checked':''}> Show hidden shots (${hc})</label>`:''}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
+    if(s.hidden&&!U.showHid)return '';const no=s.hidden?'':++vn;
     const k=KINDS[s.kind],m=moveOf(s.move),tab=U.ctab[s.id]||'frame',p=pos[s.id];
     const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
-    return `<article class="card ${U.shot===s.id?'sel':''}${p?' inc'+(p.i===1?' cfirst':'')+(p.i===p.n?' clast':''):''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} draggable="true" data-s="${s.id}">
-      <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${tagHTML(s)}${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
+    return `<article class="card ${U.shot===s.id?'sel':''}${s.hidden?' hid':''}${p?' inc'+(p.i===1?' cfirst':'')+(p.i===p.n?' clast':''):''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} draggable="true" data-s="${s.id}">
+      <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>${s.hidden?'HIDDEN':'#'+no}</span>${tagHTML(s)}${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
       ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><button class="cundo" data-cundo="${b.id}|${s.id}">Undo combo</button><span>${p.i} of ${p.n}</span></div>`:''}
       <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
         <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
       <div class="body"><div class="line${s.script?'':' nm'}">${line}</div>
         <div class="kv">${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}<b>Where</b><span>${esc(s.loc)}${s.pos&&!s.title?' · '+esc(s.pos):''}</span>${s.gfx?`<b>Graphic</b><span>${esc(s.gfx)}</span>`:''}${s.broll?`<b>B-roll</b><span>${esc(s.broll)}</span>`:''}</div>
         ${moveBig(m,s)}
-        <div class="cfoot">${comboBtn(b.id,s)}</div></div>
+        <div class="cfoot">${comboBtn(b.id,s)}<label class="capt hidt"><input type="checkbox" data-hid="${b.id}|${s.id}" ${s.hidden?'checked':''}>Hide</label><button class="delb" data-del="${b.id}|${s.id}">Delete</button></div></div>
       ${combosNext(b,i)?`<div class="link"><span class="lk" title="${esc(s.link||'Linked to next clip')}">${esc(s.combo)}</span></div>`:''}
     </article>`}).join('')}<button class="addcard" id="addS2">Add shot</button></div>`;
 }
@@ -224,7 +227,7 @@ function listView(b){
   let t=0;const notes=b.shots.filter(s=>s.ask).length;
   const rows=b.shots.map((s,i)=>{const at=t;t+=+s.dur||0;const m=moveOf(s.move),k=KINDS[s.kind];
     return `<tr data-open="${s.id}" class="${U.shot===s.id?'on':''}"><td class="n">${i+1}</td><td class="n">${tc(at)}</td><td class="n">${s.dur}s</td><td><span class="lb" style="background:${k.c}">${esc(k.label)}</span>${tagHTML(s)}</td><td class="n">${s.roll==='G'?'GFX':s.roll}</td><td>${esc(s.loc)}</td><td class="w">${s.combo?`<span class="cmb">${esc(s.combo)}</span>`:''}${esc(s.title||s.script||s.gfx)}${s.title&&s.script?'<br><small>'+esc(s.script)+'</small>':''}</td><td>${esc(m.name)} ${dots(s.hard||1)}</td><td class="n">${esc(s.lens)}${s.fps?' · '+s.fps:''}</td><td class="n">${s.got?'✓':''}</td><td class="w ask">${esc(s.ask||'')}</td></tr>`}).join('');
-  return `${notes?`<div class="flag"><b>NOTES</b><span>${notes} ${notes===1?'note':'notes'} for Claude on this board. ${db?'Tell Claude to check your notes.':'Copy them and paste them to Claude.'}</span>${db?'':'<button class="btn" id="copyN" style="margin-left:auto">Copy notes</button>'}</div>`:''}<div class="tblwrap"><table class="sl"><thead><tr><th>#</th><th>At</th><th>Len</th><th>Label</th><th>Roll</th><th>Where</th><th>Shot</th><th>Move</th><th>Lens · fps</th><th>Got</th><th>Note for Claude</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  return `${legend(b)}${notes?`<div class="flag"><b>NOTES</b><span>${notes} ${notes===1?'note':'notes'} for Claude on this board. ${db?'Tell Claude to check your notes.':'Copy them and paste them to Claude.'}</span>${db?'':'<button class="btn" id="copyN" style="margin-left:auto">Copy notes</button>'}</div>`:''}<div class="tblwrap"><table class="sl"><thead><tr><th>#</th><th>At</th><th>Len</th><th>Label</th><th>Roll</th><th>Where</th><th>Shot</th><th>Move</th><th>Lens · fps</th><th>Got</th><th>Note for Claude</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /* ---------- shoot order ---------- */
@@ -281,7 +284,7 @@ function shootView(b){
   let clock=toMin(startOf(b)),n=0;
   const totalMin=sets.reduce((a,x)=>a+setupMin(x),0);
   const pos={};new Set(sets.map(x=>x.board)).forEach(x=>comboRuns(x).forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length})));
-  return `<div class="scope">${b.group?`<div class="seg2"><button data-sc="whole" class="${whole?'on':''}">Whole shoot day</button><button data-sc="one" class="${whole?'':'on'}">This video only</button></div>`:''}
+  return `${legend(b)}<div class="scope">${b.group?`<div class="seg2"><button data-sc="whole" class="${whole?'on':''}">Whole shoot day</button><button data-sc="one" class="${whole?'':'on'}">This video only</button></div>`:''}
     <span class="seglab">Group by</span><div class="seg2"><button data-gb="loc" class="${byLens()?'':'on'}">Location</button><button data-gb="lens" class="${byLens()?'on':''}">Lens</button></div>
     <span class="seglab">View</span><div class="seg2"><button data-sl="list" class="${cards?'':'on'}">List</button><button data-sl="cards" class="${cards?'on':''}">Storyboard</button></div>${cards?allTabs(b):''}
     <label>Start <input class="inp" type="time" id="startT" value="${esc(startOf(b))}"></label></div>
@@ -365,6 +368,9 @@ function wireMain(b){
   m.querySelectorAll('[data-sb]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sb.split('|');U.board=bi;U.view='story';U.shot=si;renderMain();renderRail();const c=document.querySelector(`.card[data-s="${si}"]`);if(c){c.classList.add('sel');c.scrollIntoView({block:'center'})}});
   m.querySelectorAll('[data-jump]').forEach(e=>e.onclick=()=>{const t=$('setup'+e.dataset.jump);if(t)t.scrollIntoView({block:'start'})});
   const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
+  m.querySelectorAll('[data-hid]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.hid.split('|'),x=S.boards[bi],s=shotById(x,si);if(e.checked)s.hidden=true;else delete s.hidden;touch(x);render()}});
+  m.querySelectorAll('[data-del]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();if(!e.classList.contains('armed')){e.classList.add('armed');e.textContent='Tap again to delete';setTimeout(()=>{if(e.isConnected){e.classList.remove('armed');e.textContent='Delete'}},3000);return}const [bi,si]=e.dataset.del.split('|'),x=S.boards[bi],j=x.shots.findIndex(y=>y.id===si);if(j<0)return;x.shots.splice(j,1);if(U.shot===si)U.shot=null;touch(x);render()});
+  const sh=$('showHid');if(sh)sh.onchange=()=>{U.showHid=sh.checked;renderMain()};
   m.querySelectorAll('[data-cundo]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();ev.preventDefault();const [bi,si]=e.dataset.cundo.split('|'),x=S.boards[bi];undoCombo(x,si);touch(x);renderMain()});
   m.querySelectorAll('[data-cmb]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.cmb.split('|'),x=S.boards[bi];toggleCombo(x,si);touch(x);renderMain()}});
   m.querySelectorAll('[data-got]').forEach(e=>e.onchange=()=>{const [bi,si]=e.dataset.got.split('|'),x=S.boards[bi],s=shotById(x,si);s.got=e.checked;touch(x);renderMain()});
