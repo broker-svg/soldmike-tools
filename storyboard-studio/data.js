@@ -252,3 +252,17 @@ const SEED_META = {
   order:{merino:['merino|Kitchen level','merino|Bedroom level','merino|Basement','merino|Entrance level','merino|Exterior · Sony','merino|Exterior · Drone'],pinned:['invest|Living room','invest|Kitchen island','social|Kitchen island','social|Living room','social|Terrace','social|Patio']},
   notes:{'merino|Entrance level':'Combo A runs through here. Film the stairs climb and the front door shots as one run, with the exterior setup right after.','merino|Kitchen level':'Turn on every pot light and the chandelier. Warm up here on the easy moves, then do the glass stairs FPV while you are fresh.','merino|Exterior · Sony':'Front faces south, so aim for midday light on the brick and stone.','merino|Exterior · Drone':'No rain, light wind. Check the airspace for the site before you fly.','social|Terrace':'Light starts to warm up here. Combo A happens at this setup.','social|Patio':'Golden hour. Sunset is about 5:00 PM in early November, so this setup cannot slip.','social|Kitchen island':'Change to Outfit A here. Lights stay where they are.'}
 };
+
+/* Reel gets the 4 moves it was missing, using the same takes as the tour. Runs after the condo clone so the condo draft keeps its moves. */
+(function(){const r=SEED_BOARDS.find(x=>x.id==='reel'),t=SEED_BOARDS.find(x=>x.id==='tour');
+const sw=(id,o)=>{const n=r.shots.find(x=>x.id===id);if(!n)throw new Error('no reel '+id);Object.assign(n,{swapped:true,solo:true},o)};
+sw('re14',{move:3,hard:2,title:'Kitchen island orbit',pos:'Kitchen island orbit',f:{img:'img/sb-kitchen-orbit-v.jpg'}});
+sw('re15',{move:12,hard:3,fps:60,title:'Island or faucet, wrap and rise',pos:'Island or faucet, wrap and rise',f:{img:'img/sb-faucet-v.jpg'}});
+sw('re29',{move:13,hard:2,kind:'closeup',lens:'50mm',fps:60,title:'Vanity, top down pull back',pos:'Vanity, top down pull back',f:{img:'img/sb-vanity-v.jpg'}});
+sw('re30',{move:4,hard:2,f:{img:'img/sb-bedroom-drop-v.jpg'}});
+r.flags.push('4 moves swapped in, tagged SWAP: Orbit, PTF Orbit, Top Down Detail and Yee-Haw Drop. Each uses the same take as the tour, so no extra filming. Seconds are a guide, set them in the edit.');
+const img={re6:'foyer',vtx1:'foyer-drop',re14:'kitchen-orbit',vtx2:'faucet',vtx3:'fireplace',re19:'dining-push',vtx4:'dining-orbit',vtx5:'vanity',re27:'bedroom-curve',re28:'bedroom-orbit',re29:'bathroom',re30:'bedroom-drop'};
+Object.keys(img).forEach(l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no tour '+l);n.f={img:'img/sb-'+img[l]+'.jpg'}});
+t.shots.find(x=>x.lid==='re15').solo=true;
+t.flags.push('Storyboard images on EXTRA and SWAP shots are AI planning references, not a real house.');
+r.flags.push('Storyboard images on SWAP shots are AI planning references, not a real house.')})();
