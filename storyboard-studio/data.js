@@ -264,5 +264,16 @@ r.flags.push('4 moves swapped in, tagged SWAP: Orbit, PTF Orbit, Top Down Detail
 const img={re6:'foyer',vtx1:'foyer-drop',re14:'kitchen-orbit',vtx2:'faucet',vtx3:'fireplace',re19:'dining-push',vtx4:'dining-orbit',vtx5:'vanity',re27:'bedroom-curve',re28:'bedroom-push',re29:'bathroom',re30:'bedroom-drop'};
 Object.keys(img).forEach(l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no tour '+l);n.f={img:'img/sb-'+img[l]+'.jpg'}});
 t.shots.find(x=>x.lid==='re15').solo=true;
-t.flags.push('Storyboard images on EXTRA and SWAP shots are AI planning references, not a real house.');t.flags.push('Hero clips for Yee-Haw Drop, Push + Rise, Tripod and Top Down Detail are hidden until real footage is added.');
-r.flags.push('Storyboard images on SWAP shots are AI planning references, not a real house.')})();
+t.flags.push('All storyboard images are AI planning references, not a real house.');t.flags.push('Hero clips for Yee-Haw Drop, Push + Rise, Tripod and Top Down Detail are hidden until real footage is added.');
+r.flags.push('All storyboard images are AI planning references, not a real house.')})();
+
+/* Every template shot gets a storyboard image. Tour is horizontal, reel and condo are vertical. */
+(function(){const by=id=>SEED_BOARDS.find(x=>x.id===id);
+const base={re1:'money-front',re2:'drone-open',re3:'ext-close',re4:'entrance',re5:'door',re7:'close',re8:'rapid1',re9:'rapid2',re10:'rapid3',re11:'rapid4',re12:'kitchen-wide',re13:'kitchen-close',re16:'fpv',re17:'family',re18:'dining-close',re20:'dining-detail',re21:'stairs-close',re22:'stairs',re23:'master',re24:'master-close',re25:'ensuite-close',re26:'ensuite',re31:'basement',re32:'birdseye',re33:'backyard',re34:'drone360',re35:'closing'};
+const set=(b,l,n)=>{const s=b.shots.find(x=>x.lid===l);if(!s)throw new Error('no '+l);s.f={img:'img/sb-'+n+'.jpg'}};
+const t=by('tour'),r=by('reel'),c=by('condo');
+Object.keys(base).forEach(l=>{set(t,l,base[l]);set(r,l,base[l]+'-v')});
+set(t,'re15','kitchen-detail');
+Object.entries({re6:'foyer-v',re19:'dining-push-v',re27:'bedroom-curve-v',re28:'bedroom-push-v'}).forEach(([l,n])=>set(r,l,n));
+['door','foyer','close','rapid1','rapid2','rapid3','rapid4','kitchen-wide',null,'kitchen-close','pan','detail','fpv','family','dining-close','dining','dining-detail','master','master-close','ensuite-close','ensuite','bedroom'].forEach((n,i)=>{if(n)set(c,'co'+(i+1),'c-'+n)});
+c.flags.push('All storyboard images are AI planning references, not a real condo.')})();

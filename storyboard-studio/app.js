@@ -11,7 +11,7 @@ const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],[
 
 const S={boards:{},meta:clone(SEED_META),order:[]};
 SEED_BOARDS.forEach(b=>{S.boards[b.id]=clone(b);S.order.push(b.id)});
-const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},scope:'whole',cat:null,groupBy:'loc',shootLook:'list'};
+const U={sec:'board',board:'merino',view:'bird',shot:null,itab:'frame',ctab:{},allTab:{},scope:'whole',cat:null,groupBy:'loc',shootLook:'list'};
 try{const p=JSON.parse(localStorage.getItem('storyboardStudio.shootView'));if(p){U.groupBy=p.groupBy==='lens'?'lens':'loc';U.shootLook=p.shootLook==='cards'?'cards':'list'}}catch(e){}
 const saveShootPrefs=()=>{try{localStorage.setItem('storyboardStudio.shootView',JSON.stringify({groupBy:U.groupBy,shootLook:U.shootLook}))}catch(e){}};
 let db=null,assets=null,saved={},timer=null,dirty=new Set(),metaDirty=false;
@@ -197,9 +197,10 @@ function birdView(b){
   <div class="sect">Every shot at a glance</div>
   <div class="sheet">${b.shots.map((s,i)=>`<button class="mini ${U.shot===s.id?'sel':''}" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra||s.swapped?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</button>`).join('')}</div>`;
 }
+function allTabs(b){const a=U.allTab[b.id]??'frame';return `<div class="alltabs"><span class="seglab">Show all</span><div class="seg2">${[['frame','Frame'],['hero','Hero'],['gimbal','Gimbal']].map(([k,l])=>`<button data-all="${k}" class="${a===k?'on':''}">${l}</button>`).join('')}</div></div>`}
 function storyView(b){
   const runs=comboRuns(b),pos={};runs.forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));
-  return `${legend(b)}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
+  return `${legend(b)}${allTabs(b)}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
     const k=KINDS[s.kind],m=moveOf(s.move),tab=U.ctab[s.id]||'frame',p=pos[s.id];
     const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
     return `<article class="card ${U.shot===s.id?'sel':''}" draggable="true" data-s="${s.id}">
@@ -261,7 +262,7 @@ function shootView(b){
   const pos={};new Set(sets.map(x=>x.board)).forEach(x=>comboRuns(x).forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length})));
   return `<div class="scope">${b.group?`<div class="seg2"><button data-sc="whole" class="${whole?'on':''}">Whole shoot day</button><button data-sc="one" class="${whole?'':'on'}">This video only</button></div>`:''}
     <span class="seglab">Group by</span><div class="seg2"><button data-gb="loc" class="${byLens()?'':'on'}">Location</button><button data-gb="lens" class="${byLens()?'on':''}">Lens</button></div>
-    <span class="seglab">View</span><div class="seg2"><button data-sl="list" class="${cards?'':'on'}">List</button><button data-sl="cards" class="${cards?'on':''}">Storyboard</button></div>
+    <span class="seglab">View</span><div class="seg2"><button data-sl="list" class="${cards?'':'on'}">List</button><button data-sl="cards" class="${cards?'on':''}">Storyboard</button></div>${cards?allTabs(b):''}
     <label>Start <input class="inp" type="time" id="startT" value="${esc(startOf(b))}"></label></div>
   <div class="scope"><span>${sets.length} setups · about ${Math.floor(totalMin/60)}h ${totalMin%60}m · ${all.length} shots, filmed out of story order</span></div>
   <div class="prog" aria-label="Captured"><i style="width:${all.length?got/all.length*100:0}%"></i></div>
@@ -328,7 +329,8 @@ function wireMain(b){
   $('addS').onclick=add;const a2=$('addS2');if(a2)a2.onclick=add;
   m.querySelectorAll('.tile,.mini[data-s]').forEach(e=>e.onclick=()=>open(e.dataset.s));
   m.querySelectorAll('[data-open]').forEach(e=>e.onclick=()=>open(e.dataset.open));
-  m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;renderMain()});
+  m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;U.allTab[B().id]='';renderMain()});
+  m.querySelectorAll('[data-all]').forEach(e=>e.onclick=()=>{const b=B(),k=e.dataset.all;U.allTab[b.id]=k;b.shots.forEach(s=>{U.ctab[s.id]=(k==='hero'&&!heroSrc(s))||(k==='gimbal'&&!gimbalSrc(s))?'frame':k});renderMain()});
   m.querySelectorAll('.card[draggable]').forEach(c=>{
     c.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',c.dataset.s);c.classList.add('drag')});
     c.addEventListener('dragend',()=>c.classList.remove('drag'));
