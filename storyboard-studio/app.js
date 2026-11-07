@@ -41,7 +41,7 @@ async function connect(){
   setSave('Saved online. Phone and Macs match.');
   db.collection('boards').onSnapshot(q=>{
     let ch=false;
-    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);ensureBase(S.boards[v.id],!v.tbase);dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
+    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);ensureBase(S.boards[v.id],!v.tbase);{const d=tplDiff(S.boards[v.id]);if(d&&d.n)applyTpl(S.boards[v.id])}dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
     if(ch&&!document.activeElement.closest?.('.insp'))render();
   },()=>setSave('Online saving stopped. Kept on this computer.'));
   db.doc('meta/shoot').onSnapshot(d=>{if(d.exists&&!d.metadata.hasPendingWrites){S.meta=clone(d.data());if(U.view==='shoot')renderMain()}},()=>{});
@@ -449,7 +449,7 @@ function renderInsp(){
   let armed=false;$('delS').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to delete';return}b.shots.splice(i,1);U.shot=null;touch(b);render()};
 }
 const nextCombo=b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l=>!b.shots.some(s=>s.combo===l));
-function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,2200)}
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,t.length>60?4500:2200)}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
 
-lsRead();Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));render();connect();
+lsRead();Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));let autoUp=0;Object.values(S.boards).forEach(b=>{const d=tplDiff(b);if(d&&d.n)autoUp+=applyTpl(b)});render();if(autoUp)toast(`Template updates added to ${autoUp} ${autoUp===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`);connect();
