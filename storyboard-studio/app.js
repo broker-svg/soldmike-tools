@@ -179,8 +179,7 @@ function birdView(b){
   const beats=[];let t=0;b.shots.forEach(s=>{const l=beats[beats.length-1];if(l&&l.n===s.beat)l.d+=+s.dur||0;else beats.push({n:s.beat,t,d:+s.dur||0});t+=+s.dur||0});
   const starts=[];t=0;b.shots.forEach(s=>{starts.push(t);t+=+s.dur||0});
   const ticks=[];for(let i=0;i<=T;i+=5)ticks.push(i);
-  return `${flagsHTML(b)}
-  <div class="stats">
+  return `<div class="stats">
     <div class="stat"><b class="${over?'over':''}">${fmt(T)}s</b><span>runtime, target ${b.target}s</span></div>
     <div class="stat"><b>${b.shots.length}</b><span>shots</span></div>
     <div class="stat"><b>${locs}</b><span>locations</span></div>
@@ -189,6 +188,9 @@ function birdView(b){
     <div class="stat"><b>${hard}</b><span>hard moves</span></div>${b.shots.some(s=>s.extra)?`<div class="stat"><b>${b.shots.filter(s=>s.extra).length}</b><span>extras</span></div>`:''}${b.shots.some(s=>s.swapped)?`<div class="stat"><b>${b.shots.filter(s=>s.swapped).length}</b><span>swaps</span></div>`:''}
     <div class="stat"><b>${got}/${film.length}</b><span>captured</span></div>
   </div>
+  <div class="sect">Storyboard, in story order <small>· how the finished video plays · drag to reorder</small></div>
+  ${storyStrip(b)}
+  <div class="sect">Timeline</div>
   ${legend(b)}
   <div class="tlwrap"><div class="tl">
     <div class="lane">${beats.map(x=>`<div class="seg" style="left:${x.t/T*100}%;width:${x.d/T*100}%" title="${esc(x.n)}">${esc(x.n)}</div>`).join('')}</div>
@@ -197,8 +199,7 @@ function birdView(b){
     ${rs.length?`<div class="lane combos">${rs.map(r=>{const st=starts[r.start],en=starts[r.end]+(+b.shots[r.end].dur||0);return `<div class="seg" style="left:${st/T*100}%;width:${(en-st)/T*100}%">${esc(r.key)}</div>`}).join('')}</div>`:''}
     <div class="ruler">${ticks.map(i=>`<span style="left:${i/T*100}%">${i}s</span>`).join('')}</div>
   </div></div>
-  <div class="sect">Storyboard, in story order <small>· how the finished video plays · drag to reorder</small></div>
-  ${storyStrip(b)}`;
+  ${(b.flags||[]).length?`<div class="sect">Notes to check</div>${flagsHTML(b)}`:''}`;
 }
 function allTabs(b){const a=U.allTab[b.id]??'frame';return `<div class="alltabs"><span class="seglab">Show all</span><div class="seg2">${[['frame','Frame'],['hero','Hero'],['gimbal','Gimbal']].map(([k,l])=>`<button data-all="${k}" class="${a===k?'on':''}">${l}</button>`).join('')}</div></div>`}
 function storyView(b){
