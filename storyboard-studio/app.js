@@ -209,7 +209,8 @@ function storyView(b){
       <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
         <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
       <div class="body"><div class="line">${line}</div>
-        <div class="kv"><b>Where</b><span>${esc(s.loc)}${s.pos&&!s.title?' · '+esc(s.pos):''}</span><b>Move</b><span>${esc(m.name)} ${dots(s.hard||1)}</span>${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}${s.gfx?`<b>Graphic</b><span>${esc(s.gfx)}</span>`:''}${s.broll?`<b>B-roll</b><span>${esc(s.broll)}</span>`:''}</div></div>
+        <div class="kv">${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}<b>Where</b><span>${esc(s.loc)}${s.pos&&!s.title?' · '+esc(s.pos):''}</span>${s.gfx?`<b>Graphic</b><span>${esc(s.gfx)}</span>`:''}${s.broll?`<b>B-roll</b><span>${esc(s.broll)}</span>`:''}</div>
+        ${moveBig(m,s)}</div>
       ${combosNext(b,i)?`<div class="link"><span class="lk" title="${esc(s.link||'Linked to next clip')}">${esc(s.combo)}</span></div>`:''}
     </article>`}).join('')}<button class="addcard" id="addS2">Add shot</button></div>`;
 }
@@ -244,6 +245,7 @@ function shootRows(su){
 }
 function shootRowHTML(su,s){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind];
   return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><button class="sn sblink" data-sb="${bb.id}|${s.id}" title="See this shot in the Storyboard">#${num(bb,s)}</button><span>${tagHTML(s)}${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}<small class="rowsub">${esc(k.label)}${byLens()?' · '+esc(s.loc):''}</small></span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}
+function moveBig(m,s){return `<div class="mvbig"><span class="mvn">${esc(m.name)}</span><span class="mvd">${dots(s.hard||1)}</span></div>`}
 function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind],tab=U.ctab[s.id]||'frame',p=pos[s.id];
   return `<article class="card shootcard ${s.got?'got':''} ${U.shot===s.id?'sel':''}" data-s="${s.id}">
     <div class="top" style="background:${k.c}"><span class="badge">${esc(k.label)}</span><span>Shoot ${n}</span>${tagHTML(s)}<span class="r">#${num(bb,s)} · ${s.dur}s</span></div>
@@ -251,8 +253,9 @@ function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.
     <div class="pic" data-open2="${bb.id}|${s.id}">${frameHTML(s,tab)}
       <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
     <div class="body"><div class="line">${esc(s.script||s.title||s.pos||'')}</div>
-      <div class="kv"><b>Where</b><span>${esc(s.loc)}</span><b>Move</b><span>${esc(m.name)} ${dots(s.hard||1)}</span>${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}${s.combo?`<b>Roll</b><span>${+s.dur+4}s</span>`:''}</div>
-      <label class="capt"><input type="checkbox" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}>Captured</label><button class="sblink" data-sb="${bb.id}|${s.id}">See in Storyboard #${num(bb,s)}</button></div>
+      <div class="kv">${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}<b>Where</b><span>${esc(s.loc)}</span>${s.combo?`<b>Roll</b><span>${+s.dur+4}s</span>`:''}</div>
+      ${moveBig(m,s)}
+      <div class="cfoot"><label class="capt"><input type="checkbox" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}>Captured</label><button class="sblink" data-sb="${bb.id}|${s.id}">See in Storyboard #${num(bb,s)}</button></div></div>
   </article>`}
 function shootView(b){
   const whole=U.scope==='whole'&&!!b.group,cards=U.shootLook==='cards';

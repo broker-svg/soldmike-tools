@@ -6,7 +6,7 @@ const MOVES = [
   {id:0,name:'Locked off',lens:'Any',mode:'Tripod',hard:1,tech:'Camera on sticks, nothing moves. Let the talent do the work.',mistake:'Leaving it crooked. Level the horizon before the take.',tip:'Use it for the longest lines, where a move would distract from the words.'},
   {id:1,name:'Straight Push',lens:'Wide',mode:'Standard',hard:1,tech:'Ninja walk: smooth forward or backward motion keeping grid lines aligned with room lines.',mistake:'Letting hips sway side to side breaks the smooth glide and makes the footage look shaky.',tip:"Use the center X on your grid overlay to anchor where you want the viewer's eye to go.",op:'clips/01_straight_push_operator.mp4',res:'clips/01_straight_push_result.mp4'},
   {id:2,name:'Push Curve',lens:'Wide',mode:'Standard',hard:2,tech:'Push in straight, then introduce a gentle wrist turn. Let the gimbal curve, not your body.',mistake:'Twisting your whole torso creates a harsh 90° snap instead of a smooth, cinematic arc.',tip:'The curve should feel like water flowing, started by the fingertips, not the shoulders.',op:'clips/02_push_curve_operator.mp4',res:'clips/02_push_curve_result.mp4'},
-  {id:3,name:'Orbit',lens:'Wide',mode:'Standard',hard:2,tech:"Move your feet in a 'C' shape (bird's eye) while spinning and gently turning your wrist.",mistake:'Moving too fast loses the smooth orbit and creates a panning clip instead of a true orbit.',tip:'Meshes naturally with other clips in the edit. Shows all four sides of the subject.',op:'clips/03_orbit_operator.mp4',res:'clips/03_orbit_result.mp4'},
+  {id:3,name:'Orbit',lens:'Wide',mode:'Standard',hard:2,tech:"Move your feet in a 'C' shape (bird's eye) while spinning and gently turning your wrist.",mistake:'Moving too fast loses the smooth orbit and creates a panning clip instead of a true orbit.',tip:'Meshes naturally with other clips in the edit. Shows all four sides of the subject.',res:'clips/03_orbit_result.mp4'},
   {id:4,name:'Yee-Haw Drop',lens:'Wide',mode:'PTF',hard:2,tech:'PTF mode: joystick up, reach wide, drop the camera all the way down your legs.',mistake:'Not going wide enough with your reach limits the dramatic drop effect.',tip:'Wide reach plus full drop creates the cowboy-style height reveal. Commit to the full range.',op:'clips/04_yeehaw_drop_operator.mp4'},
   {id:5,name:'FPV',lens:'Wide',mode:'Follow',hard:3,tech:'Mimic a flying drone: energetic, swooping movement through the space.',mistake:'Overusing FPV kills its impact. One or two per video maximum.',tip:'Best in modern homes with reflections and great light. Avoid in traditional or dark spaces.',res:'clips/05_fpv_result.mp4'},
   {id:6,name:'PTF Rise & Drop',lens:'Wide',mode:'PTF',hard:3,tech:'Walk in straight, push up with wrist showing height, orbit if possible, then drop.',mistake:'Forgetting the orbit makes this just a rise. The orbit is what makes it special.',tip:'Works beautifully around a staircase. Orbit the newel post while changing elevation.',op:'clips/06_ptf_rise_drop_operator.mp4',res:'clips/06_ptf_rise_drop_result.mp4'},
@@ -277,3 +277,16 @@ set(t,'re15','kitchen-detail');
 Object.entries({re6:'foyer-v',re19:'dining-push-v',re27:'bedroom-curve-v',re28:'bedroom-push-v'}).forEach(([l,n])=>set(r,l,n));
 ['door','foyer','close','rapid1','rapid2','rapid3','rapid4','kitchen-wide',null,'kitchen-close','pan','detail','fpv','family','dining-close','dining','dining-detail','master','master-close','ensuite-close','ensuite','bedroom'].forEach((n,i)=>{if(n)set(c,'co'+(i+1),'c-'+n)});
 c.flags.push('All storyboard images are AI planning references, not a real condo.')})();
+
+/* Nov 7 fixes from Michael's tour review (Shoot Order numbers in Lens view) */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const sh=l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no '+l);return n};
+Object.assign(sh('vtx1'),{move:7,hard:2,title:'Foyer, push and tilt up',pos:'Foyer, push and tilt up'});
+Object.assign(sh('vtx3'),{move:4,hard:2,fps:60,title:'Feature wall or fireplace, height drop',pos:'Feature wall or fireplace, height drop'});
+Object.assign(sh('re21'),{move:11,hard:2,swapped:true,solo:true});
+const add=(after,id,o)=>{const i=t.shots.findIndex(x=>x.lid===after);if(i<0)throw new Error('no '+after);const n=JSON.parse(JSON.stringify(t.shots[i]));delete n.combo;delete n.link;delete n.ramp;delete n.swapped;
+Object.assign(n,{id,lid:id,extra:true,solo:true},o);t.shots.splice(i+1,0,n)};
+add('re3','vtx6',{title:'Exterior detail, cowboy lift',pos:'Exterior detail, cowboy lift',kind:'closeup',move:10,hard:3,lens:'50mm',fps:60,dur:3,f:{img:'img/sb-ext-cowboy.jpg'}});
+add('vtx4','vtx7',{title:'Dining chandelier, wrap and rise',pos:'Dining chandelier, wrap and rise',kind:'wide',move:12,hard:3,lens:'12mm',fps:60,dur:3,f:{img:'img/sb-dining-ptf.jpg'}});
+t.shots.forEach((s,i)=>s.id='vt'+(i+1));
+t.flags.push('Nov 7: Foyer is now a push and tilt up, the fireplace takes the Yee-Haw Drop, stairs close-up is a Detail Slider, and 2 EXTRA shots added (exterior Cowboy Lift, dining chandelier PTF Orbit on 12mm). Tour about 135s. Orbit has no How-to clip until a better one is found.')})();
