@@ -24,7 +24,7 @@ const MOVES = [
 
 const KINDS = {
   wide:{label:'Wide',c:'#4d9be6'}, medium:{label:'Medium',c:'#35c2b1'}, closeup:{label:'Close-up',c:'#f2c230'},
-  burst:{label:'0.5s burst',c:'#f7e08a'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'}
+  burst:{label:'0.5s burst',c:'#9fd3f7'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'}
 };
 
 const CATEGORIES = [
@@ -333,4 +333,7 @@ Object.assign(n,{id:'vtx8',lid:'vtx8',title:'Family Room Detail',pos:'Family Roo
 t.shots.splice(t.shots.findIndex(x=>x.lid==='re17')+1,0,n);
 t.shots.forEach((s,j)=>s.id='vt'+(j+1));
 t.flags.push('Front Door Detail removed. New Family Room Detail uses the Detail Slider Rise (clips to come).')})();
+
+/* Nov 7 (Michael): burst shots are wide, on the 12mm */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');t.shots.filter(s=>s.kind==='burst').forEach(s=>{s.lens='12mm'})})();
 
