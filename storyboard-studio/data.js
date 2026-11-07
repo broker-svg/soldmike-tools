@@ -301,3 +301,14 @@ const k=t.shots.findIndex(x=>x.lid==='vtx2');t.shots.splice(k+1,0,c);
 t.shots.forEach((s,j)=>s.id='vt'+(j+1));
 t.flags.push('Backyard is a Push Curve now (the old "truck" was a mistake). The exterior Cowboy Lift is 12mm and sits right after the kitchen. Ideas to try: a backyard drone near the start, and using the Cowboy Lift in a combo.')})();
 
+/* Nov 7: clear shot names on the tour, Entrance as a push with a fill-in, two exterior details side by side */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const by=l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no '+l);return n};
+const names={re1:'Exterior Hero',re2:'Drone Opener',re3:'Exterior Feature Detail',vtx6:'Exterior Detail',re4:'Entrance',re5:'Front Door Detail',re6:'Foyer',vtx1:'Foyer Height',re7:'Kitchen Detail',re8:'Rapid Push 1',re9:'Rapid Push 2',re10:'Rapid Push 3',re11:'Rapid Push 4',re12:'Kitchen Hero',re36:'The Hurley Special',re13:'Kitchen Range Detail',re14:'Kitchen Hero 2',re15:'Kitchen Feature',vtx2:'Kitchen Faucet',re16:'FPV Freeze and Reverse',re17:'Family Room Hero',vtx3:'Feature Wall and Fireplace',re18:'Dining Detail',re19:'Dining Room',vtx4:'Dining Table Orbit',vtx7:'Dining Chandelier',re20:'Dining Feature',re21:'Stairs Close-up',re22:'Stairs',re23:'Master Hero',re24:'Master Detail',vtx5:'Vanity Top Down',re25:'En Suite Detail',re26:'En Suite',re27:'Bedroom',re28:'Bedroom',re29:'Bathroom',re30:'Bedroom',re31:'Basement',re32:'Birdseye',re33:'Backyard Hero',re34:'360 Drone',re35:'Closing Zoom'};
+Object.entries(names).forEach(([l,n])=>{const s=by(l);s.title=n;s.pos=n});
+Object.assign(by('re4'),{move:1,ask:'Push for now. Fill in for the house: rise for a high ceiling, curve to turn into the foyer.'});
+const i=t.shots.findIndex(x=>x.lid==='vtx6');const c=t.shots.splice(i,1)[0];
+t.shots.splice(t.shots.findIndex(x=>x.lid==='re3'),0,c);
+t.shots.forEach((s,j)=>s.id='vt'+(j+1));
+t.flags.push('Shot names cleaned up. Entrance is a push for now; fill in rise or curve for the house. The two exterior details sit side by side so you can pick one.')})();
+

@@ -203,14 +203,15 @@ function storyView(b){
   return `${legend(b)}${allTabs(b)}<div class="board" id="boardGrid">${b.shots.map((s,i)=>{
     const k=KINDS[s.kind],m=moveOf(s.move),tab=U.ctab[s.id]||'frame',p=pos[s.id];
     const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
-    return `<article class="card ${U.shot===s.id?'sel':''}" draggable="true" data-s="${s.id}">
+    return `<article class="card ${U.shot===s.id?'sel':''}${p?' inc'+(p.i===1?' cfirst':'')+(p.i===p.n?' clast':''):''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} draggable="true" data-s="${s.id}">
       <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${tagHTML(s)}${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
       ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>${p.i} of ${p.n}</span></div>`:''}
       <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
         <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
-      <div class="body"><div class="line">${line}</div>
+      <div class="body"><div class="line${s.script?'':' nm'}">${line}</div>
         <div class="kv">${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}<b>Where</b><span>${esc(s.loc)}${s.pos&&!s.title?' · '+esc(s.pos):''}</span>${s.gfx?`<b>Graphic</b><span>${esc(s.gfx)}</span>`:''}${s.broll?`<b>B-roll</b><span>${esc(s.broll)}</span>`:''}</div>
-        ${moveBig(m,s)}</div>
+        ${moveBig(m,s)}
+        <div class="cfoot">${comboBtn(b.id,s)}</div></div>
       ${combosNext(b,i)?`<div class="link"><span class="lk" title="${esc(s.link||'Linked to next clip')}">${esc(s.combo)}</span></div>`:''}
     </article>`}).join('')}<button class="addcard" id="addS2">Add shot</button></div>`;
 }
@@ -245,6 +246,18 @@ function shootRows(su){
 }
 function shootRowHTML(su,s){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind];
   return `<div class="row ${s.got?'got':''}"><input type="checkbox" aria-label="Captured" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}><div class="th" data-open2="${bb.id}|${s.id}">${frameHTML(s)}</div><button class="sn sblink" data-sb="${bb.id}|${s.id}" title="See this shot in the Storyboard">#${num(bb,s)}</button><span>${tagHTML(s)}${s.combo?`<span class="cmb">COMBO ${esc(s.combo)}</span>`:''}${esc(s.script||s.title||s.pos)}${needsNum(s)?' <span class="cmb" style="background:var(--warn)">NUMBER</span>':''}<small class="rowsub">${esc(k.label)}${byLens()?' · '+esc(s.loc):''}</small></span><span class="mv">${esc(m.name)} ${dots(s.hard||1)}</span><span class="tech">${esc(s.lens)}${s.fps?' · '+s.fps+'fps':''}${s.combo?'<br>roll '+(+s.dur+4)+'s':''}</span></div>`}
+const COMBO_COLORS=['#d4a73a','#4fb3d9','#e0708a','#7bc47f','#b08cf0','#f39c4a'];
+function comboColor(k){return COMBO_COLORS[Math.max(0,'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(k))%COMBO_COLORS.length]}
+function comboBtn(bid,s){return `<label class="capt cmbt"><input type="checkbox" data-cmb="${bid}|${s.id}" ${s.combo?'checked':''}>Combo</label>`}
+function newComboInfo(){return {name:'New combo',why:'',handoff:'Match speed and direction across the cut.',drill:['Rehearse the move','Shoot each clip with 2s of room at both ends','Check the handoff on the monitor'],checks:[]}}
+function toggleCombo(b,id){const i=b.shots.findIndex(x=>x.id===id),s=b.shots[i];if(i<0)return;b.combos=b.combos||{};
+  const p=b.shots[i-1],n=b.shots[i+1];
+  if(s.combo){const k=s.combo;delete s.combo;delete s.link;if(p&&p.combo===k)delete p.link;
+    if(p&&p.combo===k&&n&&n.combo===k){const nk=nextCombo(b);for(let j=i+1;j<b.shots.length&&b.shots[j].combo===k;j++)b.shots[j].combo=nk;b.combos[nk]=b.combos[nk]||newComboInfo()}
+    return}
+  const k=(p&&p.combo)||(n&&n.combo)||nextCombo(b);s.combo=k;
+  if(p&&p.combo&&n&&n.combo&&n.combo!==k){const old=n.combo;for(let j=i+1;j<b.shots.length&&b.shots[j].combo===old;j++)b.shots[j].combo=k}
+  b.combos[k]=b.combos[k]||newComboInfo()}
 function moveBig(m,s){return `<div class="mvbig"><span class="mvn">${esc(m.name)}</span><span class="mvd">${dots(s.hard||1)}</span></div>`}
 function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind],tab=U.ctab[s.id]||'frame',p=pos[s.id];
   return `<article class="card shootcard ${s.got?'got':''} ${U.shot===s.id?'sel':''}" data-s="${s.id}">
@@ -252,10 +265,10 @@ function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.
     ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>clip ${p.i} of ${p.n}</span></div>`:''}
     <div class="pic" data-open2="${bb.id}|${s.id}">${frameHTML(s,tab)}
       <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
-    <div class="body"><div class="line">${esc(s.script||s.title||s.pos||'')}</div>
+    <div class="body"><div class="line${s.script?'':' nm'}">${esc(s.script||s.title||s.pos||'')}</div>
       <div class="kv">${s.lens?`<b>Lens</b><span>${esc(s.lens)}${s.fps?' · '+s.fps+' fps':''}</span>`:''}<b>Where</b><span>${esc(s.loc)}</span>${s.combo?`<b>Roll</b><span>${+s.dur+4}s</span>`:''}</div>
       ${moveBig(m,s)}
-      <div class="cfoot"><label class="capt"><input type="checkbox" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}>Captured</label><button class="sblink" data-sb="${bb.id}|${s.id}">See in Storyboard #${num(bb,s)}</button></div></div>
+      <div class="cfoot"><label class="capt"><input type="checkbox" data-got="${bb.id}|${s.id}" ${s.got?'checked':''}>Captured</label>${comboBtn(bb.id,s)}<button class="sblink" data-sb="${bb.id}|${s.id}">See in Storyboard #${num(bb,s)}</button></div></div>
   </article>`}
 function shootView(b){
   const whole=U.scope==='whole'&&!!b.group,cards=U.shootLook==='cards';
@@ -347,6 +360,7 @@ function wireMain(b){
   m.querySelectorAll('[data-sb]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sb.split('|');U.board=bi;U.view='story';U.shot=si;renderMain();renderRail();const c=document.querySelector(`.card[data-s="${si}"]`);if(c){c.classList.add('sel');c.scrollIntoView({block:'center'})}});
   m.querySelectorAll('[data-jump]').forEach(e=>e.onclick=()=>{const t=$('setup'+e.dataset.jump);if(t)t.scrollIntoView({block:'start'})});
   const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
+  m.querySelectorAll('[data-cmb]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.cmb.split('|'),x=S.boards[bi];toggleCombo(x,si);touch(x);renderMain()}});
   m.querySelectorAll('[data-got]').forEach(e=>e.onchange=()=>{const [bi,si]=e.dataset.got.split('|'),x=S.boards[bi],s=shotById(x,si);s.got=e.checked;touch(x);renderMain()});
   m.querySelectorAll('[data-open2]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.open2.split('|');U.board=bi;renderMain();renderRail();open(si)});
   m.querySelectorAll('[data-min]').forEach(e=>e.onchange=()=>{(S.meta.mins=S.meta.mins||{})[e.dataset.min]=+e.value;touchMeta();renderMain()});
