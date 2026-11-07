@@ -41,7 +41,7 @@ async function connect(){
   setSave('Saved online. Phone and Macs match.');
   db.collection('boards').onSnapshot(q=>{
     let ch=false;
-    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
+    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);ensureBase(S.boards[v.id],!v.tbase);dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
     if(ch&&!document.activeElement.closest?.('.insp'))render();
   },()=>setSave('Online saving stopped. Kept on this computer.'));
   db.doc('meta/shoot').onSnapshot(d=>{if(d.exists&&!d.metadata.hasPendingWrites){S.meta=clone(d.data());if(U.view==='shoot')renderMain()}},()=>{});
@@ -52,6 +52,23 @@ async function connect(){
 const B=()=>S.boards[U.board];
 const shotById=(b,id)=>b.shots.find(s=>s.id===id);
 const act=b=>b.shots.some(s=>s.hidden)?Object.assign(Object.create(b),{shots:b.shots.filter(s=>!s.hidden)}):b;
+const TF=['title','pos','kind','move','hard','lens','fps','f','ask','swapped','extra','solo','beat','loc','roll','dur'];
+const lidOf=s=>s.lid||s.id,eqv=(a,c)=>JSON.stringify(a??null)===JSON.stringify(c??null);
+function tplOf(b){return typeof SEED_BOARDS!=='undefined'?SEED_BOARDS.find(x=>x.id===(b.from||b.id)):null}
+function snapT(t){const o={};t.shots.forEach(s=>{const r={};TF.forEach(k=>r[k]=s[k]===undefined?null:clone(s[k]));o[lidOf(s)]=r});return {shots:o,order:t.shots.map(lidOf),flags:clone(t.flags||[])}}
+function ensureBase(b,persist){if(b.tbase||!tplOf(b))return;b.tbase=snapT(tplOf(b));if(persist)touch(b)}
+function tplDiff(b){const t=tplOf(b);if(!t||!b.tbase)return null;const cur=snapT(t),base=b.tbase,ch=[],add=[];
+  cur.order.forEach(l=>{const c=cur.shots[l],bs=base.shots[l],s=b.shots.find(x=>lidOf(x)===l);
+    if(!bs){if(!s)add.push(l);return}if(!s)return;
+    TF.forEach(k=>{if(!eqv(c[k],bs[k])&&eqv(s[k],bs[k])&&!eqv(s[k],c[k]))ch.push([l,k,c[k]])})});
+  const fl=!eqv(cur.flags,base.flags)&&eqv(b.flags,base.flags);
+  return {cur,ch,add,fl,shots:new Set(ch.map(x=>x[0])).size+add.length,n:ch.length+add.length+(fl?1:0)}}
+function applyTpl(b){const d=tplDiff(b),t=tplOf(b);if(!d)return 0;
+  d.ch.forEach(([l,k,v])=>{const s=b.shots.find(x=>lidOf(x)===l);if(v===null)delete s[k];else s[k]=clone(v)});
+  d.add.forEach(l=>{const ts=t.shots.find(x=>lidOf(x)===l),n=clone(ts);n.lid=l;if(b.shots.some(x=>x.id===n.id))n.id='s'+Math.random().toString(36).slice(2,9);n.got=false;
+    const prev=d.cur.order[d.cur.order.indexOf(l)-1],pi=prev?b.shots.findIndex(x=>lidOf(x)===prev):-1;b.shots.splice(pi+1,0,n)});
+  if(d.fl)b.flags=clone(t.flags||[]);b.tbase=d.cur;touch(b);return d.shots}
+function tplBtn(b){const d=tplDiff(b);if(!d||!d.n){if(d&&b.tbase&&!eqv(b.tbase,d.cur))b.tbase=d.cur;return ''}return `<button class="btn tplu" id="tplU" title="Brings in the template's newer names, moves, images and new shots. Keeps your combos, hidden shots, order and anything you changed yourself.">Get template updates <b>${d.shots||1}</b></button>`}
 const total=b=>b.shots.reduce((a,s)=>a+(+s.dur||0),0);
 const needsNum=s=>/\[/.test(s.script||'');
 const num=(b,s)=>b.shots.indexOf(s)+1;
@@ -135,7 +152,7 @@ function renderMain(){
   const b=B();
   const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
   $('main').innerHTML=`<div class="head"><div><h1>${esc(b.name)}</h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
-    <div class="acts"><button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
+    <div class="acts">${tplBtn(b)}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
   ${versionBar(b)}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
   wireMain(b);
 }
@@ -344,7 +361,8 @@ function open(id){U.shot=id;U.itab='frame';renderInsp();document.querySelectorAl
 function wireMain(b){
   const m=$('main');
   m.querySelectorAll('[data-v]').forEach(e=>e.onclick=()=>{U.view=e.dataset.v;renderMain();lsWrite()});
-  $('dupB').onclick=()=>{const id='b'+Date.now().toString(36),n=clone(b);n.id=id;n.name=b.name+' copy';delete n.group;delete n.family;delete n.linked;delete n.version;n.shots.forEach(s=>{s.got=false;s.id='s'+Math.random().toString(36).slice(2,9)});S.boards[id]=n;S.order.push(id);U.board=id;touch(n);render();toast('Board duplicated')};
+  const tu=$('tplU');if(tu)tu.onclick=()=>{if(!tu.classList.contains('armed')){tu.classList.add('armed');tu.innerHTML='Tap again to update';setTimeout(()=>{if(tu.isConnected)render()},3500);return}const n=applyTpl(b);render();toast(n?`Updated ${n} ${n===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`:'Already up to date')};
+  $('dupB').onclick=()=>{const id='b'+Date.now().toString(36),n=clone(b);n.id=id;n.name=b.name+' copy';delete n.group;delete n.family;delete n.linked;delete n.version;n.from=b.from||b.id;n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id='s'+Math.random().toString(36).slice(2,9)});S.boards[id]=n;S.order.push(id);U.board=id;touch(n);render();toast('Board duplicated')};
   const add=()=>{const s=newShot();b.shots.push(s);if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);x.shots.push(c);touch(x)})}touch(b);renderMain();open(s.id)};
   $('addV').onclick=()=>{U.addV=!U.addV;renderMain()};
   const vf=$('verForm');if(vf){vf.onsubmit=e=>{e.preventDefault();createVersion(b,$('vName').value.trim()||'Version',$('vShape').value)};$('vCancel').onclick=()=>{U.addV=false;renderMain()}}
@@ -426,4 +444,4 @@ const nextCombo=b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l=>!b.shots.some(
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,2200)}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
 
-lsRead();render();connect();
+lsRead();Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));render();connect();
