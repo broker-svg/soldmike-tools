@@ -319,3 +319,8 @@ t.flags.push('Shot names cleaned up. Entrance is a push for now; fill in rise or
 (function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
 ['re1','re6','vtx1','re12','re17','re19','re23','re26','re31','re33'].forEach(l=>{const n=t.shots.find(x=>x.lid===l);if(!n)throw new Error('no '+l);n.kind='hero'});
 Object.entries({re6:'Foyer Hero',vtx1:'Foyer Height Hero',re19:'Dining Room Hero',re26:'En Suite Hero',re31:'Basement Hero'}).forEach(([l,n])=>{const x=t.shots.find(y=>y.lid===l);x.title=n;x.pos=n})})();
+
+/* Hero rule (Michael): a Hero is a push-type move (Straight Push, Push Curve, Push + Rise) on a main room, wide. Orbits and specials are not Heroes. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');const PUSH=[1,2,7];
+t.shots.forEach(s=>{if(s.kind==='hero'&&!PUSH.includes(s.move))s.kind='wide'})})();
+
