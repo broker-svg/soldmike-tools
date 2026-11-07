@@ -176,8 +176,9 @@ function createVersion(b,name,aspect){
   S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;touch(b);touch(n);render();toast('Linked version created');
 }
 function legend(b){
-  const vis=b.shots.filter(s=>!s.hidden),used=[...new Set(vis.map(s=>s.kind))],cnt=k=>vis.filter(s=>s.kind===k).length;
-  return `<div class="legend">${used.map(k=>`<span><i style="background:${KINDS[k].c}"></i>${KINDS[k].label} <b class="lc">${cnt(k)}</b></span>`).join('')}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
+  const vis=b.shots.filter(s=>!s.hidden),cnt=k=>vis.filter(s=>s.kind===k).length,hero=cnt('hero');
+  const rows=[['wide','Wide',cnt('wide')+hero],['medium','Medium',cnt('medium')],['closeup','Close-up',cnt('closeup')],['burst','0.5s burst',cnt('burst')],['drone','Drone',cnt('drone')],['graphic','Graphic only',cnt('graphic')]].filter(r=>r[2]);
+  return `<div class="legend">${rows.map(([k,l,n])=>`<span><i style="background:${KINDS[k].c}"></i>${l} <b class="lc">${n}</b></span>`).join('')}${hero?`<span><i style="background:${KINDS.hero.c}"></i>Hero <b class="lc">${hero}</b> <small class="ls">of the wide</small></span>`:''}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
 }
 function flagsHTML(b){
   const n=b.shots.filter(needsNum);

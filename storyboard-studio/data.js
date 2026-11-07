@@ -23,7 +23,7 @@ const MOVES = [
 
 const KINDS = {
   wide:{label:'Wide',c:'#4d9be6'}, medium:{label:'Medium',c:'#35c2b1'}, closeup:{label:'Close-up',c:'#f2c230'},
-  burst:{label:'0.5s burst',c:'#f7e08a'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Hero',c:'#ef4b43'}, graphic:{label:'Graphic only',c:'#98a6b5'}
+  burst:{label:'0.5s burst',c:'#f7e08a'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'}
 };
 
 const CATEGORIES = [
