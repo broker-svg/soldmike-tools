@@ -169,7 +169,7 @@ function flagsHTML(b){
 }
 function storyStrip(b){const pos={};comboRuns(b).forEach(r=>r.shots.forEach((s,i)=>pos[s.id]={k:r.key,i:i+1,n:r.shots.length}));let lastBeat=null,t=0;
   return `<div class="sheet story ${b.aspect==='16/9'?'h':'v'}">${b.shots.map((s,i)=>{const p=pos[s.id],m=moveOf(s.move),at=t;t+=+s.dur||0;const beat=s.beat!==lastBeat?`<div class="beatlab">${esc(s.beat||'')}<small>${tc(at)}</small></div>`:'';lastBeat=s.beat;
-    return `${beat}<div class="mini sbm ${U.shot===s.id?'sel':''}${p?' inc':''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} role="button" tabindex="0" draggable="true" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra||s.swapped?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}<div class="mcap"><b>${esc(s.title||s.script||s.pos||'')}</b><span>${esc(m.name)} · ${s.dur}s${p?` · <i style="color:var(--cc)">combo ${esc(p.k)} ${p.i}/${p.n}</i>`:''}</span>${comboBtn(b.id,s)}</div>${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</div>`}).join('')}</div>`}
+    return `${beat}<div class="mini sbm ${U.shot===s.id?'sel':''}${p?' inc':''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} role="button" tabindex="0" draggable="true" data-s="${s.id}"><div class="bar" style="background:${KINDS[s.kind].c}"></div><span class="n">${i+1}${s.extra||s.swapped?' +':''}</span>${s.got?'<span class="ck">✓</span>':''}${frameHTML(s)}<div class="mcap"><b>${esc(s.title||s.script||s.pos||'')}</b><span>${esc(m.name)} · ${s.dur}s${p?` · <i style="color:var(--cc)">combo ${esc(p.k)} ${p.i}/${p.n}</i>`:''}</span>${comboBtn(b.id,s)}${p&&p.i===1?`<button class="cundo sm" data-cundo="${b.id}|${s.id}">Undo combo ${esc(p.k)}</button>`:''}</div>${combosNext(b,i)?`<span class="cl"><span class="lk">${esc(s.combo)}</span></span>`:''}</div>`}).join('')}</div>`}
 function birdView(b){
   const T=total(b)||1,over=T>b.target,rs=comboRuns(b);
   const a=b.shots.filter(s=>s.roll==='A').reduce((x,s)=>x+(+s.dur||0),0),br=b.shots.filter(s=>s.roll==='B').reduce((x,s)=>x+(+s.dur||0),0);
@@ -209,7 +209,7 @@ function storyView(b){
     const line=esc(s.script||s.title||s.gfx||'').replace(/\[[^\]]*\]/g,x=>`<mark>${x}</mark>`);
     return `<article class="card ${U.shot===s.id?'sel':''}${p?' inc'+(p.i===1?' cfirst':'')+(p.i===p.n?' clast':''):''}" ${p?`style="--cc:${comboColor(p.k)}"`:''} draggable="true" data-s="${s.id}">
       <div class="top" style="background:${k.c}"><span class="badge">${s.roll==='G'?'GFX':s.roll+'-ROLL'}</span><span>#${i+1}</span>${tagHTML(s)}${s.ask?'<span class="badge" style="background:var(--gold);color:#17120a">NOTE</span>':''}<span class="r">${s.dur}s</span></div>
-      ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>${p.i} of ${p.n}</span></div>`:''}
+      ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><button class="cundo" data-cundo="${b.id}|${s.id}">Undo combo</button><span>${p.i} of ${p.n}</span></div>`:''}
       <div class="pic" data-open="${s.id}">${frameHTML(s,tab)}
         <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
       <div class="body"><div class="line${s.script?'':' nm'}">${line}</div>
@@ -262,11 +262,12 @@ function toggleCombo(b,id){const i=b.shots.findIndex(x=>x.id===id),s=b.shots[i];
   const k=(p&&p.combo)||(n&&n.combo)||nextCombo(b);s.combo=k;
   if(p&&p.combo&&n&&n.combo&&n.combo!==k){const old=n.combo;for(let j=i+1;j<b.shots.length&&b.shots[j].combo===old;j++)b.shots[j].combo=k}
   b.combos[k]=b.combos[k]||newComboInfo()}
+function undoCombo(b,id){const i=b.shots.findIndex(x=>x.id===id);if(i<0||!b.shots[i].combo)return;const k=b.shots[i].combo;let a=i,z=i;while(a>0&&b.shots[a-1].combo===k)a--;while(z<b.shots.length-1&&b.shots[z+1].combo===k)z++;for(let j=a;j<=z;j++){delete b.shots[j].combo;delete b.shots[j].link}if(a>0&&b.shots[a-1].combo)delete b.shots[a-1].link}
 function moveBig(m,s){return `<div class="mvbig"><span class="mvn">${esc(m.name)}</span><span class="mvd">${dots(s.hard||1)}</span></div>`}
 function shootCardHTML(su,s,n,pos){const bb=su.board,m=moveOf(s.move),k=KINDS[s.kind],tab=U.ctab[s.id]||'frame',p=pos[s.id];
   return `<article class="card shootcard ${s.got?'got':''} ${U.shot===s.id?'sel':''}" data-s="${s.id}">
     <div class="top" style="background:${k.c}"><span class="badge">${esc(k.label)}</span><span>Shoot ${n}</span>${tagHTML(s)}<span class="r">#${num(bb,s)} · ${s.dur}s</span></div>
-    ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><span>clip ${p.i} of ${p.n}</span></div>`:''}
+    ${p?`<div class="cband"><span>COMBO ${esc(p.k)}</span><button class="cundo" data-cundo="${bb.id}|${s.id}">Undo combo</button><span>clip ${p.i} of ${p.n}</span></div>`:''}
     <div class="pic" data-open2="${bb.id}|${s.id}">${frameHTML(s,tab)}
       <div class="mt"><button class="${tab==='frame'?'on':''}" data-t="frame" data-id="${s.id}">Frame</button><button class="${tab==='hero'?'on':''}" data-t="hero" data-id="${s.id}" ${heroSrc(s)?'':'disabled'}>Hero</button><button class="${tab==='gimbal'?'on':''}" data-t="gimbal" data-id="${s.id}" ${gimbalSrc(s)?'':'disabled'}>Gimbal</button></div></div>
     <div class="body"><div class="line${s.script?'':' nm'}">${esc(s.script||s.title||s.pos||'')}</div>
@@ -364,6 +365,7 @@ function wireMain(b){
   m.querySelectorAll('[data-sb]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sb.split('|');U.board=bi;U.view='story';U.shot=si;renderMain();renderRail();const c=document.querySelector(`.card[data-s="${si}"]`);if(c){c.classList.add('sel');c.scrollIntoView({block:'center'})}});
   m.querySelectorAll('[data-jump]').forEach(e=>e.onclick=()=>{const t=$('setup'+e.dataset.jump);if(t)t.scrollIntoView({block:'start'})});
   const st=$('startT');if(st)st.onchange=()=>{(S.meta.starts=S.meta.starts||{})[b.group||b.family||b.id]=st.value;touchMeta();renderMain()};
+  m.querySelectorAll('[data-cundo]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();ev.preventDefault();const [bi,si]=e.dataset.cundo.split('|'),x=S.boards[bi];undoCombo(x,si);touch(x);renderMain()});
   m.querySelectorAll('[data-cmb]').forEach(e=>{e.closest('label').onclick=ev=>ev.stopPropagation();e.onchange=()=>{const [bi,si]=e.dataset.cmb.split('|'),x=S.boards[bi];toggleCombo(x,si);touch(x);renderMain()}});
   m.querySelectorAll('[data-got]').forEach(e=>e.onchange=()=>{const [bi,si]=e.dataset.got.split('|'),x=S.boards[bi],s=shotById(x,si);s.got=e.checked;touch(x);renderMain()});
   m.querySelectorAll('[data-open2]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.open2.split('|');U.board=bi;renderMain();renderRail();open(si)});
