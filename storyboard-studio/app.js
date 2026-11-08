@@ -427,10 +427,12 @@ function buildView(b){
 
 /* ---------- library pages ---------- */
 function renderMoves(){
-  $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Your 13 moves from Shot Commander, plus The Hurley Special, locked off and drone. Hover a clip to play it.</div></div></div>
-  <div class="movegrid">${MOVES.filter(m=>m.id!==0&&m.id!==14).map(m=>`<article class="move"><div class="vids"><div>${m.res?`<video src="${esc(m.res)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No clip yet</em>'}<span>RESULT</span></div><div>${m.op?`<video src="${esc(m.op)}" muted loop playsinline preload="metadata" data-hv></video>`:'<em>No operator clip yet</em>'}<span>HOW TO</span></div></div>
+  $('main').innerHTML=`<div class="head"><div><h1>Gimbal moves</h1><div class="sub">Every gimbal and drone move. Hover a clip to play it. Tap a clip to see it full screen.</div></div></div>
+  <div class="movegrid">${MOVES.filter(m=>m.id!==0&&m.id!==14).map(m=>`<article class="move"><div class="vids"><div>${m.res?`<video src="${esc(m.res)}#t=0.1" muted loop playsinline preload="metadata" data-hv data-big></video>`:'<em>No clip yet</em>'}<span>RESULT</span></div><div>${m.op?`<video src="${esc(m.op)}#t=0.1" muted loop playsinline preload="metadata" data-hv data-big></video>`:'<em>No operator clip yet</em>'}<span>HOW TO</span></div></div>
   <div class="tx"><h3>${esc(m.name)} ${dots(m.hard)}</h3><p class="used">${tourUse(m)}</p><p>${esc(m.mode)} mode · ${esc(m.lens)}</p><p><b>Technique.</b> ${esc(m.tech)}</p><p><b>Mistake.</b> ${esc(m.mistake)}</p><p><b>Tip.</b> ${esc(m.tip)}</p></div></article>`).join('')}</div>`;
   hover();
+  $('main').querySelectorAll('video[data-big]').forEach(v=>{v.style.cursor='zoom-in';v.onclick=()=>{v.loop=true;const p=v.play();if(p&&p.catch)p.catch(()=>{});
+    if(v.webkitEnterFullscreen)try{v.webkitEnterFullscreen();return}catch(e){}if(v.requestFullscreen)v.requestFullscreen().catch(()=>{});else if(v.webkitRequestFullscreen)v.webkitRequestFullscreen()}});
 }
 const tagHTML=s=>s.extra?'<span class="xtra">EXTRA</span>':s.swapped?'<span class="xtra">SWAP</span>':'';
 const tourUse=m=>{const t=S.boards.tour;if(!t)return '';const n=t.shots.filter(s=>s.move==m.id).length,x=t.shots.filter(s=>s.move==m.id&&s.extra).length;return n?`On the Standard Virtual Tour: ${n} ${n===1?'shot':'shots'}${x?' ('+x+' extra)':''}`:'Not on the Standard Virtual Tour yet'};
