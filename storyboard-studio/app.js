@@ -183,7 +183,7 @@ function legend(b){
   const dd=list=>{const g={};list.forEach(s=>{const a=area(s.loc);(g[a]=g[a]||[]).push(s)});return `<div class="dd${list.length>10?' two':''}">${Object.entries(g).map(([a,ss])=>`<div class="ddg"><b>${esc(a)} <span>${ss.length}</span></b>${ss.map(s=>`<button class="ddi" data-open="${s.id}"><span>#${num(b,s)}</span>${esc(s.title||s.script||s.pos||'')}<em>${esc(moveOf(s.move).name)}</em></button>`).join('')}</div>`).join('')}</div>`};
   const item=(sw,label,list,sub)=>list.length?`<details class="lgd"><summary><i style="background:${sw}"></i>${label} <b class="lc">${list.length}</b>${sub?` <small class="ls">${sub}</small>`:''}<span class="car">▾</span></summary>${dd(list)}</details>`:'';
   const wide=of(['wide','hero','burst']);
-  return `<div class="legend">${item(KINDS.wide.c,'Wide',wide)}${item(KINDS.medium.c,'Medium',of(['medium']))}${item(KINDS.closeup.c,'Close-up',of(['closeup']))}${item(KINDS.drone.c,'Drone',of(['drone']))}${item(KINDS.burst.c,'0.5s burst',of(['burst']),'of the wide')}${item(KINDS.hero.c,'Hero',of(['hero']),'of the wide')}${item(KINDS.graphic.c,'Graphic only',of(['graphic']))}${item(KINDS.twilight.c,'Twilight',of(['twilight']))}${item(KINDS.staging.c,'Virtual Staging',of(['staging']))}${item(KINDS.aieffect.c,'AI Effect',of(['aieffect']))}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
+  return `<div class="legend">${item(KINDS.wide.c,'Wide',wide)}${item(KINDS.medium.c,'Medium',of(['medium']))}${item(KINDS.closeup.c,'Close-up',of(['closeup']))}${item(KINDS.drone.c,'Drone',of(['drone']))}${item(KINDS.burst.c,'0.5s burst',of(['burst']),'of the wide')}${item(KINDS.hero.c,'Hero',of(['hero']),'of the wide')}${item(KINDS.graphic.c,'Graphic only',of(['graphic']))}${item(KINDS.twilight.c,'Twilight',of(['twilight']))}${item(KINDS.staging.c,'Virtual Staging',of(['staging']))}${item(KINDS.aieffect.c,'AI Effect',of(['aieffect']))}${item(KINDS.agent.c,'Agent',of(['agent']))}<span class="lt">${vis.length} shots</span>${Object.keys(b.combos||{}).length?`<span><i class="hatch"></i>Ramp room on combo clips</span>`:''}</div>`;
 }
 function flagsHTML(b){
   const n=b.shots.filter(needsNum);
@@ -455,12 +455,13 @@ function renderInsp(){
 }
 /* ---------- preset shot picker (Add shot) ---------- */
 const PRESETS=(()=>{const seen=new Set(),out=[];if(typeof SEED_BOARDS==='undefined')return out;
-  ['tour','reel','condo'].forEach(id=>{const t=SEED_BOARDS.find(x=>x.id===id);if(!t)return;t.shots.forEach(s=>{if(s.hidden)return;const name=(s.title||s.pos||'').trim(),k=name.toLowerCase();if(!name||seen.has(k))return;seen.add(k);out.push({key:'p'+out.length,name,from:t.name,s:clone(s)})})});return out})();
-function presetArea(s){if(s.kind==='drone')return 'Drone';if(['twilight','staging','aieffect'].includes(s.kind))return 'Specialty';const l=(s.loc||'').toLowerCase(),n=(s.title||s.pos||'').toLowerCase();
+  ['tour','reel','condo'].forEach(id=>{const t=SEED_BOARDS.find(x=>x.id===id);if(!t)return;t.shots.forEach(s=>{if(s.hidden)return;const name=(s.title||s.pos||'').trim(),k=name.toLowerCase();if(!name||seen.has(k))return;seen.add(k);out.push({key:'p'+out.length,name,from:t.name,s:clone(s)})})});
+  if(typeof PRESET_EXTRA!=='undefined')PRESET_EXTRA.forEach(x=>{if(seen.has(x.name.toLowerCase()))return;seen.add(x.name.toLowerCase());out.push({key:'p'+out.length,name:x.name,from:x.from,s:clone(x.s)})});return out})();
+function presetArea(s){if(s.kind==='drone')return 'Drone';if(['twilight','staging','aieffect'].includes(s.kind))return 'Specialty';if(s.kind==='agent')return 'Agent';const l=(s.loc||'').toLowerCase(),n=(s.title||s.pos||'').toLowerCase();
   if(/kitchen|rapid push|hurley|island|faucet/.test(n))return 'Kitchen';if(/dining/.test(n))return 'Dining';if(/family|living|fireplace|feature wall/.test(n))return 'Family & living';
   if(/master|en ?suite|bedroom|bath|vanity|closet/.test(n))return 'Bedrooms & baths';if(/basement|rec|bar|gym|theat/.test(n)||/basement|lower/.test(l))return 'Basement';
   if(/exterior|outside|backyard|yard|front|porch|garage|pool/.test(l+' '+n))return 'Exterior';if(/foyer|entrance|stair|hall/.test(n))return 'Foyer & stairs';if(/suite/.test(l))return 'Bedrooms & baths';if(/main/.test(l))return 'Main floor';return 'Other'}
-const PICK_ORDER=['Drone','Specialty','Exterior','Foyer & stairs','Kitchen','Dining','Family & living','Main floor','Bedrooms & baths','Basement','Other'];
+const PICK_ORDER=['Drone','Exterior','Foyer & stairs','Kitchen','Dining','Family & living','Main floor','Bedrooms & baths','Basement','Other','Specialty','Agent'];
 function pickHTML(b){const q=(U.pickQ||'').toLowerCase().trim(),groups={};
   PRESETS.forEach(p=>{const m=moveOf(p.s.move),hay=(p.name+' '+m.name+' '+(p.s.loc||'')+' '+(p.s.lens||'')+' '+KINDS[p.s.kind].label).toLowerCase();if(q&&!q.split(/\s+/).every(w=>hay.includes(w)))return;(groups[presetArea(p.s)]=groups[presetArea(p.s)]||[]).push(p)});
   const ai=b.shots.findIndex(x=>x.id===U.shot),where=ai>=0?`after shot #${ai+1} (${esc(b.shots[ai].title||b.shots[ai].pos||'selected')})`:'at the end';

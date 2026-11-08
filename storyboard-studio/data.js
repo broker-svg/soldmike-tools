@@ -30,7 +30,8 @@ const MOVES = [
 const KINDS = {
   wide:{label:'Wide',c:'#4d9be6'}, medium:{label:'Medium',c:'#35c2b1'}, closeup:{label:'Close-up',c:'#f2c230'},
   burst:{label:'0.5s burst',c:'#9fd3f7'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'},
-  twilight:{label:'Twilight',c:'#7c5cff'}, staging:{label:'Virtual Staging',c:'#f08a3c'}, aieffect:{label:'AI Effect',c:'#e44fc8'}
+  twilight:{label:'Twilight',c:'#7c5cff'}, staging:{label:'Virtual Staging',c:'#f08a3c'}, aieffect:{label:'AI Effect',c:'#e44fc8'},
+  agent:{label:'Agent',c:'#d9c9a3'}
 };
 
 const CATEGORIES = [
@@ -365,3 +366,8 @@ mk('re16','vtx12','AI Effect Push','aieffect','Interior · Main','Main floor','i
 mk('re30','vtx11','Virtual Staging Push','staging','Interior · Second','Upstairs','img/sb-staging.jpg','Shoot the empty room. Post: virtual staging furniture added.');
 mk('re33','vtx10','Twilight Exterior Push','twilight','Exterior · Sony','Finale','img/sb-twilight.jpg','Shoot in daylight. Post: virtual twilight (TPM Virtual Twilight note).');
 t.shots.forEach((s,j)=>s.id='vt'+(j+1))})();
+
+/* Nov 7 (Michael): Agent shots. Picker-only presets (not on a template). More agent styles (front of house, inside) coming later. */
+const PRESET_EXTRA=[
+  {name:'Tripod Agent',from:'Agent shots',s:{id:'ag1',roll:'A',kind:'agent',beat:'Agent',loc:'Front of house or inside',pos:'Tripod Agent',title:'Tripod Agent',dur:5,move:0,hard:1,lens:'24mm',fps:30,script:'',gfx:'Agent to camera on the tripod. Clean lower third.',broll:'',f:{img:'img/m2.jpg'}}}
+];
