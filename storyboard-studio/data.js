@@ -23,6 +23,7 @@ const MOVES = [
   ,{id:17,name:'Dive Reveal',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Start high on the horizon. Fly forward and tilt the camera down at the same time, so you finish straight above the house.',mistake:'Tilting faster than you fly. The house should arrive at the centre just as the camera hits straight down.',tip:'Best as the opener. The neighbourhood first, then the house fills the frame.',res:'clips/17_dive_reveal_result.mp4',op:'clips/17_dive_reveal_operator.mp4'}
   ,{id:18,name:'Spin Drop',lens:'Drone',mode:'Mavic 3',hard:3,tech:'Camera straight down over the roof. Drop down and spin (yaw) at the same time, keeping the house in the centre.',mistake:'Drifting sideways while you spin. The roof has to stay dead centre or it looks messy.',tip:'Fast and short. Great as a transition between the dive and the top-down.',res:'clips/18_spin_drop_result.mp4',op:'clips/18_spin_drop_operator.mp4'}
   ,{id:19,name:'Rise & Reveal',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Start low, camera straight down over the pool. Rise straight up, then fly backward and tilt the camera up until the horizon shows.',mistake:'Starting the tilt too early. Get the height first, then reveal the horizon.',tip:'Use it as the closing shot. It pulls back from the house to the whole neighbourhood.',res:'clips/19_rise_reveal_result.mp4',op:'clips/19_rise_reveal_operator.mp4'}
+  ,{id:20,name:'Kitchen Orbit',lens:'Wide',mode:'Standard',hard:3,tech:'Walk the length of the island in an arc while turning the gimbal to keep the island in frame, so the camera swings around it from the end to the side.',mistake:'Walking straight and only panning. Your feet do the orbit, the gimbal just keeps the island centred.',tip:'Michael\'s kitchen orbit (the Boss Level move). Use it for the kitchen only. Other rooms keep the regular Orbit.',res:'clips/20_kitchen_orbit_result.mp4',op:'clips/20_kitchen_orbit_operator.mp4'}
 ];
 
 const KINDS = {
@@ -343,3 +344,6 @@ t.flags.push('Front Door Detail removed. New Family Room Detail uses the Detail 
 
 /* Nov 7 (Michael): 3 drone moves from the drone tutorial video, on the tour's drone shots. 360 Drone stays an orbit. */
 (function(){const t=SEED_BOARDS.find(x=>x.id==='tour');[['re2',17],['re32',18],['re35',19]].forEach(([l,m])=>{const x=t.shots.find(y=>y.lid===l);if(!x)throw new Error('no '+l);x.move=m;x.hard=m===18?3:2})})();
+
+/* Nov 7 (Michael): the Boss Level orbit is his kitchen orbit, kitchen only. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');const x=t.shots.find(y=>y.lid==='re14');if(!x)throw new Error('no re14');x.move=20;x.hard=3})();
