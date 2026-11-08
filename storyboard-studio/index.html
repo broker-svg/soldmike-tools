@@ -135,6 +135,24 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .lnk::after{content:'';position:absolute;left:-5px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
 .fvs.mk label{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);cursor:pointer}
 .fvs.mk label:has(input:checked){border-color:var(--gold);color:var(--fg)}
+.scv{display:flex;flex-direction:column;gap:18px;max-width:900px}
+.scbox{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.schd{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.schd h2{margin:0;font-size:20px}
+.scacts{display:flex;gap:8px;flex-wrap:wrap}.scname{font:600 18px inherit;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--fg);min-width:240px}
+.scl{padding:12px 0;border-top:1px solid var(--line)}.scl:first-of-type{border-top:0}
+.scm{font-size:13px;color:var(--mut);margin-bottom:4px}.scm b{color:var(--gold);font-family:var(--mono)}
+.who{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700}.who.you{background:#d9c9a3;color:#2a2010}.who.vo{background:#35c2b1;color:#06231f}
+.sct{font-size:clamp(22px,2.6vw,30px);line-height:1.45;color:var(--fg);font-weight:500}.sct.sm{font-size:17px;color:var(--mut)}.sct.pre{white-space:pre-wrap}
+.scedit{width:100%;min-height:260px;font-size:20px;line-height:1.5;background:var(--panel2);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:12px}
+.scos summary{cursor:pointer;color:var(--mut);margin-top:10px}.scempty{color:var(--mut)}
+.tp{position:fixed;inset:0;z-index:9999;background:#000;color:#fff;display:flex;flex-direction:column}
+.tpbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;background:#111;border-bottom:1px solid #222;font-size:14px}
+.tpc{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.tpc button{background:#222;color:#fff;border:1px solid #333;border-radius:6px;padding:8px 11px;font-size:14px}.tpv{font-family:var(--mono);color:#aaa;font-size:12px;padding:0 4px}
+.tpscroll{flex:1;overflow-y:auto;position:relative;padding:0 6vw;cursor:pointer;scrollbar-width:none}.tpscroll::-webkit-scrollbar{display:none}
+.tpline{position:sticky;top:33%;height:0;border-top:2px solid rgba(201,160,74,.55);margin:0 -6vw;z-index:1;pointer-events:none}
+.tptext{white-space:pre-wrap;line-height:1.35;font-weight:600;padding:33vh 0 10vh;max-width:1100px;margin:0 auto}.tpend{text-align:center;color:#666;padding-bottom:60vh}
+.tphint{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#888;font-size:13px;pointer-events:none}
+.tp.mir .tpscroll{transform:scaleX(-1)}
 .nav.newf{color:var(--gold);font-weight:600;margin-top:6px}
 .btn.sm{padding:5px 10px;font-size:12px}
 .btn.armed{border-color:#ef4b43;color:#ef4b43}
@@ -414,7 +432,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 </div>
 <aside class="insp" id="insp" hidden aria-label="Shot details"></aside>
 <div class="toast" id="toast" hidden></div>
-<script src="data.js?v=20261107g"></script>
-<script src="app.js?v=20261107g"></script>
+<script src="data.js?v=20261108a"></script>
+<script src="app.js?v=20261108a"></script>
 
 </body></html>

@@ -7,7 +7,7 @@ const tc=s=>{const m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFi
 const moveOf=id=>MOVES.find(m=>m.id==id)||MOVES[0];
 const LS='storyboardStudio.v1';
 const LINKED=['script','gfx','broll','loc','pos','move','hard','lens','fps','kind','roll','beat','notes'];
-const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],['shoot','Shoot Order'],['build','Combos & Hard Moves']];
+const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],['shoot','Shoot Order'],['build','Combos & Hard Moves'],['script','Script']];
 
 const S={boards:{},meta:clone(SEED_META),order:[]};
 SEED_BOARDS.forEach(b=>{S.boards[b.id]=clone(b);S.order.push(b.id)});
@@ -134,7 +134,7 @@ const AREA_ONE={properties:'property',commercials:'commercial',projects:'project
 const areaOf=b=>b.area||(b.family==='merino'?'properties':'templates');
 const folderOf=b=>b.folder||(b.family==='merino'?'merino':null);
 const fnameOf=b=>b.fname||(b.family==='merino'?'1 Merino Rd':b.name);
-const verName=b=>b.version||b.name;
+const verName=b=>(['merino','merinotour'].includes(b.id)?'Old plan · ':'')+(b.version||b.name);
 const rid=()=>'s'+Math.random().toString(36).slice(2,9);
 function foldersIn(a){const m={},out=[];S.order.forEach(id=>{const b=S.boards[id];if(!b||areaOf(b)!==a)return;const f=folderOf(b)||b.id;if(!m[f]){m[f]={id:f,name:fnameOf(b),boards:[]};out.push(m[f])}m[f].boards.push(b)});return out}
 function openFolder(fid){const f=foldersIn(U.area).find(x=>x.id===fid);if(!f)return;U.sec='board';U.board=f.boards[0].id;U.shot=null;U.sbs=false;render()}
@@ -231,11 +231,11 @@ function renderMain(){
   if(U.sec==='cat')return renderCat();
   if(U.sec==='area')return renderArea();
   const b=B();
-  const sbs=U.sbs&&!!folderOf(b)&&siblings(b).length>0;const v=sbs?sbsView(b):{bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
+  const sbs=U.sbs&&!!folderOf(b)&&siblings(b).length>0;const v=sbs?sbsView(b):{bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView,script:scriptView}[U.view](U.view==='story'?b:act(b));
   $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${folderOf(b)?esc(AREAS.find(x=>x[0]===areaOf(b))[1])+' › '+esc(fnameOf(b))+' · ':''}${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
     <div class="acts">${tplBtn(b)}${!folderOf(b)&&!SEED_BOARDS.some(x=>x.id===b.id)?`<button class="btn" id="rmV" data-lab="Delete board">Delete board</button>`:''}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
   ${versionBar(b)}${U.addPick?pickHTML(b):''}${sbs?'':`<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>`}${v}`;
-  wireMain(b);
+  wireMain(b);if(U.view==='script'&&!sbs)wireScript(b);
 }
 function siblings(b){return b.family?S.order.map(i=>S.boards[i]).filter(x=>x&&x.family===b.family&&x.id!==b.id):[]}
 function versionBar(b){
@@ -243,7 +243,7 @@ function versionBar(b){
   const form=U.addV?`<form class="verform" id="verForm"><label class="fld"><span>Version name</span><input id="vName" value="${b.aspect==='16/9'?'Reel':'Virtual Tour'}"></label>${folderOf(b)?`<label class="fld"><span>Start from</span><select id="vSrc"><option value="">Copy of this version (linked)</option>${tpls.map(x=>`<option value="${x.id}">Template: ${esc(x.name)}</option>`).join('')}</select></label>`:''}<label class="fld"><span>Shape</span><select id="vShape"><option value="16/9">Horizontal 16:9</option><option value="9/16">Vertical 9:16</option></select></label><button class="btn pri">Create linked version</button><button type="button" class="btn" id="vCancel">Cancel</button></form>`:'';
   if(!b.family)return folderOf(b)?`<div class="vers"><button class="btn sm" id="rmV">Remove this version</button></div>${form}`:form;
   const sib=siblings(b),on=b.linked!==false;
-  return `<div class="vers"><div class="seg2">${[b,...sib].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id)).map(x=>`<button class="${x.id===b.id?'on':''}" data-ver="${x.id}">${esc(x.version||x.name)}</button>`).join('')}</div>
+  return `<div class="vers"><div class="seg2">${[b,...sib].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id)).map(x=>`<button class="${x.id===b.id?'on':''}" data-ver="${x.id}">${esc(verName(x))}</button>`).join('')}</div>
   ${folderOf(b)&&sib.length?`<button class="btn sm ${U.sbs?'pri':''}" id="sbsT">${U.sbs?'One at a time':'Side by side'}</button>`:''}${folderOf(b)?`<button class="btn sm" id="rmV">Remove this version</button>`:''}<button class="sw ${on?'on':''}" id="linkT" role="switch" aria-checked="${on}"><i></i>${on?'Linked: changes here also go to '+esc(sib.map(x=>x.version||x.name).join(', ')):'Not linked: changes stay on this version'}</button></div>${form}`;
 }
 function syncShot(b,s,k){
@@ -446,6 +446,47 @@ function renderCat(){
   wireNewForm({cat:c.id},renderCat);
 }
 function newShot(){return {id:'s'+Math.random().toString(36).slice(2,9),roll:'B',kind:'wide',beat:'New',loc:'Location',pos:'',dur:2,move:1,hard:1,lens:'24mm',fps:30,script:'',gfx:'',broll:'',f:{scene:'living'}}}
+
+/* ---------- Script tab + teleprompter (Nov 8) ---------- */
+const spoken=s=>s.roll==='A'||s.kind==='agent';
+function shotLines(b){return b.shots.filter(s=>!s.hidden&&(s.script||'').trim())}
+function scriptView(b){
+  const lines=shotLines(b),onScr=b.shots.filter(s=>!s.hidden&&!spoken(s)&&/Text:|Label:|Big serif|Comment pill/i.test(s.gfx||''));
+  const say=lines.filter(spoken),vo=lines.filter(s=>!spoken(s));
+  const row=(s,who)=>`<div class="scl"><div class="scm"><b>#${num(b,s)}</b> ${esc(s.title||s.pos||'')} · ${who}</div><div class="sct">${esc(s.script)}</div></div>`;
+  const txt=s=>(s.gfx||'').split(/(?<=\.)\s+/).filter(x=>/Text:|Label:|Big serif|Comment pill/i.test(x)).join(' ');
+  const scripts=b.scripts||[];
+  return `<div class="scv">
+  <div class="scbox"><div class="schd"><h2>Reel lines (from the shots)</h2>${say.length||vo.length?`<button class="btn pri" data-tp="shots">▶ Teleprompter</button>`:''}</div>
+  ${say.length||vo.length?say.map(s=>row(s,'<span class="who you">You on camera</span>')).join('')+vo.map(s=>row(s,'<span class="who vo">Voiceover</span>')).join(''):`<p class="scempty">No spoken lines yet. Open a shot and type its line in "Script".</p>`}
+  ${onScr.length?`<details class="scos"><summary>On-screen text (${onScr.length})</summary>${onScr.map(s=>`<div class="scl small"><div class="scm"><b>#${num(b,s)}</b> ${esc(s.title||'')}</div><div class="sct sm">${esc(txt(s)||s.gfx)}</div></div>`).join('')}</details>`:''}</div>
+  ${scripts.map((x,i)=>`<div class="scbox"><div class="schd">${U.sedit===x.id?`<input class="scname" data-sname="${i}" value="${esc(x.name)}">`:`<h2>${esc(x.name)}</h2>`}<div class="scacts"><button class="btn pri" data-tp="${i}">▶ Teleprompter</button><button class="btn" data-sedit="${x.id}">${U.sedit===x.id?'Done':'Edit'}</button>${U.sedit===x.id?`<button class="btn" data-sdel="${i}">Delete</button>`:''}</div></div>
+    ${U.sedit===x.id?`<textarea class="scedit" data-stext="${i}">${esc(x.text)}</textarea>`:`<div class="sct pre">${esc(x.text)}</div>`}</div>`).join('')}
+  <button class="btn" id="sAdd">+ Add a script</button></div>`}
+function tpText(b,k){if(k==='shots')return shotLines(b).filter(spoken).concat(shotLines(b).filter(s=>!spoken(s))).map(s=>`— shot ${num(b,s)} · ${spoken(s)?'on camera':'voiceover'} —\n${s.script}`).join('\n\n');const x=(b.scripts||[])[+k];return x?x.text:''}
+function teleprompter(text,title){
+  const P=Object.assign({speed:+(localStorage.getItem('tp.speed')||40),size:+(localStorage.getItem('tp.size')||56),mirror:false,run:false},{});
+  const o=document.createElement('div');o.className='tp';o.innerHTML=`<div class="tpbar"><b>${esc(title)}</b><span class="tpc"><button data-k="slow">Slower</button><span class="tpv" id="tpSp"></span><button data-k="fast">Faster</button><button data-k="small">A−</button><button data-k="big">A+</button><button data-k="mirror">Mirror</button><button data-k="top">Restart</button><button data-k="close">Close</button></span></div><div class="tpscroll"><div class="tpline"></div><div class="tptext"></div><div class="tpend">— end —</div></div><div class="tphint">Tap the text to start / pause</div>`;
+  document.body.appendChild(o);document.body.style.overflow='hidden';
+  const sc=o.querySelector('.tpscroll'),tx=o.querySelector('.tptext'),sp=o.querySelector('#tpSp'),hint=o.querySelector('.tphint');tx.textContent=text;
+  const apply=()=>{tx.style.fontSize=P.size+'px';sp.textContent='Speed '+P.speed;o.classList.toggle('mir',P.mirror);try{localStorage.setItem('tp.speed',P.speed);localStorage.setItem('tp.size',P.size)}catch(e){}};apply();
+  let last=0,acc=0,raf=0;const step=t=>{if(!P.run)return;if(last){acc+=(t-last)/1000*P.speed;const n=Math.floor(acc);if(n){sc.scrollTop+=n;acc-=n}}last=t;if(sc.scrollTop+sc.clientHeight>=sc.scrollHeight-2){P.run=false;hint.textContent='End. Tap Restart or Close';return}raf=requestAnimationFrame(step)};
+  const toggle=()=>{P.run=!P.run;last=0;hint.textContent=P.run?'Tap to pause':'Paused · tap to continue';if(P.run)raf=requestAnimationFrame(step)};
+  sc.onclick=toggle;
+  const close=()=>{P.run=false;cancelAnimationFrame(raf);o.remove();document.body.style.overflow='';removeEventListener('keydown',key)};
+  const key=e=>{if(e.key==='Escape')close();if(e.key===' '){e.preventDefault();toggle()}if(e.key==='ArrowUp'){P.speed=Math.min(200,P.speed+10);apply()}if(e.key==='ArrowDown'){P.speed=Math.max(10,P.speed-10);apply()}};addEventListener('keydown',key);
+  o.querySelectorAll('[data-k]').forEach(bn=>bn.onclick=e=>{e.stopPropagation();const k=bn.dataset.k;
+    if(k==='slow')P.speed=Math.max(10,P.speed-10);if(k==='fast')P.speed=Math.min(200,P.speed+10);if(k==='small')P.size=Math.max(28,P.size-6);if(k==='big')P.size=Math.min(110,P.size+6);
+    if(k==='mirror')P.mirror=!P.mirror;if(k==='top'){sc.scrollTop=0;P.run=false;hint.textContent='Tap the text to start'}if(k==='close')return close();apply()});
+}
+function wireScript(b){const m=$('main');
+  m.querySelectorAll('[data-tp]').forEach(e=>e.onclick=()=>{const k=e.dataset.tp;teleprompter(tpText(b,k),k==='shots'?b.name+' · reel lines':(b.scripts[+k]||{}).name||'Script')});
+  m.querySelectorAll('[data-sedit]').forEach(e=>e.onclick=()=>{U.sedit=U.sedit===e.dataset.sedit?null:e.dataset.sedit;renderMain()});
+  m.querySelectorAll('[data-stext]').forEach(e=>e.oninput=()=>{b.scripts[+e.dataset.stext].text=e.value;touch(b)});
+  m.querySelectorAll('[data-sname]').forEach(e=>e.oninput=()=>{b.scripts[+e.dataset.sname].name=e.value;touch(b)});
+  m.querySelectorAll('[data-sdel]').forEach(e=>e.onclick=()=>{if(!e.classList.contains('armed')){e.classList.add('armed');e.textContent='Tap again to delete';setTimeout(()=>{if(e.isConnected){e.classList.remove('armed');e.textContent='Delete'}},3000);return}b.scripts.splice(+e.dataset.sdel,1);U.sedit=null;touch(b);renderMain()});
+  const a=$('sAdd');if(a)a.onclick=()=>{b.scripts=b.scripts||[];const id='sc'+Date.now().toString(36);b.scripts.push({id,name:'New script',text:''});U.sedit=id;touch(b);renderMain();const t=m.querySelector('.scedit');if(t)t.focus()};
+}
 
 /* ---------- wiring ---------- */
 function hover(){document.querySelectorAll('video[data-hv]').forEach(v=>{v.onmouseenter=()=>v.play().catch(()=>{});v.onmouseleave=()=>v.pause();v.onclick=()=>v.paused?v.play().catch(()=>{}):v.pause()})}
