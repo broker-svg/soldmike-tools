@@ -219,7 +219,7 @@ function sbsView(b){const vs=[b,...siblings(b)].sort((x,y)=>S.order.indexOf(x.id
   return `<div class="sbsw"><div class="sbs" style="grid-template-columns:repeat(${vs.length},minmax(250px,1fr))">${vs.map(x=>{const sh=x.shots.filter(s=>!s.hidden);return `<div class="sbc"><button class="sbh" data-ver="${x.id}"><b>${esc(verName(x))}</b><small>${x.aspect==='16/9'?'16:9':'9:16'} · ${sh.length} shots · ${fmt(sh.reduce((t,s)=>t+(+s.dur||0),0))}s</small></button><div class="sbt">${sh.map((s,i)=>`<i style="flex:${s.dur} 1 0;background:${KINDS[s.kind].c}" title="${i+1}. ${esc(s.title||s.pos||'')}"></i>`).join('')}</div><div class="sbl">${sh.map((s,i)=>`<button class="sbr" data-sbo="${x.id}|${s.id}"><span class="sbk" style="background:${KINDS[s.kind].c}"></span><em>${i+1}</em><span class="sbn">${esc(s.title||s.script||s.pos||'')}</span><small>${s.dur}s</small></button>`).join('')}</div></div>`}).join('')}</div></div>`}
 function removeBoard(b){const sib=siblings(b);delete S.boards[b.id];S.order=S.order.filter(i=>i!==b.id);S.meta.gone=S.meta.gone||[];if(!S.meta.gone.includes(b.id))S.meta.gone.push(b.id);touchMeta();dirty.delete(b.id);dirtyAll.delete(b.id);
   if(db){try{const p=db.doc('boards/'+b.id).delete();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
-  U.sbs=false;U.shot=null;if(sib.length){U.board=sib[0].id;U.sec='board'}else{U.sec='area'}render();toast(sib.length?'Version removed':'Folder removed')}
+  U.sbs=false;U.shot=null;const tpl=!folderOf(b);if(sib.length){U.board=sib[0].id;U.sec='board'}else if(tpl){U.sec='cat';U.cat=b.cat||'houses';U.board=S.order[0]}else{U.sec='area';U.board=S.order[0]}render();toast(tpl?'Board deleted':sib.length?'Version removed':'Folder removed')}
 function purgeGone(){(S.meta.gone||[]).forEach(id=>{delete S.boards[id]});S.order=S.order.filter(i=>S.boards[i]);if(!S.boards[U.board])U.board=S.order[0]}
 
 /* ---------- main ---------- */
@@ -233,7 +233,7 @@ function renderMain(){
   const b=B();
   const sbs=U.sbs&&!!folderOf(b)&&siblings(b).length>0;const v=sbs?sbsView(b):{bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
   $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${folderOf(b)?esc(AREAS.find(x=>x[0]===areaOf(b))[1])+' › '+esc(fnameOf(b))+' · ':''}${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
-    <div class="acts">${tplBtn(b)}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
+    <div class="acts">${tplBtn(b)}${!folderOf(b)&&!SEED_BOARDS.some(x=>x.id===b.id)?`<button class="btn" id="rmV" data-lab="Delete board">Delete board</button>`:''}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
   ${versionBar(b)}${U.addPick?pickHTML(b):''}${sbs?'':`<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>`}${v}`;
   wireMain(b);
 }
@@ -463,7 +463,7 @@ function wireMain(b){
   m.querySelectorAll('[data-ver]').forEach(e=>e.onclick=()=>{U.board=e.dataset.ver;U.shot=null;U.sbs=false;render()});
   const sb=$('sbsT');if(sb)sb.onclick=()=>{U.sbs=!U.sbs;U.shot=null;render()};
   m.querySelectorAll('[data-sbo]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sbo.split('|');U.board=bi;U.sbs=false;U.view='story';render();open(si);const c=document.querySelector(`.card[data-s="${si}"]`);if(c)c.scrollIntoView({block:'center'})});
-  const rv=$('rmV');if(rv)rv.onclick=()=>{if(!rv.classList.contains('armed')){rv.classList.add('armed');rv.textContent=siblings(b).length?'Tap again to remove '+verName(b):'Tap again: removes the whole folder';setTimeout(()=>{if(rv.isConnected){rv.classList.remove('armed');rv.textContent='Remove this version'}},3500);return}removeBoard(b)};
+  const rv=$('rmV');if(rv)rv.onclick=()=>{if(!rv.classList.contains('armed')){const lab=rv.textContent;rv.classList.add('armed');rv.textContent=!folderOf(b)?'Tap again to delete '+b.name:siblings(b).length?'Tap again to remove '+verName(b):'Tap again: removes the whole folder';setTimeout(()=>{if(rv.isConnected){rv.classList.remove('armed');rv.textContent=lab}},3500);return}removeBoard(b)};
   const lt=$('linkT');if(lt)lt.onclick=()=>{b.linked=b.linked===false;touch(b);renderMain()};
   const pickOpen=()=>{U.addPick=!U.addPick;renderMain();if(U.addPick){const q=$('pickQ');if(q){q.focus();$('pick').scrollIntoView({block:'nearest'})}}};$('addS').onclick=pickOpen;const a2=$('addS2');if(a2)a2.onclick=()=>{U.addPick=true;renderMain();window.scrollTo({top:0,behavior:'smooth'});const q=$('pickQ');if(q)q.focus()};
   wirePick(b,add);
