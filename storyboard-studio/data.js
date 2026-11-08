@@ -29,7 +29,8 @@ const MOVES = [
 
 const KINDS = {
   wide:{label:'Wide',c:'#4d9be6'}, medium:{label:'Medium',c:'#35c2b1'}, closeup:{label:'Close-up',c:'#f2c230'},
-  burst:{label:'0.5s burst',c:'#9fd3f7'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'}
+  burst:{label:'0.5s burst',c:'#9fd3f7'}, drone:{label:'Drone',c:'#46c46f'}, hero:{label:'Wide · Hero',c:'linear-gradient(90deg,#4d9be6 0 72%,#ef4b43 72% 100%)'}, graphic:{label:'Graphic only',c:'#98a6b5'},
+  twilight:{label:'Twilight',c:'#7c5cff'}, staging:{label:'Virtual Staging',c:'#f08a3c'}, aieffect:{label:'AI Effect',c:'#e44fc8'}
 };
 
 const CATEGORIES = [
@@ -354,3 +355,13 @@ t.flags.push('Front Door Detail removed. New Family Room Detail uses the Detail 
 const n=JSON.parse(JSON.stringify(cz));['combo','link','ask','swapped','ramp'].forEach(k=>delete n[k]);
 Object.assign(n,{id:'vtx9',lid:'vtx9',title:'Drone Zoom Out',pos:'Drone Zoom Out',move:21,hard:1,dur:4,extra:true,f:{img:'img/sb-drone-zoomout.jpg'}});
 t.shots.splice(t.shots.indexOf(cz),0,n);t.shots.forEach((s,j)=>s.id='vt'+(j+1))})();
+
+/* Nov 7 (Michael): Twilight, Virtual Staging and AI Effect shots. All straight pushes, each with its own colour. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');
+const mk=(after,id,title,kind,loc,beat,img,gfx)=>{const a=t.shots.find(x=>x.lid===after);if(!a)throw new Error('no '+after);
+  const n={id,lid:id,roll:'B',kind,beat,loc,pos:title,title,dur:3,move:1,hard:1,lens:'12mm',fps:30,script:'',gfx,broll:'',extra:true,solo:true,f:{img}};
+  t.shots.splice(t.shots.indexOf(a)+1,0,n)};
+mk('re16','vtx12','AI Effect Push','aieffect','Interior · Main','Main floor','img/sb-ai-effect.jpg','Post: AI effect on this push.');
+mk('re30','vtx11','Virtual Staging Push','staging','Interior · Second','Upstairs','img/sb-staging.jpg','Shoot the empty room. Post: virtual staging furniture added.');
+mk('re33','vtx10','Twilight Exterior Push','twilight','Exterior · Sony','Finale','img/sb-twilight.jpg','Shoot in daylight. Post: virtual twilight (TPM Virtual Twilight note).');
+t.shots.forEach((s,j)=>s.id='vt'+(j+1))})();
