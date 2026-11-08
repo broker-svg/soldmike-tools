@@ -20,6 +20,9 @@ const MOVES = [
   {id:14,name:'Drone',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Set the move before you hit record, then one slow, committed pass.',mistake:'Adjusting two sticks halfway through. Plan the line, then fly it.',tip:'Drone works best as an act break, not filler.'},
   {id:15,name:'The Hurley Special',lens:'Wide',mode:'PTF (confirm)',hard:3,tech:'Reverse parallel park. Start close with the gimbal at head height, camera up at the ceiling. Walk backward around the corner of the island, twisting the camera down as you sink into a squat. Land low, level and wide.',mistake:'Landing tilted up or down. The final frame must be level, or the whole move falls apart.',tip:'Walk the path first so you know where the island corner is. Operator clip runs at 75% speed.',op:'clips/15_hurley_special_operator.mp4',res:'clips/15_hurley_special_result.mp4'}
   ,{id:16,name:'Detail Slider Rise',lens:'50mm',mode:'Standard',hard:2,tech:'Slide sideways and slowly lift the camera at the same time, keeping every horizontal line level.',mistake:'Tilting as you rise. Keep the camera level and let the height change do the work.',tip:'Michael uses this a lot on family room details: coffee table, shelves, the mantel. Clips coming later.'}
+  ,{id:17,name:'Dive Reveal',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Start high on the horizon. Fly forward and tilt the camera down at the same time, so you finish straight above the house.',mistake:'Tilting faster than you fly. The house should arrive at the centre just as the camera hits straight down.',tip:'Best as the opener. The neighbourhood first, then the house fills the frame.',res:'clips/17_dive_reveal_result.mp4',op:'clips/17_dive_reveal_operator.mp4'}
+  ,{id:18,name:'Spin Drop',lens:'Drone',mode:'Mavic 3',hard:3,tech:'Camera straight down over the roof. Drop down and spin (yaw) at the same time, keeping the house in the centre.',mistake:'Drifting sideways while you spin. The roof has to stay dead centre or it looks messy.',tip:'Fast and short. Great as a transition between the dive and the top-down.',res:'clips/18_spin_drop_result.mp4',op:'clips/18_spin_drop_operator.mp4'}
+  ,{id:19,name:'Rise & Reveal',lens:'Drone',mode:'Mavic 3',hard:2,tech:'Start low, camera straight down over the pool. Rise straight up, then fly backward and tilt the camera up until the horizon shows.',mistake:'Starting the tilt too early. Get the height first, then reveal the horizon.',tip:'Use it as the closing shot. It pulls back from the house to the whole neighbourhood.',res:'clips/19_rise_reveal_result.mp4',op:'clips/19_rise_reveal_operator.mp4'}
 ];
 
 const KINDS = {
@@ -337,3 +340,6 @@ t.flags.push('Front Door Detail removed. New Family Room Detail uses the Detail 
 /* Nov 7 (Michael): burst shots are wide, on the 12mm */
 (function(){const t=SEED_BOARDS.find(x=>x.id==='tour');t.shots.filter(s=>s.kind==='burst').forEach(s=>{s.lens='12mm'})})();
 
+
+/* Nov 7 (Michael): 3 drone moves from the drone tutorial video, on the tour's drone shots. 360 Drone stays an orbit. */
+(function(){const t=SEED_BOARDS.find(x=>x.id==='tour');[['re2',17],['re32',18],['re35',19]].forEach(([l,m])=>{const x=t.shots.find(y=>y.lid===l);if(!x)throw new Error('no '+l);x.move=m;x.hard=m===18?3:2})})();

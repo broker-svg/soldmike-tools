@@ -137,7 +137,7 @@ function renderRail(){
   <div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
   <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
   <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
-  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>14</small></button></div>
+  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>${MOVES.filter(m=>m.id!==0&&m.id!==14).length}</small></button></div>
   <div class="save" id="saveNote">${db?'Saved online. Phone and Macs match.':'Saved on this computer'}</div>`;
   $('rail').querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;render()});
   $('rail').querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
