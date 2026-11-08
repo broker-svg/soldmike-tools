@@ -155,7 +155,7 @@ function renderMain(){
   const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
   $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
     <div class="acts">${tplBtn(b)}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
-  ${versionBar(b)}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
+  ${versionBar(b)}${U.addPick?pickHTML(b):''}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
   wireMain(b);
 }
 function siblings(b){return b.family?S.order.map(i=>S.boards[i]).filter(x=>x&&x.family===b.family&&x.id!==b.id):[]}
@@ -370,12 +370,16 @@ function wireMain(b){
   const tu=$('tplU');if(tu)tu.onclick=()=>{if(!tu.classList.contains('armed')){tu.classList.add('armed');tu.innerHTML='Tap again to update';setTimeout(()=>{if(tu.isConnected)render()},3500);return}const n=applyTpl(b);render();toast(n?`Updated ${n} ${n===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`:'Already up to date')};
   const bn=$('bName');if(bn)bn.onclick=()=>{if(bn.querySelector('input'))return;const inp=document.createElement('input');inp.value=b.name;inp.style.cssText='font:inherit;width:100%;max-width:640px;padding:2px 6px;border:2px solid var(--acc,#4d9be6);border-radius:6px;background:transparent;color:inherit';bn.innerHTML='';bn.appendChild(inp);inp.focus();inp.select();let done=false;const save=ok=>{if(done)return;done=true;const v=inp.value.trim();if(ok&&v&&v!==b.name){b.name=v;touch(b);toast('Board renamed')}render()};inp.onkeydown=e=>{if(e.key==='Enter')save(true);if(e.key==='Escape')save(false)};inp.onblur=()=>save(true)};
   $('dupB').onclick=()=>{const id='b'+Date.now().toString(36),n=clone(b);n.id=id;n.name=b.name+' copy';delete n.group;delete n.family;delete n.linked;delete n.version;n.from=b.from||b.id;n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id='s'+Math.random().toString(36).slice(2,9)});S.boards[id]=n;S.order.push(id);U.board=id;touch(n);render();toast('Board duplicated')};
-  const add=()=>{const s=newShot();b.shots.push(s);if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);x.shots.push(c);touch(x)})}touch(b);renderMain();open(s.id)};
+  const add=(s0)=>{const s=s0||newShot();const ai=b.shots.findIndex(x=>x.id===U.shot),anc=ai>=0?b.shots[ai]:null;
+    if(ai>=0)b.shots.splice(ai+1,0,s);else b.shots.push(s);
+    if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);const xi=anc?x.shots.findIndex(y=>y.lid===anc.lid):-1;if(xi>=0)x.shots.splice(xi+1,0,c);else x.shots.push(c);touch(x)})}
+    touch(b);U.shot=s.id;renderMain();open(s.id);return s};
   $('addV').onclick=()=>{U.addV=!U.addV;renderMain()};
   const vf=$('verForm');if(vf){vf.onsubmit=e=>{e.preventDefault();createVersion(b,$('vName').value.trim()||'Version',$('vShape').value)};$('vCancel').onclick=()=>{U.addV=false;renderMain()}}
   m.querySelectorAll('[data-ver]').forEach(e=>e.onclick=()=>{U.board=e.dataset.ver;U.shot=null;render()});
   const lt=$('linkT');if(lt)lt.onclick=()=>{b.linked=b.linked===false;touch(b);renderMain()};
-  $('addS').onclick=add;const a2=$('addS2');if(a2)a2.onclick=add;
+  const pickOpen=()=>{U.addPick=!U.addPick;renderMain();if(U.addPick){const q=$('pickQ');if(q){q.focus();$('pick').scrollIntoView({block:'nearest'})}}};$('addS').onclick=pickOpen;const a2=$('addS2');if(a2)a2.onclick=()=>{U.addPick=true;renderMain();window.scrollTo({top:0,behavior:'smooth'});const q=$('pickQ');if(q)q.focus()};
+  wirePick(b,add);
   m.querySelectorAll('.tile,.mini[data-s]').forEach(e=>e.onclick=()=>open(e.dataset.s));
   m.querySelectorAll('[data-open]').forEach(e=>e.onclick=()=>open(e.dataset.open));
   m.querySelectorAll('[data-t]').forEach(e=>e.onclick=ev=>{ev.stopPropagation();U.ctab[e.dataset.id]=e.dataset.t;U.allTab[B().id]='';renderMain()});
@@ -449,6 +453,30 @@ function renderInsp(){
   $('dupS').onclick=()=>{const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);c.got=false;b.shots.splice(i+1,0,c);touch(b);renderMain();open(c.id)};
   let armed=false;$('delS').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to delete';return}b.shots.splice(i,1);U.shot=null;touch(b);render()};
 }
+/* ---------- preset shot picker (Add shot) ---------- */
+const PRESETS=(()=>{const seen=new Set(),out=[];if(typeof SEED_BOARDS==='undefined')return out;
+  ['tour','reel','condo'].forEach(id=>{const t=SEED_BOARDS.find(x=>x.id===id);if(!t)return;t.shots.forEach(s=>{if(s.hidden)return;const name=(s.title||s.pos||'').trim(),k=name.toLowerCase();if(!name||seen.has(k))return;seen.add(k);out.push({key:'p'+out.length,name,from:t.name,s:clone(s)})})});return out})();
+function presetArea(s){if(s.kind==='drone')return 'Drone';const l=(s.loc||'').toLowerCase(),n=(s.title||s.pos||'').toLowerCase();
+  if(/kitchen|rapid push|hurley|island|faucet/.test(n))return 'Kitchen';if(/dining/.test(n))return 'Dining';if(/family|living|fireplace|feature wall/.test(n))return 'Family & living';
+  if(/master|en ?suite|bedroom|bath|vanity|closet/.test(n))return 'Bedrooms & baths';if(/basement|rec|bar|gym|theat/.test(n)||/basement|lower/.test(l))return 'Basement';
+  if(/exterior|outside|backyard|yard|front|porch|garage|pool/.test(l+' '+n))return 'Exterior';if(/foyer|entrance|stair|hall/.test(n))return 'Foyer & stairs';if(/suite/.test(l))return 'Bedrooms & baths';if(/main/.test(l))return 'Main floor';return 'Other'}
+const PICK_ORDER=['Drone','Exterior','Foyer & stairs','Kitchen','Dining','Family & living','Main floor','Bedrooms & baths','Basement','Other'];
+function pickHTML(b){const q=(U.pickQ||'').toLowerCase().trim(),groups={};
+  PRESETS.forEach(p=>{const m=moveOf(p.s.move),hay=(p.name+' '+m.name+' '+(p.s.loc||'')+' '+(p.s.lens||'')+' '+KINDS[p.s.kind].label).toLowerCase();if(q&&!q.split(/\s+/).every(w=>hay.includes(w)))return;(groups[presetArea(p.s)]=groups[presetArea(p.s)]||[]).push(p)});
+  const ai=b.shots.findIndex(x=>x.id===U.shot),where=ai>=0?`after shot #${ai+1} (${esc(b.shots[ai].title||b.shots[ai].pos||'selected')})`:'at the end';
+  const item=p=>{const s=p.s,m=moveOf(s.move),n=b.shots.filter(x=>(x.title||x.pos)===p.name).length;return `<button class="pki" data-pk="${p.key}" title="Add ${esc(p.name)}"><span class="pkbar" style="background:${KINDS[s.kind].c}"></span>${s.f&&s.f.img?`<img src="${esc(s.f.img)}" alt="" loading="lazy">`:'<span class="pknoimg"></span>'}<span class="pkt"><b>${esc(p.name)}</b><small>${esc(m.name)} · ${esc(s.lens||'')} · ${s.dur}s${/Virtual Tour/.test(p.from)?'':' · '+esc(p.from.replace(/^Standard /,''))}</small>${n?`<em>on this board ×${n}</em>`:''}</span></button>`};
+  const gs=PICK_ORDER.filter(g=>groups[g]).map(g=>`<details class="pg" data-pg="${g}" ${q||(U.pickGrp||{})[g]?'open':''}><summary>${esc(g)} <small>${groups[g].length}</small><span class="car">▾</span></summary><div class="pgrid">${groups[g].map(item).join('')}</div></details>`).join('');
+  return `<div class="pick" id="pick"><div class="pickhd"><b>Add a shot</b><input id="pickQ" type="search" placeholder="Search presets: kitchen, orbit, drone…" value="${esc(U.pickQ||'')}"><button class="btn" id="pickC">+ Custom shot</button><button class="btn" id="pickX">Close</button></div>
+  <div class="pickinfo">Preset shots come ready with the move, lens, length and image. New shots go ${where}. Tap a shot on the board first to choose where.</div>
+  ${gs||'<div class="empty">No preset matches. Try another word, or add a Custom shot.</div>'}</div>`}
+function wirePick(b,add){const pk=$('pick');if(!pk)return;
+  $('pickX').onclick=()=>{U.addPick=false;renderMain()};
+  $('pickC').onclick=()=>{const s=add();toast('Custom shot added. Fill it in on the right.')};
+  const q=$('pickQ');let tm;q.oninput=()=>{clearTimeout(tm);tm=setTimeout(()=>{U.pickQ=q.value;const pos=q.selectionStart;renderMain();const n=$('pickQ');if(n){n.focus();n.setSelectionRange(pos,pos)}},180)};
+  pk.querySelectorAll('details.pg').forEach(d=>d.ontoggle=()=>{U.pickGrp=U.pickGrp||{};U.pickGrp[d.dataset.pg]=d.open});
+  pk.querySelectorAll('[data-pk]').forEach(e=>e.onclick=()=>{const p=PRESETS.find(x=>x.key===e.dataset.pk);if(!p)return;const s=clone(p.s);
+    ['combo','link','hidden','got','ask','swapped','solo','extra','lid','media'].forEach(k=>delete s[k]);s.id='s'+Math.random().toString(36).slice(2,9);s.preset=p.name;
+    add(s);toast(`Added ${p.name} as shot #${b.shots.findIndex(x=>x.id===s.id)+1}`)})}
 /* drag: a combo moves as one block; dropping on another combo lands before it, never inside it */
 function runOf(b,id){const i=b.shots.findIndex(x=>x.id===id);if(i<0)return null;const k=b.shots[i].combo;let a=i,z=i;if(k){while(a>0&&b.shots[a-1].combo===k)a--;while(z<b.shots.length-1&&b.shots[z+1].combo===k)z++}return [a,z]}
 function moveGroup(b,from,to){const f=runOf(b,from),t=runOf(b,to);if(!f||!t)return false;if(t[0]>=f[0]&&t[1]<=f[1])return false;
