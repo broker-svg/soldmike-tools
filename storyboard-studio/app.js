@@ -170,7 +170,7 @@ function renderRail(){
 }
 /* New board / new folder: pick a template and what to make (Reel, Virtual Tour or Both, linked). */
 const MAKES=[['reel','Reel'],['tour','Virtual Tour'],['both','Both (linked)']];
-const MAKE_DEF={properties:'both',commercials:'reel',projects:'reel',houses:'both',condos:'both',luxury:'both',realtor:'reel'};
+const MAKE_DEF={properties:'both',commercials:'reel',projects:'reel',houses:'both',models:'reel',condos:'both',luxury:'both',realtor:'reel'};
 function srcOptions(){const tpl=S.order.map(i=>S.boards[i]).filter(b=>b&&areaOf(b)==='templates');let h='<option value="blank">Blank board</option>';
   CATEGORIES.forEach(c=>{const bs=tpl.filter(b=>b.cat===c.id);if(!bs.length)return;const fam={};bs.forEach(b=>{if(b.family&&b.linked!==false)(fam[b.family]=fam[b.family]||[]).push(b)});const done=new Set(),o=[];
     bs.forEach(b=>{const f=b.family&&fam[b.family];if(f&&f.length>1){if(done.has(b.family))return;done.add(b.family);o.push(['fam:'+b.family,f.map(x=>verName(x)).join(' + ')+' · '+f[0].name.replace(/ · .*$/,'').replace(/(Listing )?Reel$/,'').replace(/Virtual Tour$/,'').trim()])}else o.push(['b:'+b.id,b.name])});
