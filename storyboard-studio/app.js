@@ -144,17 +144,14 @@ function renderRail(){
   let body='';
   if(a==='templates'){
     const boardsIn=c=>S.order.filter(id=>S.boards[id]&&S.boards[id].cat===c&&areaOf(S.boards[id])==='templates');
-    const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`};
-    const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${ids.map(nb).join('')}</div>`};
-    const top=CATEGORIES.filter(c=>!c.parent),re=CATEGORIES.filter(c=>c.parent);
-    body=`<div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
-    <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
-    <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
+    const nb=b=>`<button class="nav ${U.sec==='board'&&U.board===b.id?'on':''}" data-b="${b.id}"><span>${esc(b.name)}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`;
+    const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${linkedList(ids.map(i=>S.boards[i]),nb)}</div>`};
+    body=`<div class="grp"><h4>Templates</h4>${CATEGORIES.map(cat).join('')}</div>
     <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>${MOVES.filter(m=>m.id!==0&&m.id!==14).length}</small></button></div>`;
   }else{
     const lab=AREAS.find(x=>x[0]===a)[1],one=AREA_ONE[a],fs=foldersIn(a),cur=S.boards[U.board];
     body=`<div class="grp"><h4>${lab}</h4><button class="nav sub ${U.sec==='area'?'on':''}" data-al="1"><span>All ${lab.toLowerCase()}</span><small>${fs.length}</small></button>
-    ${fs.map(f=>{const here=U.sec==='board'&&cur&&(folderOf(cur)||cur.id)===f.id;return `<button class="nav sub fold" data-fold="${f.id}"><span>${here?'▾':'▸'} ${esc(f.name)}</span><small>${f.boards.length}</small></button><div class="nest">${f.boards.map(b=>`<button class="nav ${U.sec==='board'&&U.board===b.id&&!U.sbs?'on':''}" data-b="${b.id}"><span>${esc(verName(b))}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`).join('')}${f.boards.length>1?`<button class="nav ${here&&U.sbs?'on':''}" data-sbsf="${f.boards[0].id}"><span>Side by side</span></button>`:''}</div>`}).join('')}
+    ${fs.map(f=>{const here=U.sec==='board'&&cur&&(folderOf(cur)||cur.id)===f.id;return `<button class="nav sub fold" data-fold="${f.id}"><span>${here?'▾':'▸'} ${esc(f.name)}</span><small>${f.boards.length}</small></button><div class="nest">${linkedList(f.boards,b=>`<button class="nav ${U.sec==='board'&&U.board===b.id&&!U.sbs?'on':''}" data-b="${b.id}"><span>${esc(verName(b))}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`)}${f.boards.length>1?`<button class="nav ${here&&U.sbs?'on':''}" data-sbsf="${f.boards[0].id}"><span>Side by side</span></button>`:''}</div>`}).join('')}
     <button class="nav newf" data-newf="1"><span>+ New ${one}</span></button></div>`;
   }
   $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>${seg}${body}
@@ -163,48 +160,61 @@ function renderRail(){
   r.querySelectorAll('[data-area]').forEach(e=>e.onclick=()=>{const k=e.dataset.area;if(k===U.area)return;U.area=k;U.shot=null;U.sbs=false;U.newF=false;
     if(k==='templates'){const b=S.boards[U.board];if(b&&areaOf(b)==='templates')U.sec='board';else{U.sec='cat';U.cat='houses'}}else U.sec='area';render()});
   r.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;U.sbs=false;render()});
-  r.querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
+  r.querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;U.newF=false;render()});
   r.querySelectorAll('[data-fold]').forEach(e=>e.onclick=()=>openFolder(e.dataset.fold));
   r.querySelectorAll('[data-sbsf]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.sbsf;U.sbs=true;U.shot=null;render()});
   const al=r.querySelector('[data-al]');if(al)al.onclick=()=>{U.sec='area';U.shot=null;render()};
   const nf=r.querySelector('[data-newf]');if(nf)nf.onclick=()=>{U.sec='area';U.newF=true;U.shot=null;render();const i=$('fName');if(i)i.focus()};
   const mm=r.querySelector('[data-m]');if(mm)mm.onclick=()=>{U.sec='moves';U.shot=null;render()};
 }
-function srcOptions(a){const tpl=S.order.map(i=>S.boards[i]).filter(b=>b&&areaOf(b)==='templates'),fam={},out=[];
-  tpl.forEach(b=>{if(b.family)(fam[b.family]=fam[b.family]||[]).push(b)});
-  Object.entries(fam).forEach(([k,bs])=>{if(bs.length>1)out.push(['fam:'+k,bs.map(b=>b.name.replace(/^Standard /,'')).join(' + ')+(k==='std'?' (standard house)':'')])});
-  tpl.forEach(b=>out.push(['b:'+b.id,b.name]));out.push(['blank','Blank board']);return out}
-function srcBoards(v){if(v==='blank')return ['blank'];if(v.startsWith('fam:')){const k=v.slice(4);return S.order.filter(i=>S.boards[i]&&S.boards[i].family===k&&areaOf(S.boards[i])==='templates').sort((x,y)=>(S.boards[x].aspect==='16/9'?0:1)-(S.boards[y].aspect==='16/9'?0:1))}return [v.slice(2)]}
-function newFolderForm(a){const one=AREA_ONE[a],opts=srcOptions(a);
-  if(!U.newSrc||!opts.some(o=>o[0]===U.newSrc))U.newSrc=a==='properties'&&opts.some(o=>o[0]==='fam:std')?'fam:std':'blank';
-  const bs=srcBoards(U.newSrc);
-  return `<form class="newfold" id="newFold"><label class="fld"><span>${one[0].toUpperCase()+one.slice(1)} name</span><input id="fName" value="${esc(U.newName||'')}" placeholder="${a==='properties'?'22 Oak Cres':a==='commercials'?'Spring home value promo':'AI short film'}"></label>
-  <label class="fld"><span>Start from template</span><select id="fSrc">${opts.map(([v,n])=>`<option value="${v}" ${v===U.newSrc?'selected':''}>${esc(n)}</option>`).join('')}</select></label>
-  ${bs[0]!=='blank'&&bs.length>1?`<div class="fvs"><span>Versions in the folder</span>${bs.map(id=>`<label><input type="checkbox" data-fv="${id}" checked> ${esc(verName(S.boards[id]))}</label>`).join('')}</div>`:''}
-  <p class="fnote">Copies go into the new folder and stay linked to each other. The template is not changed.</p><span class="ferr" id="fErr"></span>
+/* New board / new folder: pick a template and what to make (Reel, Virtual Tour or Both, linked). */
+const MAKES=[['reel','Reel'],['tour','Virtual Tour'],['both','Both (linked)']];
+const MAKE_DEF={properties:'both',commercials:'reel',projects:'reel',houses:'both',condos:'both',luxury:'both',realtor:'reel'};
+function srcOptions(){const tpl=S.order.map(i=>S.boards[i]).filter(b=>b&&areaOf(b)==='templates');let h='<option value="blank">Blank board</option>';
+  CATEGORIES.forEach(c=>{const bs=tpl.filter(b=>b.cat===c.id);if(!bs.length)return;const fam={};bs.forEach(b=>{if(b.family&&b.linked!==false)(fam[b.family]=fam[b.family]||[]).push(b)});const done=new Set(),o=[];
+    bs.forEach(b=>{const f=b.family&&fam[b.family];if(f&&f.length>1){if(done.has(b.family))return;done.add(b.family);o.push(['fam:'+b.family,f.map(x=>verName(x)).join(' + ')+' · '+f[0].name.replace(/ · .*$/,'').replace(/(Listing )?Reel$/,'').replace(/Virtual Tour$/,'').trim()])}else o.push(['b:'+b.id,b.name])});
+    h+=`<optgroup label="${esc(c.name)}">${o.map(([v,n])=>`<option value="${v}">${esc(n)}</option>`).join('')}</optgroup>`});return h}
+function srcBoards(v){if(!v||v==='blank')return [];if(v.startsWith('fam:')){const k=v.slice(4);return S.order.filter(i=>S.boards[i]&&S.boards[i].family===k&&areaOf(S.boards[i])==='templates')}return S.boards[v.slice(2)]?[v.slice(2)]:[]}
+function newForm(ctx){const key=ctx.area||ctx.cat,one=ctx.area?AREA_ONE[ctx.area]:'board';
+  if(U.newKey!==key){U.newKey=key;U.newSrc=ctx.area==='properties'?'fam:std':'blank';U.newMake=MAKE_DEF[key]||'reel'}
+  const ph=ctx.area==='properties'?'22 Oak Cres':ctx.area==='commercials'?'Spring home value promo':ctx.area==='projects'?'AI short film':'Luxury listing';
+  return `<form class="newfold" id="newFold"><label class="fld"><span>${one[0].toUpperCase()+one.slice(1)} name</span><input id="fName" value="${esc(U.newName||'')}" placeholder="${ph}"></label>
+  <label class="fld"><span>Start from template</span><select id="fSrc">${srcOptions().replace(`value="${U.newSrc}"`,`value="${U.newSrc}" selected`)}</select></label>
+  <div class="fvs mk"><span>Make</span>${MAKES.map(([k,n])=>`<label><input type="radio" name="mk" value="${k}" ${U.newMake===k?'checked':''}> ${n}</label>`).join('')}</div>
+  <p class="fnote">${ctx.area?'Copies go into the new folder. The template is not changed.':'Makes a new template here.'} Both = a Reel and a Virtual Tour linked together, so changes carry between them. You can add more versions later.</p><span class="ferr" id="fErr"></span>
   <div class="facts"><button class="btn pri">Create ${one}</button><button type="button" class="btn" id="fCancel">Cancel</button></div></form>`}
-function createFolder(a,name,srcIds){const fid='f'+Date.now().toString(36),fam='fam'+fid,ids=[];
-  srcIds.forEach((sid,i)=>{const src=sid==='blank'?null:S.boards[sid],id='b'+Date.now().toString(36)+i;let n;
-    if(src){n=clone(src);n.from=src.from||src.id;delete n.tbase;n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id=rid()})}
-    else{n={cat:'',sub:'',target:45,outfit:'',flags:[],combos:{},shots:[newShot()]};n.shots.forEach(s=>s.lid=s.id)}
-    n.id=id;n.area=a;n.folder=fid;n.fname=name;n.version=src?(src.version||src.name.replace(/^Standard /,'')):'Board';n.name=name+' · '+n.version;
-    n.family=fam;n.linked=true;n.status='Draft';n.sub=AREAS.find(x=>x[0]===a)[1]+' · '+name;delete n.group;
-    S.boards[id]=n;S.order.push(id);ids.push(id);ensureBase(n,false);touch(n)});
-  U.area=a;U.sec='board';U.board=ids[0];U.newF=false;U.newName='';U.sbs=false;U.shot=null;render();toast(`${name} created with ${ids.length} ${ids.length===1?'version':'versions'}`)}
+function buildSet(srcIds,make,fieldsFor){const tag=Date.now().toString(36),fam='fam'+tag,ids=[];
+  let pool=srcIds.map(i=>S.boards[i]).filter(Boolean);
+  if(!pool.length){const sh=[newShot()];sh.forEach(s=>s.lid=s.id);pool=[{target:45,outfit:'',flags:[],combos:{},shots:sh}]}
+  (make==='both'?['tour','reel']:[make]).forEach((w,i)=>{const isT=w==='tour',src=pool.find(b=>(b.aspect==='16/9')===isT)||pool[0],ver=isT?'Virtual Tour':'Reel';
+    const n=clone(src),from=src.from||src.id;if(from)n.from=from;else delete n.from;delete n.tbase;delete n.group;
+    n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id=rid()});
+    if(isT){n.aspect='16/9';if(src.aspect!=='16/9')n.target=Math.max(n.target||0,120)}else delete n.aspect;
+    n.id='b'+tag+i;n.version=ver;n.family=fam;n.linked=true;n.status='Draft';Object.assign(n,fieldsFor(ver));
+    S.boards[n.id]=n;S.order.push(n.id);ids.push(n.id);if(n.from)ensureBase(n,false);touch(n)});
+  return ids}
+function wireNewForm(ctx,rerender){const f=$('newFold');if(!f)return;
+  $('fName').oninput=e=>{U.newName=e.target.value;$('fErr').textContent=''};
+  $('fSrc').onchange=e=>{U.newSrc=e.target.value};
+  f.querySelectorAll('[name=mk]').forEach(r=>r.onchange=()=>{U.newMake=r.value});
+  $('fCancel').onclick=()=>{U.newF=false;rerender()};
+  f.onsubmit=e=>{e.preventDefault();const name=$('fName').value.trim();if(!name){$('fErr').textContent='Type a name first';$('fName').focus();return}
+    const make=(f.querySelector('[name=mk]:checked')||{}).value||'reel',src=srcBoards(U.newSrc);let ids;
+    if(ctx.area){const fid='f'+Date.now().toString(36),lab=AREAS.find(x=>x[0]===ctx.area)[1];
+      ids=buildSet(src,make,ver=>({area:ctx.area,folder:fid,fname:name,name:name+' · '+ver,sub:lab+' · '+name,cat:''}));U.area=ctx.area}
+    else{const c=CATEGORIES.find(x=>x.id===ctx.cat);ids=buildSet(src,make,ver=>({cat:c.id,name:make==='both'?name+' · '+ver:name,sub:c.name,area:undefined,folder:undefined,fname:undefined}));ids.forEach(i=>{const b=S.boards[i];delete b.area;delete b.folder;delete b.fname})}
+    U.sec='board';U.board=ids[0];U.newF=false;U.newName='';U.newKey=null;U.sbs=false;U.shot=null;render();toast(`${name} created${ids.length>1?': Reel and Virtual Tour, linked':''}`)}}
 function renderArea(){const a=U.area,lab=AREAS.find(x=>x[0]===a)[1],one=AREA_ONE[a],fs=foldersIn(a);
   $('main').innerHTML=`<div class="head"><div><h1>${lab}</h1><div class="sub">${fs.length} ${fs.length===1?one:lab.toLowerCase()} · each folder holds its own reels and tours</div></div><div class="acts"><button class="btn pri" id="newF">New ${one}</button></div></div>
-  ${U.newF?newFolderForm(a):''}
+  ${U.newF?newForm({area:a}):''}
   ${fs.length?`<div class="fgrid">${fs.map(f=>`<button class="fcard" data-fold2="${f.id}">${frameHTML(f.boards[0].shots[0]||{f:{}})}<b>${esc(f.name)}</b><span>${f.boards.map(b=>esc(verName(b))).join(' · ')}</span></button>`).join('')}</div>`:`<div class="empty">No ${lab.toLowerCase()} yet. Tap New ${one} to start one from a template.</div>`}`;
   const m=$('main');
   $('newF').onclick=()=>{U.newF=!U.newF;renderArea();const i=$('fName');if(i)i.focus()};
   m.querySelectorAll('[data-fold2]').forEach(e=>e.onclick=()=>openFolder(e.dataset.fold2));
-  const f=$('newFold');if(!f)return;
-  $('fName').oninput=e=>{U.newName=e.target.value;$('fErr').textContent=''};
-  $('fSrc').onchange=e=>{U.newSrc=e.target.value;renderArea()};
-  $('fCancel').onclick=()=>{U.newF=false;renderArea()};
-  f.onsubmit=e=>{e.preventDefault();const name=$('fName').value.trim();if(!name){$('fErr').textContent='Type a name first';$('fName').focus();return}
-    let ids=srcBoards(U.newSrc);const cb=[...f.querySelectorAll('[data-fv]')];if(cb.length)ids=cb.filter(c=>c.checked).map(c=>c.dataset.fv);
-    if(!ids.length){$('fErr').textContent='Pick at least one version';return}createFolder(a,name,ids)}}
+  wireNewForm({area:a},renderArea)}
+/* sidebar: boards linked together get a side line */
+function linkedList(boards,item){const g=[],m={};boards.forEach(b=>{const k=b.family&&b.linked!==false?'f:'+b.family:'b:'+b.id;if(!m[k]){m[k]=[];g.push(m[k])}m[k].push(b)});
+  return g.map(x=>x.length>1?`<div class="lnk" title="Linked: changes carry between these">${x.map(item).join('')}</div>`:item(x[0])).join('')}
 function sbsView(b){const vs=[b,...siblings(b)].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id));
   return `<div class="sbsw"><div class="sbs" style="grid-template-columns:repeat(${vs.length},minmax(250px,1fr))">${vs.map(x=>{const sh=x.shots.filter(s=>!s.hidden);return `<div class="sbc"><button class="sbh" data-ver="${x.id}"><b>${esc(verName(x))}</b><small>${x.aspect==='16/9'?'16:9':'9:16'} · ${sh.length} shots · ${fmt(sh.reduce((t,s)=>t+(+s.dur||0),0))}s</small></button><div class="sbt">${sh.map((s,i)=>`<i style="flex:${s.dur} 1 0;background:${KINDS[s.kind].c}" title="${i+1}. ${esc(s.title||s.pos||'')}"></i>`).join('')}</div><div class="sbl">${sh.map((s,i)=>`<button class="sbr" data-sbo="${x.id}|${s.id}"><span class="sbk" style="background:${KINDS[s.kind].c}"></span><em>${i+1}</em><span class="sbn">${esc(s.title||s.script||s.pos||'')}</span><small>${s.dur}s</small></button>`).join('')}</div></div>`}).join('')}</div></div>`}
 function removeBoard(b){const sib=siblings(b);delete S.boards[b.id];S.order=S.order.filter(i=>i!==b.id);S.meta.gone=S.meta.gone||[];if(!S.meta.gone.includes(b.id))S.meta.gone.push(b.id);touchMeta();dirty.delete(b.id);dirtyAll.delete(b.id);
@@ -426,10 +436,12 @@ const tagHTML=s=>s.extra?'<span class="xtra">EXTRA</span>':s.swapped?'<span clas
 const tourUse=m=>{const t=S.boards.tour;if(!t)return '';const n=t.shots.filter(s=>s.move==m.id).length,x=t.shots.filter(s=>s.move==m.id&&s.extra).length;return n?`On the Standard Virtual Tour: ${n} ${n===1?'shot':'shots'}${x?' ('+x+' extra)':''}`:'Not on the Standard Virtual Tour yet'};
 function renderCat(){
   const c=CATEGORIES.find(x=>x.id===U.cat),ids=S.order.filter(i=>S.boards[i]&&S.boards[i].cat===c.id&&areaOf(S.boards[i])==='templates');
-  $('main').innerHTML=`<div class="head"><div><h1>${esc(c.name)}</h1><div class="sub">${c.parent?esc(c.parent)+' · ':''}${ids.length} ${ids.length===1?'board':'boards'}</div></div><div class="acts"><button class="btn pri" id="newB">New board</button></div></div>
-  ${ids.length?`<div class="sheet" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px">${ids.map(i=>{const b=S.boards[i];return `<button class="mini" data-b2="${i}">${frameHTML(b.shots[0]||{f:{}})}<div style="padding-top:7px;font-weight:700">${esc(b.name)}</div><div style="font-size:12px;color:var(--mut)">${b.shots.length} shots · ${fmt(total(b))}s</div></button>`}).join('')}</div>`:`<div class="empty">No boards here yet. Start one, or duplicate a board from another category.</div>`}`;
+  $('main').innerHTML=`<div class="head"><div><h1>${esc(c.name)}</h1><div class="sub">Templates · ${ids.length} ${ids.length===1?'board':'boards'}</div></div><div class="acts"><button class="btn pri" id="newB">New board</button></div></div>
+  ${U.newF?newForm({cat:c.id}):''}
+  ${ids.length?`<div class="sheet" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px">${ids.map(i=>{const b=S.boards[i];return `<button class="mini" data-b2="${i}">${frameHTML(b.shots[0]||{f:{}})}<div style="padding-top:7px;font-weight:700">${esc(b.name)}</div><div style="font-size:12px;color:var(--mut)">${b.shots.length} shots · ${fmt(total(b))}s${b.family&&b.linked!==false&&siblings(b).length?' · linked':''}</div></button>`}).join('')}</div>`:`<div class="empty">No templates here yet. Tap New board to start one.</div>`}`;
   $('main').querySelectorAll('[data-b2]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b2;render()});
-  const n=$('newB');if(n)n.onclick=()=>{const id='b'+Date.now().toString(36);S.boards[id]={id,cat:c.id,name:'Untitled board',sub:c.name,status:'Draft',target:45,outfit:'',flags:[],combos:{},shots:[newShot()]};S.order.push(id);U.sec='board';U.board=id;U.view='story';touch(S.boards[id]);render()};
+  $('newB').onclick=()=>{U.newF=!U.newF;renderCat();const i=$('fName');if(i)i.focus()};
+  wireNewForm({cat:c.id},renderCat);
 }
 function newShot(){return {id:'s'+Math.random().toString(36).slice(2,9),roll:'B',kind:'wide',beat:'New',loc:'Location',pos:'',dur:2,move:1,hard:1,lens:'24mm',fps:30,script:'',gfx:'',broll:'',f:{scene:'living'}}}
 

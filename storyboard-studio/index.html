@@ -130,6 +130,11 @@ button{cursor:pointer;background:none;border:0;padding:0}
 .areas{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .areas button{padding:7px 6px;border:1px solid var(--line);border-radius:6px;font-size:12px;font-weight:600;color:var(--mut);background:var(--panel2)}
 .areas button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.lnk{position:relative;border-left:2px solid var(--gold);padding-left:6px;margin:2px 0 4px 2px;border-radius:0}
+.lnk::before{content:'';position:absolute;left:-5px;top:-1px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.lnk::after{content:'';position:absolute;left:-5px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.fvs.mk label{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);cursor:pointer}
+.fvs.mk label:has(input:checked){border-color:var(--gold);color:var(--fg)}
 .nav.newf{color:var(--gold);font-weight:600;margin-top:6px}
 .btn.sm{padding:5px 10px;font-size:12px}
 .btn.armed{border-color:#ef4b43;color:#ef4b43}
@@ -409,7 +414,7 @@ button{cursor:pointer;background:none;border:0;padding:0}
 </div>
 <aside class="insp" id="insp" hidden aria-label="Shot details"></aside>
 <div class="toast" id="toast" hidden></div>
-<script src="data.js?v=20261107c"></script>
-<script src="app.js?v=20261107c"></script>
+<script src="data.js?v=20261107d"></script>
+<script src="app.js?v=20261107d"></script>
 
 </body></html>

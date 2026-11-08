@@ -36,10 +36,10 @@ const KINDS = {
 
 const CATEGORIES = [
   {id:'commercials',name:'Commercials'},
-  {id:'houses',name:'Regular houses',parent:'Real estate videos'},
-  {id:'condos',name:'Condos',parent:'Real estate videos'},
-  {id:'luxury',name:'Luxury',parent:'Real estate videos'},
-  {id:'realtor',name:'Realtor shots'}
+  {id:'houses',name:'Regular homes'},
+  {id:'condos',name:'Condos'},
+  {id:'luxury',name:'Luxury'},
+  {id:'realtor',name:'Realtors'}
 ];
 
 const SEED_BOARDS = [
