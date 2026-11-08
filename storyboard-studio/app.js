@@ -456,11 +456,11 @@ function renderInsp(){
 /* ---------- preset shot picker (Add shot) ---------- */
 const PRESETS=(()=>{const seen=new Set(),out=[];if(typeof SEED_BOARDS==='undefined')return out;
   ['tour','reel','condo'].forEach(id=>{const t=SEED_BOARDS.find(x=>x.id===id);if(!t)return;t.shots.forEach(s=>{if(s.hidden)return;const name=(s.title||s.pos||'').trim(),k=name.toLowerCase();if(!name||seen.has(k))return;seen.add(k);out.push({key:'p'+out.length,name,from:t.name,s:clone(s)})})});return out})();
-function presetArea(s){if(s.kind==='drone')return 'Drone';if(s.kind==='twilight')return 'Twilight';if(s.kind==='staging')return 'Virtual Staging';if(s.kind==='aieffect')return 'AI Effect';const l=(s.loc||'').toLowerCase(),n=(s.title||s.pos||'').toLowerCase();
+function presetArea(s){if(s.kind==='drone')return 'Drone';if(['twilight','staging','aieffect'].includes(s.kind))return 'Specialty';const l=(s.loc||'').toLowerCase(),n=(s.title||s.pos||'').toLowerCase();
   if(/kitchen|rapid push|hurley|island|faucet/.test(n))return 'Kitchen';if(/dining/.test(n))return 'Dining';if(/family|living|fireplace|feature wall/.test(n))return 'Family & living';
   if(/master|en ?suite|bedroom|bath|vanity|closet/.test(n))return 'Bedrooms & baths';if(/basement|rec|bar|gym|theat/.test(n)||/basement|lower/.test(l))return 'Basement';
   if(/exterior|outside|backyard|yard|front|porch|garage|pool/.test(l+' '+n))return 'Exterior';if(/foyer|entrance|stair|hall/.test(n))return 'Foyer & stairs';if(/suite/.test(l))return 'Bedrooms & baths';if(/main/.test(l))return 'Main floor';return 'Other'}
-const PICK_ORDER=['Drone','Twilight','Virtual Staging','AI Effect','Exterior','Foyer & stairs','Kitchen','Dining','Family & living','Main floor','Bedrooms & baths','Basement','Other'];
+const PICK_ORDER=['Drone','Specialty','Exterior','Foyer & stairs','Kitchen','Dining','Family & living','Main floor','Bedrooms & baths','Basement','Other'];
 function pickHTML(b){const q=(U.pickQ||'').toLowerCase().trim(),groups={};
   PRESETS.forEach(p=>{const m=moveOf(p.s.move),hay=(p.name+' '+m.name+' '+(p.s.loc||'')+' '+(p.s.lens||'')+' '+KINDS[p.s.kind].label).toLowerCase();if(q&&!q.split(/\s+/).every(w=>hay.includes(w)))return;(groups[presetArea(p.s)]=groups[presetArea(p.s)]||[]).push(p)});
   const ai=b.shots.findIndex(x=>x.id===U.shot),where=ai>=0?`after shot #${ai+1} (${esc(b.shots[ai].title||b.shots[ai].pos||'selected')})`:'at the end';
