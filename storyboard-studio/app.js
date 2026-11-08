@@ -6,6 +6,7 @@ const fmt=n=>(Math.round(n*10)/10).toString();
 const tc=s=>{const m=Math.floor(s/60),r=s-m*60;return m+':'+(r<10?'0':'')+r.toFixed(1)};
 const moveOf=id=>MOVES.find(m=>m.id==id)||MOVES[0];
 const LS='storyboardStudio.v1';
+const UPD={ready:false,mine:(()=>{const e=document.querySelector('script[src*="app.js"]');const m=e&&e.getAttribute('src').match(/v=([^&]+)/);return m?m[1]:''})()};
 const LINKED=['script','gfx','broll','loc','pos','move','hard','lens','fps','kind','roll','beat','notes'];
 const VIEWS=[['bird',"Bird's-eye"],['story','Storyboard'],['list','Shot List'],['shoot','Shoot Order'],['build','Combos & Hard Moves'],['script','Script']];
 
@@ -154,9 +155,9 @@ function renderRail(){
     ${fs.map(f=>{const here=U.sec==='board'&&cur&&(folderOf(cur)||cur.id)===f.id;return `<button class="nav sub fold" data-fold="${f.id}"><span>${here?'▾':'▸'} ${esc(f.name)}</span><small>${f.boards.length}</small></button><div class="nest">${linkedList(f.boards,b=>`<button class="nav ${U.sec==='board'&&U.board===b.id&&!U.sbs?'on':''}" data-b="${b.id}"><span>${esc(verName(b))}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`)}${f.boards.length>1?`<button class="nav ${here&&U.sbs?'on':''}" data-sbsf="${f.boards[0].id}"><span>Side by side</span></button>`:''}</div>`}).join('')}
     <button class="nav newf" data-newf="1"><span>+ New ${one}</span></button></div>`;
   }
-  $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>${seg}${body}
+  $('rail').innerHTML=`<div class="toprow"><div class="logo">Storyboard Studio<span>Toronto Property Media</span></div><button class="updbtn${UPD.ready?' ready':''}" id="updBtn" title="Load the newest version">${UPD.ready?'⬆ New version: tap to update':'↻ Update'}</button></div>${seg}${body}
   <div class="save" id="saveNote">${db?'Saved online. Phone and Macs match.':'Saved on this computer'}</div>`;
-  const r=$('rail');
+  const r=$('rail');const ub=$('updBtn');if(ub)ub.onclick=doUpdate;
   r.querySelectorAll('[data-area]').forEach(e=>e.onclick=()=>{const k=e.dataset.area;if(k===U.area)return;U.area=k;U.shot=null;U.sbs=false;U.newF=false;
     if(k==='templates'){const b=S.boards[U.board];if(b&&areaOf(b)==='templates')U.sec='board';else{U.sec='cat';U.cat='houses'}}else U.sec='area';render()});
   r.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;U.sbs=false;render()});
@@ -619,3 +620,12 @@ function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout
 addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
 
 lsRead();purgeGone();U.area=areaOf(B()||{});Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));let autoUp=0;Object.values(S.boards).forEach(b=>{const d=tplDiff(b);if(d&&d.n)autoUp+=applyTpl(b)});render();if(autoUp)toast(`Template updates added to ${autoUp} ${autoUp===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`);connect();
+
+/* ---------- Update button (Nov 8): always at the top; turns gold when a newer version is live ---------- */
+async function latestVersion(){try{const r=await fetch('index.html?u='+Date.now(),{cache:'no-store'});if(!r.ok)return '';const t=await r.text();const m=t.match(/app\.js\?v=([^"&]+)/);return m?m[1]:''}catch(e){return ''}}
+async function checkUpdate(){if(!UPD.mine)return;const v=await latestVersion();const ready=!!v&&v!==UPD.mine;if(ready!==UPD.ready){UPD.ready=ready;renderRail()}}
+async function doUpdate(){const b=$('updBtn');if(b){b.textContent='Updating…';b.disabled=true}
+  try{await flush()}catch(e){}
+  try{await Promise.all(['index.html','app.js','data.js'].map(f=>fetch(f,{cache:'reload'}).catch(()=>{})));const v=await latestVersion();if(v)await Promise.all(['app.js?v='+v,'data.js?v='+v].map(f=>fetch(f,{cache:'reload'}).catch(()=>{})))}catch(e){}
+  const u=new URL(location.href);u.searchParams.set('u',Date.now());location.replace(u.toString())}
+checkUpdate();setInterval(checkUpdate,120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});
