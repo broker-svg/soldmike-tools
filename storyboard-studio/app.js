@@ -41,10 +41,10 @@ async function connect(){
   setSave('Saved online. Phone and Macs match.');
   db.collection('boards').onSnapshot(q=>{
     let ch=false;
-    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id)return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);ensureBase(S.boards[v.id],!v.tbase);{const d=tplDiff(S.boards[v.id]);if(d&&d.n)applyTpl(S.boards[v.id])}dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
+    q.docs.forEach(d=>{if(d.metadata.hasPendingWrites)return;const v=d.data();if(!v||!v.id||(S.meta.gone||[]).includes(v.id))return;const j=JSON.stringify(v);if(saved[v.id]===j)return;saved[v.id]=j;S.boards[v.id]=clone(v);ensureBase(S.boards[v.id],!v.tbase);{const d=tplDiff(S.boards[v.id]);if(d&&d.n)applyTpl(S.boards[v.id])}dirtyAll.add(v.id);if(!S.order.includes(v.id))S.order.push(v.id);ch=true});
     if(ch&&!document.activeElement.closest?.('.insp'))render();
   },()=>setSave('Online saving stopped. Kept on this computer.'));
-  db.doc('meta/shoot').onSnapshot(d=>{if(d.exists&&!d.metadata.hasPendingWrites){S.meta=clone(d.data());if(U.view==='shoot')renderMain()}},()=>{});
+  db.doc('meta/shoot').onSnapshot(d=>{if(d.exists&&!d.metadata.hasPendingWrites){S.meta=clone(d.data());if((S.meta.gone||[]).some(i=>S.boards[i])){purgeGone();render()}else if(U.view==='shoot')renderMain()}},()=>{});
   if(U.shot)renderInsp();
 }
 
@@ -128,54 +128,126 @@ function frameHTML(s,mode){
 }
 
 /* ---------- rail ---------- */
+/* ---------- areas & folders (Nov 7): Templates / Properties / Commercials / Projects ---------- */
+const AREAS=[['templates','Templates'],['properties','Properties'],['commercials','Commercials'],['projects','Projects']];
+const AREA_ONE={properties:'property',commercials:'commercial',projects:'project'};
+const areaOf=b=>b.area||(b.family==='merino'?'properties':'templates');
+const folderOf=b=>b.folder||(b.family==='merino'?'merino':null);
+const fnameOf=b=>b.fname||(b.family==='merino'?'1 Merino Rd':b.name);
+const verName=b=>b.version||b.name;
+const rid=()=>'s'+Math.random().toString(36).slice(2,9);
+function foldersIn(a){const m={},out=[];S.order.forEach(id=>{const b=S.boards[id];if(!b||areaOf(b)!==a)return;const f=folderOf(b)||b.id;if(!m[f]){m[f]={id:f,name:fnameOf(b),boards:[]};out.push(m[f])}m[f].boards.push(b)});return out}
+function openFolder(fid){const f=foldersIn(U.area).find(x=>x.id===fid);if(!f)return;U.sec='board';U.board=f.boards[0].id;U.shot=null;U.sbs=false;render()}
 function renderRail(){
-  const boardsIn=c=>S.order.filter(id=>S.boards[id]&&S.boards[id].cat===c);
-  const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`};
-  const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${ids.map(nb).join('')}</div>`};
-  const top=CATEGORIES.filter(c=>!c.parent),re=CATEGORIES.filter(c=>c.parent);
-  $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>
-  <div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
-  <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
-  <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
-  <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>${MOVES.filter(m=>m.id!==0&&m.id!==14).length}</small></button></div>
+  const a=U.area||'templates';
+  const seg=`<div class="areas">${AREAS.map(([k,n])=>`<button class="${a===k?'on':''}" data-area="${k}">${n}</button>`).join('')}</div>`;
+  let body='';
+  if(a==='templates'){
+    const boardsIn=c=>S.order.filter(id=>S.boards[id]&&S.boards[id].cat===c&&areaOf(S.boards[id])==='templates');
+    const nb=(id)=>{const b=S.boards[id];return `<button class="nav ${U.sec==='board'&&U.board===id?'on':''}" data-b="${id}"><span>${esc(b.name)}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`};
+    const cat=c=>{const ids=boardsIn(c.id);return `<button class="nav sub ${U.sec==='cat'&&U.cat===c.id?'on':''}" data-c="${c.id}"><span>${esc(c.name)}</span><small>${ids.length}</small></button><div class="nest">${ids.map(nb).join('')}</div>`};
+    const top=CATEGORIES.filter(c=>!c.parent),re=CATEGORIES.filter(c=>c.parent);
+    body=`<div class="grp"><h4>Commercials</h4>${cat(top[0])}</div>
+    <div class="grp"><h4>Real estate videos</h4>${re.map(cat).join('')}</div>
+    <div class="grp"><h4>Realtor shots</h4>${cat(top[1])}</div>
+    <div class="grp"><h4>Library</h4><button class="nav sub ${U.sec==='moves'?'on':''}" data-m="1"><span>Gimbal moves</span><small>${MOVES.filter(m=>m.id!==0&&m.id!==14).length}</small></button></div>`;
+  }else{
+    const lab=AREAS.find(x=>x[0]===a)[1],one=AREA_ONE[a],fs=foldersIn(a),cur=S.boards[U.board];
+    body=`<div class="grp"><h4>${lab}</h4><button class="nav sub ${U.sec==='area'?'on':''}" data-al="1"><span>All ${lab.toLowerCase()}</span><small>${fs.length}</small></button>
+    ${fs.map(f=>{const here=U.sec==='board'&&cur&&(folderOf(cur)||cur.id)===f.id;return `<button class="nav sub fold" data-fold="${f.id}"><span>${here?'▾':'▸'} ${esc(f.name)}</span><small>${f.boards.length}</small></button><div class="nest">${f.boards.map(b=>`<button class="nav ${U.sec==='board'&&U.board===b.id&&!U.sbs?'on':''}" data-b="${b.id}"><span>${esc(verName(b))}</span><small>${b.shots.filter(s=>!s.hidden).length}</small></button>`).join('')}${f.boards.length>1?`<button class="nav ${here&&U.sbs?'on':''}" data-sbsf="${f.boards[0].id}"><span>Side by side</span></button>`:''}</div>`}).join('')}
+    <button class="nav newf" data-newf="1"><span>+ New ${one}</span></button></div>`;
+  }
+  $('rail').innerHTML=`<div class="logo">Storyboard Studio<span>Toronto Property Media</span></div>${seg}${body}
   <div class="save" id="saveNote">${db?'Saved online. Phone and Macs match.':'Saved on this computer'}</div>`;
-  $('rail').querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;render()});
-  $('rail').querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
-  $('rail').querySelector('[data-m]').onclick=()=>{U.sec='moves';U.shot=null;render()};
+  const r=$('rail');
+  r.querySelectorAll('[data-area]').forEach(e=>e.onclick=()=>{const k=e.dataset.area;if(k===U.area)return;U.area=k;U.shot=null;U.sbs=false;U.newF=false;
+    if(k==='templates'){const b=S.boards[U.board];if(b&&areaOf(b)==='templates')U.sec='board';else{U.sec='cat';U.cat='houses'}}else U.sec='area';render()});
+  r.querySelectorAll('[data-b]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b;U.shot=null;U.sbs=false;render()});
+  r.querySelectorAll('[data-c]').forEach(e=>e.onclick=()=>{U.sec='cat';U.cat=e.dataset.c;U.shot=null;render()});
+  r.querySelectorAll('[data-fold]').forEach(e=>e.onclick=()=>openFolder(e.dataset.fold));
+  r.querySelectorAll('[data-sbsf]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.sbsf;U.sbs=true;U.shot=null;render()});
+  const al=r.querySelector('[data-al]');if(al)al.onclick=()=>{U.sec='area';U.shot=null;render()};
+  const nf=r.querySelector('[data-newf]');if(nf)nf.onclick=()=>{U.sec='area';U.newF=true;U.shot=null;render();const i=$('fName');if(i)i.focus()};
+  const mm=r.querySelector('[data-m]');if(mm)mm.onclick=()=>{U.sec='moves';U.shot=null;render()};
 }
+function srcOptions(a){const tpl=S.order.map(i=>S.boards[i]).filter(b=>b&&areaOf(b)==='templates'),fam={},out=[];
+  tpl.forEach(b=>{if(b.family)(fam[b.family]=fam[b.family]||[]).push(b)});
+  Object.entries(fam).forEach(([k,bs])=>{if(bs.length>1)out.push(['fam:'+k,bs.map(b=>b.name.replace(/^Standard /,'')).join(' + ')+(k==='std'?' (standard house)':'')])});
+  tpl.forEach(b=>out.push(['b:'+b.id,b.name]));out.push(['blank','Blank board']);return out}
+function srcBoards(v){if(v==='blank')return ['blank'];if(v.startsWith('fam:')){const k=v.slice(4);return S.order.filter(i=>S.boards[i]&&S.boards[i].family===k&&areaOf(S.boards[i])==='templates').sort((x,y)=>(S.boards[x].aspect==='16/9'?0:1)-(S.boards[y].aspect==='16/9'?0:1))}return [v.slice(2)]}
+function newFolderForm(a){const one=AREA_ONE[a],opts=srcOptions(a);
+  if(!U.newSrc||!opts.some(o=>o[0]===U.newSrc))U.newSrc=a==='properties'&&opts.some(o=>o[0]==='fam:std')?'fam:std':'blank';
+  const bs=srcBoards(U.newSrc);
+  return `<form class="newfold" id="newFold"><label class="fld"><span>${one[0].toUpperCase()+one.slice(1)} name</span><input id="fName" value="${esc(U.newName||'')}" placeholder="${a==='properties'?'22 Oak Cres':a==='commercials'?'Spring home value promo':'AI short film'}"></label>
+  <label class="fld"><span>Start from template</span><select id="fSrc">${opts.map(([v,n])=>`<option value="${v}" ${v===U.newSrc?'selected':''}>${esc(n)}</option>`).join('')}</select></label>
+  ${bs[0]!=='blank'&&bs.length>1?`<div class="fvs"><span>Versions in the folder</span>${bs.map(id=>`<label><input type="checkbox" data-fv="${id}" checked> ${esc(verName(S.boards[id]))}</label>`).join('')}</div>`:''}
+  <p class="fnote">Copies go into the new folder and stay linked to each other. The template is not changed.</p><span class="ferr" id="fErr"></span>
+  <div class="facts"><button class="btn pri">Create ${one}</button><button type="button" class="btn" id="fCancel">Cancel</button></div></form>`}
+function createFolder(a,name,srcIds){const fid='f'+Date.now().toString(36),fam='fam'+fid,ids=[];
+  srcIds.forEach((sid,i)=>{const src=sid==='blank'?null:S.boards[sid],id='b'+Date.now().toString(36)+i;let n;
+    if(src){n=clone(src);n.from=src.from||src.id;delete n.tbase;n.shots.forEach(s=>{s.lid=s.lid||s.id;s.got=false;s.id=rid()})}
+    else{n={cat:'',sub:'',target:45,outfit:'',flags:[],combos:{},shots:[newShot()]};n.shots.forEach(s=>s.lid=s.id)}
+    n.id=id;n.area=a;n.folder=fid;n.fname=name;n.version=src?(src.version||src.name.replace(/^Standard /,'')):'Board';n.name=name+' · '+n.version;
+    n.family=fam;n.linked=true;n.status='Draft';n.sub=AREAS.find(x=>x[0]===a)[1]+' · '+name;delete n.group;
+    S.boards[id]=n;S.order.push(id);ids.push(id);ensureBase(n,false);touch(n)});
+  U.area=a;U.sec='board';U.board=ids[0];U.newF=false;U.newName='';U.sbs=false;U.shot=null;render();toast(`${name} created with ${ids.length} ${ids.length===1?'version':'versions'}`)}
+function renderArea(){const a=U.area,lab=AREAS.find(x=>x[0]===a)[1],one=AREA_ONE[a],fs=foldersIn(a);
+  $('main').innerHTML=`<div class="head"><div><h1>${lab}</h1><div class="sub">${fs.length} ${fs.length===1?one:lab.toLowerCase()} · each folder holds its own reels and tours</div></div><div class="acts"><button class="btn pri" id="newF">New ${one}</button></div></div>
+  ${U.newF?newFolderForm(a):''}
+  ${fs.length?`<div class="fgrid">${fs.map(f=>`<button class="fcard" data-fold2="${f.id}">${frameHTML(f.boards[0].shots[0]||{f:{}})}<b>${esc(f.name)}</b><span>${f.boards.map(b=>esc(verName(b))).join(' · ')}</span></button>`).join('')}</div>`:`<div class="empty">No ${lab.toLowerCase()} yet. Tap New ${one} to start one from a template.</div>`}`;
+  const m=$('main');
+  $('newF').onclick=()=>{U.newF=!U.newF;renderArea();const i=$('fName');if(i)i.focus()};
+  m.querySelectorAll('[data-fold2]').forEach(e=>e.onclick=()=>openFolder(e.dataset.fold2));
+  const f=$('newFold');if(!f)return;
+  $('fName').oninput=e=>{U.newName=e.target.value;$('fErr').textContent=''};
+  $('fSrc').onchange=e=>{U.newSrc=e.target.value;renderArea()};
+  $('fCancel').onclick=()=>{U.newF=false;renderArea()};
+  f.onsubmit=e=>{e.preventDefault();const name=$('fName').value.trim();if(!name){$('fErr').textContent='Type a name first';$('fName').focus();return}
+    let ids=srcBoards(U.newSrc);const cb=[...f.querySelectorAll('[data-fv]')];if(cb.length)ids=cb.filter(c=>c.checked).map(c=>c.dataset.fv);
+    if(!ids.length){$('fErr').textContent='Pick at least one version';return}createFolder(a,name,ids)}}
+function sbsView(b){const vs=[b,...siblings(b)].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id));
+  return `<div class="sbsw"><div class="sbs" style="grid-template-columns:repeat(${vs.length},minmax(250px,1fr))">${vs.map(x=>{const sh=x.shots.filter(s=>!s.hidden);return `<div class="sbc"><button class="sbh" data-ver="${x.id}"><b>${esc(verName(x))}</b><small>${x.aspect==='16/9'?'16:9':'9:16'} · ${sh.length} shots · ${fmt(sh.reduce((t,s)=>t+(+s.dur||0),0))}s</small></button><div class="sbt">${sh.map((s,i)=>`<i style="flex:${s.dur} 1 0;background:${KINDS[s.kind].c}" title="${i+1}. ${esc(s.title||s.pos||'')}"></i>`).join('')}</div><div class="sbl">${sh.map((s,i)=>`<button class="sbr" data-sbo="${x.id}|${s.id}"><span class="sbk" style="background:${KINDS[s.kind].c}"></span><em>${i+1}</em><span class="sbn">${esc(s.title||s.script||s.pos||'')}</span><small>${s.dur}s</small></button>`).join('')}</div></div>`}).join('')}</div></div>`}
+function removeBoard(b){const sib=siblings(b);delete S.boards[b.id];S.order=S.order.filter(i=>i!==b.id);S.meta.gone=S.meta.gone||[];if(!S.meta.gone.includes(b.id))S.meta.gone.push(b.id);touchMeta();dirty.delete(b.id);dirtyAll.delete(b.id);
+  if(db){try{const p=db.doc('boards/'+b.id).delete();if(p&&p.catch)p.catch(()=>{})}catch(e){}}
+  U.sbs=false;U.shot=null;if(sib.length){U.board=sib[0].id;U.sec='board'}else{U.sec='area'}render();toast(sib.length?'Version removed':'Folder removed')}
+function purgeGone(){(S.meta.gone||[]).forEach(id=>{delete S.boards[id]});S.order=S.order.filter(i=>S.boards[i]);if(!S.boards[U.board])U.board=S.order[0]}
 
 /* ---------- main ---------- */
 function render(){renderRail();renderMain();renderInsp();try{lsWrite()}catch(e){}}
 function renderMain(){
   gid=0;
-  const wide=U.sec==='board'&&B().aspect==='16/9';$('main').classList.toggle('wide',wide);$('insp').classList.toggle('wide',wide);
+  const wide=U.sec==='area'||(U.sec==='board'&&(B().aspect==='16/9'||(U.sbs&&folderOf(B()))));$('main').classList.toggle('wide',wide);$('insp').classList.toggle('wide',wide);
   if(U.sec==='moves')return renderMoves();
   if(U.sec==='cat')return renderCat();
+  if(U.sec==='area')return renderArea();
   const b=B();
-  const v={bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
-  $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
+  const sbs=U.sbs&&!!folderOf(b)&&siblings(b).length>0;const v=sbs?sbsView(b):{bird:birdView,story:storyView,list:listView,shoot:shootView,build:buildView}[U.view](U.view==='story'?b:act(b));
+  $('main').innerHTML=`<div class="head"><div><h1 id="bName" title="Tap to rename this board" style="cursor:text">${esc(b.name)} <span style="font-size:.55em;opacity:.45;font-weight:400">✎ rename</span></h1><div class="sub">${folderOf(b)?esc(AREAS.find(x=>x[0]===areaOf(b))[1])+' › '+esc(fnameOf(b))+' · ':''}${esc(b.sub||'')} · ${esc(b.status||'')}</div></div>
     <div class="acts">${tplBtn(b)}<button class="btn" id="addV">Add version</button><button class="btn" id="dupB">Duplicate board</button><button class="btn pri" id="addS">Add shot</button></div></div>
-  ${versionBar(b)}${U.addPick?pickHTML(b):''}<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>${v}`;
+  ${versionBar(b)}${U.addPick?pickHTML(b):''}${sbs?'':`<div class="tabs" role="tablist">${VIEWS.map(([k,n])=>`<button class="tab ${U.view===k?'on':''}" role="tab" aria-selected="${U.view===k}" data-v="${k}">${n}</button>`).join('')}</div>`}${v}`;
   wireMain(b);
 }
 function siblings(b){return b.family?S.order.map(i=>S.boards[i]).filter(x=>x&&x.family===b.family&&x.id!==b.id):[]}
 function versionBar(b){
-  const form=U.addV?`<form class="verform" id="verForm"><label class="fld"><span>Version name</span><input id="vName" value="Virtual Tour"></label><label class="fld"><span>Shape</span><select id="vShape"><option value="16/9">Horizontal 16:9</option><option value="9/16">Vertical 9:16</option></select></label><button class="btn pri">Create linked version</button><button type="button" class="btn" id="vCancel">Cancel</button></form>`:'';
-  if(!b.family)return form;
+  const tpls=S.order.map(i=>S.boards[i]).filter(x=>x&&areaOf(x)==='templates');
+  const form=U.addV?`<form class="verform" id="verForm"><label class="fld"><span>Version name</span><input id="vName" value="${b.aspect==='16/9'?'Reel':'Virtual Tour'}"></label>${folderOf(b)?`<label class="fld"><span>Start from</span><select id="vSrc"><option value="">Copy of this version (linked)</option>${tpls.map(x=>`<option value="${x.id}">Template: ${esc(x.name)}</option>`).join('')}</select></label>`:''}<label class="fld"><span>Shape</span><select id="vShape"><option value="16/9">Horizontal 16:9</option><option value="9/16">Vertical 9:16</option></select></label><button class="btn pri">Create linked version</button><button type="button" class="btn" id="vCancel">Cancel</button></form>`:'';
+  if(!b.family)return folderOf(b)?`<div class="vers"><button class="btn sm" id="rmV">Remove this version</button></div>${form}`:form;
   const sib=siblings(b),on=b.linked!==false;
   return `<div class="vers"><div class="seg2">${[b,...sib].sort((x,y)=>S.order.indexOf(x.id)-S.order.indexOf(y.id)).map(x=>`<button class="${x.id===b.id?'on':''}" data-ver="${x.id}">${esc(x.version||x.name)}</button>`).join('')}</div>
-  <button class="sw ${on?'on':''}" id="linkT" role="switch" aria-checked="${on}"><i></i>${on?'Linked: changes here also go to '+esc(sib.map(x=>x.version||x.name).join(', ')):'Not linked: changes stay on this version'}</button></div>${form}`;
+  ${folderOf(b)&&sib.length?`<button class="btn sm ${U.sbs?'pri':''}" id="sbsT">${U.sbs?'One at a time':'Side by side'}</button>`:''}${folderOf(b)?`<button class="btn sm" id="rmV">Remove this version</button>`:''}<button class="sw ${on?'on':''}" id="linkT" role="switch" aria-checked="${on}"><i></i>${on?'Linked: changes here also go to '+esc(sib.map(x=>x.version||x.name).join(', ')):'Not linked: changes stay on this version'}</button></div>${form}`;
 }
 function syncShot(b,s,k){
   if(!b.family||b.linked===false||s.solo||!LINKED.includes(k))return;
   siblings(b).forEach(x=>{if(x.linked===false)return;const t=x.shots.find(y=>y.lid===s.lid);if(t&&!t.solo){t[k]=s[k];touch(x)}});
 }
-function createVersion(b,name,aspect){
+function createVersion(b,name,aspect,srcId){
   const id='b'+Date.now().toString(36);
   if(!b.family){b.family='f'+id;b.linked=true;b.version=b.version||'Original';b.shots.forEach(s=>s.lid=s.lid||s.id)}
-  const n=clone(b);n.id=id;n.version=name;n.name=(b.name+' · '+name);n.aspect=aspect;n.linked=true;delete n.group;
+  const src=srcId&&S.boards[srcId];
+  const n=src?clone(src):clone(b);n.id=id;n.version=name;n.name=(folderOf(b)?fnameOf(b):b.name)+' · '+name;n.aspect=src?src.aspect:aspect;n.linked=true;delete n.group;
+  if(src){n.from=src.from||src.id;delete n.tbase;n.family=b.family;['area','folder','fname','sub','status'].forEach(k=>{if(b[k]!==undefined)n[k]=b[k]});if(!b.folder&&folderOf(b)){n.area=areaOf(b);n.folder=folderOf(b);n.fname=fnameOf(b)}n.shots.forEach(s=>s.lid=s.lid||s.id)}
   n.shots.forEach(s=>{s.id='s'+Math.random().toString(36).slice(2,9);s.got=false;s.lid=s.lid});
-  S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;touch(b);touch(n);render();toast('Linked version created');
+  S.boards[id]=n;S.order.splice(S.order.indexOf(b.id)+1,0,id);U.board=id;U.addV=false;U.sbs=false;if(src)ensureBase(n,false);touch(b);touch(n);render();toast('Linked version created');
 }
 function legend(b){
   const vis=b.shots.filter(s=>!s.hidden),of=ks=>vis.filter(s=>ks.includes(s.kind));
@@ -353,7 +425,7 @@ function renderMoves(){
 const tagHTML=s=>s.extra?'<span class="xtra">EXTRA</span>':s.swapped?'<span class="xtra">SWAP</span>':'';
 const tourUse=m=>{const t=S.boards.tour;if(!t)return '';const n=t.shots.filter(s=>s.move==m.id).length,x=t.shots.filter(s=>s.move==m.id&&s.extra).length;return n?`On the Standard Virtual Tour: ${n} ${n===1?'shot':'shots'}${x?' ('+x+' extra)':''}`:'Not on the Standard Virtual Tour yet'};
 function renderCat(){
-  const c=CATEGORIES.find(x=>x.id===U.cat),ids=S.order.filter(i=>S.boards[i]&&S.boards[i].cat===c.id);
+  const c=CATEGORIES.find(x=>x.id===U.cat),ids=S.order.filter(i=>S.boards[i]&&S.boards[i].cat===c.id&&areaOf(S.boards[i])==='templates');
   $('main').innerHTML=`<div class="head"><div><h1>${esc(c.name)}</h1><div class="sub">${c.parent?esc(c.parent)+' · ':''}${ids.length} ${ids.length===1?'board':'boards'}</div></div><div class="acts"><button class="btn pri" id="newB">New board</button></div></div>
   ${ids.length?`<div class="sheet" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px">${ids.map(i=>{const b=S.boards[i];return `<button class="mini" data-b2="${i}">${frameHTML(b.shots[0]||{f:{}})}<div style="padding-top:7px;font-weight:700">${esc(b.name)}</div><div style="font-size:12px;color:var(--mut)">${b.shots.length} shots · ${fmt(total(b))}s</div></button>`}).join('')}</div>`:`<div class="empty">No boards here yet. Start one, or duplicate a board from another category.</div>`}`;
   $('main').querySelectorAll('[data-b2]').forEach(e=>e.onclick=()=>{U.sec='board';U.board=e.dataset.b2;render()});
@@ -375,8 +447,11 @@ function wireMain(b){
     if(b.family){s.lid=s.id;if(b.linked!==false)siblings(b).forEach(x=>{if(x.linked===false)return;const c=clone(s);c.id='s'+Math.random().toString(36).slice(2,9);const xi=anc?x.shots.findIndex(y=>y.lid===anc.lid):-1;if(xi>=0)x.shots.splice(xi+1,0,c);else x.shots.push(c);touch(x)})}
     touch(b);U.shot=s.id;renderMain();open(s.id);return s};
   $('addV').onclick=()=>{U.addV=!U.addV;renderMain()};
-  const vf=$('verForm');if(vf){vf.onsubmit=e=>{e.preventDefault();createVersion(b,$('vName').value.trim()||'Version',$('vShape').value)};$('vCancel').onclick=()=>{U.addV=false;renderMain()}}
-  m.querySelectorAll('[data-ver]').forEach(e=>e.onclick=()=>{U.board=e.dataset.ver;U.shot=null;render()});
+  const vf=$('verForm');if(vf){vf.onsubmit=e=>{e.preventDefault();createVersion(b,$('vName').value.trim()||'Version',$('vShape').value,$('vSrc')?$('vSrc').value:'')};$('vCancel').onclick=()=>{U.addV=false;renderMain()}}
+  m.querySelectorAll('[data-ver]').forEach(e=>e.onclick=()=>{U.board=e.dataset.ver;U.shot=null;U.sbs=false;render()});
+  const sb=$('sbsT');if(sb)sb.onclick=()=>{U.sbs=!U.sbs;U.shot=null;render()};
+  m.querySelectorAll('[data-sbo]').forEach(e=>e.onclick=()=>{const [bi,si]=e.dataset.sbo.split('|');U.board=bi;U.sbs=false;U.view='story';render();open(si);const c=document.querySelector(`.card[data-s="${si}"]`);if(c)c.scrollIntoView({block:'center'})});
+  const rv=$('rmV');if(rv)rv.onclick=()=>{if(!rv.classList.contains('armed')){rv.classList.add('armed');rv.textContent=siblings(b).length?'Tap again to remove '+verName(b):'Tap again: removes the whole folder';setTimeout(()=>{if(rv.isConnected){rv.classList.remove('armed');rv.textContent='Remove this version'}},3500);return}removeBoard(b)};
   const lt=$('linkT');if(lt)lt.onclick=()=>{b.linked=b.linked===false;touch(b);renderMain()};
   const pickOpen=()=>{U.addPick=!U.addPick;renderMain();if(U.addPick){const q=$('pickQ');if(q){q.focus();$('pick').scrollIntoView({block:'nearest'})}}};$('addS').onclick=pickOpen;const a2=$('addS2');if(a2)a2.onclick=()=>{U.addPick=true;renderMain();window.scrollTo({top:0,behavior:'smooth'});const q=$('pickQ');if(q)q.focus()};
   wirePick(b,add);
@@ -488,4 +563,4 @@ const nextCombo=b=>'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find(l=>!b.shots.some(
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(e._t);e._t=setTimeout(()=>e.hidden=true,t.length>60?4500:2200)}
 addEventListener('keydown',e=>{if(e.key==='Escape'&&U.shot){U.shot=null;renderInsp()}});
 
-lsRead();Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));let autoUp=0;Object.values(S.boards).forEach(b=>{const d=tplDiff(b);if(d&&d.n)autoUp+=applyTpl(b)});render();if(autoUp)toast(`Template updates added to ${autoUp} ${autoUp===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`);connect();
+lsRead();purgeGone();U.area=areaOf(B()||{});Object.values(S.boards).forEach(b=>ensureBase(b,dirtyAll.has(b.id)));let autoUp=0;Object.values(S.boards).forEach(b=>{const d=tplDiff(b);if(d&&d.n)autoUp+=applyTpl(b)});render();if(autoUp)toast(`Template updates added to ${autoUp} ${autoUp===1?'shot':'shots'}. Your combos, hidden shots and order are kept.`);connect();
