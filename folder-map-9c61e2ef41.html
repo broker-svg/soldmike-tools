@@ -183,7 +183,7 @@ body.treemode #vTree{position:fixed;top:calc(var(--barH,60px) + env(safe-area-in
     <div id="go"></div>
   </section>
   </div>
-  <div class="note hideintree" id="ruleNote"><b>The one rule:</b> business files live in Google Drive in this one system. Notes live in the 2nd Brain. Video you're editing right now sits in Movies, then the finished files go to Drive and the raw footage goes to the work hard drive. Personal stuff goes in iCloud. The Desktop and Downloads are for today only. When you're unsure, drop it in <b>00 Inbox</b> and we sort it weekly.</div>
+  <div class="note hideintree" id="ruleNote"><b>One job per place:</b> T4 = working (raw + editing). SoldMike Drive = every live business file, in one folder system. OP Team Active = what the team shares, including every finished Nick video in one folder. OP Team Drive = archive after 3 months. iCloud = personal. The Mac = tools, not a filing cabinet. <b>One file, one place:</b> if it needs to show up in a second folder, use a Google Drive shortcut instead of a copy.</div>
 
   <div class="note hideintree">Duplicates are matched by file name and size (files of 5 MB and up). Before anything is deleted, each pair gets checked byte for byte. Folders under 150 MB are grouped as "smaller folders".</div>
 </div>
@@ -198,48 +198,78 @@ const CODE = {name:"Code folders (websites + tools)",size:136e6,files:0,newest:0
  {name:"~/Projects/soldmike-site (old copy, Oct 21)",size:28e6,dup:28e6,dupWith:["~/ClaudeWork/soldmike-site"],dest:"delete",kids:[]},
  {name:"~/soldmike-ig-dm, ~/opteam-ig-dm",size:1e6,dup:0,dupWith:[],dest:"code",kids:[]}]};
 NOW.push(CODE);
+const G=2**30;
+NOW.push({name:"OP Team shared folders (Active + 3 more)",size:190*G,files:21164,newest:0,dup:0,dupWith:[],dest:null,kids:[
+ {name:"Active",size:176*G,dup:0,dupWith:[],dest:null,kids:[
+   {name:"# SOLD CLOSED",size:94*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"# zDEAL FELL THRU (DFT)",size:46*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"# CURRENT LISTINGS",size:15*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"Nick Videos",size:8*G,dup:0,dupWith:[],dest:"tpm-opteam",kids:[]},
+   {name:"# SOLD BEFORE CLOSING",size:4*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"# COMING SOON & EXCLUSIVE",size:4*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"#zReels",size:3*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"# Pre Construction",size:1*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"# Team Resources",size:.19*G,dup:0,dupWith:[],dest:"re-opteam",kids:[]}]},
+ {name:"Property Reels",size:11*G,dup:0,dupWith:[],dest:"team",kids:[]},
+ {name:"SOCIAL MEDIA",size:3*G,dup:0,dupWith:[],dest:null,kids:[
+   {name:"NICK VIDEO'S",size:1*G,dup:0,dupWith:[],dest:"tpm-opteam",kids:[]},
+   {name:"CURRENT LISTINGS",size:.8*G,dup:0,dupWith:[],dest:"team",kids:[]},
+   {name:"Listing Montages",size:.6*G,dup:0,dupWith:[],dest:"team",kids:[]}]},
+ {name:"MLS",size:.06*G,dup:0,dupWith:[],dest:"team",kids:[]}]});
+NOW.push({name:"OP Team Drive (mike@theopteam.ca)",size:10.7*G,files:0,newest:0,dup:0,dupWith:[],dest:null,kids:[
+ {name:"My Drive (not scanned, 10.7 GB)",size:10.7*G,dup:0,dupWith:[],dest:"archive",kids:[]}]});
+NOW.push({name:"T4 hard drive (work) — not scanned yet",size:0,files:0,newest:0,dup:0,dupWith:[],dest:null,kids:[
+ {name:"Scan when you're at the office",size:0,dup:0,dupWith:[],dest:"t4raw",kids:[]}]});
 
-// target system
+// target system: every storage place has one job
 const T = {
- drive:{name:"Google Drive › My Drive",desc:"The one home for every business file. Synced to every Mac.",kids:[
+ work:{name:"T4 hard drive (work) — WORKING",desc:"Raw footage and projects being edited. Temporary: cleared once a project is delivered.",kids:[
+  {id:"t4raw",name:"Raw Footage › [Date] [Client] [Address]",desc:"Camera cards get dumped here first."},
+  {id:"editing",name:"Editing Now › [Project]",desc:"Resolve projects in progress (T4 or Mac Movies). Delivered: finals → Drive, raw → archive."}]},
+ drive:{name:"SoldMike Drive (broker@soldmike.com) — BUSINESS HOME",desc:"Every live business file, in one folder system. 1.11 TB used today.",kids:[
   {id:"inbox",name:"00 Inbox",desc:"Drop zone when you're unsure. Sorted weekly, then empty."},
   {id:"re",name:"01 Real Estate",desc:"Everything about a property or a client.",kids:[
-    {id:"re-listings",name:"Listings › [Address]",desc:"One folder per property: Docs · Photos · Video · Marketing. Sold ones move to Listings › Sold [year]."},
-    {id:"re-clients",name:"Clients › [Name]",desc:"Buyers and sellers without a listing yet: buyer reps, offers, notes."},
-    {id:"re-evals",name:"Evaluations",desc:"Value Grid evaluations and CMAs, one per address."},
-    {id:"re-precon",name:"Pre-Construction",desc:"Builder projects (The Valley Woodbridge, Uptown)."},
-    {id:"re-opteam",name:"OP Team",desc:"Team docs, agreements and forms (not videos)."}]},
-  {id:"mk",name:"02 Marketing (SoldMike)",desc:"Your own brand, not client work.",kids:[
-    {id:"mk-social",name:"Social Posts",desc:"Series (Morning Mindset, Steps, Special Dates), Sold posts, Stories."},
-    {id:"mk-video",name:"SoldMike Video",desc:"Your finished reels, ads and talking-head videos."},
-    {id:"mk-leadmag",name:"Lead Magnets",desc:"SoldMike + OP Team PDFs and guides."},
-    {id:"mk-print",name:"Print",desc:"Door hangers, flyers, signs."},
+    {id:"re-listings",name:"Listings › [Address]",desc:"One folder per property: Docs · Photos · Video · Marketing."},
+    {id:"re-clients",name:"Clients › [Name]",desc:"Buyers and sellers without a listing yet."},
+    {id:"re-evals",name:"Evaluations",desc:"Value Grid evaluations and CMAs."},
+    {id:"re-precon",name:"Pre-Construction",desc:"Builder projects."}]},
+  {id:"mk",name:"02 Marketing (SoldMike)",desc:"Your own brand.",kids:[
+    {id:"mk-social",name:"Social Posts",desc:"Series, Sold posts, Stories."},
+    {id:"mk-video",name:"SoldMike Video",desc:"Your finished reels, ads, talking heads."},
+    {id:"mk-leadmag",name:"Lead Magnets",desc:"SoldMike + OP Team PDFs."},
+    {id:"mk-print",name:"Print",desc:"Door hangers, flyers."},
     {id:"mk-web",name:"Website",desc:"soldmike.com copy and images."},
-    {id:"mk-brand",name:"Brand Assets",desc:"Logos, photo cutouts, fonts."}]},
-  {id:"tpm",name:"03 TPM",desc:"Toronto Property Media: work for clients.",kids:[
-    {id:"tpm-clients",name:"Clients › [Agent or Brokerage] › [Address]",desc:"Each shoot: Raw · Edit · Delivered."},
-    {id:"tpm-opteam",name:"Clients › OP Team",desc:"Nick and OP Team videos (info videos, educational, listings)."},
-    {id:"tpm-content",name:"Content",desc:"TPM's own reels, clips, YouTube and Metricool posts."},
-    {id:"tpm-web",name:"Website",desc:"TPM site, listing videos for the site."},
+    {id:"mk-brand",name:"Brand Assets",desc:"Logos, cutouts, fonts."}]},
+  {id:"tpm",name:"03 TPM",desc:"Toronto Property Media client work.",kids:[
+    {id:"tpm-clients",name:"Clients › [Agent or Brokerage] › [Address]",desc:"Finished deliverables per shoot."},
+    {id:"tpm-content",name:"Content",desc:"TPM reels, clips, YouTube, Metricool."},
+    {id:"tpm-web",name:"Website",desc:"TPM site + listing videos."},
     {id:"tpm-graphics",name:"Graphics",desc:"Templates, thumbnails, overlays."}]},
-  {id:"footage",name:"04 Footage Library",desc:"Reusable footage: B-roll, drone, areas, gimbal moves, you on camera."},
-  {id:"fin",name:"05 Financial",desc:"Statements, receipts, tax, payroll, commissions (RE + TPM)."},
-  {id:"personal",name:"06 Personal",desc:"Family, health, hockey, courses, personal video."},
-  {id:"brain",name:"2nd Brain",desc:"Notes + Workspace (Claude's work in progress). Final files get copied out to the folders above."}]},
- off:{name:"Outside Google Drive",desc:"",kids:[
-  {id:"editing",name:"Mac › Movies › Editing Now",desc:"Only projects you're cutting this week. When it's delivered: final → Drive, raw → work hard drive."},
-  {id:"code",name:"Mac › ~/Projects › [one folder per site]",desc:"One copy of each website's code. Always pull before you deploy."},
-  {id:"photos",name:"Mac › Pictures",desc:"Lightroom and Photos library stay where they are."},
-  {id:"cache",name:"Mac › Movies › app caches",desc:"Resolve / CapCut caches. Clear them inside the app, never by hand."},
-  {id:"icloud",name:"iCloud Drive",desc:"Personal and phone files only."},
-  {id:"archive",name:"Work hard drive › Archive › [Year]",desc:"Finished years and old raw footage. Off the Mac and out of Drive."},
-  {id:"pw",name:"Password manager",desc:"Passwords never sit in a folder."},
-  {id:"delete",name:"Review, then delete",desc:"Already marked to remove, old copies, old backups. Checked file by file first."},
-  {id:"ask",name:"Your call",desc:"I can't tell what these are. You decide."}]}
+  {id:"footage",name:"04 Footage Library",desc:"Reusable B-roll, drone, areas, gimbal moves."},
+  {id:"fin",name:"05 Financial",desc:"Statements, receipts, tax, payroll, commissions."},
+  {id:"brain",name:"2nd Brain",desc:"Notes + Workspace. Finals copied out to the folders above."}]},
+ team:{name:"OP Team shared folder (Active) — TEAM",desc:"What the whole team needs: listings, deals, team resources, Nick's finished videos. Owned by the OP Team.",kids:[
+  {id:"team",name:"Active (keep its structure)",desc:"# CURRENT LISTINGS · # SOLD CLOSED · # COMING SOON · # Team Resources …"},
+  {id:"tpm-opteam",name:"Active › Nick Videos (the ONE home)",desc:"Every finished Nick video, by month. Today they're in ~10 places."},
+  {id:"re-opteam",name:"Active › # Team Resources",desc:"Team docs, agreements, forms."}]},
+ archive:{name:"OP Team Drive (mike@theopteam.ca) — ARCHIVE",desc:"Finished projects older than 3 months. Uses the team's pooled storage (to confirm with the admin). 18 GB used today.",kids:[
+  {id:"archive",name:"Archive › [Year] › [Project]",desc:"Old raw footage, finished years, old cabinets after dedupe."}]},
+ icloud:{name:"iCloud (≈6 TB plan, 4.7 TB free) — PERSONAL",desc:"Personal and phone files only.",kids:[
+  {id:"personal",name:"Personal",desc:"Family, health, hockey, courses, personal video."},
+  {id:"icloud",name:"Phone & Photos",desc:"Photos library and phone backups."}]},
+ mac:{name:"This Mac (8 TB, 5.1 TB free) — TOOLS",desc:"Apps, code and caches. Not a filing cabinet.",kids:[
+  {id:"code",name:"~/Projects › [one folder per site]",desc:"One copy of each website's code."},
+  {id:"photos",name:"Pictures (Lightroom / Photos)",desc:"Stays where it is."},
+  {id:"cache",name:"Movies › app caches",desc:"Cleared inside Resolve / CapCut."},
+  {id:"pw",name:"Password manager",desc:"Passwords never sit in a folder."}]},
+ sort:{name:"To decide",desc:"",kids:[
+  {id:"delete",name:"Review, then delete",desc:"Marked to remove, old copies, old backups. Checked file by file first."},
+  {id:"ask",name:"Your call",desc:"I can't tell what these are."}]}
 };
-const LABEL={}; (function idx(n,path){ if(n.id) LABEL[n.id]=path; (n.kids||[]).forEach(k=>idx(k,(n.id?path+" › ":"")+k.name)); })({kids:[T.drive,T.off]},"");
+const TOPS=[T.work,T.drive,T.team,T.archive,T.icloud,T.mac,T.sort];
+const LABEL={}; TOPS.forEach(top=>(function idx(n,path){ if(n.id) LABEL[n.id]=path; (n.kids||[]).forEach(k=>idx(k,path+(path?" › ":"")+k.name)); })(top,top.name.split(" (")[0].split(" — ")[0]));
 // nicer short labels
-for (const k in LABEL){ LABEL[k]=LABEL[k].replace(/^Google Drive › My Drive › /,"").replace(/^Outside Google Drive › /,""); }
+for (const k in LABEL){ LABEL[k]=LABEL[k].replace(/^SoldMike Drive › /,"").replace(/^This Mac › /,"Mac › ").replace(/^To decide › /,""); }
 
 const fmt=b=>{if(!b)return"0";const u=["B","KB","MB","GB","TB"];let i=0;while(b>=1000&&i<4){b/=1024;i++}return (b>=100||i<3?Math.round(b):b.toFixed(1))+" "+u[i]};
 const mo=t=>t?new Date(t*1000).toLocaleDateString("en-CA",{year:"numeric",month:"short"}):"";
@@ -299,10 +329,10 @@ function goNode(n,d){
   return el;
 }
 const goEl=document.getElementById("go");
-const g1=document.createElement("div");g1.className="grp";g1.textContent="The one system";goEl.appendChild(g1);
-goEl.appendChild(goNode(T.drive,0));
+const g1=document.createElement("div");g1.className="grp";g1.textContent="Working + business home";goEl.appendChild(g1);
+TOPS.slice(0,2).forEach(x=>goEl.appendChild(goNode(x,0)));
 const g2=document.createElement("div");g2.className="grp";g2.textContent="Everything else";goEl.appendChild(g2);
-goEl.appendChild(goNode(T.off,0));
+TOPS.slice(2).forEach(x=>goEl.appendChild(goNode(x,0)));
 
 function setOpen(nd,open){const k=nd.querySelector(":scope>.kids");if(!k)return;k.hidden=!open;nd.classList.toggle("open",open);const r=nd.querySelector(":scope>.row");if(r.hasAttribute("aria-expanded"))r.setAttribute("aria-expanded",open)}
 document.addEventListener("click",e=>{
@@ -343,7 +373,7 @@ function goData(){
     const src=(n.id?(FROM[n.id]||[]):[]).slice().sort((a,b)=>b.size-a.size).map(s=>({name:"← "+s.path,size:s.size,dup:s.dup,kind:"src"}));
     const tot=src.reduce((a,s)=>a+s.size,0)+kids.reduce((a,k)=>a+(k.size||0),0);
     return {name:n.name,kind:n.id?"tgt":"grp",size:tot,desc:n.desc,children:kids.concat(src)};};
-  return {name:"New folder system",kind:"root",children:[conv(T.drive),conv(T.off)]};
+  return {name:"Where every file lives",kind:"root",children:TOPS.map(conv)};
 }
 const STATE={};
 const keyOf=d=>d.ancestors().map(a=>a.data.name).reverse().join(" / ");
