@@ -110,7 +110,7 @@ body.treemode #vTree{position:fixed;top:calc(var(--barH,60px) + env(safe-area-in
 .tn.dupn rect{fill:var(--dupsoft);stroke:var(--dup)}
 .tn.tgt rect{fill:var(--navy);stroke:var(--navy)}
 .tn.tgt .t1{fill:var(--bg)} .tn.tgt .t2{fill:var(--bg);opacity:.8}
-.tn.grp rect{fill:var(--gold);stroke:var(--gold)} .tn.grp .t1,.tn.grp .t2{fill:var(--bg)}
+.tn.tgrp rect{fill:var(--gold);stroke:var(--gold)} .tn.tgrp .t1,.tn.tgrp .t2{fill:var(--bg)}
 .tn.src rect{fill:var(--bg);stroke-dasharray:3 3}
 .tn.src.dupn rect{fill:var(--dupsoft)}
 .tn.root rect{fill:var(--ink);stroke:var(--ink)} .tn.root .t1,.tn.root .t2{fill:var(--bg)}
@@ -119,7 +119,7 @@ body.treemode #vTree{position:fixed;top:calc(var(--barH,60px) + env(safe-area-in
 .t3{font:500 11px var(--body);fill:var(--ok)}
 .tn.dupn .t2{fill:var(--dup)}
 .plus{font:700 15px var(--mono);fill:var(--muted)}
-.tn.tgt .plus,.tn.grp .plus,.tn.root .plus{fill:var(--bg)}
+.tn.tgt .plus,.tn.tgrp .plus,.tn.root .plus{fill:var(--bg)}
 .link{fill:none;stroke:var(--line);stroke-width:1.5}
 @media (max-width:560px){.sbar{max-width:140px}.row{padding-right:10px}}
 </style>
@@ -223,10 +223,10 @@ NOW.push({name:"T4 hard drive (work) — not scanned yet",size:0,files:0,newest:
 
 // target system: every storage place has one job
 const T = {
- work:{name:"T4 hard drive (work) — WORKING",desc:"Raw footage and projects being edited. Temporary: cleared once a project is delivered.",kids:[
+ work:{name:"T4 hard drive — Working",desc:"At the office. Raw footage and projects being edited. Temporary: cleared once a project is delivered.",kids:[
   {id:"t4raw",name:"Raw Footage › [Date] [Client] [Address]",desc:"Camera cards get dumped here first."},
   {id:"editing",name:"Editing Now › [Project]",desc:"Resolve projects in progress (T4 or Mac Movies). Delivered: finals → Drive, raw → archive."}]},
- drive:{name:"SoldMike Drive (broker@soldmike.com) — BUSINESS HOME",desc:"Every live business file, in one folder system. 1.11 TB used today.",kids:[
+ drive:{name:"SoldMike Drive — Business home",desc:"broker@soldmike.com. Every live business file, in one folder system. 1.11 TB used today.",kids:[
   {id:"inbox",name:"00 Inbox",desc:"Drop zone when you're unsure. Sorted weekly, then empty."},
   {id:"re",name:"01 Real Estate",desc:"Everything about a property or a client.",kids:[
     {id:"re-listings",name:"Listings › [Address]",desc:"One folder per property: Docs · Photos · Video · Marketing."},
@@ -248,16 +248,16 @@ const T = {
   {id:"footage",name:"04 Footage Library",desc:"Reusable B-roll, drone, areas, gimbal moves."},
   {id:"fin",name:"05 Financial",desc:"Statements, receipts, tax, payroll, commissions."},
   {id:"brain",name:"2nd Brain",desc:"Notes + Workspace. Finals copied out to the folders above."}]},
- team:{name:"OP Team shared folder (Active) — TEAM",desc:"What the whole team needs: listings, deals, team resources, Nick's finished videos. Owned by the OP Team.",kids:[
+ team:{name:"OP Team Active — Team",desc:"Shared folder. What the whole team needs: listings, deals, team resources, Nick's finished videos. Owned by the OP Team.",kids:[
   {id:"team",name:"Active (keep its structure)",desc:"# CURRENT LISTINGS · # SOLD CLOSED · # COMING SOON · # Team Resources …"},
   {id:"tpm-opteam",name:"Active › Nick Videos (the ONE home)",desc:"Every finished Nick video, by month. Today they're in ~10 places."},
   {id:"re-opteam",name:"Active › # Team Resources",desc:"Team docs, agreements, forms."}]},
- archive:{name:"OP Team Drive (mike@theopteam.ca) — ARCHIVE",desc:"Finished projects older than 3 months. Uses the team's pooled storage (to confirm with the admin). 18 GB used today.",kids:[
+ archive:{name:"OP Team Drive — Archive",desc:"mike@theopteam.ca. Finished projects older than 3 months. Uses the team's pooled storage (to confirm with the admin). 18 GB used today.",kids:[
   {id:"archive",name:"Archive › [Year] › [Project]",desc:"Old raw footage, finished years, old cabinets after dedupe."}]},
- icloud:{name:"iCloud (≈6 TB plan, 4.7 TB free) — PERSONAL",desc:"Personal and phone files only.",kids:[
+ icloud:{name:"iCloud — Personal",desc:"About 6 TB plan, 4.7 TB free. Personal and phone files only.",kids:[
   {id:"personal",name:"Personal",desc:"Family, health, hockey, courses, personal video."},
   {id:"icloud",name:"Phone & Photos",desc:"Photos library and phone backups."}]},
- mac:{name:"This Mac (8 TB, 5.1 TB free) — TOOLS",desc:"Apps, code and caches. Not a filing cabinet.",kids:[
+ mac:{name:"This Mac — Tools",desc:"8 TB disk, 5.1 TB free. Apps, code and caches. Not a filing cabinet.",kids:[
   {id:"code",name:"~/Projects › [one folder per site]",desc:"One copy of each website's code."},
   {id:"photos",name:"Pictures (Lightroom / Photos)",desc:"Stays where it is."},
   {id:"cache",name:"Movies › app caches",desc:"Cleared inside Resolve / CapCut."},
@@ -377,12 +377,12 @@ function goData(){
 }
 const STATE={};
 const keyOf=d=>d.ancestors().map(a=>a.data.name).reverse().join(" / ");
-function saveOpen(st){try{const open=[];st.root.each(d=>{if(d._all&&d.children)open.push(keyOf(d));});localStorage.setItem("fm-open-"+st.root.which,JSON.stringify(open));}catch(e){}}
+function saveOpen(st){try{const open=[];st.root.each(d=>{if(d._all&&d.children)open.push(keyOf(d));});localStorage.setItem("fm2-open-"+st.root.which,JSON.stringify(open));}catch(e){}}
 function build(which){
   const root=d3.hierarchy(which==="now"?nowData():goData());
   root.each(d=>{d._all=d.children||null;});
   const lim=which==="now"?1:2;
-  let saved=null; try{saved=JSON.parse(localStorage.getItem("fm-open-"+which)||"null")}catch(e){}
+  let saved=null; try{saved=JSON.parse(localStorage.getItem("fm2-open-"+which)||"null")}catch(e){}
   root.each(d=>{if(!d._all)return; d.children=saved?(saved.includes(keyOf(d))?d._all:null):(d.depth<lim?d._all:null); if(d.depth===0)d.children=d._all;});
   root.which=which;
   return root;
@@ -404,7 +404,7 @@ function render(st){
   const nd=g.append("g").selectAll("g").data(st.root.descendants()).join("g")
     .attr("transform",d=>`translate(${d.y},${d.x-NH/2})`)
     .attr("class",d=>{const x=d.data;const p=x.size?x.dup/x.size:0;
-      return "tn "+(x.kind==="root"?"root ":x.kind==="tgt"?"tgt ":x.kind==="grp"?"grp ":x.kind==="src"?"src ":"")+(d._all&&d.depth>0?"has ":"")+(p>=.05&&x.kind!=="root"?"dupn":"");})
+      return "tn "+(x.kind==="root"?"root ":x.kind==="tgt"?"tgt ":x.kind==="grp"?"tgrp ":x.kind==="src"?"src ":"")+(d._all&&d.depth>0?"has ":"")+(p>=.05&&x.kind!=="root"?"dupn":"");})
     .attr("tabindex",d=>d._all?0:null).attr("role",d=>d._all?"button":null)
     .on("click",(e,d)=>{if(DRAG.moved)return; if(d._all&&d.depth>0)toggle(st,d);})
     .on("keydown",(e,d)=>{if((e.key==="Enter"||e.key===" ")&&d._all&&d.depth>0){e.preventDefault();toggle(st,d);}});
