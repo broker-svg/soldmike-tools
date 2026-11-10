@@ -391,6 +391,7 @@ function goData(){
   return {name:"Where every file lives",kind:"root",children:TOPS.map(conv)};
 }
 const DESK=[];
+let SCOPE="all";
 const DSZ=s=>{const m=/([\d.]+)\s*(KB|MB|GB)/.exec(s||"");if(!m)return 0;return +m[1]*{KB:1024,MB:1048576,GB:1073741824}[m[2]];};
 function deskNow(){
   const org=[],loose=[];
