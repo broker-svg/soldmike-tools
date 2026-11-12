@@ -609,13 +609,26 @@
         body:JSON.stringify({firstName,lastName,email,phone,message,
           property:{street:'Uptown Woodbridge',city:'Woodbridge',state:'ON'},
           source:'Uptown Woodbridge VIP',system:'Uptown Woodbridge Landing Page',
-          tags:['Uptown Woodbridge','Preconstruction','VIP Registration','Precon Home 2027']})
+          tags:['Uptown Woodbridge','Preconstruction','VIP Registration','Precon Home 2027'].concat(window.smAd?window.smAd():[])})
       });
       const r=await res.json();
       if(r&&r.success){form.style.display='none';const s=document.getElementById('formSuccess');s.classList.add('show');s.scrollIntoView({behavior:'smooth',block:'center'});}
       else throw new Error((r&&r.error)||'fail');
     }catch(err){fail('Something went wrong — please try again');}
   });
+</script>
+<script>
+/* Which ad sent this visitor. The ad link carries utm_source=meta&utm_medium=paid&utm_campaign=...; an organic visit has none.
+   Remembered for 7 days so a later sign-up on this device still counts. Read by the form when it sends the lead. */
+window.smAd=function(){try{var q=new URLSearchParams(location.search),s=null,ok=function(v){v=String(v||'');return v.indexOf('{{')<0?v:'';};
+try{s=JSON.parse(localStorage.getItem('sm_ad')||'null');}catch(e){}
+if(q.get('utm_source')||q.get('fbclid')){s={src:ok(q.get('utm_source')).toLowerCase(),med:ok(q.get('utm_medium')).toLowerCase(),camp:ok(q.get('utm_campaign')),ad:ok(q.get('utm_content')),fb:!!q.get('fbclid'),t:Date.now()};try{localStorage.setItem('sm_ad',JSON.stringify(s));}catch(e){}}
+if(!s||Date.now()-s.t>6048e5)return[];
+var meta=/meta|facebook|instagram|^fb$|^ig$/.test(s.src),paid=meta&&/paid|cpc|ads?$/.test(s.med),t=[];
+if(paid){t.push('Meta Ad');if(s.camp)t.push(('Ad: '+s.camp).slice(0,80));}
+else if(s.fb||meta)t.push('FB/IG Click');
+return t;}catch(e){return[];}};
+window.smAd();
 </script>
 </body>
 </html>
