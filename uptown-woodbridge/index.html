@@ -609,7 +609,7 @@
         body:JSON.stringify({firstName,lastName,email,phone,message,
           property:{street:'Uptown Woodbridge',city:'Woodbridge',state:'ON'},
           source:'Uptown Woodbridge VIP',system:'Uptown Woodbridge Landing Page',
-          tags:['Uptown Woodbridge','Preconstruction','VIP Registration']})
+          tags:['Uptown Woodbridge','Preconstruction','VIP Registration','Precon Home 2027']})
       });
       const r=await res.json();
       if(r&&r.success){form.style.display='none';const s=document.getElementById('formSuccess');s.classList.add('show');s.scrollIntoView({behavior:'smooth',block:'center'});}
